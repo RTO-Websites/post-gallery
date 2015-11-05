@@ -16,10 +16,9 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
+1. This screenshot shows the main-settings-section
+1. This screenshot shows the upload-section under a post
+3. This screenshot shows the litebox-gallery
 
 == Changelog ==
 
