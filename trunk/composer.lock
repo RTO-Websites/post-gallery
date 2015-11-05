@@ -1,0 +1,61 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "477d22a61fe16b5936d4f108ffe7f978",
+    "packages": [
+        {
+            "name": "r4c00n/magic-admin-page",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/R4c00n/MagicAdminPage.git",
+                "reference": "9deb858a588d25f8a77bd73e456ac6e0a8bbf41c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/R4c00n/MagicAdminPage/zipball/9deb858a588d25f8a77bd73e456ac6e0a8bbf41c",
+                "reference": "9deb858a588d25f8a77bd73e456ac6e0a8bbf41c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MagicAdminPage\\": "src/MagicAdminPage"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "R4c00n",
+                    "email": "marcel.kempf93@gmail.com"
+                }
+            ],
+            "description": "Helper class to generate WordPress admin pages.",
+            "homepage": "https://github.com/R4c00n/MagicAdminPage",
+            "keywords": [
+                "wordpress",
+                "wp-admin"
+            ],
+            "time": "2015-10-26 13:38:58"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "r4c00n/magic-admin-page": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
