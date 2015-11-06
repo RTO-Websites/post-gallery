@@ -17,27 +17,74 @@ body.liteboxgallery-open {
     overflow: hidden;
     z-index: -1;
 
-    -webkit-transition: opacity 0.6s linear;
-    -moz-transition: opacity 0.6s linear;
-    transition: opacity 0.6s linear;
+    -webkit-transition: opacity 0.6s linear, visibility 0.6s;
+    -moz-transition: opacity 0.6s linear, visibility 0.6s;
+    transition: opacity 0.6s linear, visibility 0.6s;
 }
 
 .litebox-gallery.open {
     visibility: visible;
     opacity: 1;
+
+    -webkit-transition: opacity 0.6s linear;
+    -moz-transition: opacity 0.6s linear;
+    transition: opacity 0.6s linear;
+
     z-index: 100000000;
 }
 
-.litebox-table {
-    display: table;
-    table-layout: fixed;
-    vertical-align: middle;
-    width: 100%;
+.litebox-gallery .owl-carousel {
     height: 100%;
 }
 
-.litebox-cell {
+.litebox-gallery .owl-stage-outer {
+    display: table;
+    overflow: visible;
+}
+
+.litebox-gallery .owl-stage {
+    height: 100vh;
+}
+
+.litebox-gallery .owl-item {
+    display: table;
+    height: 100%;
+}
+
+.litebox-gallery .owl-item .litebox-image {
     display: table-cell;
     vertical-align: middle;
-    width: 100%;
+}
+
+.litebox-gallery .litebox-owlslider.owl-theme .owl-dots {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.litebox-gallery .close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48px;
+    height: 48px;
+    font-size: 44px;
+
+    cursor: pointer;
+
+    z-index: 300;
+}
+
+.litebox-gallery .close-button:after {
+    content: '✖';
+}
+
+.litebox-gallery .owl-item img {
+    -wekbit-transform-style: flat;
+    -moz-transform-style: flat;
+    -ms-transform-style: flat;
+    -o-transform-style: flat;
+    transform-style: flat;
 }
