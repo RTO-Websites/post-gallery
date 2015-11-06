@@ -128,6 +128,10 @@ class PostGalleryPublic {
 		 * class.
 		 */
 
+		wp_enqueue_script( 'lazysizes', plugin_dir_url( __FILE__ )
+				. '../bower_components/lazysizes'
+				. '/lazysizes.min.js' );
+
 		$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
 		wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array ( 'jquery' ) );
 

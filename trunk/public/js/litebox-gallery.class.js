@@ -59,9 +59,6 @@ var LiteboxGallery = function(args) {
 		$(linkSelector).addClass('no-ajax');
 	};
 
-
-
-
 	/**
 	 * Opens the gallery-litebox with an array of pics
 	 *
@@ -171,6 +168,7 @@ var LiteboxGallery = function(args) {
 
 		var galleryStartPic = startPic;
 
+		// TODO embed thumbs ins litebox-theme
 		// Thumbs
 		if ( liteboxContainer.find('.thumb-slider').length ) {
 			debug('load-thumbs');
@@ -178,13 +176,14 @@ var LiteboxGallery = function(args) {
 				var thumbSlider = liteboxContainer.find('.thumb-slider');
 				thumbSlider.html('');
 				for (var i = 0; i < pics.length; i+=1 ) {
-					var thumb = jQuery('<div class="litebox-thumb"><img src="' + pics[i] + '" alt="" /></dov>');
+					var thumb = jQuery('<div class="litebox-thumb"><img class="lazyload" data-src="' + pics[i] + '" alt="" /></div>');
 					thumb[0].liteboxIndex = i;
 					thumb.on('click', function() {
 						galleryContainer.trigger('to.owl.carousel', this.liteboxIndex);
 					});
 					thumbSlider.append(thumb);
 				}
+				owlThumbConfig.lazyLoad = true;
 				jQuery('.thumb-container').owlCarousel(owlThumbConfig);
 			});
 
@@ -193,7 +192,6 @@ var LiteboxGallery = function(args) {
 
 		// Gallery
 		getFullsizeThumbs(pics, 'gallery-image', function(pics) {
-			console.info('getfullsize callback', pics);
 			debug('images-loaded', pics);
 			jQuery('body').removeClass('litebox-gallery-loading');
 			jQuery('body').addClass('liteboxgallery-open');
@@ -204,12 +202,12 @@ var LiteboxGallery = function(args) {
 
 			// add pics to container
 			for (var i = 0; i < pics.length; i+=1 ) {
-				var thumb = jQuery('<div class="litebox-image"><img src="' + pics[i] + '" alt="" /></div>');
+				var thumb = jQuery('<div class="litebox-image"><img class="lazyload" data-src="' + pics[i] + '" alt="" /></div>');
 				galleryContainer.append(thumb);
 			}
 
 			config.owlConfig.startPosition = galleryStartPic;
-			console.info('owlConfog', config.owlConfig);
+			config.owlConfig.loop = true;
 
 			galleryContainer.owlCarousel(config.owlConfig);
 
