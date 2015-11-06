@@ -41,16 +41,16 @@
 				owlContainerElement = $('#' + selectBox.data('container') + '-' + selectBox.data('lang'));
 			switch (selectBox.val()) {
 				case 'fade':
-					owlContainerElement.val("animateOut: 'fadeOut',\nanimateIn: 'fadeIn',");
+					owlContainerElement.val("items: 1, \nanimateOut: 'fadeOut',\nanimateIn: 'fadeIn',");
 					break;
 				case 'slidevertical':
-					owlContainerElement.val("animateOut: 'slideOutDown',\nanimateIn: 'slideInDown',");
+					owlContainerElement.val("items: 1, \nanimateOut: 'slideOutDown',\nanimateIn: 'slideInDown',");
 					break;
 				case 'zoominout':
-					owlContainerElement.val("animateOut: 'zoomOut',\nanimateIn: 'zoomIn',");
+					owlContainerElement.val("items: 1, \nanimateOut: 'zoomOut',\nanimateIn: 'zoomIn',");
 					break;
 				case '':
-					owlContainerElement.val('');
+					owlContainerElement.val('items: 1, ');
 					break;
 
 			}

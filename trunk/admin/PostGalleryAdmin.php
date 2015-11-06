@@ -156,6 +156,7 @@ class PostGalleryAdmin
                     <option value="zoominout">Zoom In/out</option>
                     </select>',
                 'class'       => 'owl-slider-config',
+                'default'     => 'items: 1,',
             ),
 
             'owlThumbConfig'        => array (
