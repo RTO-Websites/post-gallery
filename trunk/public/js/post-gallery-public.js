@@ -33,7 +33,7 @@
 	 * DOM-Ready
 	 */
 	$(function() {
-		new LiteboxGallery({owlConfig: liteboxOwlConfig});
+		new LiteboxGallery(liteboxArgs);
 	});
 
 

@@ -37,11 +37,12 @@ body.liteboxgallery-open {
     height: 100%;
 }
 
+.litebox-gallery .owl-wrapper-outer,
 .litebox-gallery .owl-stage-outer {
-    display: table;
     overflow: visible;
 }
 
+.litebox-gallery .owl-wrapper,
 .litebox-gallery .owl-stage {
     height: 100vh;
 }
@@ -56,6 +57,7 @@ body.liteboxgallery-open {
     vertical-align: middle;
 }
 
+.litebox-gallery .litebox-owlslider.owl-theme .owl-pageination,
 .litebox-gallery .litebox-owlslider.owl-theme .owl-dots {
     position: fixed;
     bottom: 10px;
@@ -87,4 +89,6 @@ body.liteboxgallery-open {
     -ms-transform-style: flat;
     -o-transform-style: flat;
     transform-style: flat;
+
+    width: 100%;
 }

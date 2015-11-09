@@ -96,6 +96,10 @@ class PostGalleryAdmin
                 'title'   => __( 'Debug-Mode', $this->textdomain ),
                 'default' => false,
             ),
+            'useOldOwl'   => array (
+                'type'    => 'checkbox',
+                'title'   => __( 'Use old owl-carousel (v1.3)', $this->textdomain ),
+            ),
 
             'global_position'  => array (
                 'title'   => __( 'Global position', $this->textdomain ),

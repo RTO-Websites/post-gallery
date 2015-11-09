@@ -21,7 +21,7 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
-
 = 1.0 =
+* Add support for owl 1.x
 * Release
 

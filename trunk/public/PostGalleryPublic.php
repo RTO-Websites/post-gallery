@@ -103,9 +103,19 @@ class PostGalleryPublic {
 
 		wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
 
-		$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
-		wp_enqueue_style( 'owl.carousel', $owlPath . '/assets/owl.carousel.min.css' );
-		wp_enqueue_style( 'owl.carousel.theme', $owlPath . '/assets/owl.theme.default.min.css' );
+
+		if ( !empty( $this->options['useOldOwl'] ) ) {
+			// owl 1
+			$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
+			wp_enqueue_style( 'owl.carousel', $owlPath . '/owl.carousel.css' );
+			wp_enqueue_style( 'owl.carousel.theme', $owlPath . '/owl.theme.css' );
+			wp_enqueue_style( 'owl.carousel.transitions', $owlPath . '/owl.transitions.css' );
+		} else {
+			// owl 2
+			$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
+			wp_enqueue_style( 'owl.carousel', $owlPath . '/assets/owl.carousel.min.css' );
+			wp_enqueue_style( 'owl.carousel.theme', $owlPath . '/assets/owl.theme.default.min.css' );
+		}
 		wp_enqueue_style( 'animate.css', plugin_dir_url( __FILE__ ) . '../bower_components/animate.css/animate.min.css' );
 	}
 
@@ -132,8 +142,13 @@ class PostGalleryPublic {
 				. '../bower_components/lazysizes'
 				. '/lazysizes.min.js' );
 
-		$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
-		wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array ( 'jquery' ) );
+		if ( !empty( $this->options['useOldOwl'] ) ) {
+			$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
+			wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array ( 'jquery' ) );
+		} else {
+			$owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
+			wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array ( 'jquery' ) );
+		}
 
 		wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', array( 'jquery' ), $this->version, false );
@@ -359,12 +374,13 @@ class PostGalleryPublic {
 
 	public function insert_headerscript( $header )
 	{
+		$oldOwl = !empty($this->options['useOldOwl']) ? 'owlVersion: 1,' : '';
 
 		// script for websiteurl
 		$script = '<script type="text/javascript">';
 		$script .= 'var websiteUrl = "' . get_bloginfo( 'wpurl' ) . '";';
 		$script .= 'var pluginUrl = "' . WP_PLUGIN_URL . '";';
-		$script .= 'var liteboxOwlConfig = {' . $this->options['owlConfig'] . '};';
+		$script .= 'var liteboxArgs = {' . $oldOwl. 'owlArgs: {' . $this->options['owlConfig'] . '}};';
 		$script .= '</script>';
 
 		$header = $header . $script;
