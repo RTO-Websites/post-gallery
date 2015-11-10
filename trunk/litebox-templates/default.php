@@ -4,4 +4,5 @@
 
 	</div>
 	<div class="close-button"></div>
+	<div class="thumb-container"></div>
 </div>

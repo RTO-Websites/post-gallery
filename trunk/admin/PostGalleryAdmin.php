@@ -148,6 +148,16 @@ class PostGalleryAdmin
                 'list' => 'postgallery-owl-theme',
                 'options' => array('default', 'green')
             ),
+            'clickEvents'           => array (
+                'type'    => 'checkbox',
+                'title'   => __( 'Enable Click-Events', 'post-gallery' ),
+                'default' => true
+            ),
+            'keyEvents'           => array (
+                'type'    => 'checkbox',
+                'title'   => __( 'Enable Keypress-Events', 'post-gallery' ),
+                'default' => true
+            ),
 
             'owlConfig'        => array (
                 'type'        => 'textarea',
