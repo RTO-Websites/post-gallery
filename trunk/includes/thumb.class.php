@@ -154,72 +154,72 @@
                 return array ( 'error' => 'File not found' );
             }
 
-            // Get imagedata
-            $size = GetImageSize( $path );
-
-            $orgWidth = $size[ 0 ];
-            $orgHeight = $size[ 1 ];
-            $ratioW = $orgWidth / $orgHeight;
-            $ratioH = $orgHeight / $orgWidth;
-            // TODO: calc height/width for stretching
-
-            if ( !$stretchImages && $orgWidth <= $width && $orgHeight <= $height && !$bw ) {
-                // Load original (do nothing)
+            // create cache-filename
+            $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
+            if ( file_exists( $this->cache_dir . '/' . $cachefile ) &&
+                empty( $_REQUEST[ 'force_new' ] ) &&
+                filesize($this->cache_dir . '/' . $cachefile) > 0
+            ) {
+                $loadFromCache = true;
+                $orgWidth = $width;
+                $orgHeight = $height;
+                $path = $this->cache_dir . '/' . $cachefile;
             } else {
-                // create cache-filename
-                $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
-                if ( file_exists( $this->cache_dir . '/' . $cachefile ) &&
-                    empty( $_REQUEST[ 'force_new' ] ) &&
-                    filesize( $this->cache_dir . '/' . $cachefile ) > 0
-                ) {
-                    // load from cache (do nothing)
-                } else {
-                    // crop images
-                    try {
-                        $im = new \Imagick( $path );
-                    } catch ( Exception $e ) {
-                        return array ( 'error' => 'Imagick fails' );
-                    }
+                // Get imagedata
+                $size = GetImageSize( $path );
+                $orgWidth = $size[ 0 ];
+                $orgHeight = $size[ 1 ];
+            }
 
-                    // calc height
-
-                    switch ( $scale ) {
-                        case 0: // crop
-                            $im->cropThumbnailImage( $width, $height );
-                            break;
-
-                        case 3: // use long edge, ignore short edge
-                            if ( $width > $height ) {
-                                $im->thumbnailimage( $width, 0 );
-                            } else {
-                                $ratio = $orgWidth / $orgHeight;
-                                $im->thumbnailimage( 0, $height );
-                            }
-                            break;
-
-                        case 2:
-                        case 4:
-                            $im->thumbnailimage( $width, $height );
-                            break;
-
-                        case 1: // scale 1:1 (height = maxheight, width=maxwidth)
-                        case 5:
-                        default:
-                            if ( $width > $height ) {
-                                $im->thumbnailimage( 0, $height );
-                            } else {
-                                $im->thumbnailimage( $width, 0 );
-                            }
-                            break;
-                    }
-
-                    // write image to cache
-                    $im->writeImage( $this->cache_dir . '/' . $cachefile );
-
-                    @chmod( $this->cache_dir . '/' . $cachefile, octdec( '0666' ) );
+            if ( !empty($loadFromCache) || ( !$stretchImages && $orgWidth <= $width && $orgHeight <= $height && !$bw ) ) {
+                // Load original or from cache (do nothing)
+            } else {
+                // crop images
+                try {
+                    $im = new \Imagick( $path );
+                } catch ( Exception $e ) {
+                    return array ( 'error' => 'Imagick fails' );
                 }
+
+                // calc height
+
+                switch ( $scale ) {
+                    case 0: // crop
+                        $im->cropThumbnailImage( $width, $height );
+                        break;
+
+                    case 3: // use long edge, ignore short edge
+                        if ( $width > $height ) {
+                            $im->thumbnailimage( $width, 0 );
+                        } else {
+                            $ratio = $orgWidth / $orgHeight;
+                            $im->thumbnailimage( 0, $height );
+                        }
+                        break;
+
+                    case 2:
+                    case 4:
+                        $im->thumbnailimage( $width, $height );
+                        break;
+
+                    case 1: // scale 1:1 (height = maxheight, width=maxwidth)
+                    case 5:
+                    default:
+                        if ( $width > $height ) {
+                            $im->thumbnailimage( 0, $height );
+                        } else {
+                            $im->thumbnailimage( $width, 0 );
+                        }
+                        break;
+                }
+
+                // write image to cache
+                $im->writeImage( $this->cache_dir . '/' . $cachefile );
+
+                @chmod( $this->cache_dir . '/' . $cachefile, octdec( '0666' ) );
                 $path = $this->cache_dir . '/' . $cachefile;
             }
+
             if ( empty( $args[ 'return_thumb' ] ) && empty( $_REQUEST[ 'return_thumb' ] ) ) {
                 $thumbnail = null;
             } else {
