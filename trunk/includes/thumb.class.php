@@ -15,7 +15,7 @@
     {
         public $srv_dir = ABSPATH;
         public $cache_dir = '';
-        public $default_settings = array (
+        public $default_settings = array(
             'scale'   => 1,
             'width'   => 1920,
             'height'  => 1080,
@@ -39,7 +39,7 @@
             $this->srv_dir = ABSPATH;
 
             // Load Options from PostGallery
-            $this->pgOptions = MagicAdminPage::getOption('post-gallery');
+            $this->pgOptions = MagicAdminPage::getOption( 'post-gallery' );
 
             // create cachedir
             $upload_dir = wp_upload_dir();
@@ -87,7 +87,7 @@
                 && strpos( $args[ 'path' ], get_bloginfo( 'wpurl' ) ) === false
             ) {
                 // external
-                return array (
+                return array(
                     'path'  => $args[ 'path' ],
                     'url'   => $args[ 'path' ],
                     'thumb' => null,
@@ -145,91 +145,98 @@
             } else if ( !empty( $args[ 'url' ] ) ) {
                 $path = $args[ 'url' ];
             } else {
-                return array ( 'error' => 'Filepath missed' );
+                return array( 'error' => 'Filepath missed' );
             }
             $path = str_replace( '%20', ' ', $path );
             $path = $this->check_path( $path );
 
             if ( !file_exists( $path ) || is_dir( $path ) ) {
-                return array ( 'error' => 'File not found' );
+                return array( 'error' => 'File not found' );
             }
 
-            // create cache-filename
-            $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
-            if ( file_exists( $this->cache_dir . '/' . $cachefile ) &&
-                empty( $_REQUEST[ 'force_new' ] ) &&
-                filesize($this->cache_dir . '/' . $cachefile) > 0
-            ) {
-                $loadFromCache = true;
-                $orgWidth = $width;
-                $orgHeight = $height;
-                $path = $this->cache_dir . '/' . $cachefile;
+            // Get imagedata
+            $size = GetImageSize( $path );
+
+            $orgWidth = $size[ 0 ];
+            $orgHeight = $size[ 1 ];
+            $ratioW = $orgWidth / $orgHeight;
+            $ratioH = $orgHeight / $orgWidth;
+            // TODO: calc height/width for stretching
+
+            if ( !$stretchImages && $orgWidth <= $width && $orgHeight <= $height && !$bw ) {
+                // Load original (do nothing)
             } else {
-                // Get imagedata
-                $size = GetImageSize( $path );
-                $orgWidth = $size[ 0 ];
-                $orgHeight = $size[ 1 ];
-            }
+                // create cache-filename
+                $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
+                if ( file_exists( $this->cache_dir . '/' . $cachefile ) &&
+                    empty( $_REQUEST[ 'force_new' ] ) &&
+                    filesize( $this->cache_dir . '/' . $cachefile ) > 0
+                ) {
+                    // load from cache (do nothing)
+                } else {
+                    // crop images
+                    try {
+                        $im = new \Imagick( $path );
+                    } catch ( Exception $e ) {
+                        return array( 'error' => 'Imagick fails' );
+                    }
 
-            if ( !empty($loadFromCache) || ( !$stretchImages && $orgWidth <= $width && $orgHeight <= $height && !$bw ) ) {
-                // Load original or from cache (do nothing)
-            } else {
-                // crop images
-                try {
-                    $im = new \Imagick( $path );
-                } catch ( Exception $e ) {
-                    return array ( 'error' => 'Imagick fails' );
+                    // calc height
+
+                    switch ( $scale ) {
+                        case 0: // crop
+                            $im->cropThumbnailImage( $width, $height );
+                            break;
+
+                        case 3: // use long edge, ignore short edge
+                            if ( $width > $height ) {
+                                $im->thumbnailimage( $width, 0 );
+                            } else {
+                                $ratio = $orgWidth / $orgHeight;
+                                $im->thumbnailimage( 0, $height );
+                            }
+                            break;
+
+                        case 2:
+                        case 4:
+                            $im->thumbnailimage( $width, $height );
+                            break;
+
+                        case 1: // scale 1:1 (height = maxheight, width=maxwidth)
+                        case 5:
+                        default:
+                            if ( $width > $height ) {
+                                $im->thumbnailimage( 0, $height );
+                            } else {
+                                $im->thumbnailimage( $width, 0 );
+                            }
+                            break;
+                    }
+
+                    // write image to cache
+                    $im->writeImage( $this->cache_dir . '/' . $cachefile );
+
+                    @chmod( $this->cache_dir . '/' . $cachefile, octdec( '0666' ) );
                 }
-
-                // calc height
-
-                switch ( $scale ) {
-                    case 0: // crop
-                        $im->cropThumbnailImage( $width, $height );
-                        break;
-
-                    case 3: // use long edge, ignore short edge
-                        if ( $width > $height ) {
-                            $im->thumbnailimage( $width, 0 );
-                        } else {
-                            $ratio = $orgWidth / $orgHeight;
-                            $im->thumbnailimage( 0, $height );
-                        }
-                        break;
-
-                    case 2:
-                    case 4:
-                        $im->thumbnailimage( $width, $height );
-                        break;
-
-                    case 1: // scale 1:1 (height = maxheight, width=maxwidth)
-                    case 5:
-                    default:
-                        if ( $width > $height ) {
-                            $im->thumbnailimage( 0, $height );
-                        } else {
-                            $im->thumbnailimage( $width, 0 );
-                        }
-                        break;
-                }
-
-                // write image to cache
-                $im->writeImage( $this->cache_dir . '/' . $cachefile );
-
-                @chmod( $this->cache_dir . '/' . $cachefile, octdec( '0666' ) );
                 $path = $this->cache_dir . '/' . $cachefile;
             }
 
+            // output image
             if ( empty( $args[ 'return_thumb' ] ) && empty( $_REQUEST[ 'return_thumb' ] ) ) {
                 $thumbnail = null;
             } else {
                 $thumbnail = file_get_contents( $path );
             }
-            return array (
+
+            $newSize = getimagesize( $path );
+
+            return array(
                 'thumb'        => $thumbnail,
                 'content-type' => $content_type,
                 'path'         => $path,
-                'url'          => str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path )
+                'url'          => str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path ),
+                'width'        => $newSize[ 0 ],
+                'height'       => $newSize[ 1 ],
             );
         }
 
@@ -244,7 +251,7 @@
             $quality = $args[ 'quality' ];
             $stretchImages = !empty( $this->pgOptions[ 'stretch_images' ] );
 
-            $return_array = array ();
+            $return_array = array();
 
             if ( $width == 'auto' || !is_numeric( $width ) ) {
                 $width = 10000;
@@ -260,13 +267,13 @@
             } else if ( !empty( $args[ 'url' ] ) ) {
                 $path = $args[ 'url' ];
             } else {
-                return array ( 'error' => 'Filepath missed' );
+                return array( 'error' => 'Filepath missed' );
             }
 
             $path = $this->check_path( $path );
 
             if ( !file_exists( $path ) ) {
-                return array ( 'error' => 'File not found' );
+                return array( 'error' => 'File not found' );
             }
 
             // create cache-filename
@@ -281,6 +288,10 @@
                 }
                 $return_array[ 'path' ] = $this->cache_dir . '/' . $cachefile;
                 $return_array[ 'url' ] = str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $return_array[ 'path' ] );
+
+                $newSize = getimagesize( $return_array[ 'path' ] );
+                $return_array[ 'width' ] = $newSize[ 0 ];
+                $return_array[ 'height' ] = $newSize[ 1 ];
 
                 return $return_array;
             }
@@ -406,6 +417,7 @@
                 if ( !empty( $args[ 'return_thumb' ] ) ) {
                     $return_array[ 'thumb' ] = file_get_contents( $path );
                 }
+                $return_array[ 'path' ] = $path;
                 $return_array[ 'url' ] = str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path );
             } else {
                 // create cache-filename
@@ -481,12 +493,14 @@
 
                     // if Fail, then load orginal image
                     if ( !$oldImage ) {
-                        return array (
+                        return array(
                             'content-type' => 'image/jpg',
                             'show_org'     => true,
                             'thumb'        => file_get_contents( $path ),
                             'path'         => $path,
-                            'url'          => str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path )
+                            'url'          => str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path ),
+                            'width'        => $orgWidth,
+                            'height'       => $orgHeight,
                         );
                     }
 
@@ -525,14 +539,21 @@
                     imagedestroy( $newImage );
                 }
 
+                // output image
                 if ( !empty( $args[ 'return_thumb' ] ) ) {
                     $return_array[ 'thumb' ] = file_get_contents( $this->cache_dir . '/' . $cachefile );
                 } else {
                     $return_array[ 'thumb' ] = null;
                 }
+
                 $return_array[ 'path' ] = $this->cache_dir . '/' . $cachefile;
                 $return_array[ 'url' ] = str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $return_array[ 'path' ] );
             }
+
+            $newSize = getimagesize( $return_array[ 'path' ] );
+            $return_array[ 'width' ] = $newSize[ 0 ];
+            $return_array[ 'height' ] = $newSize[ 1 ];
+
             return $return_array;
         }
 
@@ -564,7 +585,7 @@
                     $bw = true;
                 }
 
-                $thumb_result = $this->get_thumb( array (
+                $thumb_result = $this->get_thumb( array(
                     'path'         => urldecode( $_GET[ 'path' ] ),
                     'width'        => ( isset( $_GET[ 'width' ] ) ? $_GET[ 'width' ] : 0 ),
                     'height'       => ( isset( $_GET[ 'height' ] ) ? $_GET[ 'height' ] : 0 ),

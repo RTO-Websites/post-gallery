@@ -6,11 +6,11 @@ If you want one single image you can call
 
 http://mySite.com/?load_thumb&width=300&height=300&scale=0&path=/wp-content/uploads/myimage.jpg
 
-If you want a list of images:
+### If you want a list of images:
 
 http://mySite.com/?get_thumb_list&width=300&height=300&scale=0&pics[]=/wp-content/uploads/myimage.jpg&pics[]=/wp-content/uploads/myimage2.jpg
 
-It returns a json-string with the Urls to the cached images.
+It returns a json-string with the cached images (url, width, height and path)
 
 
 ### Load thumb with function
@@ -29,6 +29,8 @@ It returns an array:
 ```
 'content-type' => 'image/jpg',
 'path'
-'url'
+'url',
+'width',
+'height'
 ```
 

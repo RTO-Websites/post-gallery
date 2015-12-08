@@ -1,5 +1,4 @@
 
-
 body.liteboxgallery-open {
     overflow: hidden;
 }
@@ -56,6 +55,7 @@ body.liteboxgallery-open {
 .litebox-gallery .litebox-owlslider .owl-item .litebox-image {
     display: table-cell;
     vertical-align: middle;
+    text-align: center;
 }
 
 .litebox-gallery .litebox-owlslider.owl-theme .owl-pageination,
@@ -91,7 +91,14 @@ body.liteboxgallery-open {
     -o-transform-style: flat;
     transform-style: flat;
 
+    display: inline-block;
+
     width: 100%;
+}
+
+.litebox-gallery .owl-item img.upright {
+    width: auto;
+    height: 100%;
 }
 
 .litebox-gallery .thumb-container {
@@ -117,7 +124,6 @@ body.liteboxgallery-open {
     opacity: 1 !important;
 }
 
-
 .litebox-gallery .thumb-container .owl-item:last-child {
     margin-right: -3px;
 }
@@ -127,8 +133,14 @@ body.liteboxgallery-open {
     max-height: 75px;
     width: auto;
 }
+
 .litebox-gallery .thumb-container .litebox-thumb {
     cursor: pointer;
+    width: 75px;
+}
+
+.litebox-gallery .thumb-container .owl-stage {
+    margin: 0 auto;
 }
 
 .litebox-gallery .thumb-container .owl-item {

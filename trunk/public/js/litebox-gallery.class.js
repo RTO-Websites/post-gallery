@@ -36,6 +36,8 @@ var LiteboxGallery = function(args) {
 
 
     init = function() {
+        window.liteboxOpenProgress = false;
+
         if (!win.$) {
             win.$ = jQuery;
         }
@@ -159,6 +161,11 @@ var LiteboxGallery = function(args) {
     this.openGallery = function(clickElement) {
         debug('openGallery', clickElement);
 
+        if (window.liteboxOpenProgress) {
+            return;
+        }
+        window.liteboxOpenProgress = true;
+
         // get image container
         clickElement = $(clickElement);
         var imageContainer = clickElement.closest('.gallery_container, .gallery-container');
@@ -275,7 +282,22 @@ var LiteboxGallery = function(args) {
 
             // add pics to container
             for (var i = 0; i < pics.length; i += 1) {
-                var thumb = jQuery('<div class="litebox-image"><img class="lazyload" data-src="' + pics[i] + '" alt="" /></div>');
+                var thumb = null,
+                    width = 'auto',
+                    height = 'auto',
+                    orientation = ' wide';
+
+                if (pics[i]['width'] > pics[i]['height']) {
+                    width = pics[i]['width'];
+                } else if (typeof(pics[i]['height']) !== 'undefined' ) {
+                    height = pics[i]['height'];
+                    orientation = ' upright';
+                }
+
+                thumb = jQuery('<div class="litebox-image">' +
+                    '<img width="' + width + '" height="' + height + '" class="lazyload '
+                        + orientation + '" data-src="' + pics[i]['url'] + '" alt="" />' +
+                    '</div>');
                 galleryContainer.append(thumb);
             }
 
@@ -290,6 +312,8 @@ var LiteboxGallery = function(args) {
 
             // open popup
             liteboxContainer.addClass('open').css({'display': 'block'}).animate({'opacity': '1'}, 500);
+
+            window.liteboxOpenProgress = false;
         });
     }
 
@@ -316,7 +340,7 @@ var LiteboxGallery = function(args) {
                 thumbSlider.addClass('owl-carousel owl-theme');
 
                 for (var i = 0; i < pics.length; i += 1) {
-                    var thumb = jQuery('<div class="litebox-thumb"><img src="' + pics[i] + '" alt="" /></div>');
+                    var thumb = jQuery('<div class="litebox-thumb"><img src="' + pics[i]['url'] + '" alt="" /></div>');
                     thumb[0].liteboxIndex = i;
                     thumb.on('click', function() {
                         if (args.owlVersion == 1) {
@@ -329,7 +353,7 @@ var LiteboxGallery = function(args) {
                 }
 
                 jQuery('.thumb-container').owlCarousel(thumbArgs);
-            });
+            }, 0);
 
             // TODO: highlight current thumb
         }

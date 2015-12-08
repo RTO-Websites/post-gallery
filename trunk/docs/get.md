@@ -23,6 +23,13 @@ $args = array(
 $images = PostGallery::get_images_resized( $postid, $args );
 ```
 
+Returns an array with:
+'filename'
+'path'
+'url',
+'width',
+'height'
+
 ### get_image_string
 Return all images (resized) of a post in a json-string.
 ```
@@ -48,6 +55,13 @@ $args = array(
 }
 $images = PostGallery::get_pics_resized( $pics, $args );
 ```
+
+Returns an array with:
+'filename'
+'path'
+'url',
+'width',
+'height'
 
 
 ### Get titles, alt and description

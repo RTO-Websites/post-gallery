@@ -69,19 +69,19 @@ class PostGalleryPublic
         $this->options = MagicAdminPage::getOption( 'post-gallery' );
 
 
-        add_filter( 'the_content', array ( $this, 'add_gallery_to_content' ) );
-        add_shortcode( 'postgallery', array ( $this, 'postgallery_shortcode' ) );
-        add_action( 'plugins_loaded', array ( $this, 'postgallery_thumb' ) );
-        add_action( 'plugins_loaded', array ( $this, 'get_thumb_list' ) );
+        add_filter( 'the_content', array( $this, 'add_gallery_to_content' ) );
+        add_shortcode( 'postgallery', array( $this, 'postgallery_shortcode' ) );
+        add_action( 'plugins_loaded', array( $this, 'postgallery_thumb' ) );
+        add_action( 'plugins_loaded', array( $this, 'get_thumb_list' ) );
 
         // Embed headerscript
-        add_action( 'wp_head', array ( $this, 'insert_headerscript' ) );
+        add_action( 'wp_head', array( $this, 'insert_headerscript' ) );
 
         // Embed footer-html
-        add_action( 'wp_footer', array ( $this, 'insert_footer_html' ) );
+        add_action( 'wp_footer', array( $this, 'insert_footer_html' ) );
 
-        add_filter( 'post_thumbnail_html', array ( $this, 'postgallery_thumbnail' ), 10, 5 );
-        add_filter( 'get_post_metadata', array ( $this, 'postgallery_has_post_thumbnail' ), 10, 5 );
+        add_filter( 'post_thumbnail_html', array( $this, 'postgallery_thumbnail' ), 10, 5 );
+        add_filter( 'get_post_metadata', array( $this, 'postgallery_has_post_thumbnail' ), 10, 5 );
 
     }
 
@@ -105,7 +105,7 @@ class PostGalleryPublic
          * class.
          */
 
-        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array (), $this->version, 'all' );
+        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
 
 
         if ( !empty( $this->options[ 'useOldOwl' ] ) ) {
@@ -149,14 +149,14 @@ class PostGalleryPublic
 
         if ( !empty( $this->options[ 'useOldOwl' ] ) ) {
             $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
-            wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array ( 'jquery' ) );
+            wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array( 'jquery' ) );
         } else {
             $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
-            wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array ( 'jquery' ) );
+            wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array( 'jquery' ) );
         }
 
-        wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', array ( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', array ( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', array( 'jquery' ), $this->version, false );
 
     }
 
@@ -173,13 +173,15 @@ class PostGalleryPublic
     }
 
 
-    public function postgallery_has_post_thumbnail($null, $object_id, $meta_key, $single) {
-        if ( $meta_key == '_thumbnail_id') {
+    public function postgallery_has_post_thumbnail( $null, $object_id, $meta_key, $single )
+    {
+        if ( $meta_key == '_thumbnail_id' ) {
             return true;
         }
 
         return null;
     }
+
     /**
      * Hooks the_post_thumbnail() and loads first gallery-image if post-thumb is empty
      *
@@ -237,15 +239,31 @@ class PostGalleryPublic
             $path = explode( '/wp-content/', $path );
             $path = '/wp-content/' . array_pop( $path );
 
-            $thumb = PostGallery::get_thumb( $path, array (
+            /*$thumb = PostGallery::get_thumb( $path, array (
+                'width'  => $width,
+                'height' => $height,
+                'scale'  => '0'
+            ) );*/
+            $thumb = Thumb::get_thumb( $path, array(
                 'width'  => $width,
                 'height' => $height,
                 'scale'  => '0'
             ) );
 
-            $html = '<img width="auto" height="auto" src="'
-                . $thumb
-                . '" alt="" class="attachment-' . $size . ' wp-post-image  post-image-from-postgallery" />';
+            $width = $height = 'auto';
+
+            $orientation = ' wide';
+
+            if ( $thumb[ 'width' ] > $thumb[ 'height' ] ) {
+                $width = $thumb['width'];
+            } else {
+                $height = $thumb['height'];
+                $orientation = ' upright';
+            }
+
+            $html = '<img width="'.$width.'" height="'.$height.'" src="'
+                . $thumb[ 'url' ]
+                . '" alt="" class="attachment-' . $size . $orientation . ' wp-post-image  post-image-from-postgallery" />';
         }
 
         return $html;
@@ -285,7 +303,7 @@ class PostGalleryPublic
      * @param type $template
      * @return type
      */
-    public function return_gallery_html( $template, $postid = 0, $args = array () )
+    public function return_gallery_html( $template, $postid = 0, $args = array() )
     {
         $custom_template_dir = get_stylesheet_directory() . '/post-gallery';
         $custom_template_dir2 = get_stylesheet_directory() . '/plugins/post-gallery';
@@ -363,7 +381,7 @@ class PostGalleryPublic
     {
         if ( isset( $_REQUEST[ 'get_fullsize_thumbs' ] ) || isset( $_REQUEST[ 'get_thumb_list' ] ) ) {
 
-            $_SESSION[ 'swapper_window_size' ] = array (
+            $_SESSION[ 'swapper_window_size' ] = array(
                 'width'  => $_REQUEST[ 'width' ],
                 'height' => $_REQUEST[ 'height' ]
             );
@@ -374,7 +392,7 @@ class PostGalleryPublic
             $pics = ( $_REQUEST[ 'pics' ] );
 
             if ( !empty( $pics ) ) {
-                $pics = PostGallery::get_pics_resized( $pics, array (
+                $pics = PostGallery::get_pics_resized( $pics, array(
                     'width'  => $_REQUEST[ 'width' ],
                     'height' => $_REQUEST[ 'height' ],
                     'scale'  => ( !isset( $_REQUEST[ 'scale' ] ) ? 1 : $_REQUEST[ 'scale' ] ),

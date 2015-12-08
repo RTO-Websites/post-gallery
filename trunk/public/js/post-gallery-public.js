@@ -40,12 +40,10 @@
 
 	window.getFullsizeThumbs = function(pics, swapperId, callback) {
 		var sizes = postGalleryCheckImageSize();
-		//sizes[0] =sizes[0] /2;
-		//sizes[1] = sizes[0] / 16 *9;
 
 		jQuery.ajax({
 			'type' : 'POST',
-			'url' : websiteUrl + '/?get_fullsize_thumbs',
+			'url' : websiteUrl + '/?get_thumb_list',
 			'data' : { 'pics' : pics, 'width' : sizes[0], 'height' : sizes[1] },
 			'success' : function(data, textStatus) {
 				if (typeof(callback) === 'function') {
@@ -55,11 +53,14 @@
 		});
 	};
 
-	window.getThumbs = function(pics, width, height, callback) {
+	window.getThumbs = function(pics, width, height, callback, scale) {
+		if (typeof(scale) === 'undefined') {
+			scale = 0;
+		}
 		jQuery.ajax({
 			'type' : 'POST',
-			'url' : websiteUrl + '/?get_fullsize_thumbs',
-			'data' : { 'pics' : pics, 'width' : width, 'height' : height },
+			'url' : websiteUrl + '/?get_thumb_list',
+			'data' : { 'pics' : pics, 'width' : width, 'height' : height, scale: scale },
 			'success' : function(data, textStatus) {
 				if (typeof(callback) === 'function') {
 					callback(jQuery.parseJSON(data));
