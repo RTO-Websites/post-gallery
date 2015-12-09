@@ -4,11 +4,11 @@
 
 If you want one single image you can call
 
-http://mySite.com/?load_thumb&width=300&height=300&scale=0&path=/wp-content/uploads/myimage.jpg
+http://mySite.com/?loadThumb&width=300&height=300&scale=0&path=/wp-content/uploads/myimage.jpg
 
 ### If you want a list of images:
 
-http://mySite.com/?get_thumb_list&width=300&height=300&scale=0&pics[]=/wp-content/uploads/myimage.jpg&pics[]=/wp-content/uploads/myimage2.jpg
+http://mySite.com/?getThumbList&width=300&height=300&scale=0&pics[]=/wp-content/uploads/myimage.jpg&pics[]=/wp-content/uploads/myimage2.jpg
 
 It returns a json-string with the cached images (url, width, height and path)
 
@@ -22,7 +22,7 @@ $args = array(
   'scale' => 0, // 0 = crop, 1 = scale 1:1
   'bw' => false, // optional, true returns greyscale images
 }
-$thumb = PostGallery::get_thumb( $args );
+$thumb = Inc\PostGallery::getThumb( $args );
 ```
 
 It returns an array:

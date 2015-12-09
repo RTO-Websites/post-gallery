@@ -17,7 +17,7 @@ If you click one of these links, it will open the litebox with the four images.
 ### Open with javascript
 You can also open the litebox with an array of pics
 ```
-liteboxGalleryInstance.openGalleryByPics( [
+litebox.openGalleryByPics( [
     'wp-content/uploads/image1.jpg', 
     'wp-content/uploads/image2.jpg'
 ] );
@@ -27,8 +27,8 @@ liteboxGalleryInstance.openGalleryByPics( [
 You can load the image list from PortGallery and then open the litebox
 ```
 <?php
-  $images =  PostGallery::get_image_string( $post_id );
+  $images = \Inc\PostGallery::getImageString( $post_id );
 ?>
  
-<div onclick="liteboxGalleryInstance.openGalleryByPics( <?php echo $images; ?> ) ">Blub</div>
+<div onclick="litebox.openGalleryByPics( <?php echo $images; ?> ) ">Blub</div>
 ```

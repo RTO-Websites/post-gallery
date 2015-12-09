@@ -44,6 +44,8 @@ class PostGalleryPublic
      */
     private $version;
 
+    private $textdomain;
+
 
     /**
      * The options from admin-page
@@ -65,23 +67,24 @@ class PostGalleryPublic
     {
 
         $this->pluginName = $pluginName;
+        $this->textdomain = $pluginName;
         $this->version = $version;
         $this->options = MagicAdminPage::getOption( 'post-gallery' );
 
 
-        add_filter( 'the_content', array( $this, 'add_gallery_to_content' ) );
-        add_shortcode( 'postgallery', array( $this, 'postgallery_shortcode' ) );
-        add_action( 'plugins_loaded', array( $this, 'postgallery_thumb' ) );
-        add_action( 'plugins_loaded', array( $this, 'get_thumb_list' ) );
+        add_filter( 'the_content', array( $this, 'addGalleryToContent' ) );
+        add_shortcode( 'postgallery', array( $this, 'postgalleryShortcode' ) );
+        add_action( 'plugins_loaded', array( $this, 'postgalleryThumb' ) );
+        add_action( 'plugins_loaded', array( $this, 'getThumbList' ) );
 
         // Embed headerscript
-        add_action( 'wp_head', array( $this, 'insert_headerscript' ) );
+        add_action( 'wp_head', array( $this, 'insertHeaderscript' ) );
 
         // Embed footer-html
-        add_action( 'wp_footer', array( $this, 'insert_footer_html' ) );
+        add_action( 'wp_footer', array( $this, 'insertFooterHtml' ) );
 
-        add_filter( 'post_thumbnail_html', array( $this, 'postgallery_thumbnail' ), 10, 5 );
-        add_filter( 'get_post_metadata', array( $this, 'postgallery_has_post_thumbnail' ), 10, 5 );
+        add_filter( 'post_thumbnail_html', array( $this, 'postgalleryThumbnail' ), 10, 5 );
+        add_filter( 'get_post_metadata', array( $this, 'postgalleryHasPostThumbnail' ), 10, 5 );
 
     }
 
@@ -164,17 +167,18 @@ class PostGalleryPublic
     /**
      * Register request for thumbnails
      */
-    public function postgallery_thumb()
+    public function postgalleryThumb()
     {
-        if ( isset( $_REQUEST[ 'load_thumb' ] ) ) {
-            Thumb::the_thumb();
+        if ( isset( $_REQUEST[ 'loadThumb' ] ) ) {
+            Thumb::theThumb();
             exit();
         }
     }
 
 
-    public function postgallery_has_post_thumbnail( $null, $object_id, $meta_key, $single )
+    public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single )
     {
+
         if ( $meta_key == '_thumbnail_id' ) {
             return true;
         }
@@ -192,7 +196,7 @@ class PostGalleryPublic
      * @param $attr
      * @return string
      */
-    public function postgallery_thumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr )
+    public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr )
     {
         if ( '' == $html ) {
             // get id from main-language post
@@ -202,12 +206,12 @@ class PostGalleryPublic
                 $post_id = icl_object_id( $post_id, 'any', true, $sitepress->get_default_language() );
             }
 
-            $post_gallery_images = PostGallery::get_images( $post_id );
-            if ( !count( $post_gallery_images ) ) {
+            $postGalleryImages = PostGallery::getImages( $post_id );
+            if ( !count( $postGalleryImages ) ) {
                 return $html;
             }
 
-            $first_thumb = array_shift( $post_gallery_images );
+            $firstThumb = array_shift( $postGalleryImages );
 
             if ( empty( $size ) ) {
                 $size = 'post-thumbnail';
@@ -235,16 +239,11 @@ class PostGalleryPublic
                 $height = '1080';
             }
 
-            $path = $first_thumb[ 'path' ];
+            $path = $firstThumb[ 'path' ];
             $path = explode( '/wp-content/', $path );
             $path = '/wp-content/' . array_pop( $path );
 
-            /*$thumb = PostGallery::get_thumb( $path, array (
-                'width'  => $width,
-                'height' => $height,
-                'scale'  => '0'
-            ) );*/
-            $thumb = Thumb::get_thumb( $path, array(
+            $thumb = Thumb::getThumb( $path, array(
                 'width'  => $width,
                 'height' => $height,
                 'scale'  => '0'
@@ -275,23 +274,23 @@ class PostGalleryPublic
      * @param type $content
      * @return type
      */
-    public function add_gallery_to_content( $content )
+    public function addGalleryToContent( $content )
     {
-        $position = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgallery_position', true );
-        $template = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgallery_template', true );
+        $position = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgalleryPosition', true );
+        $template = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgalleryTemplate', true );
         if ( empty( $position ) || $position == 'global' ) {
-            $position = ( !empty( $this->options[ 'global_position' ] ) ? $this->options[ 'global_position' ] : 'bottom' );
+            $position = ( !empty( $this->options[ 'globalPosition' ] ) ? $this->options[ 'globalPosition' ] : 'bottom' );
         }
 
         // from global
         if ( empty( $template ) || $template == 'global' ) {
-            $template = ( !empty( $this->options[ 'global_template' ] ) ? $this->options[ 'global_template' ] : 'thumbs' );
+            $template = ( !empty( $this->options[ 'globalTemplate' ] ) ? $this->options[ 'globalTemplate' ] : 'thumbs' );
         }
 
         if ( $position === 'top' ) {
-            $content = $this->return_gallery_html( $template ) . $content;
+            $content = $this->returnGalleryHtml( $template ) . $content;
         } else if ( $position === 'bottom' ) {
-            $content = $content . $this->return_gallery_html( $template );
+            $content = $content . $this->returnGalleryHtml( $template );
         }
 
         return $content;
@@ -303,29 +302,32 @@ class PostGalleryPublic
      * @param type $template
      * @return type
      */
-    public function return_gallery_html( $template, $postid = 0, $args = array() )
+    public function returnGalleryHtml( $template, $postid = 0, $args = array() )
     {
-        $custom_template_dir = get_stylesheet_directory() . '/post-gallery';
-        $custom_template_dir2 = get_stylesheet_directory() . '/plugins/post-gallery';
-        $default_template_dir = POSTGALLERY_DIR . '/templates';
+        $customTemplateDir = get_stylesheet_directory() . '/post-gallery';
+        $customTemplateDir2 = get_stylesheet_directory() . '/plugins/post-gallery';
+        $defaultTemplateDir = POSTGALLERY_DIR . '/templates';
 
-        $images = PostGallery::get_images( $postid );
-        $titles = get_post_meta( $postid, 'postgallery_titles', true );
-        $descs = get_post_meta( $postid, 'postgallery_descs', true );
-        $alts = get_post_meta( $postid, 'postgallery_alt_attributes', true );
+        $images = PostGallery::getImages( $postid );
+        $titles = get_post_meta( $postid, 'postgalleryTitles', true );
+        $descs = get_post_meta( $postid, 'postgalleryDescs', true );
+        $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
+
+        // TODO: Add alt, desc, title to image-array directly in getImages
 
         if ( empty( $template ) || $template == 'global' ) {
-            $template = $this->options[ 'global_template' ];
+            $template = $this->options[ 'globalTemplate' ];
         }
 
         ob_start();
-        if ( file_exists( $custom_template_dir . '/' . $template . '.php' ) ) {
-            require( $custom_template_dir . '/' . $template . '.php' );
-        } else if ( file_exists( $custom_template_dir2 . '/' . $template . '.php' ) ) {
-            require( $custom_template_dir2 . '/' . $template . '.php' );
-        } else if ( file_exists( $default_template_dir . '/' . $template . '.php' ) ) {
-            require( $default_template_dir . '/' . $template . '.php' );
+        if ( file_exists( $customTemplateDir . '/' . $template . '.php' ) ) {
+            require( $customTemplateDir . '/' . $template . '.php' );
+        } else if ( file_exists( $customTemplateDir2 . '/' . $template . '.php' ) ) {
+            require( $customTemplateDir2 . '/' . $template . '.php' );
+        } else if ( file_exists( $defaultTemplateDir . '/' . $template . '.php' ) ) {
+            require( $defaultTemplateDir . '/' . $template . '.php' );
         }
+
         $content = ob_get_contents();
         ob_clean();
         return $content;
@@ -336,18 +338,18 @@ class PostGalleryPublic
      *
      * @param string $footer
      */
-    public function insert_footer_html( $footer )
+    public function insertFooterHtml( $footer )
     {
         $options = $this->options;
         $template = ( !empty( $options[ 'template' ] ) ? $options[ 'template' ] : 'default' );
 
-        $custom_template_dir = get_stylesheet_directory() . '/litebox';
-        $default_template_dir = POSTGALLERY_DIR . '/litebox-templates';
+        $customTemplateDir = get_stylesheet_directory() . '/litebox';
+        $defaultTemplateDir = POSTGALLERY_DIR . '/litebox-templates';
 
-        if ( file_exists( $custom_template_dir . '/' . $template . '.php' ) ) {
-            require( $custom_template_dir . '/' . $template . '.php' );
-        } else if ( file_exists( $default_template_dir . '/' . $template . '.php' ) ) {
-            require( $default_template_dir . '/' . $template . '.php' );
+        if ( file_exists( $customTemplateDir . '/' . $template . '.php' ) ) {
+            require( $customTemplateDir . '/' . $template . '.php' );
+        } else if ( file_exists( $defaultTemplateDir . '/' . $template . '.php' ) ) {
+            require( $defaultTemplateDir . '/' . $template . '.php' );
         }
     }
 
@@ -358,10 +360,10 @@ class PostGalleryPublic
      * @param type $content
      * @return {string}
      */
-    public function postgallery_shortcode( $args, $content = '' )
+    public function postgalleryShortcode( $args, $content = '' )
     {
         if ( empty( $args[ 'template' ] ) ) {
-            $template = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgallery_template', true );
+            $template = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgalleryTemplate', true );
         } else {
             $template = $args[ 'template' ];
         }
@@ -370,18 +372,18 @@ class PostGalleryPublic
             $postid = $args[ 'post' ];
         }
 
-        return $this->return_gallery_html( $template, $postid, $args );
+        return $this->returnGalleryHtml( $template, $postid, $args );
     }
 
 
     /**
      * Gives a url from cache
      */
-    public function get_thumb_list()
+    public function getThumbList()
     {
-        if ( isset( $_REQUEST[ 'get_fullsize_thumbs' ] ) || isset( $_REQUEST[ 'get_thumb_list' ] ) ) {
+        if ( isset( $_REQUEST[ 'getFullsizeThumbs' ] ) || isset( $_REQUEST[ 'getThumbList' ] ) ) {
 
-            $_SESSION[ 'swapper_window_size' ] = array(
+            $_SESSION[ 'postGalleryWindowSize' ] = array(
                 'width'  => $_REQUEST[ 'width' ],
                 'height' => $_REQUEST[ 'height' ]
             );
@@ -392,7 +394,7 @@ class PostGalleryPublic
             $pics = ( $_REQUEST[ 'pics' ] );
 
             if ( !empty( $pics ) ) {
-                $pics = PostGallery::get_pics_resized( $pics, array(
+                $pics = PostGallery::getPicsResized( $pics, array(
                     'width'  => $_REQUEST[ 'width' ],
                     'height' => $_REQUEST[ 'height' ],
                     'scale'  => ( !isset( $_REQUEST[ 'scale' ] ) ? 1 : $_REQUEST[ 'scale' ] ),
@@ -404,7 +406,7 @@ class PostGalleryPublic
         }
     }
 
-    public function insert_headerscript( $header )
+    public function insertHeaderscript( $header )
     {
         $oldOwl = !empty( $this->options[ 'useOldOwl' ] ) ? 'owlVersion: 1,' : '';
         $clickEvents = !empty( $this->options[ 'clickEvents' ] ) ? 'clickEvents: 1,' : '';

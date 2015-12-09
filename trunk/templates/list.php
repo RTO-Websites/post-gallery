@@ -7,12 +7,11 @@
      *            -> filename, path, thumbURL
      */
 ?>
-
 <section class="gallery">
     <?php foreach ( $images as $image ) { ?>
         <a href="<?php echo $image[ 'path' ] ?>">
             <img style="max-width:100%;"
-                src="<?php echo \Inc\PostGallery::get_thumb_url( $image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
+                src="<?php echo \Inc\PostGallery::getThumbUrl( $image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
                 alt="<?php echo $image[ 'filename' ] ?>"/>
         </a>
     <?php } ?>

@@ -13,7 +13,7 @@
 
 <section class="gallery">
     <img id="gallery_image" onclick="nextImage();" style="max-width:100%;"
-        src="<?php echo \Inc\PostGallery::get_thumb_url( $first_image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
+        src="<?php echo \Inc\PostGallery::getThumbUrl( $first_image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
         alt="<?php echo $first_image[ 'filename' ] ?>"/>
 
     <div class="thumb_container">
@@ -21,7 +21,7 @@
             $count = 0;
             foreach ( $images as $image ) {
                 echo '<div class="thumb" onclick="changeImage(' . $count . ');">';
-                echo '<img class="gallery_thumb" src="' . \Inc\PostGallery::get_thumb_url( $image[ 'path' ], array( 'width' => 150, 'height' => 150 ) ) . '" alt="' . $image[ 'filename' ] . '" />';
+                echo '<img class="gallery_thumb" src="' . \Inc\PostGallery::getThumbUrl( $image[ 'path' ], array( 'width' => 150, 'height' => 150 ) ) . '" alt="' . $image[ 'filename' ] . '" />';
                 echo '</div>';
                 $count += 1;
             }
@@ -32,7 +32,7 @@
         var currentPic = 0;
         var picList = [];
         <?php $count = 0; foreach ($images as $image) {?>
-        picList[<?php echo $count?>] = '<?php echo \Inc\PostGallery::get_thumb_url($first_image['path'], array('width'=>1024, 'height'=>768))?>';
+        picList[<?php echo $count?>] = '<?php echo \Inc\PostGallery::getThumbUrl($first_image['path'], array('width'=>1024, 'height'=>768))?>';
 
 
         <?php $count+= 1; }?>

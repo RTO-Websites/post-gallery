@@ -13,9 +13,9 @@
 
     class Thumb
     {
-        public $srv_dir = ABSPATH;
-        public $cache_dir = '';
-        public $default_settings = array(
+        public $srvDir = ABSPATH;
+        public $cacheDir = '';
+        public $defaultSettings = array(
             'scale'   => 1,
             'width'   => 1920,
             'height'  => 1080,
@@ -36,17 +36,17 @@
         public function __construct()
         {
             // get folders
-            $this->srv_dir = ABSPATH;
+            $this->srvDir = ABSPATH;
 
             // Load Options from PostGallery
             $this->pgOptions = MagicAdminPage::getOption( 'post-gallery' );
 
             // create cachedir
-            $upload_dir = wp_upload_dir();
-            $this->cache_dir = $upload_dir[ 'basedir' ] . '/cache';
-            if ( !file_exists( $this->cache_dir ) ) {
-                @mkdir( $this->cache_dir );
-                @chmod( $this->cache_dir, octdec( '0777' ) );
+            $uploadDir = wp_upload_dir();
+            $this->cacheDir = $uploadDir[ 'basedir' ] . '/cache';
+            if ( !file_exists( $this->cacheDir ) ) {
+                @mkdir( $this->cacheDir );
+                @chmod( $this->cacheDir, octdec( '0777' ) );
             }
         }
 
@@ -56,15 +56,15 @@
          * @param type $path
          * @return type
          */
-        public function check_path( $path )
+        public function checkPath( $path )
         {
             if ( empty( $path ) || !is_string( $path ) ) {
                 return false;
             }
-            $path = str_replace( get_bloginfo( 'wpurl' ), $this->srv_dir, $path );
+            $path = str_replace( get_bloginfo( 'wpurl' ), $this->srvDir, $path );
             $path = str_replace( '//', '/', $path );
             if ( !file_exists( $path ) ) {
-                $path = $this->srv_dir . '/' . $path;
+                $path = $this->srvDir . '/' . $path;
             }
             $path = str_replace( '//', '/', $path );
             $path = str_replace( '%20', ' ', $path );
@@ -78,7 +78,7 @@
          * @param type $args
          * @return type
          */
-        public function get_thumb( $args )
+        public function getThumb( $args )
         {
             if ( empty( $args[ 'path' ] ) || !is_string( $args[ 'path' ] ) ) {
                 return false;
@@ -95,23 +95,36 @@
             }
 
             if ( class_exists( 'Imagick' ) ) {
-                $thumb_result = $this->get_thumb_imagick( $args );
+                $thumbResult = $this->getThumbImagick( $args );
             } else {
-                $thumb_result = $this->get_thumb_gd( $args );
+                $thumbResult = $this->getThumbGd( $args );
             }
-            return $thumb_result;
+            return $thumbResult;
         }
 
-        public function get_cache_filename( $path, $width, $height, $scale = 0, $bw = 0 )
+        /**
+         * Generate filename for cache
+         *
+         * @param $path
+         * @param $width
+         * @param $height
+         * @param int $scale
+         * @param int $bw
+         * @return mixed
+         */
+        public function getCacheFilename( $path, $width, $height, $scale = 0, $bw = 0 )
         {
             // create cache-filename
-            $path_parts = explode( "/", $path );
-            $filename = array_pop( $path_parts );
+            $pathParts = explode( "/", $path );
+            $filename = array_pop( $pathParts );
             $filetime = filemtime( $path );
-            $filename_parts = explode( ".", $filename );
-            $cachefile_extension = array_pop( $filename_parts );
+            $filenameParts = explode( ".", $filename );
+            $cachefileExtension = array_pop( $filenameParts );
 
-            $cachefile = str_replace( '.' . $cachefile_extension, '_' . $scale . '_' . $filetime . '_' . $width . '_' . $height . ( $bw ? '_bw' : '' ) . '.' . $cachefile_extension, $filename );
+            $cachefile = str_replace( '.' . $cachefileExtension, '_' . $scale . '_' . $filetime
+                . '_' . $width . '_' . $height . ( $bw ? '_bw' : '' ) . '.'
+                . $cachefileExtension, $filename );
+
             return $cachefile;
         }
 
@@ -120,16 +133,16 @@
          * @param type $args
          * @return array
          */
-        public function get_thumb_imagick( $args )
+        public function getThumbImagick( $args )
         {
-            $args = array_merge( $this->default_settings, $args );
+            $args = array_merge( $this->defaultSettings, $args );
             // Setting-Variables
             $scale = $args[ 'scale' ];
             $bw = $args[ 'bw' ];
             $width = $args[ 'width' ];
             $height = $args[ 'height' ];
-            $content_type = 'image/jpeg';
-            $stretchImages = !empty( $this->pgOptions[ 'stretch_images' ] );
+            $contentType = 'image/jpeg';
+            $stretchImages = !empty( $this->pgOptions[ 'stretchImages' ] );
 
             if ( $width == 'auto' || !is_numeric( $width ) ) {
                 $width = 10000;
@@ -148,7 +161,7 @@
                 return array( 'error' => 'Filepath missed' );
             }
             $path = str_replace( '%20', ' ', $path );
-            $path = $this->check_path( $path );
+            $path = $this->checkPath( $path );
 
             if ( !file_exists( $path ) || is_dir( $path ) ) {
                 return array( 'error' => 'File not found' );
@@ -167,10 +180,10 @@
                 // Load original (do nothing)
             } else {
                 // create cache-filename
-                $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
-                if ( file_exists( $this->cache_dir . '/' . $cachefile ) &&
-                    empty( $_REQUEST[ 'force_new' ] ) &&
-                    filesize( $this->cache_dir . '/' . $cachefile ) > 0
+                $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
+                if ( file_exists( $this->cacheDir . '/' . $cachefile ) &&
+                    empty( $_REQUEST[ 'forceNew' ] ) &&
+                    filesize( $this->cacheDir . '/' . $cachefile ) > 0
                 ) {
                     // load from cache (do nothing)
                 } else {
@@ -214,15 +227,15 @@
                     }
 
                     // write image to cache
-                    $im->writeImage( $this->cache_dir . '/' . $cachefile );
+                    $im->writeImage( $this->cacheDir . '/' . $cachefile );
 
-                    @chmod( $this->cache_dir . '/' . $cachefile, octdec( '0666' ) );
+                    @chmod( $this->cacheDir . '/' . $cachefile, octdec( '0666' ) );
                 }
-                $path = $this->cache_dir . '/' . $cachefile;
+                $path = $this->cacheDir . '/' . $cachefile;
             }
 
             // output image
-            if ( empty( $args[ 'return_thumb' ] ) && empty( $_REQUEST[ 'return_thumb' ] ) ) {
+            if ( empty( $args[ 'returnThumb' ] ) && empty( $_REQUEST[ 'returnThumb' ] ) ) {
                 $thumbnail = null;
             } else {
                 $thumbnail = file_get_contents( $path );
@@ -232,26 +245,26 @@
 
             return array(
                 'thumb'        => $thumbnail,
-                'content-type' => $content_type,
+                'content-type' => $contentType,
                 'path'         => $path,
-                'url'          => str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path ),
+                'url'          => str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $path ),
                 'width'        => $newSize[ 0 ],
                 'height'       => $newSize[ 1 ],
             );
         }
 
-        public function get_thumb_gd( $args )
+        public function getThumbGd( $args )
         {
-            $args = array_merge( $this->default_settings, $args );
+            $args = array_merge( $this->defaultSettings, $args );
             // Setting-Variables
             $scale = $args[ 'scale' ];
             $bw = $args[ 'bw' ];
             $width = $args[ 'width' ];
             $height = $args[ 'height' ];
             $quality = $args[ 'quality' ];
-            $stretchImages = !empty( $this->pgOptions[ 'stretch_images' ] );
+            $stretchImages = !empty( $this->pgOptions[ 'stretchImages' ] );
 
-            $return_array = array();
+            $returnArray = array();
 
             if ( $width == 'auto' || !is_numeric( $width ) ) {
                 $width = 10000;
@@ -270,30 +283,30 @@
                 return array( 'error' => 'Filepath missed' );
             }
 
-            $path = $this->check_path( $path );
+            $path = $this->checkPath( $path );
 
             if ( !file_exists( $path ) ) {
                 return array( 'error' => 'File not found' );
             }
 
             // create cache-filename
-            $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
+            $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
 
             // check if cache-file already exists
-            if ( file_exists( $this->cache_dir . '/' . $cachefile ) && empty( $_REQUEST[ 'force_new' ] ) ) {
-                if ( !empty( $args[ 'return_thumb' ] ) ) {
-                    $return_array[ 'thumb' ] = file_get_contents( $this->cache_dir . '/' . $cachefile );
+            if ( file_exists( $this->cacheDir . '/' . $cachefile ) && empty( $_REQUEST[ 'forceNew' ] ) ) {
+                if ( !empty( $args[ 'returnThumb' ] ) ) {
+                    $returnArray[ 'thumb' ] = file_get_contents( $this->cacheDir . '/' . $cachefile );
                 } else {
-                    $return_array[ 'thumb' ] = null;
+                    $returnArray[ 'thumb' ] = null;
                 }
-                $return_array[ 'path' ] = $this->cache_dir . '/' . $cachefile;
-                $return_array[ 'url' ] = str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $return_array[ 'path' ] );
+                $returnArray[ 'path' ] = $this->cacheDir . '/' . $cachefile;
+                $returnArray[ 'url' ] = str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $returnArray[ 'path' ] );
 
-                $newSize = getimagesize( $return_array[ 'path' ] );
-                $return_array[ 'width' ] = $newSize[ 0 ];
-                $return_array[ 'height' ] = $newSize[ 1 ];
+                $newSize = getimagesize( $returnArray[ 'path' ] );
+                $returnArray[ 'width' ] = $newSize[ 0 ];
+                $returnArray[ 'height' ] = $newSize[ 1 ];
 
-                return $return_array;
+                return $returnArray;
             }
 
             // Get imagedata
@@ -414,16 +427,16 @@
 
             if ( !$stretchImages && $orgWidth <= $newWidth && $orgHeight <= $newHeight && !$bw ) {
                 // Load original
-                if ( !empty( $args[ 'return_thumb' ] ) ) {
-                    $return_array[ 'thumb' ] = file_get_contents( $path );
+                if ( !empty( $args[ 'returnThumb' ] ) ) {
+                    $returnArray[ 'thumb' ] = file_get_contents( $path );
                 }
-                $return_array[ 'path' ] = $path;
-                $return_array[ 'url' ] = str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path );
+                $returnArray[ 'path' ] = $path;
+                $returnArray[ 'url' ] = str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $path );
             } else {
                 // create cache-filename
-                $cachefile = $this->get_cache_filename( $path, $width, $height, $scale, $bw );
+                $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
 
-                if ( !file_exists( $this->cache_dir . '/' . $cachefile ) || !empty( $_REQUEST[ 'force_new' ] ) ) {
+                if ( !file_exists( $this->cacheDir . '/' . $cachefile ) || !empty( $_REQUEST[ 'force_new' ] ) ) {
                     // crop images
                     $newCalcHeight = $newHeight;
                     $newCalcWidth = $newWidth;
@@ -463,19 +476,19 @@
                         case 1:
                             // GIF
                             $createFunction = 'imagecreatefromgif';
-                            $return_array[ 'content-type' ] = 'image/gif';
+                            $returnArray[ 'content-type' ] = 'image/gif';
                             break;
 
                         case 2:
                             // JPG
                             $createFunction = 'imagecreatefromjpeg';
-                            $return_array[ 'content-type' ] = 'image/jpg';
+                            $returnArray[ 'content-type' ] = 'image/jpg';
                             break;
 
                         case 3:
                             // PNG
                             $createFunction = 'imagecreatefrompng';
-                            $return_array[ 'content-type' ] = 'image/png';
+                            $returnArray[ 'content-type' ] = 'image/png';
                             break;
 
                         default: // other media
@@ -498,7 +511,7 @@
                             'show_org'     => true,
                             'thumb'        => file_get_contents( $path ),
                             'path'         => $path,
-                            'url'          => str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $path ),
+                            'url'          => str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $path ),
                             'width'        => $orgWidth,
                             'height'       => $orgHeight,
                         );
@@ -515,18 +528,18 @@
                     switch ( $size[ 2 ] ) {
                         case 1:
                             // GIF
-                            $return_array[ 'thumb' ] = imagegif( $newImage, $this->cache_dir . '/' . $cachefile );
+                            $returnArray[ 'thumb' ] = imagegif( $newImage, $this->cacheDir . '/' . $cachefile );
                             break;
 
                         case 2:
                             // JPG
                             $quality = '100';
-                            $return_array[ 'thumb' ] = imagejpeg( $newImage, $this->cache_dir . '/' . $cachefile, $quality );
+                            $returnArray[ 'thumb' ] = imagejpeg( $newImage, $this->cacheDir . '/' . $cachefile, $quality );
                             break;
 
                         case 3:
                             // PNG
-                            $return_array[ 'thumb' ] = imagepng( $newImage, $this->cache_dir . '/' . $cachefile );
+                            $returnArray[ 'thumb' ] = imagepng( $newImage, $this->cacheDir . '/' . $cachefile );
                             break;
 
                         default: // anderer Mediatyp
@@ -534,33 +547,33 @@
                             break;
                     }
 
-                    @chmod( $this->cache_dir . '/' . $cachefile, octdec( '0666' ) );
+                    @chmod( $this->cacheDir . '/' . $cachefile, octdec( '0666' ) );
                     imagedestroy( $oldImage );
                     imagedestroy( $newImage );
                 }
 
                 // output image
                 if ( !empty( $args[ 'return_thumb' ] ) ) {
-                    $return_array[ 'thumb' ] = file_get_contents( $this->cache_dir . '/' . $cachefile );
+                    $returnArray[ 'thumb' ] = file_get_contents( $this->cacheDir . '/' . $cachefile );
                 } else {
-                    $return_array[ 'thumb' ] = null;
+                    $returnArray[ 'thumb' ] = null;
                 }
 
-                $return_array[ 'path' ] = $this->cache_dir . '/' . $cachefile;
-                $return_array[ 'url' ] = str_replace( $this->srv_dir, get_bloginfo( 'wpurl' ) . '/', $return_array[ 'path' ] );
+                $returnArray[ 'path' ] = $this->cacheDir . '/' . $cachefile;
+                $returnArray[ 'url' ] = str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $returnArray[ 'path' ] );
             }
 
-            $newSize = getimagesize( $return_array[ 'path' ] );
-            $return_array[ 'width' ] = $newSize[ 0 ];
-            $return_array[ 'height' ] = $newSize[ 1 ];
+            $newSize = getimagesize( $returnArray[ 'path' ] );
+            $returnArray[ 'width' ] = $newSize[ 0 ];
+            $returnArray[ 'height' ] = $newSize[ 1 ];
 
-            return $return_array;
+            return $returnArray;
         }
 
         /**
          * Echos the thumb and set header
          */
-        public function print_thumb()
+        public function printThumb()
         {
             // Fix wrong keys (beginning with amp;)
             foreach ( $_GET as $key => $value ) {
@@ -585,30 +598,30 @@
                     $bw = true;
                 }
 
-                $thumb_result = $this->get_thumb( array(
+                $thumbResult = $this->getThumb( array(
                     'path'         => urldecode( $_GET[ 'path' ] ),
                     'width'        => ( isset( $_GET[ 'width' ] ) ? $_GET[ 'width' ] : 0 ),
                     'height'       => ( isset( $_GET[ 'height' ] ) ? $_GET[ 'height' ] : 0 ),
                     'scale'        => $scale,
                     'quality'      => $quality,
                     'bw'           => $bw,
-                    'return_thumb' => ( !empty( $_GET[ 'return_thumb' ] ) ? true : false )
+                    'returnThumb' => ( !empty( $_GET[ 'returnThumb' ] ) ? true : false )
                 ) );
 
-                if ( empty( $thumb_result ) ) {
+                if ( empty( $thumbResult ) ) {
                     echo 'Fatal error! -> Empty result';
-                } else if ( !empty( $thumb_result[ 'error' ] ) ) {
-                    echo 'An Error occurred: ' . $thumb_result[ 'error' ];
-                } else if ( empty( $thumb_result[ 'url' ] ) ) {
+                } else if ( !empty( $thumbResult[ 'error' ] ) ) {
+                    echo 'An Error occurred: ' . $thumbResult[ 'error' ];
+                } else if ( empty( $thumbResult[ 'url' ] ) ) {
                     echo 'Fatal error! -> Thumb not found';
-                } else if ( !empty( $_REQUEST[ 'return_thumb' ] ) ) {
+                } else if ( !empty( $_REQUEST[ 'returnThumb' ] ) ) {
                     header( "Content-type: image/jpeg" );
-                    echo $thumb_result[ 'thumb' ];
+                    echo $thumbResult[ 'thumb' ];
                 } else {
                     if ( empty( $_GET[ 'debug' ] ) ) {
-                        header( 'Location: ' . $thumb_result[ 'url' ] );
+                        header( 'Location: ' . $thumbResult[ 'url' ] );
                     } else {
-                        var_dump( $thumb_result );
+                        var_dump( $thumbResult );
                     }
                 }
             } else {
@@ -619,10 +632,10 @@
         /**
          * Static function for printing the thumb
          */
-        public static function the_thumb()
+        public static function theThumb()
         {
             $instance = new Thumb();
-            $instance->print_thumb();
+            $instance->printThumb();
         }
 
         /**
@@ -632,7 +645,7 @@
          *
          * @return object A single instance of this class.
          */
-        public static function get_instance()
+        public static function getInstance()
         {
             // If the single instance hasn't been set, set it now.
             if ( null == self::$instance ) {

@@ -55,7 +55,7 @@ class PostGalleryAdmin
      */
     private $textdomain;
 
-    private $default_templates;
+    private $defaultTemplates;
 
     /**
      * Initialize the class and set its properties.
@@ -72,7 +72,7 @@ class PostGalleryAdmin
         $this->pluginName = $pluginName;
         $this->version = $version;
 
-        $this->default_templates = array (
+        $this->defaultTemplates = array(
             'thumbs'        => __( 'Thumbs (150x150)', $this->textdomain ),
             'list'          => __( 'List', $this->textdomain ),
             'slider'        => __( 'Slider', $this->textdomain ),
@@ -85,81 +85,81 @@ class PostGalleryAdmin
             'PostGallery'
         );
 
-        $postgalleryPage->addFields( array (
+        $postgalleryPage->addFields( array(
             'main_settings' => array(
-                'type' => 'headline',
-                'title' => __('Main-Settings', $this->textdomain)
+                'type'  => 'headline',
+                'title' => __( 'Main-Settings', $this->textdomain )
             ),
 
-            'debugmode'        => array (
+            'debugmode' => array(
                 'type'    => 'checkbox',
                 'title'   => __( 'Debug-Mode', $this->textdomain ),
                 'default' => false,
             ),
-            'useOldOwl'   => array (
-                'type'    => 'checkbox',
-                'title'   => __( 'Use old owl-carousel (v1.3)', $this->textdomain ),
+            'useOldOwl' => array(
+                'type'  => 'checkbox',
+                'title' => __( 'Use old owl-carousel (v1.3)', $this->textdomain ),
             ),
 
-            'global_position'  => array (
+            'globalPosition' => array(
                 'title'   => __( 'Global position', $this->textdomain ),
                 'type'    => 'select',
-                'options' => array (
+                'options' => array(
                     'bottom' => __( 'bottom', $this->textdomain ),
                     'top'    => __( 'top', $this->textdomain ),
                     'custom' => __( 'custom', $this->textdomain )
                 )
             ),
-            'global_template'  => array (
-                'title'   => __( 'Global template', 'post-gallery' ),
+            'globalTemplate' => array(
+                'title'   => __( 'Global template', $this->textdomain ),
                 'type'    => 'select',
-                'options' => array_merge( $this->get_custom_templates(), $this->default_templates )
+                'options' => array_merge( $this->getCustomTemplates(), $this->defaultTemplates )
             ),
-            'stretch_images'   => array (
+            'stretchImages'  => array(
                 'title' => __( 'Stretch small images (for watermark)', $this->textdomain ),
                 'type'  => 'checkbox',
             ),
 
 
-            'litebox_settings' => array(
-                'type' => 'headline',
-                'title' => __('Litebox-Settings', $this->textdomain)
+            'liteboxSettings' => array(
+                'type'  => 'headline',
+                'title' => __( 'Litebox-Settings', $this->textdomain )
             ),
-            'enable'           => array (
+            'enable'           => array(
                 'type'    => 'checkbox',
-                'title'   => __( 'Enable', 'post-gallery' ) . ' Litebox',
+                'title'   => __( 'Enable', $this->textdomain ) . ' Litebox',
                 'default' => true
             ),
-            'litebox-template' => array (
+            'liteboxTemplate' => array(
                 'type'    => 'select',
                 'default' => 'default',
                 'title'   => __( 'Litebox-Template', $this->textdomain ),
                 'options' => $this->getLiteboxTemplates()
             ),
 
-            'litebox_owl_settings' => array(
-                'type' => 'headline',
-                'title' => __('Litebox-Owl-Settings', $this->textdomain)
+            'liteboxOwlSettings' => array(
+                'type'  => 'headline',
+                'title' => __( 'Litebox-Owl-Settings', $this->textdomain )
             ),
-            'owlTheme' => array (
+            'owlTheme'             => array(
                 'type'    => 'input',
                 'default' => 'default',
                 'title'   => __( 'Owl-Theme', $this->textdomain ),
-                'list' => 'postgallery-owl-theme',
-                'options' => array('default', 'green')
+                'list'    => 'postgallery-owl-theme',
+                'options' => array( 'default', 'green' )
             ),
-            'clickEvents'           => array (
+            'clickEvents'          => array(
                 'type'    => 'checkbox',
-                'title'   => __( 'Enable Click-Events', 'post-gallery' ),
+                'title'   => __( 'Enable Click-Events', $this->textdomain ),
                 'default' => true
             ),
-            'keyEvents'           => array (
+            'keyEvents'            => array(
                 'type'    => 'checkbox',
-                'title'   => __( 'Enable Keypress-Events', 'post-gallery' ),
+                'title'   => __( 'Enable Keypress-Events', $this->textdomain ),
                 'default' => true
             ),
 
-            'owlConfig'        => array (
+            'owlConfig' => array(
                 'type'        => 'textarea',
                 'title'       => __( 'Owl-Litebox-Config', $this->textdomain ),
                 'description' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
@@ -173,7 +173,7 @@ class PostGalleryAdmin
                 'default'     => 'items: 1,',
             ),
 
-            'owlThumbConfig'        => array (
+            'owlThumbConfig' => array(
                 'type'        => 'textarea',
                 'title'       => __( 'Owl-Config for Thumbnail-Slider', $this->textdomain ),
                 'description' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
@@ -186,7 +186,7 @@ class PostGalleryAdmin
                 'class'       => 'owl-slider-config',
             ),
 
-            'owlDesc'          => array (
+            'owlDesc' => array(
                 'type'        => 'description',
                 'title'       => __( 'Description', $this->textdomain ),
                 'description' => __( 'You can use these options', $this->textdomain ) . ':<br />' .
@@ -202,12 +202,12 @@ class PostGalleryAdmin
             ),
         ) );
 
-        add_action( 'add_meta_boxes', array ( $this, 'register_post_settings' ) );
-        add_action( 'save_post', array ( $this, 'save_post_meta' ), 10, 2 );
+        add_action( 'add_meta_boxes', array( $this, 'registerPostSettings' ) );
+        add_action( 'save_post', array( $this, 'savePostMeta' ), 10, 2 );
 
         // Register ajax
-        add_action( 'wp_ajax_postgallery_upload', array ( $this, 'ajax_upload' ) );
-        add_action( 'wp_ajax_postgallery_deleteimage', array ( $this, 'ajax_delete' ) );
+        add_action( 'wp_ajax_postgalleryUpload', array( $this, 'ajaxUpload' ) );
+        add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
     }
 
 
@@ -218,30 +218,30 @@ class PostGalleryAdmin
      */
     public function getLiteboxTemplates()
     {
-        $template_list = array (
+        $templateList = array(
             'default'                      => __( 'Default', $this->textdomain ),
             'default-with-thumbs'          => __( 'Default with thumbs', $this->textdomain ),
             'default-with-thumbs-vertical' => __( 'Default with thumbs', $this->textdomain ) . ' - Vertical',
         );
 
-        $custom_templates = array ();
+        $customTemplates = array();
 
-        $custom_tpl_paths = array ( get_stylesheet_directory() . '/litebox', get_stylesheet_directory() . '/plugins/litebox' );
+        $customTplPaths = array( get_stylesheet_directory() . '/litebox', get_stylesheet_directory() . '/plugins/litebox' );
 
-        foreach ( $custom_tpl_paths as $custom_tpl_path ) {
-            $custom_tpl_files = ( file_exists( $custom_tpl_path ) ? scandir( $custom_tpl_path ) : array () );
-            foreach ( $custom_tpl_files as $file ) {
-                if ( !is_dir( $custom_tpl_path . '/' . $file ) ) {
-                    $option_key = str_replace( '.php', '', $file );
-                    $option_title = ucfirst( str_replace( '_', ' ', $option_key ) ) . __( ' (from Theme)', $this->textdomain );
+        foreach ( $customTplPaths as $customTplPath ) {
+            $customTplFiles = ( file_exists( $customTplPath ) ? scandir( $customTplPath ) : array() );
+            foreach ( $customTplFiles as $file ) {
+                if ( !is_dir( $customTplPath . '/' . $file ) ) {
+                    $optionKey = str_replace( '.php', '', $file );
+                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', $this->textdomain );
 
-                    $custom_templates[ $option_key ] = $option_title;
+                    $customTemplates[ $optionKey ] = $option_title;
                 }
             }
         }
-        $template_list = array_merge( $custom_templates, $template_list );
+        $templateList = array_merge( $customTemplates, $templateList );
 
-        return $template_list;
+        return $templateList;
     }
 
     /**
@@ -264,7 +264,7 @@ class PostGalleryAdmin
          * class.
          */
 
-        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-admin.css', array (), $this->version, 'all' );
+        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-admin.css', array(), $this->version, 'all' );
 
     }
 
@@ -290,9 +290,9 @@ class PostGalleryAdmin
 
         $pgUrl = plugin_dir_url( __FILE__ );
 
-        wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', array ( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array ( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload_handler.js', array ( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', array( 'jquery' ), $this->version, false );
 
     }
 
@@ -300,7 +300,7 @@ class PostGalleryAdmin
     /**
      * Admin-ajax for image upload
      */
-    public function ajax_upload()
+    public function ajaxUpload()
     {
         include( POSTGALLERY_DIR . '/includes/imageupload.inc.php' );
         exit();
@@ -309,7 +309,7 @@ class PostGalleryAdmin
     /**
      * Admin-ajax for image delete
      */
-    public function ajax_delete()
+    public function ajaxDelete()
     {
         include( POSTGALLERY_DIR . '/includes/deleteimage.inc.php' );
         exit();
@@ -321,12 +321,12 @@ class PostGalleryAdmin
      *
      * @return boolean
      */
-    public function register_post_settings()
+    public function registerPostSettings()
     {
-        $post_types = get_post_types();
-        foreach ( $post_types as $post_type ) {
-            add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', 'post-gallery' ), array ( $this, 'add_gallery_settings' ), $post_type );
-            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', 'post-gallery' ), array ( $this, 'add_gallery_pictures' ), $post_type );
+        $postTypes = get_post_types();
+        foreach ( $postTypes as $postType ) {
+            add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), array( $this, 'addGallerySettings' ), $postType );
+            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), array( $this, 'addGalleryPictures' ), $postType );
         }
         return false;
     }
@@ -336,35 +336,37 @@ class PostGalleryAdmin
      *
      * @param type $post
      */
-    public function add_gallery_settings( $post )
+    public function addGallerySettings( $post )
     {
-        $org_post = PostGallery::get_org_post( $post->ID );
-        $cur_lang_post = $post;
-        if ( !empty( $org_post ) ) {
-            $post = $org_post;
+        $orgPost = PostGallery::getOrgPost( $post->ID );
+        $curLangPost = $post;
+        if ( !empty( $orgPost ) ) {
+            $post = $orgPost;
         }
 
         echo '<table class="form-table">';
 
-        if ( !empty( $this->option_fields ) ) {
+
+        // TODO: check if dont used?!
+        if ( !empty( $this->optionFields ) ) {
             // Loop Post-Options and generate inputs
-            foreach ( $this->option_fields as $key => $option ) {
+            foreach ( $this->optionFields as $key => $option ) {
                 echo '<tr valign="top">';
                 // Generate Label
-                echo '<th scope="row"><label class="theme_options_label" for="' . $key . '">' . $option[ 'label' ] . '</label></th>';
+                echo '<th scope="row"><label class="theme-options-label" for="' . $key . '">' . $option[ 'label' ] . '</label></th>';
                 echo '<td>';
                 switch ( $option[ 'type' ] ) {
                     case 'select':
                         // Generate select
-                        echo '<select class="theme_options_input" name="' . $key . '" id="' . $key . '">';
+                        echo '<select class="theme-options-input" name="' . $key . '" id="' . $key . '">';
                         if ( !empty( $option[ 'value' ] ) && is_array( $option[ 'value' ] ) ) {
-                            foreach ( $option[ 'value' ] as $option_key => $option_title ) {
+                            foreach ( $option[ 'value' ] as $optionKey => $optionTitle ) {
                                 $selected = '';
                                 //echo '<br/>Key'.$option_key.'-'.get_post_meta($post->ID, $key, true);
-                                if ( $option_key == get_post_meta( $cur_lang_post->ID, $key, true ) ) {
+                                if ( $optionKey == get_post_meta( $curLangPost->ID, $key, true ) ) {
                                     $selected = ' selected="selected"';
                                 }
-                                echo '<option value="' . $option_key . '"' . $selected . '>' . $option_title . '</option>';
+                                echo '<option value="' . $optionKey . '"' . $selected . '>' . $optionTitle . '</option>';
                             }
                         }
                         echo '</select>';
@@ -372,37 +374,38 @@ class PostGalleryAdmin
 
                     case 'input':
                         // Generate text-input
-                        echo '<input class="theme_options_input" type="text" name="' . $key . '" id="' . $key . '" value="' . get_post_meta( $cur_lang_post->ID, $key, true ) . '" />';
+                        echo '<input class="theme-options-input" type="text" name="' . $key . '" id="' . $key . '" value="' . get_post_meta( $curLangPost->ID, $key, true ) . '" />';
                         break;
 
                     case 'textarea':
                         // Generate textarea
-                        echo '<textarea class="theme_options_input" name="' . $key . '" id="' . $key . '">' . get_post_meta( $cur_lang_post->ID, $key, true ) . '</textarea>';
+                        echo '<textarea class="theme-options-input" name="' . $key . '" id="' . $key . '">' . get_post_meta( $curLangPost->ID, $key, true ) . '</textarea>';
                         break;
                 }
                 echo '</td></tr>';
             }
         }
+        // end dont used?!
 
         // Template list
         echo '<tr valign="top">';
-        $key = 'postgallery_template';
-        echo '<th scope="row"><label class="theme_options_label" for="' . $key . '">' . __( 'Template', 'post-gallery' ) . '</label></th>';
+        $key = 'postgalleryTemplate';
+        echo '<th scope="row"><label class="theme-options-label" for="' . $key . '">' . __( 'Template', $this->textdomain ) . '</label></th>';
         echo '<td>';
-        echo '<select class="theme_options_input" name="' . $key . '" id="' . $key . '">';
+        echo '<select class="theme-options-input" name="' . $key . '" id="' . $key . '">';
 
-        echo '<option value="global">' . __( 'From global setting', 'post-gallery' ) . '</option>';
+        echo '<option value="global">' . __( 'From global setting', $this->textdomain ) . '</option>';
         // get templates from tpl-dir
-        $this->get_custom_template_dir_options( get_post_meta( $cur_lang_post->ID, $key, true ) );
+        $this->getCustomTemplateDirOptions( get_post_meta( $curLangPost->ID, $key, true ) );
 
         // get templates from plugin
-        $current_value = get_post_meta( $cur_lang_post->ID, $key, true );
-        if ( empty( $current_value ) ) {
+        $currentValue = get_post_meta( $curLangPost->ID, $key, true );
+        if ( empty( $currentValue ) ) {
             // for compatibility with old version
-            $current_value = get_post_meta( $cur_lang_post->ID, 'gallery-template', true );
+            $currentValue = get_post_meta( $curLangPost->ID, 'gallery-template', true );
         }
 
-        $this->get_plugin_dir_options( $current_value );
+        $this->getPluginDirOptions( $currentValue );
 
         echo '</select>';
 
@@ -412,15 +415,13 @@ class PostGalleryAdmin
 
     /**
      * Print the template-options from template_dir
-     *
-     * @param type $cur_lang_post
      */
-    public function get_custom_template_dir_options( $current_value = '' )
+    public function getCustomTemplateDirOptions( $currentValue = '' )
     {
-        $templates = $this->get_custom_templates();
+        $templates = $this->getCustomTemplates();
         foreach ( $templates as $key => $title ) {
             $selected = '';
-            if ( $key == $current_value ) {
+            if ( $key == $currentValue ) {
                 $selected = ' selected="selected"';
             }
             echo '<option value="' . $key . '"' . $selected . '>' . $title . '</option>';
@@ -431,19 +432,19 @@ class PostGalleryAdmin
      * Returns an array with all templates from template-dir
      *
      */
-    public function get_custom_templates()
+    public function getCustomTemplates()
     {
-        $output = array ();
+        $output = array();
         // scan theme-dir for templates
-        $custom_template_dirs = array ( get_stylesheet_directory() . '/post-gallery', get_stylesheet_directory() . '/plugins/post-gallery' );
+        $customTemplateDirs = array( get_stylesheet_directory() . '/post-gallery', get_stylesheet_directory() . '/plugins/post-gallery' );
 
-        foreach ( $custom_template_dirs as $custom_template_dir ) {
-            if ( file_exists( $custom_template_dir ) && is_dir( $custom_template_dir ) ) {
-                $dir = scandir( $custom_template_dir );
+        foreach ( $customTemplateDirs as $customTemplateDir ) {
+            if ( file_exists( $customTemplateDir ) && is_dir( $customTemplateDir ) ) {
+                $dir = scandir( $customTemplateDir );
                 foreach ( $dir as $file ) {
-                    if ( !is_dir( $custom_template_dir . '/' . $file ) ) {
+                    if ( !is_dir( $customTemplateDir . '/' . $file ) ) {
                         $file = str_replace( '.php', '', $file );
-                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', 'post-gallery' );
+                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', $this->textdomain );
                         $output[ $file ] = $title;
                     }
                 }
@@ -458,16 +459,16 @@ class PostGalleryAdmin
      *
      * @param type $cur_lang_post
      */
-    public function get_plugin_dir_options( $current_value = '' )
+    public function getPluginDirOptions( $currentValue = '' )
     {
         // list default-gallery-templates
-        foreach ( $this->default_templates as $option_key => $option_title ) {
+        foreach ( $this->defaultTemplates as $optionKey => $optionTitle ) {
             $selected = '';
 
-            if ( $option_key == $current_value ) {
+            if ( $optionKey == $currentValue ) {
                 $selected = ' selected="selected"';
             }
-            echo '<option value="' . $option_key . '"' . $selected . '>' . $option_title . '</option>';
+            echo '<option value="' . $optionKey . '"' . $selected . '>' . $optionTitle . '</option>';
         }
     }
 
@@ -476,25 +477,25 @@ class PostGalleryAdmin
      *
      * @param type $post
      */
-    public function add_gallery_pictures( $post )
+    public function addGalleryPictures( $post )
     {
-        $org_post = PostGallery::get_org_post( $post->ID );
-        $cur_lang_post = $post;
+        $orgPost = PostGallery::getOrgPost( $post->ID );
+        $currentLangPost = $post;
 
-        if ( !empty( $org_post ) ) {
-            $post = $org_post;
+        if ( !empty( $orgPost ) ) {
+            $post = $orgPost;
         }
-        //$image_dir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
-        $image_dir = PostGallery::get_image_dir( $post );
+        //$imageDir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
+        $imageDir = PostGallery::getImageDir( $post );
         $uploads = wp_upload_dir();
-        $upload_dir = $uploads[ 'basedir' ] . '/gallery/' . $image_dir;
-        $upload_url = $uploads[ 'baseurl' ] . '/gallery/' . $image_dir;
-        $upload_url = str_replace( get_bloginfo( 'wpurl' ), '', $upload_url );
-        $sort = get_post_meta( $cur_lang_post->ID, 'postgallery_imagesort', true );
+        $uploadDir = $uploads[ 'basedir' ] . '/gallery/' . $imageDir;
+        $uploadUrl = $uploads[ 'baseurl' ] . '/gallery/' . $imageDir;
+        $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadUrl );
+        $sort = get_post_meta( $currentLangPost->ID, 'postgalleryImagesort', true );
 
         if ( empty( $sort ) ) {
             // for compatibility with old version
-            $sort = get_post_meta( $cur_lang_post->ID, 'imagesort', true );
+            $sort = get_post_meta( $currentLangPost->ID, 'imagesort', true );
         }
 
         // Create folders if not exists
@@ -506,41 +507,41 @@ class PostGalleryAdmin
             @mkdir( $uploads[ 'basedir' ] . '/gallery' );
             @chmod( $uploads[ 'basedir' ] . '/gallery', octdec( '0777' ) );
         }
-        if ( !file_exists( $upload_dir ) ) {
-            @mkdir( $upload_dir );
-            @chmod( $upload_dir, octdec( '0777' ) );
+        if ( !file_exists( $uploadDir ) ) {
+            @mkdir( $uploadDir );
+            @chmod( $uploadDir, octdec( '0777' ) );
         }
 
         // Load image titles and description
-        $titles = get_post_meta( $cur_lang_post->ID, 'postgallery_titles', true );
-        $descs = get_post_meta( $cur_lang_post->ID, 'postgallery_descs', true );
-        $alt_attributes = get_post_meta( $cur_lang_post->ID, 'postgallery_alt_attributes', true );
+        $titles = get_post_meta( $currentLangPost->ID, 'postgalleryTitles', true );
+        $descs = get_post_meta( $currentLangPost->ID, 'postgalleryDescs', true );
+        $altAttributes = get_post_meta( $currentLangPost->ID, 'postgalleryAltAttributes', true );
 
-        if ( empty( $image_dir ) ) {
-            echo __( 'You have to save the post to upload images.', 'post-gallery' );
+        if ( empty( $imageDir ) ) {
+            echo __( 'You have to save the post to upload images.', $this->textdomain );
             return;
         }
 
         //var_dump($post);
         echo '
-			<div id="imageupload_image" data-uploadfolder="' . $image_dir . '" data-pluginurl="' . WP_PLUGIN_URL . '/post-gallery' . '"></div>
-			<div id="upload_error"></div>
+			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . WP_PLUGIN_URL . '/post-gallery' . '"></div>
+			<div class="postgallery-upload-error"></div>
 		';;
 
-        $images = array ();
-        if ( file_exists( $upload_dir ) && is_dir( $upload_dir ) ) {
-            $thumb_instance = Thumb::get_instance();
-            $dir = scandir( $upload_dir );
+        $images = array();
+        if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
+            $thumbInstance = Thumb::getInstance();
+            $dir = scandir( $uploadDir );
 
-            echo '<div id="del_button" class="button" onclick="deleteImages(\'' . $image_dir . '\');">Alle löschen</div>';
+            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $imageDir . '\');">Alle löschen</div>';
 
-            echo '<ul id="sortable_pics">';
+            echo '<ul class="sortable-pics">';
 
             if ( !empty( $dir ) ) {
                 foreach ( $dir as $file ) {
-                    if ( !is_dir( $upload_dir . '/' . $file ) ) {
-                        $thumb = $thumb_instance->get_thumb( array (
-                            'path'   => $upload_url . '/' . $file,
+                    if ( !is_dir( $uploadDir . '/' . $file ) ) {
+                        $thumb = $thumbInstance->getThumb( array(
+                            'path'   => $uploadUrl . '/' . $file,
                             'width'  => 150,
                             'height' => 150,
                             'scale'  => 0
@@ -548,18 +549,18 @@ class PostGalleryAdmin
 
                         $images[ $file ] = '<li>';
                         $images[ $file ] .= '<img style="" data-src="' . $file . '" src="' . $thumb[ 'url' ] . '" alt="" />';
-                        $images[ $file ] .= '<div class="img_title">' . $file . '</div>';
-                        $images[ $file ] .= '<div class="del" onclick="deleteImage(this.parentNode, \'' . $image_dir . '/' . $file . '\');">x</div>';
-                        $images[ $file ] .= '<div class="edit_details" onclick="PGtoggleDetails(this);"></div>';
+                        $images[ $file ] .= '<div class="img-title">' . $file . '</div>';
+                        $images[ $file ] .= '<div class="del" onclick="deleteImage(this.parentNode, \'' . $imageDir . '/' . $file . '\');">x</div>';
+                        $images[ $file ] .= '<div class="edit-details" onclick="pgToggleDetails(this);"></div>';
                         $images[ $file ] .= '<div class="details">';
-                        $images[ $file ] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgallery_titles[' . $file . ']" value="' . ( !empty( $titles[ $file ] ) ? $titles[ $file ] : '' ) . '" /></div>';
-                        $images[ $file ] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgallery_descs[' . $file . ']">' . ( !empty( $descs[ $file ] ) ? $descs[ $file ] : '' ) . '</textarea></div>';
-                        $images[ $file ] .= '<div class="alt_attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgallery_alt_attributes[' . $file . ']" value="' . ( !empty( $alt_attributes[ $file ] ) ? $alt_attributes[ $file ] : '' ) . '" /></div>';
+                        $images[ $file ] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[ $file ] ) ? $titles[ $file ] : '' ) . '" /></div>';
+                        $images[ $file ] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[ $file ] ) ? $descs[ $file ] : '' ) . '</textarea></div>';
+                        $images[ $file ] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[ $file ] ) ? $altAttributes[ $file ] : '' ) . '" /></div>';
                         $images[ $file ] .= '</div>';
                         $images[ $file ] .= '</li>';
                     }
                 }
-                $sortimages = PostGallery::sort_images( $images, $post->ID );
+                $sortimages = PostGallery::sortImages( $images, $post->ID );
                 echo implode( '', $sortimages );
             }
 
@@ -567,104 +568,34 @@ class PostGalleryAdmin
         }
 
         // hidden-input contains the image-order
-        echo '<input type="hidden" name="postgallery_imagesort" id="postgallery_imagesort" value="' . $sort . '" />';
+        echo '<input type="hidden" name="postgalleryImagesort" id="postgalleryImagesort" value="' . $sort . '" />';
 
         // hidden-input contains the current-slug
-        echo '<input type="hidden" name="current_imagedir" value="' . $image_dir . '" />';
+        echo '<input type="hidden" name="currentImagedir" value="' . $imageDir . '" />';
 
         // hidden-input contains the id of main-lang-post
-        echo '<input type="hidden" name="postgallery_mainlang_id" id="postgallery_mainlang_id" value="' . $post->ID . '" />';
+        echo '<input type="hidden" name="postgalleryMainlangId" id="postgalleryMainlangId" value="' . $post->ID . '" />';
 
-        // Javascript for drag&drop-sorting
-        echo '<script type="text/javascript">jQuery(function () { jQuery("#sortable_pics").sortable(); });
-				var input = jQuery("#postgallery_imagesort");
-				jQuery("#sortable_pics").on("sortupdate", function(event, ui) {
-					PGcloseDetails();
-					var value = [];
-					var count = 0;
-					jQuery("#sortable_pics > li > img").each(function(index, element) {
-						value[count] = jQuery(element).data("src");
-						count+=1;
-					});
-					input.val(value.join(","));
-				});
-				checkForUpload();
+        $scriptLanguage = array(
+            'moveHere' =>  __( 'Move files here.', $this->textdomain ),
+            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
 
-				function deleteImages(path) {
-					var answer = confirm("' . __( 'Are you sure you want to delete all pictures?', 'post-gallery' ) . '");
-					PGcloseDetails();
 
-					// Check if user confirmed the deletion of all images
-					if (answer) {
-						jQuery.post( ajaxurl + "?action=postgallery_deleteimage&path=" + path,
-							function(data) {
-								jQuery("#sortable_pics").remove();
-							});
-					}
-				}
-				function deleteImage(element, path) {
-					PGcloseDetails();
-					jQuery.post( ajaxurl + "?action=postgallery_deleteimage&path=" + path,
-						function(data, textStatus) {
-							deleteImageComplete(data, textStatus, element);
-						});
-				}
-				function deleteImageComplete(result, status, element) {
-					if (result == 1) {
-						jQuery(element.remove());
-					}
-				}
-				jQuery(".qq-upload-drop-area span").html("' . __( 'Move files here.', 'post-gallery' ) . '");
-				jQuery(".qq-upload-button").addClass("button");
+        );
 
-				function PGtoggleDetails(buttonElement) {
-					var detailElement = jQuery(buttonElement).parent().find(\'.details\');
-					var allDetailElements = jQuery(\'#sortable_pics .details\');
-					if (detailElement.hasClass(\'active\')) {
-						allDetailElements.removeClass(\'active\');
-					} else {
-						allDetailElements.removeClass(\'active\');
-						detailElement.addClass(\'active\');
-					}
-				}
-				function PGcloseDetails() {
-					var allDetailElements = jQuery(\'#sortable_pics .details\');
-					allDetailElements.removeClass(\'active\');
-				}
-
-			</script>';
-
-        // style
-        echo '<style type="text/css">
-				#post-gallery-pictures { text-align:center; }
-				#del_button { margin-top:20px; }
-				#sortable_pics li { width:150px;height:150px;display:inline-block;position:relative;margin-right:10px; }
-				#sortable_pics .img_title { position:absolute;bottom:0px;left:0px;right:0px;font-size:11px;text-align:center;background-color:#fff;background-color:rgba(255,255,255,0.7); }
-				#imageupload_image { background-repeat:no-repeat;background-position:center;border:4px dashed #ddd; position:relative; height:150px;line-height:150px;font-size:24px;text-align:center;cursor:default;width:100%; }
-				.qq-upload-list { display: none; }
-				.qq-upload-button { top:50px; z-index:1000; }
-				#sortable_pics .del { position: absolute; top:4px;right:4px;background-color:#fff;background-color:rgba(255,255,255,0.7);cursor:pointer;padding:0px 5px;color:#000; }
-				.qq-upload-drop-area { display: block !important; position:absolute; width:100%; height:100%; z-index:1000; }
-				#sortable_pics .edit_details { position: absolute; top:4px;left:4px;background-color:#fff;background-color:rgba(255,255,255,0.7);cursor:pointer;
-					width:20px; height:20px; background-image:url(../wp-includes/images/wpicons.png);background-position:220px 20px;}
-				#sortable_pics .details {
-					position:absolute; padding:5px;left:25px; top:25px; min-width:400px;display:none; background-color:#000; background-color:rgba(0,0,0,0.7); text-align:center; z-index:1000;
-				}
-				#sortable_pics .details input { width:100%; }
-				#sortable_pics .details textarea { width:100%; height:120px; }
-				#sortable_pics .details.active { display:block; }
-			</style>';
+        // Javascript for language
+        echo '<script type="text/javascript">window.postgalleryLang = '.json_encode( $scriptLanguage ).';</script>';
     }
 
     /**
      * Method to save Post-Meta
      *
      * @global type $post_options
-     * @param type $post_id
+     * @param type $postId
      * @param type $post
      * @return type
      */
-    public function save_post_meta( $post_id, $post )
+    public function savePostMeta( $postId, $post )
     {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return;
@@ -674,72 +605,71 @@ class PostGalleryAdmin
             return;
         }
 
-        $cur_lang_post = $post;
-        $cur_lang_post_id = $post_id;
+        $curLangPost = $post;
+        $curLangPostId = $postId;
 
-        if ( !empty( $_POST[ 'postgallery_mainlang_id' ] ) && $post_id !== $_POST[ 'postgallery_mainlang_id' ] ) {
-            $post_id = $_POST[ 'postgallery_mainlang_id' ];
-            $post = get_post( $post_id );
+        if ( !empty( $_POST[ 'postgalleryMainlangId' ] ) && $postId !== $_POST[ 'postgalleryMainlangId' ] ) {
+            $postId = $_POST[ 'postgalleryMainlangId' ];
+            $post = get_post( $postId );
         }
 
         if ( $_POST[ 'post_type' ] == 'page' ) {
-            if ( !current_user_can( 'edit_page', $post_id ) ) {
+            if ( !current_user_can( 'edit_page', $postId ) ) {
                 return;
             }
         } else {
-            if ( !current_user_can( 'edit_post', $post_id ) ) {
+            if ( !current_user_can( 'edit_post', $postId ) ) {
                 return;
             }
         }
         // Save form-fields
-        if ( !empty( $this->option_fields ) ) {
-            foreach ( $this->option_fields as $key => $post_option ) {
+        if ( !empty( $this->optionFields ) ) {
+            foreach ( $this->optionFields as $key => $postOption ) {
                 //update_post_meta($post_id, $key, $_POST[$key]);
-                update_post_meta( $cur_lang_post_id, $key, filter_input( INPUT_POST, $key ) );
+                update_post_meta( $curLangPostId, $key, filter_input( INPUT_POST, $key ) );
             }
         }
         // Save templates
-        if ( !empty( $_POST[ 'postgallery_template' ] ) ) {
-            update_post_meta( $cur_lang_post_id, 'postgallery_template', filter_input( INPUT_POST, 'postgallery_template' ) );
+        if ( !empty( $_POST[ 'postgalleryTemplate' ] ) ) {
+            update_post_meta( $curLangPostId, 'postgalleryTemplate', filter_input( INPUT_POST, 'postgalleryTemplate' ) );
         }
         // save sort
-        if ( !empty( $_POST[ 'postgallery_imagesort' ] ) ) {
-            update_post_meta( $post_id, 'postgallery_imagesort', filter_input( INPUT_POST, 'postgallery_imagesort' ) );
+        if ( !empty( $_POST[ 'postgalleryImagesort' ] ) ) {
+            update_post_meta( $postId, 'postgalleryImagesort', filter_input( INPUT_POST, 'postgalleryImagesort' ) );
         }
         // save image titles
-        if ( !empty( $_POST[ 'postgallery_titles' ] ) ) {
-            update_post_meta( $post_id, 'postgallery_titles', $_POST[ 'postgallery_titles' ] );
+        if ( !empty( $_POST[ 'postgalleryTitles' ] ) ) {
+            update_post_meta( $postId, 'postgalleryTitles', $_POST[ 'postgalleryTitles' ] );
         }
         // save image descriptions
-        if ( !empty( $_POST[ 'postgallery_descs' ] ) ) {
-            update_post_meta( $post_id, 'postgallery_descs', $_POST[ 'postgallery_descs' ] );
+        if ( !empty( $_POST[ 'postgalleryDescs' ] ) ) {
+            update_post_meta( $postId, 'postgalleryDescs', $_POST[ 'postgalleryDescs' ] );
         }
         // save image alt
-        if ( !empty( $_POST[ 'postgallery_alt_attributes' ] ) ) {
-            update_post_meta( $post_id, 'postgallery_alt_attributes', $_POST[ 'postgallery_alt_attributes' ] );
+        if ( !empty( $_POST[ 'postgalleryAltAttributes' ] ) ) {
+            update_post_meta( $postId, 'postgalleryAltAttributes', $_POST[ 'postgalleryAltAttributes' ] );
         }
 
-        $image_dir = PostGallery::get_image_dir( $post );
+        $imageDir = PostGallery::getImageDir( $post );
 
         // if post-title change, then move pictures
-        if ( !empty( $_POST[ 'current_imagedir' ] ) && $_POST[ 'current_imagedir' ] !== $image_dir ) {
+        if ( !empty( $_POST[ 'currentImagedir' ] ) && $_POST[ 'currentImagedir' ] !== $imageDir ) {
             $uploads = wp_upload_dir();
-            $upload_dir = $uploads[ 'basedir' ] . '/gallery/' . $_POST[ 'current_imagedir' ];
-            $upload_dir_new = $uploads[ 'basedir' ] . '/gallery/' . $image_dir;
-            if ( file_exists( $upload_dir ) ) {
-                $files = scandir( $upload_dir );
-                @mkdir( $upload_dir_new );
-                @chmod( $upload_dir_new, octdec( '0777' ) );
+            $uploadDir = $uploads[ 'basedir' ] . '/gallery/' . $_POST[ 'currentImagedir' ];
+            $uploadDirNew = $uploads[ 'basedir' ] . '/gallery/' . $imageDir;
+            if ( file_exists( $uploadDir ) ) {
+                $files = scandir( $uploadDir );
+                @mkdir( $uploadDirNew );
+                @chmod( $uploadDirNew, octdec( '0777' ) );
 
                 foreach ( $files as $file ) {
-                    if ( !is_dir( $upload_dir . '/' . $file ) ) {
-                        copy( $upload_dir . '/' . $file, $upload_dir_new . '/' . $file );
-                        unlink( $upload_dir . '/' . $file );
+                    if ( !is_dir( $uploadDir . '/' . $file ) ) {
+                        copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
+                        unlink( $uploadDir . '/' . $file );
                     }
                 }
-                @rmdir( $upload_dir );
+                @rmdir( $uploadDir );
             }
         }
     }
-
 }

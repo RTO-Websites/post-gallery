@@ -33,8 +33,8 @@ use Thumb\Thumb;
  */
 class PostGallery
 {
-    static $cached_images = array();
-    static $cached_folders = array();
+    static $cachedImages = array();
+    static $cachedFolders = array();
 
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
@@ -213,19 +213,16 @@ class PostGallery
      * @param {array} $images
      * @return {array}
      */
-    public static function sort_images( $images, $postid )
+    public static function sortImages( $images, $postid )
     {
         // get post in default language
-        $org_post = PostGallery::get_org_post( $postid );
-        if ( !empty( $org_post ) ) {
-            $post = $org_post;
-            $postid = $org_post->ID;
+        $orgPost = PostGallery::getOrgPost( $postid );
+        if ( !empty( $orgPost ) ) {
+            $post = $orgPost;
+            $postid = $orgPost->ID;
         }
-        $sort = get_post_meta( $postid, 'postgallery_imagesort', true );
-        if ( empty( $sort ) ) {
-            // for compatibility with old version
-            $sort = get_post_meta( $postid, 'imagesort', true );
-        }
+        $sort = get_post_meta( $postid, 'postgalleryImagesort', true );
+
         $sortimages = array();
 
         if ( !empty( $sort ) ) {
@@ -250,7 +247,7 @@ class PostGallery
      * @param type $postid
      * @return type
      */
-    public static function get_images( $postid = null )
+    public static function getImages( $postid = null )
     {
         if ( empty( $postid ) && empty( $GLOBALS[ 'post' ] ) ) {
             return;
@@ -261,21 +258,21 @@ class PostGallery
         }
 
         // check if image list is in cache
-        if ( isset( PostGallery::$cached_images[ $postid ] ) ) {
-            return PostGallery::$cached_images[ $postid ];
+        if ( isset( PostGallery::$cachedImages[ $postid ] ) ) {
+            return PostGallery::$cachedImages[ $postid ];
         }
 
         if ( empty( $post ) ) {
             $post = get_post( $postid );
         }
         // get post in default language
-        $org_post = PostGallery::get_org_post( $postid );
-        if ( !empty( $org_post ) ) {
-            $post = $org_post;
-            $postid = $org_post->ID;
-            if ( isset( PostGallery::$cached_images[ $postid ] ) ) {
+        $orgPost = PostGallery::getOrgPost( $postid );
+        if ( !empty( $orgPost ) ) {
+            $post = $orgPost;
+            $postid = $orgPost->ID;
+            if ( isset( PostGallery::$cachedImages[ $postid ] ) ) {
                 // check if image list is in cache
-                return PostGallery::$cached_images[ $postid ];
+                return PostGallery::$cachedImages[ $postid ];
             }
         }
 
@@ -285,28 +282,28 @@ class PostGallery
 
         $uploads = wp_upload_dir();
 
-        //$image_dir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
-        $image_dir = PostGallery::get_image_dir( $post );
-        $upload_dir = $uploads[ 'basedir' ] . '/gallery/' . $image_dir;
-        $upload_full_url = $uploads[ 'baseurl' ] . '/gallery/' . $image_dir;
-        $upload_url = str_replace( get_bloginfo( 'wpurl' ), '', $upload_full_url );
+        //$imageDir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
+        $imageDir = PostGallery::getImageDir( $post );
+        $uploadDir = $uploads[ 'basedir' ] . '/gallery/' . $imageDir;
+        $uploadFullUrl = $uploads[ 'baseurl' ] . '/gallery/' . $imageDir;
+        $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadFullUrl );
         $images = array();
 
-        if ( file_exists( $upload_dir ) && is_dir( $upload_dir ) ) {
-            $dir = scandir( $upload_dir );
+        if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
+            $dir = scandir( $uploadDir );
             foreach ( $dir as $file ) {
-                if ( !is_dir( $upload_dir . '/' . $file ) ) {
+                if ( !is_dir( $uploadDir . '/' . $file ) ) {
                     $images[ $file ] = array(
                         'filename' => $file,
-                        'path'     => $upload_url . '/' . $file,
-                        'url'      => $upload_full_url . '/' . $file,
-                        'thumbURL' => get_bloginfo( 'wpurl' ) . '/?load_thumb&amp;path=' . $upload_url . '/' . $file,
+                        'path'     => $uploadUrl . '/' . $file,
+                        'url'      => $uploadFullUrl . '/' . $file,
+                        'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
                     );
                 }
             }
         }
-        $images = PostGallery::sort_images( $images, $postid );
-        PostGallery::$cached_images[ $postid ] = $images;
+        $images = PostGallery::sortImages( $images, $postid );
+        PostGallery::$cachedImages[ $postid ] = $images;
         return $images;
     }
 
@@ -316,11 +313,11 @@ class PostGallery
      * @param type $postid
      * @return type
      */
-    public static function get_images_resized( $postid = 0, $args )
+    public static function getImagesResized( $postid = 0, $args )
     {
-        $images = PostGallery::get_images( $postid );
+        $images = PostGallery::getImages( $postid );
 
-        return PostGallery::get_pics_resized( $images, $args );
+        return PostGallery::getPicsResized( $images, $args );
     }
 
     /**
@@ -330,26 +327,26 @@ class PostGallery
      * @param {array} $args (singlequotes, quotes)
      * @return {string}
      */
-    public static function get_image_string( $postid = null, $args = array() )
+    public static function getImageString( $postid = null, $args = array() )
     {
-        $images = PostGallery::get_images( $postid );
+        $images = PostGallery::getImages( $postid );
         if ( empty( $images ) ) {
             return '';
         }
-        $image_list = array();
+        $imageList = array();
         foreach ( $images as $image ) {
-            $image_list[] = $image[ 'path' ];
+            $imageList[] = $image[ 'path' ];
         }
-        $image_string = '';
+        $imageString = '';
         if ( !empty( $args[ 'quotes' ] ) ) {
-            $image_string = '"' . implode( '","', $image_list ) . '"';
+            $imageString = '"' . implode( '","', $imageList ) . '"';
         } elseif ( !empty( $args[ 'singlequotes' ] ) ) {
-            $image_string = "'" . implode( "','", $image_list ) . "'";
+            $imageString = "'" . implode( "','", $imageList ) . "'";
         } else {
-            $image_string = implode( ',', $image_list );
+            $imageString = implode( ',', $imageList );
         }
 
-        return $image_string;
+        return $imageString;
     }
 
     /**
@@ -358,16 +355,16 @@ class PostGallery
      * @param {int} $post_id
      * @return boolean|object
      */
-    public static function get_org_post( $cur_post_id )
+    public static function getOrgPost( $currentPostId )
     {
         if ( class_exists( 'SitePress' ) ) {
             global $locale, $sitepress;
 
-            $org_post_id = icl_object_id( $cur_post_id, 'any', true, $sitepress->get_default_language() );
+            $orgPostId = icl_object_id( $currentPostId, 'any', true, $sitepress->get_default_language() );
             //icl_ob
-            if ( $cur_post_id !== $org_post_id ) {
-                $main_lang_post = get_post( $org_post_id );
-                return $main_lang_post;
+            if ( $currentPostId !== $orgPostId ) {
+                $mainLangPost = get_post( $orgPostId );
+                return $mainLangPost;
             }
         }
         return false;
@@ -380,23 +377,23 @@ class PostGallery
      * @param type $args
      * @return type
      */
-    static function get_thumb_url( $filepath, $args = array() )
+    static function getThumbUrl( $filepath, $args = array() )
     {
-        $thumb = PostGallery::get_thumb( $filepath, $args );
-        $thumb_url = ( !empty( $thumb[ 'url' ] ) ? $thumb[ 'url' ] : get_bloginfo( 'wpurl' ) . '/' . $args[ 'path' ] );
-        $thumb_url = str_replace( '//wp-content', '/wp-content', $thumb_url );
+        $thumb = PostGallery::getThumb( $filepath, $args );
+        $thumbUrl = ( !empty( $thumb[ 'url' ] ) ? $thumb[ 'url' ] : get_bloginfo( 'wpurl' ) . '/' . $args[ 'path' ] );
+        $thumbUrl = str_replace( '//wp-content', '/wp-content', $thumbUrl );
 
-        return $thumb_url;
+        return $thumbUrl;
     }
 
     /**
-     * Get thumb (wrapper for Thumb->get_thumb()
+     * Get thumb (wrapper for Thumb->getThumb()
      *
      * @param type $filepath
      * @param type $args
      * @return type
      */
-    static function get_thumb( $filepath, $args = array() )
+    static function getThumb( $filepath, $args = array() )
     {
         if ( empty( $args[ 'width' ] ) ) {
             $args[ 'width' ] = 1000;
@@ -409,8 +406,8 @@ class PostGallery
         }
         $args[ 'path' ] = str_replace( get_bloginfo( 'wpurl' ), '', $filepath );
 
-        $thumb_instance = Thumb::get_instance();
-        $thumb = $thumb_instance->get_thumb( $args );
+        $thumbInstance = Thumb::getInstance();
+        $thumb = $thumbInstance->getThumb( $args );
 
         return $thumb;
     }
@@ -421,71 +418,71 @@ class PostGallery
      * @param type $post_name
      * @return string
      */
-    static function get_image_dir( $wpost )
+    static function getImageDir( $wpost )
     {
-        $post_name = $wpost->post_title;
-        $post_id = $wpost->ID;
+        $postName = $wpost->post_title;
+        $postId = $wpost->ID;
 
-        if ( isset( PostGallery::$cached_folders[ $post_id ] ) ) {
-            return PostGallery::$cached_folders[ $post_id ];
+        if ( isset( PostGallery::$cachedFolders[ $postId ] ) ) {
+            return PostGallery::$cachedFolders[ $postId ];
         }
 
         $search = array( 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&' );
         $replace = array( 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-' );
         $uploads = wp_upload_dir();
-        $old_image_dir = strtolower( str_replace( 'http://', '', esc_url( $post_name ) ) );
-        $new_image_dir = str_replace(
+        $oldImageDir = strtolower( str_replace( 'http://', '', esc_url( $postName ) ) );
+        $newImageDir = str_replace(
             $search, $replace, strtolower(
-                sanitize_file_name( str_replace( '&amp;', '-', $post_name )
+                sanitize_file_name( str_replace( '&amp;', '-', $postName )
                 )
             )
         );
 
-        $base_dir = $uploads[ 'basedir' ] . '/gallery/';
+        $baseDir = $uploads[ 'basedir' ] . '/gallery/';
 
-        if ( empty( $new_image_dir ) ) {
+        if ( empty( $newImageDir ) ) {
             return false;
         }
 
         // for very old swapper who used wrong dir
-        PostGallery::rename_dir( $base_dir . $old_image_dir, $base_dir . $new_image_dir );
+        PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );
 
         // for old swapper who dont uses post-id in folder
-        $old_image_dir = $new_image_dir;
-        $new_image_dir = $new_image_dir . '_' . $post_id;
-        PostGallery::rename_dir( $base_dir . $old_image_dir, $base_dir . $new_image_dir );
+        $oldImageDir = $newImageDir;
+        $newImageDir = $newImageDir . '_' . $postId;
+        PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );
 
-        PostGallery::$cached_folders[ $post_id ] = $new_image_dir;
+        PostGallery::$cachedFolders[ $postId ] = $newImageDir;
 
-        return $new_image_dir;
+        return $newImageDir;
     }
 
-    static function rename_dir( $old_dir, $new_dir )
+    static function renameDir( $oldDir, $newDir )
     {
-        if ( $new_dir == $old_dir ) {
+        if ( $newDir == $oldDir ) {
             return;
         }
-        if ( is_dir( $old_dir ) && !is_dir( $new_dir ) ) {
+        if ( is_dir( $oldDir ) && !is_dir( $newDir ) ) {
             //rename($old_dir, $new_dir);
-            if ( file_exists( $old_dir ) ) {
-                $files = scandir( $old_dir );
-                @mkdir( $new_dir );
-                @chmod( $new_dir, octdec( '0777' ) );
+            if ( file_exists( $oldDir ) ) {
+                $files = scandir( $oldDir );
+                @mkdir( $newDir );
+                @chmod( $newDir, octdec( '0777' ) );
 
                 foreach ( $files as $file ) {
-                    if ( !is_dir( $old_dir . '/' . $file ) ) {
-                        copy( $old_dir . '/' . $file, $new_dir . '/' . $file );
-                        unlink( $old_dir . '/' . $file );
+                    if ( !is_dir( $oldDir . '/' . $file ) ) {
+                        copy( $oldDir . '/' . $file, $newDir . '/' . $file );
+                        unlink( $oldDir . '/' . $file );
                     }
                 }
-                @rmdir( $old_dir );
+                @rmdir( $oldDir );
 
-                return $new_dir;
+                return $newDir;
             }
         }
 
         // fail
-        return $old_dir;
+        return $oldDir;
     }
 
 
@@ -496,36 +493,36 @@ class PostGallery
      * @param type $args
      * @return type
      */
-    static function get_pics_resized( $pics, $args )
+    static function getPicsResized( $pics, $args )
     {
         if ( !is_array( $pics ) ) {
             return $pics;
         }
-        $new_pics = array();
+        $newPics = array();
         foreach ( $pics as $pic ) {
             // create resized image
             if ( is_array( $pic ) ) {
                 if ( !empty( $pic[ 'url' ] ) ) {
-                    $new_pic = PostGallery::get_thumb( $pic[ 'url' ], $args );
+                    $newPic = PostGallery::getThumb( $pic[ 'url' ], $args );
                 } else if ( !empty( $pic[ 'path' ] ) ) {
-                    $new_pic = PostGallery::get_thumb( $pic[ 'path' ], $args );
+                    $newPic = PostGallery::getThumb( $pic[ 'path' ], $args );
                 }
             } else {
-                $new_pic = PostGallery::get_thumb( $pic, $args );
+                $newPic = PostGallery::getThumb( $pic, $args );
             }
-            if ( !empty( $new_pic ) ) {
+            if ( !empty( $newPic ) ) {
                 // add info (title and description)
                 if ( is_array( $pic ) ) {
-                    $new_pic[ 'info' ] = $pic[ 'info' ];
-                    $new_pics[] = $new_pic;
+                    $newPic[ 'info' ] = $pic[ 'info' ];
+                    $newPics[] = $newPic;
                 }
-                $new_pics[] = $new_pic;
+                $newPics[] = $newPic;
             } else {
-                $new_pics[] = $pic;
+                $newPics[] = $pic;
             }
         }
 
-        return $new_pics;
+        return $newPics;
     }
 
     /**
@@ -534,7 +531,7 @@ class PostGallery
      * @param type $postid
      * @return boolean
      */
-    static function has_post_thumbnail( $postid = 0 )
+    static function hasPostThumbnail( $postid = 0 )
     {
         if ( empty( $postid ) && empty( $GLOBALS[ 'post' ] ) ) {
             return;
@@ -550,7 +547,7 @@ class PostGallery
         if ( has_post_thumbnail( $postid ) ) {
             return has_post_thumbnail( $postid );
         } else {
-            return count( PostGallery::get_images( $postid ) );
+            return count( PostGallery::getImages( $postid ) );
         }
     }
 

@@ -18,7 +18,7 @@
     <?php foreach ( $images as $image ) { ?>
         <a href="<?php echo $image[ 'path' ] ?>">
             <img class="post-gallery_thumb"
-                src="<?php echo \Inc\PostGallery::get_thumb_url( $image[ 'path' ], array( 'width' => 150, 'height' => 150 ) ) ?>"
+                src="<?php echo \Inc\PostGallery::getThumbUrl( $image[ 'path' ], array( 'width' => 150, 'height' => 150 ) ) ?>"
                 alt="<?php echo $image[ 'filename' ] ?>"/>
         </a>
     <?php } ?>

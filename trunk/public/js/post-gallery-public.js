@@ -33,17 +33,17 @@
 	 * DOM-Ready
 	 */
 	$(function() {
-		new LiteboxGallery(liteboxArgs);
+		window.litebox = new LiteboxGallery(liteboxArgs);
 	});
 
 
 
-	window.getFullsizeThumbs = function(pics, swapperId, callback) {
+	window.getFullsizeThumbs = function(pics, owlSliderId, callback) {
 		var sizes = postGalleryCheckImageSize();
 
 		jQuery.ajax({
 			'type' : 'POST',
-			'url' : websiteUrl + '/?get_thumb_list',
+			'url' : websiteUrl + '/?getThumbList',
 			'data' : { 'pics' : pics, 'width' : sizes[0], 'height' : sizes[1] },
 			'success' : function(data, textStatus) {
 				if (typeof(callback) === 'function') {
@@ -59,7 +59,7 @@
 		}
 		jQuery.ajax({
 			'type' : 'POST',
-			'url' : websiteUrl + '/?get_thumb_list',
+			'url' : websiteUrl + '/?getThumbList',
 			'data' : { 'pics' : pics, 'width' : width, 'height' : height, scale: scale },
 			'success' : function(data, textStatus) {
 				if (typeof(callback) === 'function') {

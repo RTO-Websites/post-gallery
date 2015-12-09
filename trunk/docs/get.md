@@ -1,17 +1,17 @@
 # Get image functions
 These functions returns all images of a post
 
-### get_images
-Returns all images of a post (in fullsize, for smaller pics use PostGallery::get_images_resized() )
+### getImages
+Returns all images of a post (in fullsize, for smaller pics use PostGallery::getImagesResized() )
 ```
-PostGallery::get_images( $postid );
+PostGallery::getImages( $postid );
 ```
 Returns an array with:
 'filename'
 'path'
 'thumbURL'
 
-### get_images_resized
+### getImagesResized
 Returns all images of a post, resized
 ```
 $args = array(
@@ -20,7 +20,7 @@ $args = array(
   'scale' => 0, // 0 = crop, 1 = scale 1:1
   'bw' => false, // optional, true returns greyscale images
 }
-$images = PostGallery::get_images_resized( $postid, $args );
+$images = PostGallery::getImagesResized( $postid, $args );
 ```
 
 Returns an array with:
@@ -30,7 +30,7 @@ Returns an array with:
 'width',
 'height'
 
-### get_image_string
+### getImageString
 Return all images (resized) of a post in a json-string.
 ```
 $args = array(
@@ -41,10 +41,10 @@ $args = array(
   'quotes' => false,
   'singlequotes' => false
 }
-$images = get_image_string( $postid, $args );
+$images = getImageString( $postid, $args );
 ```
 
-### get_pics_resized
+### getPicsResized
 Resize an array of pics.
 ```
 $args = array(
@@ -53,7 +53,7 @@ $args = array(
   'scale' => 0, // 0 = crop, 1 = scale 1:1
   'bw' => false, // optional, true returns greyscale images
 }
-$images = PostGallery::get_pics_resized( $pics, $args );
+$images = PostGallery::getPicsResized( $pics, $args );
 ```
 
 Returns an array with:
