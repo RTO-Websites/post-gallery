@@ -400,11 +400,6 @@ class PostGalleryAdmin
 
         // get templates from plugin
         $currentValue = get_post_meta( $curLangPost->ID, $key, true );
-        if ( empty( $currentValue ) ) {
-            // for compatibility with old version
-            $currentValue = get_post_meta( $curLangPost->ID, 'gallery-template', true );
-        }
-
         $this->getPluginDirOptions( $currentValue );
 
         echo '</select>';
@@ -493,11 +488,6 @@ class PostGalleryAdmin
         $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadUrl );
         $sort = get_post_meta( $currentLangPost->ID, 'postgalleryImagesort', true );
 
-        if ( empty( $sort ) ) {
-            // for compatibility with old version
-            $sort = get_post_meta( $currentLangPost->ID, 'imagesort', true );
-        }
-
         // Create folders if not exists
         if ( !file_exists( $uploads[ 'basedir' ] . '/cache' ) ) {
             @mkdir( $uploads[ 'basedir' ] . '/cache' );
@@ -579,8 +569,6 @@ class PostGalleryAdmin
         $scriptLanguage = array(
             'moveHere' =>  __( 'Move files here.', $this->textdomain ),
             'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
-
-
         );
 
         // Javascript for language
