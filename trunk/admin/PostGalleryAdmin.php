@@ -402,7 +402,7 @@ class PostGalleryAdmin
         $currentValue = get_post_meta( $curLangPost->ID, $key, true );
         $this->getPluginDirOptions( $currentValue );
 
-        echo '</select>';
+        echo '</select></td></tr>';
 
 
         echo '</table>';
