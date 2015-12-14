@@ -346,53 +346,12 @@ class PostGalleryAdmin
 
         echo '<table class="form-table">';
 
-
-        // TODO: check if dont used?!
-        if ( !empty( $this->optionFields ) ) {
-            // Loop Post-Options and generate inputs
-            foreach ( $this->optionFields as $key => $option ) {
-                echo '<tr valign="top">';
-                // Generate Label
-                echo '<th scope="row"><label class="theme-options-label" for="' . $key . '">' . $option[ 'label' ] . '</label></th>';
-                echo '<td>';
-                switch ( $option[ 'type' ] ) {
-                    case 'select':
-                        // Generate select
-                        echo '<select class="theme-options-input" name="' . $key . '" id="' . $key . '">';
-                        if ( !empty( $option[ 'value' ] ) && is_array( $option[ 'value' ] ) ) {
-                            foreach ( $option[ 'value' ] as $optionKey => $optionTitle ) {
-                                $selected = '';
-                                //echo '<br/>Key'.$option_key.'-'.get_post_meta($post->ID, $key, true);
-                                if ( $optionKey == get_post_meta( $curLangPost->ID, $key, true ) ) {
-                                    $selected = ' selected="selected"';
-                                }
-                                echo '<option value="' . $optionKey . '"' . $selected . '>' . $optionTitle . '</option>';
-                            }
-                        }
-                        echo '</select>';
-                        break;
-
-                    case 'input':
-                        // Generate text-input
-                        echo '<input class="theme-options-input" type="text" name="' . $key . '" id="' . $key . '" value="' . get_post_meta( $curLangPost->ID, $key, true ) . '" />';
-                        break;
-
-                    case 'textarea':
-                        // Generate textarea
-                        echo '<textarea class="theme-options-input" name="' . $key . '" id="' . $key . '">' . get_post_meta( $curLangPost->ID, $key, true ) . '</textarea>';
-                        break;
-                }
-                echo '</td></tr>';
-            }
-        }
-        // end dont used?!
-
         // Template list
         echo '<tr valign="top">';
         $key = 'postgalleryTemplate';
-        echo '<th scope="row"><label class="theme-options-label" for="' . $key . '">' . __( 'Template', $this->textdomain ) . '</label></th>';
+        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', $this->textdomain ) . '</label></th>';
         echo '<td>';
-        echo '<select class="theme-options-input" name="' . $key . '" id="' . $key . '">';
+        echo '<select class="field-input" name="' . $key . '" id="' . $key . '">';
 
         echo '<option value="global">' . __( 'From global setting', $this->textdomain ) . '</option>';
         // get templates from tpl-dir
@@ -574,6 +533,7 @@ class PostGalleryAdmin
         // Javascript for language
         echo '<script type="text/javascript">window.postgalleryLang = '.json_encode( $scriptLanguage ).';</script>';
     }
+
 
     /**
      * Method to save Post-Meta
