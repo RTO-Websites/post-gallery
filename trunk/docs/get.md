@@ -9,7 +9,10 @@ PostGallery::getImages( $postid );
 Returns an array with:
 'filename'
 'path'
-'thumbURL'
+'thumbURL',
+'alt',
+'title',
+'desc'
 
 ### getImagesResized
 Returns all images of a post, resized
@@ -28,7 +31,10 @@ Returns an array with:
 'path'
 'url',
 'width',
-'height'
+'height',
+'alt',
+'title',
+'desc'
 
 ### getImageString
 Return all images (resized) of a post in a json-string.
@@ -66,9 +72,9 @@ Returns an array with:
 
 ### Get titles, alt and description
 ```
-$titles = get_post_meta ( $postid, 'postgallery_titles', true );
-$descs = get_post_meta ($postid, 'postgallery_descs', true );
-$alt_attributes = get_post_meta ($postid, 'postgallery_alt_attributes', true );
+$titles = get_post_meta ( $postid, 'postgalleryTitles', true );
+$descs = get_post_meta ($postid, 'postgalleryDescs', true );
+$altAttributes = get_post_meta ($postid, 'postgalleryAltAttributes', true );
 
 echo $titles[ 'filename.jpg'];
 ```

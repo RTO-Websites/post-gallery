@@ -23,8 +23,7 @@ use Thumb\Thumb;
  * @subpackage PostGallery/public
  * @author     crazypsycho <info@hennewelt.de>
  */
-class PostGalleryPublic
-{
+class PostGalleryPublic {
 
     /**
      * The ID of this plugin.
@@ -63,8 +62,7 @@ class PostGalleryPublic
      * @param      string $pluginName The name of the plugin.
      * @param      string $version The version of this plugin.
      */
-    public function __construct( $pluginName, $version )
-    {
+    public function __construct( $pluginName, $version ) {
 
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
@@ -93,8 +91,7 @@ class PostGalleryPublic
      *
      * @since    1.0.0
      */
-    public function enqueueStyles()
-    {
+    public function enqueueStyles() {
 
         /**
          * This function is provided for demonstration purposes only.
@@ -111,7 +108,7 @@ class PostGalleryPublic
         wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
 
 
-        if ( !empty( $this->options[ 'useOldOwl' ] ) ) {
+        if ( !empty( $this->options['useOldOwl'] ) ) {
             // owl 1
             $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
             wp_enqueue_style( 'owl.carousel', $owlPath . '/owl.carousel.css' );
@@ -131,8 +128,7 @@ class PostGalleryPublic
      *
      * @since    1.0.0
      */
-    public function enqueueScripts()
-    {
+    public function enqueueScripts() {
 
         /**
          * This function is provided for demonstration purposes only.
@@ -150,7 +146,7 @@ class PostGalleryPublic
             . '../bower_components/lazysizes'
             . '/lazysizes.min.js' );
 
-        if ( !empty( $this->options[ 'useOldOwl' ] ) ) {
+        if ( !empty( $this->options['useOldOwl'] ) ) {
             $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
             wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array( 'jquery' ) );
         } else {
@@ -167,17 +163,15 @@ class PostGalleryPublic
     /**
      * Register request for thumbnails
      */
-    public function postgalleryThumb()
-    {
-        if ( isset( $_REQUEST[ 'loadThumb' ] ) ) {
+    public function postgalleryThumb() {
+        if ( isset( $_REQUEST['loadThumb'] ) ) {
             Thumb::theThumb();
             exit();
         }
     }
 
 
-    public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single )
-    {
+    public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single ) {
 
         if ( $meta_key == '_thumbnail_id' ) {
             return true;
@@ -196,8 +190,7 @@ class PostGalleryPublic
      * @param $attr
      * @return string
      */
-    public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr )
-    {
+    public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
         if ( '' == $html ) {
             // get id from main-language post
             if ( class_exists( 'SitePress' ) ) {
@@ -225,10 +218,10 @@ class PostGalleryPublic
             if ( empty( $width ) && empty( $height ) ) {
                 global $_wp_additional_image_sizes;
                 if ( !empty( $_wp_additional_image_sizes ) &&
-                    !empty( $_wp_additional_image_sizes[ $size ] )
+                    !empty( $_wp_additional_image_sizes[$size] )
                 ) {
-                    $width = $_wp_additional_image_sizes[ $size ][ 'width' ];
-                    $height = $_wp_additional_image_sizes[ $size ][ 'height' ];
+                    $width = $_wp_additional_image_sizes[$size]['width'];
+                    $height = $_wp_additional_image_sizes[$size]['height'];
                 }
             }
 
@@ -239,29 +232,29 @@ class PostGalleryPublic
                 $height = '1080';
             }
 
-            $path = $firstThumb[ 'path' ];
+            $path = $firstThumb['path'];
             $path = explode( '/wp-content/', $path );
             $path = '/wp-content/' . array_pop( $path );
 
             $thumb = Thumb::getThumb( $path, array(
-                'width'  => $width,
+                'width' => $width,
                 'height' => $height,
-                'scale'  => '0'
+                'scale' => '0',
             ) );
 
             $width = $height = 'auto';
 
             $orientation = ' wide';
 
-            if ( $thumb[ 'width' ] > $thumb[ 'height' ] ) {
+            if ( $thumb['width'] > $thumb['height'] ) {
                 $width = $thumb['width'];
             } else {
                 $height = $thumb['height'];
                 $orientation = ' upright';
             }
 
-            $html = '<img width="'.$width.'" height="'.$height.'" src="'
-                . $thumb[ 'url' ]
+            $html = '<img width="' . $width . '" height="' . $height . '" src="'
+                . $thumb['url']
                 . '" alt="" class="attachment-' . $size . $orientation . ' wp-post-image  post-image-from-postgallery" />';
         }
 
@@ -274,17 +267,16 @@ class PostGalleryPublic
      * @param type $content
      * @return type
      */
-    public function addGalleryToContent( $content )
-    {
-        $position = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgalleryPosition', true );
-        $template = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgalleryTemplate', true );
+    public function addGalleryToContent( $content ) {
+        $position = get_post_meta( $GLOBALS['post']->ID, 'postgalleryPosition', true );
+        $template = get_post_meta( $GLOBALS['post']->ID, 'postgalleryTemplate', true );
         if ( empty( $position ) || $position == 'global' ) {
-            $position = ( !empty( $this->options[ 'globalPosition' ] ) ? $this->options[ 'globalPosition' ] : 'bottom' );
+            $position = ( !empty( $this->options['globalPosition'] ) ? $this->options['globalPosition'] : 'bottom' );
         }
 
         // from global
         if ( empty( $template ) || $template == 'global' ) {
-            $template = ( !empty( $this->options[ 'globalTemplate' ] ) ? $this->options[ 'globalTemplate' ] : 'thumbs' );
+            $template = ( !empty( $this->options['globalTemplate'] ) ? $this->options['globalTemplate'] : 'thumbs' );
         }
 
         if ( $position === 'top' ) {
@@ -302,21 +294,20 @@ class PostGalleryPublic
      * @param type $template
      * @return type
      */
-    public function returnGalleryHtml( $template, $postid = 0, $args = array() )
-    {
+    public function returnGalleryHtml( $template, $postid = 0, $args = array() ) {
         $customTemplateDir = get_stylesheet_directory() . '/post-gallery';
         $customTemplateDir2 = get_stylesheet_directory() . '/plugins/post-gallery';
         $defaultTemplateDir = POSTGALLERY_DIR . '/templates';
 
         $images = PostGallery::getImages( $postid );
-        $titles = get_post_meta( $postid, 'postgalleryTitles', true );
+        /*$titles = get_post_meta( $postid, 'postgalleryTitles', true );
         $descs = get_post_meta( $postid, 'postgalleryDescs', true );
-        $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
+        $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );*/
 
         // TODO: Add alt, desc, title to image-array directly in getImages
 
         if ( empty( $template ) || $template == 'global' ) {
-            $template = $this->options[ 'globalTemplate' ];
+            $template = $this->options['globalTemplate'];
         }
 
         ob_start();
@@ -338,10 +329,9 @@ class PostGalleryPublic
      *
      * @param string $footer
      */
-    public function insertFooterHtml( $footer )
-    {
+    public function insertFooterHtml( $footer ) {
         $options = $this->options;
-        $template = ( !empty( $options[ 'template' ] ) ? $options[ 'template' ] : 'default' );
+        $template = ( !empty( $options['template'] ) ? $options['template'] : 'default' );
 
         $customTemplateDir = get_stylesheet_directory() . '/litebox';
         $defaultTemplateDir = POSTGALLERY_DIR . '/litebox-templates';
@@ -360,16 +350,15 @@ class PostGalleryPublic
      * @param type $content
      * @return {string}
      */
-    public function postgalleryShortcode( $args, $content = '' )
-    {
-        if ( empty( $args[ 'template' ] ) ) {
-            $template = get_post_meta( $GLOBALS[ 'post' ]->ID, 'postgalleryTemplate', true );
+    public function postgalleryShortcode( $args, $content = '' ) {
+        if ( empty( $args['template'] ) ) {
+            $template = get_post_meta( $GLOBALS['post']->ID, 'postgalleryTemplate', true );
         } else {
-            $template = $args[ 'template' ];
+            $template = $args['template'];
         }
         $postid = 0;
-        if ( !empty( $args[ 'post' ] ) ) {
-            $postid = $args[ 'post' ];
+        if ( !empty( $args['post'] ) ) {
+            $postid = $args['post'];
         }
 
         return $this->returnGalleryHtml( $template, $postid, $args );
@@ -379,25 +368,24 @@ class PostGalleryPublic
     /**
      * Gives a url from cache
      */
-    public function getThumbList()
-    {
-        if ( isset( $_REQUEST[ 'getFullsizeThumbs' ] ) || isset( $_REQUEST[ 'getThumbList' ] ) ) {
+    public function getThumbList() {
+        if ( isset( $_REQUEST['getFullsizeThumbs'] ) || isset( $_REQUEST['getThumbList'] ) ) {
 
-            $_SESSION[ 'postGalleryWindowSize' ] = array(
-                'width'  => $_REQUEST[ 'width' ],
-                'height' => $_REQUEST[ 'height' ]
+            $_SESSION['postGalleryWindowSize'] = array(
+                'width' => $_REQUEST['width'],
+                'height' => $_REQUEST['height'],
             );
 
-            if ( empty( $_REQUEST[ 'pics' ] ) ) {
+            if ( empty( $_REQUEST['pics'] ) ) {
                 die( '{}' );
             }
-            $pics = ( $_REQUEST[ 'pics' ] );
+            $pics = ( $_REQUEST['pics'] );
 
             if ( !empty( $pics ) ) {
                 $pics = PostGallery::getPicsResized( $pics, array(
-                    'width'  => $_REQUEST[ 'width' ],
-                    'height' => $_REQUEST[ 'height' ],
-                    'scale'  => ( !isset( $_REQUEST[ 'scale' ] ) ? 1 : $_REQUEST[ 'scale' ] ),
+                    'width' => $_REQUEST['width'],
+                    'height' => $_REQUEST['height'],
+                    'scale' => ( !isset( $_REQUEST['scale'] ) ? 1 : $_REQUEST['scale'] ),
                 ) );
             }
             echo json_encode( $pics );
@@ -406,11 +394,10 @@ class PostGalleryPublic
         }
     }
 
-    public function insertHeaderscript( $header )
-    {
-        $oldOwl = !empty( $this->options[ 'useOldOwl' ] ) ? 'owlVersion: 1,' : '';
-        $clickEvents = !empty( $this->options[ 'clickEvents' ] ) ? 'clickEvents: 1,' : '';
-        $keyEvents = !empty( $this->options[ 'keyEvents' ] ) ? 'keyEvents: 1,' : '';
+    public function insertHeaderscript( $header ) {
+        $oldOwl = !empty( $this->options['useOldOwl'] ) ? 'owlVersion: 1,' : '';
+        $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
+        $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
 
         // script for websiteurl
         $script = '<script type="text/javascript">';
@@ -418,7 +405,7 @@ class PostGalleryPublic
         $script .= 'var pluginUrl = "' . WP_PLUGIN_URL . '";';
         $script .= 'var liteboxArgs = {'
             . $clickEvents . $keyEvents . $oldOwl
-            . 'owlArgs: {' . $this->options[ 'owlConfig' ] . '}};';
+            . 'owlArgs: {' . $this->options['owlConfig'] . '}};';
         $script .= '</script>';
 
         $header = $header . $script;

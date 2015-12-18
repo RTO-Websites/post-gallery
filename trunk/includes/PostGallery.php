@@ -293,11 +293,18 @@ class PostGallery
             $dir = scandir( $uploadDir );
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
+                    $titles = get_post_meta( $postid, 'postgalleryTitles', true );
+                    $descs = get_post_meta( $postid, 'postgalleryDescs', true );
+                    $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
+
                     $images[ $file ] = array(
                         'filename' => $file,
                         'path'     => $uploadUrl . '/' . $file,
                         'url'      => $uploadFullUrl . '/' . $file,
                         'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
+                        'title'    => $titles[$file],
+                        'desc'     => $descs[$file],
+                        'alt'      => $alts[$file],
                     );
                 }
             }
@@ -510,12 +517,10 @@ class PostGallery
             } else {
                 $newPic = PostGallery::getThumb( $pic, $args );
             }
-            if ( !empty( $newPic ) ) {
+            if ( !empty( $newPic ) && is_array( $pic )) {
                 // add info (title and description)
-                if ( is_array( $pic ) ) {
-                    $newPic[ 'info' ] = $pic[ 'info' ];
-                    $newPics[] = $newPic;
-                }
+                $newPics[] = array_merge( $pic, $newPic );
+            } else if ( !empty( $newPic ) ) {
                 $newPics[] = $newPic;
             } else {
                 $newPics[] = $pic;
