@@ -38,7 +38,7 @@
      */
     $('.owl-slider-presets').on('change', function (e) {
       var selectBox = jQuery(e.target),
-        owlContainerElement =  $('#' + selectBox.data('container') + '-' + selectBox.data('lang'));
+        owlContainerElement = $('#' + selectBox.data('container') + '-' + selectBox.data('lang'));
 
       if (!owlContainerElement.length) {
         owlContainerElement = $('#' + selectBox.data('container'));

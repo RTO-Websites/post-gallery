@@ -1,111 +1,111 @@
 
 .post-gallery-pictures {
-    text-align: center;
+  text-align: center;
 }
 
 .postgallery-del-button.button {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 .sortable-pics {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .sortable-pics li {
-    width: 150px;
-    height: 150px;
-    display: inline-block;
-    position: relative;
-    margin-right: 10px;
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+  position: relative;
+  margin-right: 10px;
 }
 
 .sortable-pics .img-title {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    font-size: 11px;
-    text-align: center;
-    background-color: #fff;
-    background-color: rgba(255, 255, 255, 0.7);
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  font-size: 11px;
+  text-align: center;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .imageupload-image {
-    background-repeat: no-repeat;
-    background-position: center;
-    border: 4px dashed #ddd;
-    position: relative;
-    height: 150px;
-    line-height: 150px;
-    font-size: 24px;
-    text-align: center;
-    cursor: default;
-    width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 4px dashed #ddd;
+  position: relative;
+  height: 150px;
+  line-height: 150px;
+  font-size: 24px;
+  text-align: center;
+  cursor: default;
+  width: 100%;
 }
 
 .qq-upload-list {
-    display: none;
+  display: none;
 }
 
 .qq-upload-button {
-    top: 50px;
-    z-index: 1000;
+  top: 50px;
+  z-index: 1000;
 }
 
 .sortable-pics .del {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background-color: #fff;
-    background-color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    padding: 0px 5px;
-    color: #000;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 0px 5px;
+  color: #000;
 }
 
 .qq-upload-drop-area {
-    display: block !important;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
+  display: block !important;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
 }
 
 .sortable-pics .edit-details {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    background-color: #fff;
-    background-color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    background-image: url(../../../../../wp-includes/images/wpicons.png);
-    background-position: 220px 20px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-image: url(../../../../../wp-includes/images/wpicons.png);
+  background-position: 220px 20px;
 }
 
 .sortable-pics .details {
-    position: absolute;
-    padding: 5px;
-    left: 25px;
-    top: 25px;
-    min-width: 400px;
-    display: none;
-    background-color: #000;
-    background-color: rgba(0, 0, 0, 0.7);
-    text-align: center;
-    z-index: 1000;
+  position: absolute;
+  padding: 5px;
+  left: 25px;
+  top: 25px;
+  min-width: 400px;
+  display: none;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  z-index: 1000;
 }
 
 .sortable-pics .details input {
-    width: 100%;
+  width: 100%;
 }
 
 .sortable-pics .details textarea {
-    width: 100%;
-    height: 120px;
+  width: 100%;
+  height: 120px;
 }
 
 .sortable-pics .details.active {
-    display: block;
+  display: block;
 }
