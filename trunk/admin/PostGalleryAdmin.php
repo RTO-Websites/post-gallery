@@ -540,19 +540,22 @@ class PostGalleryAdmin {
             return;
         }
 
-        if ( !isset( $_POST['post_type'] ) ) {
+        if ( !filter_has_var( INPUT_POST, 'post_type' ) ) {
             return;
         }
 
         $curLangPost = $post;
         $curLangPostId = $postId;
 
-        if ( !empty( $_POST['postgalleryMainlangId'] ) && $postId !== $_POST['postgalleryMainlangId'] ) {
-            $postId = $_POST['postgalleryMainlangId'];
+
+        $postgalleryMainlangId = filter_input( INPUT_POST, 'postgalleryMainlangId' );
+        if ( !empty( $postgalleryMainlangId ) && $postId !== $postgalleryMainlangId ) {
+            $postId = $postgalleryMainlangId;
             $post = get_post( $postId );
         }
 
-        if ( $_POST['post_type'] == 'page' ) {
+        $postType = filter_input( INPUT_POST, 'post_type' );
+        if ( $postType == 'page' ) {
             if ( !current_user_can( 'edit_page', $postId ) ) {
                 return;
             }
@@ -564,37 +567,37 @@ class PostGalleryAdmin {
         // Save form-fields
         if ( !empty( $this->optionFields ) ) {
             foreach ( $this->optionFields as $key => $postOption ) {
-                //update_post_meta($post_id, $key, $_POST[$key]);
                 update_post_meta( $curLangPostId, $key, filter_input( INPUT_POST, $key ) );
             }
         }
         // Save templates
-        if ( !empty( $_POST['postgalleryTemplate'] ) ) {
+        if ( filter_has_var( 'postgalleryTemplate' ) ) {
             update_post_meta( $curLangPostId, 'postgalleryTemplate', filter_input( INPUT_POST, 'postgalleryTemplate' ) );
         }
         // save sort
-        if ( !empty( $_POST['postgalleryImagesort'] ) ) {
+        if ( filter_has_var( 'postgalleryImagesort' ) ) {
             update_post_meta( $postId, 'postgalleryImagesort', filter_input( INPUT_POST, 'postgalleryImagesort' ) );
         }
         // save image titles
-        if ( !empty( $_POST['postgalleryTitles'] ) ) {
-            update_post_meta( $postId, 'postgalleryTitles', $_POST['postgalleryTitles'] );
+        if ( filter_has_var( 'postgalleryTitles' ) ) {
+            update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles' ) );
         }
         // save image descriptions
-        if ( !empty( $_POST['postgalleryDescs'] ) ) {
-            update_post_meta( $postId, 'postgalleryDescs', $_POST['postgalleryDescs'] );
+        if ( filter_has_var( 'postgalleryDescs' ) ) {
+            update_post_meta( $postId, 'postgalleryDescs', filter_input( INPUT_POST, 'postgalleryDescs' ) );
         }
         // save image alt
-        if ( !empty( $_POST['postgalleryAltAttributes'] ) ) {
-            update_post_meta( $postId, 'postgalleryAltAttributes', $_POST['postgalleryAltAttributes'] );
+        if ( filter_has_var( 'postgalleryAltAttributes' ) ) {
+            update_post_meta( $postId, 'postgalleryAltAttributes', filter_input( INPUT_POST, 'postgalleryAltAttributes' ) );
         }
 
         $imageDir = PostGallery::getImageDir( $post );
+        $currentImageDir = filter_input( INPUT_POST, 'currentImagedir' );
 
         // if post-title change, then move pictures
-        if ( !empty( $_POST['currentImagedir'] ) && $_POST['currentImagedir'] !== $imageDir ) {
+        if ( !empty( $currentImageDir ) && $currentImageDir !== $imageDir ) {
             $uploads = wp_upload_dir();
-            $uploadDir = $uploads['basedir'] . '/gallery/' . $_POST['currentImagedir'];
+            $uploadDir = $uploads['basedir'] . '/gallery/' . $currentImageDir;
             $uploadDirNew = $uploads['basedir'] . '/gallery/' . $imageDir;
             if ( file_exists( $uploadDir ) ) {
                 $files = scandir( $uploadDir );

@@ -5,7 +5,11 @@ if ( !is_user_logged_in() ) {
     die( 'Login required!' );
 }
 
-if ( empty( $_REQUEST['path'] ) ) {
+$path = filter_input(INPUT_GET, 'path' );
+if ( empty( $path ) ) {
+    $path = filter_input(INPUT_POST, 'path' );
+}
+if ( empty( $path ) ) {
     die( 'no path given' );
 }
 
@@ -13,13 +17,13 @@ $uploads = wp_upload_dir();
 $uploadDir = $uploads['basedir'];
 $uploadUrl = $uploads['baseurl'];
 
-if ( !file_exists( $uploadDir . '/gallery/' . $_REQUEST['path'] ) ) {
+if ( !file_exists( $uploadDir . '/gallery/' . $path ) ) {
     die( 'file not exists or is folder' );
 }
 
 // If "path" is dir iterate through this dir and delete all files
-if ( is_dir( $uploadDir . '/gallery/' . $_REQUEST['path'] ) ) {
-    $dirname = $uploadDir . '/gallery/' . $_REQUEST['path'];
+if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
+    $dirname = $uploadDir . '/gallery/' . $path;
     $dirHandle = opendir( $dirname );
 
     if ( !$dirHandle )
@@ -31,8 +35,6 @@ if ( is_dir( $uploadDir . '/gallery/' . $_REQUEST['path'] ) ) {
         if ( $file != "." && $file != ".." ) {
             if ( !is_dir( $dirname . "/" . $file ) )
                 $success = unlink( $dirname . "/" . $file );
-            else
-                delete_directory( $dirname . '/' . $file );
         }
     }
 
@@ -41,7 +43,7 @@ if ( is_dir( $uploadDir . '/gallery/' . $_REQUEST['path'] ) ) {
     return true;
 } else {
     // Deletes a single file
-    $success = unlink( $uploadDir . '/gallery/' . $_REQUEST['path'] );
+    $success = unlink( $uploadDir . '/gallery/' . $path );
 }
 
 echo( intval( $success ) );

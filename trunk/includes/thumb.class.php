@@ -90,7 +90,7 @@ class Thumb {
             );
         }
 
-        if ( class_exists( 'Imagick' ) && empty( $_GET['forceGd'] ) ) {
+        if ( class_exists( 'Imagick' ) && filter_has_var( INPUT_GET, 'forceGd' ) ) {
             $thumbResult = $this->getThumbImagick( $args );
         } else {
             $thumbResult = $this->getThumbGd( $args );
@@ -174,7 +174,7 @@ class Thumb {
             $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
 
             if ( file_exists( $this->cacheDir . '/' . $cachefile ) &&
-                empty( $_REQUEST['forceNew'] ) &&
+                !filter_has_var( INPUT_GET, 'forceNew' ) &&
                 filesize( $this->cacheDir . '/' . $cachefile ) > 0
             ) {
                 // load from cache (do nothing)
@@ -222,7 +222,7 @@ class Thumb {
         }
 
         // output image
-        if ( empty( $args['returnThumb'] ) && empty( $_REQUEST['returnThumb'] ) ) {
+        if ( empty( $args['returnThumb'] ) && !filter_has_var( INPUT_GET, 'returnThumb' ) ) {
             $thumbnail = null;
         } else {
             $thumbnail = file_get_contents( $path );
@@ -285,7 +285,7 @@ class Thumb {
         $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
 
         // check if cache-file already exists
-        if ( file_exists( $this->cacheDir . '/' . $cachefile ) && empty( $_REQUEST['forceNew'] ) ) {
+        if ( file_exists( $this->cacheDir . '/' . $cachefile ) && !filter_has_var( INPUT_GET, 'forceNew' ) ) {
             if ( !empty( $args['returnThumb'] ) ) {
                 $returnArray['thumb'] = file_get_contents( $this->cacheDir . '/' . $cachefile );
             } else {
@@ -436,7 +436,7 @@ class Thumb {
             // create cache-filename
             $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
 
-            if ( !file_exists( $this->cacheDir . '/' . $cachefile ) || !empty( $_REQUEST['forceNew'] ) ) {
+            if ( !file_exists( $this->cacheDir . '/' . $cachefile ) || filter_has_var( INPUT_GET, 'forceNew' ) ) {
                 // crop images
                 $newCalcHeight = $newHeight;
                 $newCalcWidth = $newWidth;
@@ -580,51 +580,57 @@ class Thumb {
             $_GET[$key] = $value;
         }
 
-        if ( ( !empty( $_GET['path'] ) || !empty( $_GET['url'] ) ) ) {
-            if ( empty( $_GET['quality'] ) ) {
-                $quality = 100;
-            } else {
-                $quality = $_GET['quality'];
-            }
-            if ( isset( $_GET['scale'] ) ) {
-                $scale = $_GET['scale'];
-            } else {
-                $scale = 1;
-            }
-
-            $bw = false;
-            if ( isset( $_GET['bw'] ) ) {
-                $bw = true;
-            }
-
-            $thumbResult = $this->getThumb( array(
-                'path' => urldecode( $_GET['path'] ),
-                'width' => ( isset( $_GET['width'] ) ? $_GET['width'] : 0 ),
-                'height' => ( isset( $_GET['height'] ) ? $_GET['height'] : 0 ),
-                'scale' => $scale,
-                'quality' => $quality,
-                'bw' => $bw,
-                'returnThumb' => ( !empty( $_GET['returnThumb'] ) ? true : false ),
-            ) );
-
-            if ( empty( $thumbResult ) ) {
-                echo 'Fatal error! -> Empty result';
-            } else if ( !empty( $thumbResult['error'] ) ) {
-                echo 'An Error occurred: ' . $thumbResult['error'];
-            } else if ( empty( $thumbResult['url'] ) ) {
-                echo 'Fatal error! -> Thumb not found';
-            } else if ( !empty( $_REQUEST['returnThumb'] ) ) {
-                header( "Content-type: image/jpeg" );
-                echo $thumbResult['thumb'];
-            } else {
-                if ( empty( $_GET['debug'] ) ) {
-                    header( 'Location: ' . $thumbResult['url'] );
-                } else {
-                    var_dump( $thumbResult );
-                }
-            }
-        } else {
+        if ( ( !filter_has_var( INPUT_GET, 'path' ) && !filter_has_var( INPUT_GET, 'url' ) ) ) {
             echo 'Path is missing';
+            return;
+        }
+
+        $quality = filter_input( INPUT_GET, 'quality' );
+        if ( empty( $quality ) ) {
+            $quality = 100;
+        }
+
+
+        if ( filter_has_var( INPUT_GET, 'scale' ) ) {
+            $scale = filter_input( INPUT_GET, 'scale' );
+        } else {
+            $scale = 1;
+        }
+
+        $bw = false;
+        if ( filter_has_var( INPUT_GET, 'bw' ) ) {
+            $bw = true;
+        }
+
+        $path = filter_input( INPUT_GET, 'path' );
+        $width = filter_input( INPUT_GET, 'width' );
+        $height = filter_input( INPUT_GET, 'height' );
+
+        $thumbResult = $this->getThumb( array(
+            'path' => urldecode( $path ),
+            'width' => ( !empty( $width ) ? $width : 0 ),
+            'height' => ( !empty( $height ) ? $height : 0 ),
+            'scale' => $scale,
+            'quality' => $quality,
+            'bw' => $bw,
+            'returnThumb' => ( filter_has_var( INPUT_GET, 'returnThumb' ) ? true : false ),
+        ) );
+
+        if ( empty( $thumbResult ) ) {
+            echo 'Fatal error! -> Empty result';
+        } else if ( !empty( $thumbResult['error'] ) ) {
+            echo 'An Error occurred: ' . $thumbResult['error'];
+        } else if ( empty( $thumbResult['url'] ) ) {
+            echo 'Fatal error! -> Thumb not found';
+        } else if ( filter_has_var( INPUT_GET, 'returnThumb' ) ) {
+            header( "Content-type: image/jpeg" );
+            echo $thumbResult['thumb'];
+        } else {
+            if ( filter_has_var( INPUT_GET, 'debug' ) ) {
+                header( 'Location: ' . $thumbResult['url'] );
+            } else {
+                var_dump( $thumbResult );
+            }
         }
     }
 

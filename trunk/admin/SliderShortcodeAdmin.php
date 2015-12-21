@@ -318,11 +318,12 @@ class SliderShortcodeAdmin {
             return;
         }
 
-        if ( !isset( $_POST['post_type'] ) ) {
+        if ( !filter_has_var( INPUT_POST, 'post_type' ) ) {
             return;
         }
 
-        if ( $_POST['post_type'] == 'page' ) {
+        $postType = filter_input( INPUT_POST, 'post_type' );
+        if ( $postType == 'page' ) {
             if ( !current_user_can( 'edit_page', $postId ) ) {
                 return;
             }
@@ -331,6 +332,7 @@ class SliderShortcodeAdmin {
                 return;
             }
         }
+
         // Save form-fields
         if ( !empty( $this->optionFields ) ) {
             foreach ( $this->optionFields as $key => $postOption ) {

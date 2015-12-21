@@ -27,7 +27,14 @@ if ( $safemode == 'on' || $safemode == 'yes' || $safemode == 'true' ) {
 
 $errorMsg = '';
 $success = false;
-if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $_REQUEST['uploadfolder'] ) ) {
+
+
+$uploadFolder = filter_input( INPUT_GET, 'uploadfolder');
+if ( empty( $uploadFolder ) ) {
+    $uploadFolder = filter_input( INPUT_POST, 'uploadfolder');
+}
+
+if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $uploadFolder ) ) {
     $uploadFile = $uploadDir . '/cache/' . $fileHandler->getName();
 
     $errorMsg = '';
@@ -40,16 +47,17 @@ if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $_REQUEST
     $allowTypes = array_map( 'image_type_to_mime_type', $imageTypes );
     array_push( $allowTypes, 'image/x-png', 'image/jpeg', 'application/octet-stream' );
 
+
     if ( !file_exists( $uploadDir . '/gallery' ) ) {
         mkdir( $uploadDir . '/gallery' );
         @chmod( $uploadDir . '/gallery', octdec( '0777' ) );
     }
-    if ( !file_exists( $uploadDir . '/gallery/' . $_REQUEST['uploadfolder'] ) ) {
-        mkdir( $uploadDir . '/gallery/' . $_REQUEST['uploadfolder'] );
-        @chmod( $uploadDir . '/gallery/' . $_REQUEST['uploadfolder'], octdec( '0777' ) );
+    if ( !file_exists( $uploadDir . '/gallery/' . $uploadFolder ) ) {
+        mkdir( $uploadDir . '/gallery/' . $uploadFolder );
+        @chmod( $uploadDir . '/gallery/' . $uploadFolder, octdec( '0777' ) );
     }
 
-    $imagepath = $uploadDir . '/gallery/' . $_REQUEST['uploadfolder'] . '/' . $filename;
+    $imagepath = $uploadDir . '/gallery/' . $uploadFolder . '/' . $filename;
 
     $success = copy( $uploadFile, $imagepath );
     // delete tempfile

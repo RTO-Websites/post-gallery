@@ -63,15 +63,15 @@
     });
 
     // make pics sortable
-    if (jQuery.fn.sortable) {
-      jQuery(".sortable-pics").sortable();
-      jQuery(".sortable-pics").on("sortupdate", function (event, ui) {
+    if ($.fn.sortable) {
+      $(".sortable-pics").sortable();
+      $(".sortable-pics").on("sortupdate", function (event, ui) {
         pgCloseDetails();
         var input = jQuery("#postgalleryImagesort"),
           value = [],
           count = 0;
 
-        jQuery(".sortable-pics > li > img").each(function (index, element) {
+        $(".sortable-pics > li > img").each(function (index, element) {
           value[count] = jQuery(element).data("src");
           count += 1;
         });
@@ -82,8 +82,8 @@
     if (typeof(postgalleryLang) !== 'undefined') {
       // add upload
       checkForUpload();
-      jQuery(".qq-upload-drop-area span").html(postgalleryLang.moveHere);
-      jQuery(".qq-upload-button").addClass("button");
+      $(".qq-upload-drop-area span").html(postgalleryLang.moveHere);
+      $(".qq-upload-button").addClass("button");
     }
   });
 })(jQuery);

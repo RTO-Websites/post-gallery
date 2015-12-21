@@ -290,9 +290,9 @@ class PostGallery {
                         'path' => $uploadUrl . '/' . $file,
                         'url' => $uploadFullUrl . '/' . $file,
                         'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
-                        'title' => $titles[$file],
-                        'desc' => $descs[$file],
-                        'alt' => $alts[$file],
+                        'title' => !empty( $titles[$file]) ? $titles[$file] : '',
+                        'desc' => !empty( $descs[$file]) ? $descs[$file] : '',
+                        'alt' => !empty( $alts[$file]) ? $alts[$file] : '',
                     );
                 }
             }
