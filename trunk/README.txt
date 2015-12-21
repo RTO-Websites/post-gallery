@@ -2,8 +2,8 @@
 Contributors: crazypsycho
 Donate link: https://github.com/crazypsycho
 Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
+Requires at least: 3.4
+Tested up to: 4.5
 Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,6 +13,11 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 == Description ==
 
 Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
+
+
+You can help to develop on
+https://github.com/crazypsycho/post-gallery
+
 
 == Screenshots ==
 
