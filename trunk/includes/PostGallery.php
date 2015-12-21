@@ -31,8 +31,7 @@ use Thumb\Thumb;
  * @subpackage PostGallery/includes
  * @author     crazypsycho <info@hennewelt.de>
  */
-class PostGallery
-{
+class PostGallery {
     static $cachedImages = array();
     static $cachedFolders = array();
 
@@ -73,8 +72,7 @@ class PostGallery
      *
      * @since    1.0.0
      */
-    public function __construct()
-    {
+    public function __construct() {
 
         $this->pluginName = 'post-gallery';
         $this->version = '1.0.0';
@@ -102,8 +100,7 @@ class PostGallery
      * @since    1.0.0
      * @access   private
      */
-    private function loadDependencies()
-    {
+    private function loadDependencies() {
 
         $this->loader = new PostGalleryLoader();
 
@@ -118,8 +115,7 @@ class PostGallery
      * @since    1.0.0
      * @access   private
      */
-    private function setLocale()
-    {
+    private function setLocale() {
 
         $pluginI18n = new PostGalleryI18n();
         $pluginI18n->setDomain( $this->getPostGallery() );
@@ -135,8 +131,7 @@ class PostGallery
      * @since    1.0.0
      * @access   private
      */
-    private function defineAdminHooks()
-    {
+    private function defineAdminHooks() {
 
         $pluginAdmin = new PostGalleryAdmin( $this->getPostGallery(), $this->getVersion() );
 
@@ -152,8 +147,7 @@ class PostGallery
      * @since    1.0.0
      * @access   private
      */
-    private function definePublicHooks()
-    {
+    private function definePublicHooks() {
 
         $pluginPublic = new PostGalleryPublic( $this->getPostGallery(), $this->getVersion() );
 
@@ -167,8 +161,7 @@ class PostGallery
      *
      * @since    1.0.0
      */
-    public function run()
-    {
+    public function run() {
         $this->loader->run();
     }
 
@@ -179,8 +172,7 @@ class PostGallery
      * @since     1.0.0
      * @return    string    The name of the plugin.
      */
-    public function getPostGallery()
-    {
+    public function getPostGallery() {
         return $this->pluginName;
     }
 
@@ -190,8 +182,7 @@ class PostGallery
      * @since     1.0.0
      * @return    PostGalleryLoader    Orchestrates the hooks of the plugin.
      */
-    public function getLoader()
-    {
+    public function getLoader() {
         return $this->loader;
     }
 
@@ -201,8 +192,7 @@ class PostGallery
      * @since     1.0.0
      * @return    string    The version number of the plugin.
      */
-    public function getVersion()
-    {
+    public function getVersion() {
         return $this->version;
     }
 
@@ -213,8 +203,7 @@ class PostGallery
      * @param {array} $images
      * @return {array}
      */
-    public static function sortImages( $images, $postid )
-    {
+    public static function sortImages( $images, $postid ) {
         // get post in default language
         $orgPost = PostGallery::getOrgPost( $postid );
         if ( !empty( $orgPost ) ) {
@@ -229,9 +218,9 @@ class PostGallery
             $count = 0;
             $sort_array = explode( ',', $sort );
             foreach ( $sort_array as $key ) {
-                if ( !empty( $images[ $key ] ) ) {
-                    $sortimages[ $key ] = $images[ $key ];
-                    unset( $images[ $key ] );
+                if ( !empty( $images[$key] ) ) {
+                    $sortimages[$key] = $images[$key];
+                    unset( $images[$key] );
                 }
                 $count += 1;
             }
@@ -247,19 +236,18 @@ class PostGallery
      * @param type $postid
      * @return type
      */
-    public static function getImages( $postid = null )
-    {
-        if ( empty( $postid ) && empty( $GLOBALS[ 'post' ] ) ) {
+    public static function getImages( $postid = null ) {
+        if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
             return;
         }
         if ( empty( $postid ) ) {
-            $postid = $GLOBALS[ 'post' ]->ID;
-            $post = $GLOBALS[ 'post' ];
+            $postid = $GLOBALS['post']->ID;
+            $post = $GLOBALS['post'];
         }
 
         // check if image list is in cache
-        if ( isset( PostGallery::$cachedImages[ $postid ] ) ) {
-            return PostGallery::$cachedImages[ $postid ];
+        if ( isset( PostGallery::$cachedImages[$postid] ) ) {
+            return PostGallery::$cachedImages[$postid];
         }
 
         if ( empty( $post ) ) {
@@ -270,9 +258,9 @@ class PostGallery
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
             $postid = $orgPost->ID;
-            if ( isset( PostGallery::$cachedImages[ $postid ] ) ) {
+            if ( isset( PostGallery::$cachedImages[$postid] ) ) {
                 // check if image list is in cache
-                return PostGallery::$cachedImages[ $postid ];
+                return PostGallery::$cachedImages[$postid];
             }
         }
 
@@ -284,8 +272,8 @@ class PostGallery
 
         //$imageDir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
         $imageDir = PostGallery::getImageDir( $post );
-        $uploadDir = $uploads[ 'basedir' ] . '/gallery/' . $imageDir;
-        $uploadFullUrl = $uploads[ 'baseurl' ] . '/gallery/' . $imageDir;
+        $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
+        $uploadFullUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
         $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadFullUrl );
         $images = array();
 
@@ -297,20 +285,20 @@ class PostGallery
                     $descs = get_post_meta( $postid, 'postgalleryDescs', true );
                     $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
 
-                    $images[ $file ] = array(
+                    $images[$file] = array(
                         'filename' => $file,
-                        'path'     => $uploadUrl . '/' . $file,
-                        'url'      => $uploadFullUrl . '/' . $file,
+                        'path' => $uploadUrl . '/' . $file,
+                        'url' => $uploadFullUrl . '/' . $file,
                         'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
-                        'title'    => $titles[$file],
-                        'desc'     => $descs[$file],
-                        'alt'      => $alts[$file],
+                        'title' => $titles[$file],
+                        'desc' => $descs[$file],
+                        'alt' => $alts[$file],
                     );
                 }
             }
         }
         $images = PostGallery::sortImages( $images, $postid );
-        PostGallery::$cachedImages[ $postid ] = $images;
+        PostGallery::$cachedImages[$postid] = $images;
         return $images;
     }
 
@@ -320,8 +308,7 @@ class PostGallery
      * @param type $postid
      * @return type
      */
-    public static function getImagesResized( $postid = 0, $args )
-    {
+    public static function getImagesResized( $postid = 0, $args ) {
         $images = PostGallery::getImages( $postid );
 
         return PostGallery::getPicsResized( $images, $args );
@@ -334,20 +321,19 @@ class PostGallery
      * @param {array} $args (singlequotes, quotes)
      * @return {string}
      */
-    public static function getImageString( $postid = null, $args = array() )
-    {
+    public static function getImageString( $postid = null, $args = array() ) {
         $images = PostGallery::getImages( $postid );
         if ( empty( $images ) ) {
             return '';
         }
         $imageList = array();
         foreach ( $images as $image ) {
-            $imageList[] = $image[ 'path' ];
+            $imageList[] = $image['path'];
         }
         $imageString = '';
-        if ( !empty( $args[ 'quotes' ] ) ) {
+        if ( !empty( $args['quotes'] ) ) {
             $imageString = '"' . implode( '","', $imageList ) . '"';
-        } elseif ( !empty( $args[ 'singlequotes' ] ) ) {
+        } elseif ( !empty( $args['singlequotes'] ) ) {
             $imageString = "'" . implode( "','", $imageList ) . "'";
         } else {
             $imageString = implode( ',', $imageList );
@@ -362,8 +348,7 @@ class PostGallery
      * @param {int} $post_id
      * @return boolean|object
      */
-    public static function getOrgPost( $currentPostId )
-    {
+    public static function getOrgPost( $currentPostId ) {
         if ( class_exists( 'SitePress' ) ) {
             global $locale, $sitepress;
 
@@ -384,10 +369,9 @@ class PostGallery
      * @param type $args
      * @return type
      */
-    static function getThumbUrl( $filepath, $args = array() )
-    {
+    static function getThumbUrl( $filepath, $args = array() ) {
         $thumb = PostGallery::getThumb( $filepath, $args );
-        $thumbUrl = ( !empty( $thumb[ 'url' ] ) ? $thumb[ 'url' ] : get_bloginfo( 'wpurl' ) . '/' . $args[ 'path' ] );
+        $thumbUrl = ( !empty( $thumb['url'] ) ? $thumb['url'] : get_bloginfo( 'wpurl' ) . '/' . $args['path'] );
         $thumbUrl = str_replace( '//wp-content', '/wp-content', $thumbUrl );
 
         return $thumbUrl;
@@ -400,18 +384,17 @@ class PostGallery
      * @param type $args
      * @return type
      */
-    static function getThumb( $filepath, $args = array() )
-    {
-        if ( empty( $args[ 'width' ] ) ) {
-            $args[ 'width' ] = 1000;
+    static function getThumb( $filepath, $args = array() ) {
+        if ( empty( $args['width'] ) ) {
+            $args['width'] = 1000;
         }
-        if ( empty( $args[ 'height' ] ) ) {
-            $args[ 'height' ] = 1000;
+        if ( empty( $args['height'] ) ) {
+            $args['height'] = 1000;
         }
-        if ( !isset( $args[ 'scale' ] ) ) {
-            $args[ 'scale' ] = 1;
+        if ( !isset( $args['scale'] ) ) {
+            $args['scale'] = 1;
         }
-        $args[ 'path' ] = str_replace( get_bloginfo( 'wpurl' ), '', $filepath );
+        $args['path'] = str_replace( get_bloginfo( 'wpurl' ), '', $filepath );
 
         $thumbInstance = Thumb::getInstance();
         $thumb = $thumbInstance->getThumb( $args );
@@ -425,13 +408,12 @@ class PostGallery
      * @param type $post_name
      * @return string
      */
-    static function getImageDir( $wpost )
-    {
+    static function getImageDir( $wpost ) {
         $postName = $wpost->post_title;
         $postId = $wpost->ID;
 
-        if ( isset( PostGallery::$cachedFolders[ $postId ] ) ) {
-            return PostGallery::$cachedFolders[ $postId ];
+        if ( isset( PostGallery::$cachedFolders[$postId] ) ) {
+            return PostGallery::$cachedFolders[$postId];
         }
 
         $search = array( 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&' );
@@ -445,7 +427,7 @@ class PostGallery
             )
         );
 
-        $baseDir = $uploads[ 'basedir' ] . '/gallery/';
+        $baseDir = $uploads['basedir'] . '/gallery/';
 
         if ( empty( $newImageDir ) ) {
             return false;
@@ -459,13 +441,12 @@ class PostGallery
         $newImageDir = $newImageDir . '_' . $postId;
         PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );
 
-        PostGallery::$cachedFolders[ $postId ] = $newImageDir;
+        PostGallery::$cachedFolders[$postId] = $newImageDir;
 
         return $newImageDir;
     }
 
-    static function renameDir( $oldDir, $newDir )
-    {
+    static function renameDir( $oldDir, $newDir ) {
         if ( $newDir == $oldDir ) {
             return;
         }
@@ -500,8 +481,7 @@ class PostGallery
      * @param type $args
      * @return type
      */
-    static function getPicsResized( $pics, $args )
-    {
+    static function getPicsResized( $pics, $args ) {
         if ( !is_array( $pics ) ) {
             return $pics;
         }
@@ -509,15 +489,15 @@ class PostGallery
         foreach ( $pics as $pic ) {
             // create resized image
             if ( is_array( $pic ) ) {
-                if ( !empty( $pic[ 'url' ] ) ) {
-                    $newPic = PostGallery::getThumb( $pic[ 'url' ], $args );
-                } else if ( !empty( $pic[ 'path' ] ) ) {
-                    $newPic = PostGallery::getThumb( $pic[ 'path' ], $args );
+                if ( !empty( $pic['url'] ) ) {
+                    $newPic = PostGallery::getThumb( $pic['url'], $args );
+                } else if ( !empty( $pic['path'] ) ) {
+                    $newPic = PostGallery::getThumb( $pic['path'], $args );
                 }
             } else {
                 $newPic = PostGallery::getThumb( $pic, $args );
             }
-            if ( !empty( $newPic ) && is_array( $pic )) {
+            if ( !empty( $newPic ) && is_array( $pic ) ) {
                 // add info (title and description)
                 $newPics[] = array_merge( $pic, $newPic );
             } else if ( !empty( $newPic ) ) {
@@ -536,13 +516,12 @@ class PostGallery
      * @param type $postid
      * @return boolean
      */
-    static function hasPostThumbnail( $postid = 0 )
-    {
-        if ( empty( $postid ) && empty( $GLOBALS[ 'post' ] ) ) {
+    static function hasPostThumbnail( $postid = 0 ) {
+        if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
             return;
         }
         if ( empty( $postid ) ) {
-            $postid = $GLOBALS[ 'post' ]->ID;
+            $postid = $GLOBALS['post']->ID;
         }
 
         if ( empty( $postid ) ) {

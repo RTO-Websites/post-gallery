@@ -319,7 +319,7 @@ class Thumb {
                 } else {
                     $newHeight = 9999;
                 }
-                // no break
+            // no break
             case 2: // let aspect ratio, scale 1:1
                 switch ( $orgWidth > $orgHeight ) {
                     case true: // breitformat

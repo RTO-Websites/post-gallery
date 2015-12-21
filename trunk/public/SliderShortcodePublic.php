@@ -127,10 +127,10 @@ class SliderShortcodePublic {
 
 
             if ( !empty( $image['title'] ) ) {
-                echo '<div class="slider-image-title">' . $image['title'].'</div>';
+                echo '<div class="slider-image-title">' . $image['title'] . '</div>';
             }
             if ( !empty( $image['desc'] ) ) {
-                echo '<div class="slider-image-desc">' . $image['desc'].'</div>';
+                echo '<div class="slider-image-desc">' . $image['desc'] . '</div>';
             }
             echo '</div>';
         }
