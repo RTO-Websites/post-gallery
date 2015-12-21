@@ -1,4 +1,12 @@
 
+.owl-carousel .owl-item img {
+    -webkit-transform-style: flat;
+    -moz-transform-style: flat;
+    -ms-transform-style: flat;
+    -o-transform-style: flat;
+    transform-style: flat;
+}
+
 body.liteboxgallery-open {
     overflow: hidden;
 }
@@ -145,4 +153,21 @@ body.liteboxgallery-open {
 
 .litebox-gallery .thumb-container .owl-item {
     text-align: center;
+}
+
+/** slider **/
+.postgallery-slider .slider-image {
+    position: relative;
+}
+
+.postgallery-slider .slider-image-title {
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+}
+
+.postgallery-slider .slider-image-desc {
+    position: absolute;
+    top: 1.5em;
+    left: 0.5em;
 }

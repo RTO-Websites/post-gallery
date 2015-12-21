@@ -69,6 +69,7 @@ class PostGalleryPublic {
         $this->version = $version;
         $this->options = MagicAdminPage::getOption( 'post-gallery' );
 
+        $sliderShortcode = new SliderShortcodePublic( $pluginName, $version );
 
         add_filter( 'the_content', array( $this, 'addGalleryToContent' ) );
         add_shortcode( 'postgallery', array( $this, 'postgalleryShortcode' ) );
@@ -300,11 +301,6 @@ class PostGalleryPublic {
         $defaultTemplateDir = POSTGALLERY_DIR . '/templates';
 
         $images = PostGallery::getImages( $postid );
-        /*$titles = get_post_meta( $postid, 'postgalleryTitles', true );
-        $descs = get_post_meta( $postid, 'postgalleryDescs', true );
-        $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );*/
-
-        // TODO: Add alt, desc, title to image-array directly in getImages
 
         if ( empty( $template ) || $template == 'global' ) {
             $template = $this->options['globalTemplate'];
