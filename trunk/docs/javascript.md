@@ -4,12 +4,12 @@
 You give a list of images and the litebox will open with these pics
 ```
 var picString = 'image1.jpg,image2.jpg,image3.jpg';
-liteboxGalleryInstance.openGalleryByPics( picString );
+window.litebox.openGalleryByPics( picString );
 ```
 
 ### Close Litebox
 ```
-liteboxGalleryInstance.closeGallery();
+window.litebox.closeGallery();
 ```
 
 ### Classes
@@ -22,7 +22,7 @@ Prevent litebox:
 ### Callbacks
 Box init
 ```
-jQuery('#gallery_image').trigger('box-init', {
+jQuery('#litebox-gallery').trigger('box-init', {
     state: 'before', // complete
     container: galleryContainer,
     picLinks: items,
@@ -31,25 +31,9 @@ jQuery('#gallery_image').trigger('box-init', {
 });
 ```
 
-On arrow-click:
-```
-jQuery('#gallery_image').trigger('box-swap', {
-    state: 'complete',
-    direction: 'prev' // 'next'
-});
-```
-
-On touch (start, move, end)
-```
-jQuery('#gallery_image').trigger('box-touch', {
-    state: 'start', // 'move', 'end'
-    event: event
-});
-```
-
 On close of litebox
 ```
-jQuery('#gallery_image').trigger('box-close', { 
+jQuery('#litebox-gallery').trigger('box-close', { 
     state: 'complete'  // begin
 });
 ```
