@@ -297,6 +297,7 @@ class PostGallery {
                 }
             }
         }
+
         $images = PostGallery::sortImages( $images, $postid );
         PostGallery::$cachedImages[$postid] = $images;
         return $images;

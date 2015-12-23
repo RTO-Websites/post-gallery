@@ -63,13 +63,12 @@ class PostGalleryPublic {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
-
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
         $this->version = $version;
         $this->options = MagicAdminPage::getOption( 'post-gallery' );
 
-        $sliderShortcode = new SliderShortcodePublic( $pluginName, $version );
+        new SliderShortcodePublic( $pluginName, $version );
 
         add_filter( 'the_content', array( $this, 'addGalleryToContent' ) );
         add_shortcode( 'postgallery', array( $this, 'postgalleryShortcode' ) );
@@ -108,20 +107,19 @@ class PostGalleryPublic {
 
         wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
 
+        $buildPath = plugin_dir_url( __FILE__ ) . '../build';
 
         if ( !empty( $this->options['useOldOwl'] ) ) {
             // owl 1
-            $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
-            wp_enqueue_style( 'owl.carousel', $owlPath . '/owl.carousel.css' );
-            wp_enqueue_style( 'owl.carousel.theme', $owlPath . '/owl.theme.css' );
-            wp_enqueue_style( 'owl.carousel.transitions', $owlPath . '/owl.transitions.css' );
+            wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel-v1.css' );
+            wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme-v1.css' );
+            wp_enqueue_style( 'owl.carousel.transitions', $buildPath . '/css/owl.transitions-v1.css' );
         } else {
             // owl 2
-            $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
-            wp_enqueue_style( 'owl.carousel', $owlPath . '/assets/owl.carousel.min.css' );
-            wp_enqueue_style( 'owl.carousel.theme', $owlPath . '/assets/owl.theme.default.min.css' );
+            wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel.min.css' );
+            wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme.default.min.css' );
         }
-        wp_enqueue_style( 'animate.css', plugin_dir_url( __FILE__ ) . '../bower_components/animate.css/animate.min.css' );
+        wp_enqueue_style( 'animate.css', $buildPath .  '/css/animate.min.css' );
     }
 
     /**
@@ -143,16 +141,15 @@ class PostGalleryPublic {
          * class.
          */
 
-        wp_enqueue_script( 'lazysizes', plugin_dir_url( __FILE__ )
-            . '../bower_components/lazysizes'
-            . '/lazysizes.min.js' );
+        $buildPath = plugin_dir_url( __FILE__ ) . '../build';
+
+        wp_enqueue_script( 'lazysizes', $buildPath
+            . '/js/lazysizes.min.js' );
 
         if ( !empty( $this->options['useOldOwl'] ) ) {
-            $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owlcarousel/owl-carousel';
-            wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array( 'jquery' ) );
+            wp_enqueue_script( 'owl.carousel', $buildPath . '/owl.carouse-v1l.min.js', array( 'jquery' ) );
         } else {
-            $owlPath = plugin_dir_url( __FILE__ ) . '../bower_components/owl.carousel/dist';
-            wp_enqueue_script( 'owl.carousel', $owlPath . '/owl.carousel.min.js', array( 'jquery' ) );
+            wp_enqueue_script( 'owl.carousel', $buildPath . '/owl.carousel.min.js', array( 'jquery' ) );
         }
 
         wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', array( 'jquery' ), $this->version, false );
