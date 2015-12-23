@@ -26,8 +26,9 @@
 
       editor.addButton('PostGallerySlider', {
         title: 'Slider',
-        icon: 'icon dashicons-images-alt',
+        icon: 'icon dashicons-images-alt mce-i-dashicon',
         cmd: 'mcePostGallerySlider',
+        text: ' Slider'
       });
     },
 
