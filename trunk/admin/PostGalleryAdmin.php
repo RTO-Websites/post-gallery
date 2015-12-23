@@ -66,7 +66,7 @@ class PostGalleryAdmin {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
-        load_plugin_textdomain( $pluginName, false, '/post-gallery/languages' );
+        load_plugin_textdomain( $pluginName, false, '/postgallery/languages' );
         $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
