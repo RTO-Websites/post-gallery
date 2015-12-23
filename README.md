@@ -9,6 +9,7 @@ Currently in development, soon available on wordpress.org
 ### Requirements
 - Composer (https://getcomposer.org/)
 - [npm bower](http://bower.io/)
+- Grunt (http://gruntjs.com/)
 
 ### Run this
 ```
@@ -16,5 +17,7 @@ $ git clone git@github.com:crazypsycho/post-gallery.git
 cd trunk
 bower install
 composer install
+npm install
+grunt
 ```
 
