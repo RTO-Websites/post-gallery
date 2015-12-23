@@ -113,7 +113,7 @@ class PostGalleryPublic {
             // owl 1
             wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel-v1.css' );
             wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme-v1.css' );
-            wp_enqueue_style( 'owl.carousel.transitions', $buildPath . '/css/owl.transitions-v1.css' );
+            wp_enqueue_style( 'owl.carousel.transitions', $buildPath . '/css/owl.transition-v1.css' );
         } else {
             // owl 2
             wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel.min.css' );
@@ -147,9 +147,9 @@ class PostGalleryPublic {
             . '/js/lazysizes.min.js' );
 
         if ( !empty( $this->options['useOldOwl'] ) ) {
-            wp_enqueue_script( 'owl.carousel', $buildPath . '/owl.carouse-v1l.min.js', array( 'jquery' ) );
+            wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', array( 'jquery' ) );
         } else {
-            wp_enqueue_script( 'owl.carousel', $buildPath . '/owl.carousel.min.js', array( 'jquery' ) );
+            wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', array( 'jquery' ) );
         }
 
         wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', array( 'jquery' ), $this->version, false );

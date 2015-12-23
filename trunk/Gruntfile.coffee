@@ -58,6 +58,10 @@ module.exports = (grunt) ->
             src: ['<%= appConfig.src %>/owlcarousel/owl-carousel/owl.transitions.css']
             dest: '<%= appConfig.dest %>/css/owl.transition-v1.css'
           },
+          {
+            src: ['<%= appConfig.src %>/owlcarousel/owl-carousel/grabbing.png']
+            dest: '<%= appConfig.dest %>/css/grabbing.png'
+          },
 
 
         ],
