@@ -11,6 +11,7 @@
  */
 
 use Admin\SliderShortcodeAdmin;
+use Admin\PostGalleryMceButton;
 use Inc\PostGallery;
 use MagicAdminPage\MagicAdminPage;
 use Thumb\Thumb;
@@ -80,7 +81,9 @@ class PostGalleryAdmin {
         $postgalleryPage = new MagicAdminPage(
             'post-gallery',
             'PostGallery',
-            'PostGallery'
+            'PostGallery',
+            null,
+            'dashicons-format-gallery'
         );
 
         $postgalleryPage->addFields( array(
@@ -201,7 +204,8 @@ class PostGalleryAdmin {
         ) );
 
 
-        $shortcodeAdmin = new SliderShortcodeAdmin( $pluginName, $version );
+        new SliderShortcodeAdmin( $pluginName, $version );
+        new PostGalleryMceButton( $pluginName );
 
         add_action( 'add_meta_boxes', array( $this, 'registerPostSettings' ) );
         add_action( 'save_post', array( $this, 'savePostMeta' ), 10, 2 );
@@ -463,7 +467,6 @@ class PostGalleryAdmin {
             return;
         }
 
-        //var_dump($post);
         echo '
 			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . WP_PLUGIN_URL . '/post-gallery' . '"></div>
 			<div class="postgallery-upload-error"></div>
