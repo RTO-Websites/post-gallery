@@ -1,0 +1,198 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Post-Gallery v1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-26 15:54+0100\n"
+"PO-Revision-Date: 2015-12-23 13:54+0100\n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.8.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-Basepath: .\n"
+"Last-Translator: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
+
+msgid "Enable"
+msgstr "Aktiviere"
+
+msgid "Debug-Mode"
+msgstr "Debug-Modus"
+
+msgid "Animation"
+msgstr "Animation"
+
+msgid "Example"
+msgstr "Beispiel"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Post-Gallery"
+msgstr ""
+
+msgid "Select posts"
+msgstr "Wähle Beiträge"
+
+msgid "Select categories"
+msgstr "Wähle Kategorien"
+
+msgid "Choose Image"
+msgstr "Wähle Bild"
+
+msgid "Position"
+msgstr ""
+
+msgid "bottom"
+msgstr "unterhalb"
+
+msgid "top"
+msgstr "oberhalb"
+
+msgid "custom"
+msgstr "eigene"
+
+msgid "Thumbs (150x150)"
+msgstr ""
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Slider"
+msgstr "Slider"
+
+msgid "Slider with Thumbs"
+msgstr "Slider mit Vorschaugrafiken"
+
+msgid "Template"
+msgstr ""
+
+msgid " (from Theme)"
+msgstr " (vom Seitentemplate)"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Are you sure you want to delete all pictures?"
+msgstr "Sind Sie sich sicher, dass Sie alle Galeriebilder löschen möchten?"
+
+msgid "Move files here."
+msgstr "Dateien hierher ziehen."
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Notice"
+msgstr "Hinweis"
+
+msgid "From global setting"
+msgstr "Von globaler Einstellung"
+
+msgid "Default with thumbs"
+msgstr "Standard mit Thumbs"
+
+msgid "Global position"
+msgstr "Globale Position"
+
+msgid "Global template"
+msgstr "Globales Template"
+
+msgid "Main-Settings"
+msgstr "Grundeinstellungen"
+
+msgid "Use old owl-carousel (v1.3)"
+msgstr "Verwende altes Owl-Carousel (v1.3)"
+
+msgid "Stretch small images (for watermark)"
+msgstr "Strecke kleine Bilder (für Wasserzeichen)"
+
+msgid "Litebox-Settings"
+msgstr "Litebox-Einstellungen"
+
+msgid "Litebox-Template"
+msgstr ""
+
+msgid "Owl-Theme"
+msgstr ""
+
+msgid "Owl-Litebox-Config"
+msgstr "Owl-Litebox-Konfiguration"
+
+msgid "Owl-Config for Thumbnail-Slider"
+msgstr "Owl-Konfiguration für Thumbnail-Slider"
+
+msgid "You can use these animations"
+msgstr "Du kannst diese Animationen verwenden"
+
+msgid "You can use these options"
+msgstr "Du kannst diese Optionen verwenden"
+
+msgid "Gallery-Settings"
+msgstr "Galerie-Einstellungen"
+
+msgid "Gallery-Pictures"
+msgstr "Galerie-Bilder"
+
+msgid "Image"
+msgstr "Bild"
+
+msgid "Select image"
+msgstr "Wähle Bild"
+
+msgid "Color"
+msgstr "Farbe"
+
+msgid "crop"
+msgstr "Zuschneiden"
+
+msgid "Keep proportions (long edge)"
+msgstr "Behalte Seitenverhältnis (lange Kante)"
+
+msgid "Keep proportions (short edge)"
+msgstr "Behalte Seitenverhältnis (kurze Kante)"
+
+msgid "Ignore proportions"
+msgstr "Ignoriere Seitenverhältnis"
+
+msgid "Width"
+msgstr "Breite"
+
+msgid "Height"
+msgstr "Höhe"
+
+msgid "Image-Width"
+msgstr "Bild-Breite"
+
+msgid "Image-Height"
+msgstr "Bild-Höhe"
+
+msgid "Image-Scale"
+msgstr "Bild-Skalierung"
+
+msgid "Load images from"
+msgstr "Lade Bilder von"
+
+msgid "Presets"
+msgstr "Vorlagen"
+
+msgid "Slider-Settings"
+msgstr "Slider-Einstellungen"
+
+msgid "Owl-Config"
+msgstr "Owl-Konfiguration"
+
+msgid "Enable Click-Events"
+msgstr "Aktiviere Klick-Events"
+
+msgid "Enable Keypress-Events"
+msgstr "Aktiviere Tastatur-Events"

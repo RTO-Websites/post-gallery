@@ -143,7 +143,7 @@ class PostGalleryAdmin {
                 'title' => __( 'Litebox-Owl-Settings', $this->textdomain ),
             ),
             'owlTheme' => array(
-                'type' => 'input',
+                'type' => 'text',
                 'default' => 'default',
                 'title' => __( 'Owl-Theme', $this->textdomain ),
                 'list' => 'postgallery-owl-theme',
