@@ -169,6 +169,15 @@ class PostGalleryPublic {
     }
 
 
+    /**
+     * Hooks has_post_thumbnail and return true if a gallery-image exists
+     *
+     * @param $null
+     * @param $object_id
+     * @param $meta_key
+     * @param $single
+     * @return bool|null
+     */
     public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single ) {
 
         if ( $meta_key == '_thumbnail_id' ) {
