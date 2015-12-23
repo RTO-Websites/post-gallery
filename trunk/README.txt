@@ -14,6 +14,8 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 
 Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
 
+It comes with a fullscreen-litebox-gallery and also an easy to use slider-configurator.
+
 
 You can help to develop on
 https://github.com/crazypsycho/post-gallery
