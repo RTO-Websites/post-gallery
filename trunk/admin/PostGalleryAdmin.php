@@ -574,24 +574,24 @@ class PostGalleryAdmin {
             }
         }
         // Save templates
-        if ( filter_has_var( 'postgalleryTemplate' ) ) {
+        if ( filter_has_var( INPUT_POST, 'postgalleryTemplate' ) ) {
             update_post_meta( $curLangPostId, 'postgalleryTemplate', filter_input( INPUT_POST, 'postgalleryTemplate' ) );
         }
         // save sort
-        if ( filter_has_var( 'postgalleryImagesort' ) ) {
+        if ( filter_has_var( INPUT_POST, 'postgalleryImagesort' ) ) {
             update_post_meta( $postId, 'postgalleryImagesort', filter_input( INPUT_POST, 'postgalleryImagesort' ) );
         }
         // save image titles
-        if ( filter_has_var( 'postgalleryTitles' ) ) {
-            update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles' ) );
+        if ( filter_has_var( INPUT_POST, 'postgalleryTitles' ) ) {
+            update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
         // save image descriptions
-        if ( filter_has_var( 'postgalleryDescs' ) ) {
-            update_post_meta( $postId, 'postgalleryDescs', filter_input( INPUT_POST, 'postgalleryDescs' ) );
+        if ( filter_has_var( INPUT_POST, 'postgalleryDescs' ) ) {
+            update_post_meta( $postId, 'postgalleryDescs', filter_input( INPUT_POST, 'postgalleryDescs', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
         // save image alt
-        if ( filter_has_var( 'postgalleryAltAttributes' ) ) {
-            update_post_meta( $postId, 'postgalleryAltAttributes', filter_input( INPUT_POST, 'postgalleryAltAttributes' ) );
+        if ( filter_has_var( INPUT_POST, 'postgalleryAltAttributes' ) ) {
+            update_post_meta( $postId, 'postgalleryAltAttributes', filter_input( INPUT_POST, 'postgalleryAltAttributes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
 
         $imageDir = PostGallery::getImageDir( $post );
