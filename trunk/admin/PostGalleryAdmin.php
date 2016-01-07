@@ -58,6 +58,8 @@ class PostGalleryAdmin {
 
     private $defaultTemplates;
 
+    private $optionFields = null;
+
     /**
      * Initialize the class and set its properties.
      *
@@ -70,6 +72,17 @@ class PostGalleryAdmin {
         $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
+
+        $this->optionFields = array( 'postgalleryPosition' => array(
+            'label' => __( 'Position', 'post-gallery' ),
+            'type' => 'select',
+            'value' => array(
+                'global' => __( 'From global setting', $this->textdomain ),
+                'bottom' => __( 'bottom', $this->textdomain ),
+                'top' => __( 'top', $this->textdomain ),
+                'custom' => __( 'custom', $this->textdomain ),
+            ),
+        ) );
 
         $this->defaultTemplates = array(
             'thumbs' => __( 'Thumbs (150x150)', $this->textdomain ),
@@ -345,6 +358,35 @@ class PostGalleryAdmin {
         }
 
         echo '<table class="form-table">';
+
+        if ( !empty( $this->optionFields ) ) {
+            // Loop Post-Options and generate inputs
+            foreach ( $this->optionFields as $key => $option ) {
+                echo '<tr valign="top">';
+                // Generate Label
+                echo '<th scope="row"><label class="theme_options_label" for="' . $key . '">' . $option['label'] . '</label></th>';
+                echo '<td>';
+
+                switch ( $option['type'] ) {
+                    case 'select':
+                        // Generate select
+                        echo '<select class="theme_options_input" name="' . $key . '" id="' . $key . '">';
+                        if ( !empty( $option['value'] ) && is_array( $option['value'] ) ) {
+                            foreach ( $option['value'] as $optionKey => $optionTitle ) {
+                                $selected = '';
+                                //echo '<br/>Key'.$option_key.'-'.get_post_meta($post->ID, $key, true);
+                                if ( $optionKey == get_post_meta( $curLangPost->ID, $key, true ) ) {
+                                    $selected = ' selected="selected"';
+                                }
+                                echo '<option value="' . $optionKey . '"' . $selected . '>' . $optionTitle . '</option>';
+                            }
+                        }
+                        echo '</select>';
+                        break;
+                }
+                echo '</td></tr>';
+            }
+        }
 
         // Template list
         echo '<tr valign="top">';
