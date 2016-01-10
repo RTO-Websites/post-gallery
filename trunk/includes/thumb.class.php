@@ -90,7 +90,7 @@ class Thumb {
             );
         }
 
-        if ( class_exists( 'Imagick' ) && filter_has_var( INPUT_GET, 'forceGd' ) ) {
+        if ( class_exists( 'Imagick' ) && !filter_has_var( INPUT_GET, 'forceGd' ) ) {
             $thumbResult = $this->getThumbImagick( $args );
         } else {
             $thumbResult = $this->getThumbGd( $args );

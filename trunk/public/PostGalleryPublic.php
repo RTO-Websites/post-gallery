@@ -243,10 +243,12 @@ class PostGalleryPublic {
             $path = explode( '/wp-content/', $path );
             $path = '/wp-content/' . array_pop( $path );
 
-            $thumb = Thumb::getThumb( $path, array(
+            $thumbInstance = new Thumb();
+            $thumb = $thumbInstance->getThumb( array(
+                'path' => $path,
                 'width' => $width,
                 'height' => $height,
-                'scale' => '0',
+                'scale' => 2,
             ) );
 
             $width = $height = 'auto';
