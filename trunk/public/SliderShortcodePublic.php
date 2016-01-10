@@ -100,7 +100,9 @@ class SliderShortcodePublic {
         if ( !empty( $loadFrom ) && is_array( $loadFrom ) ) {
             // load from other posts
             foreach ( $loadFrom as $loadId ) {
-                $images = array_merge( $images, PostGallery::getImages( $loadId ) );
+                if ( !empty( $loadId ) ) {
+                    $images = array_merge( $images, PostGallery::getImages( $loadId ) );
+                }
             }
         }
 
