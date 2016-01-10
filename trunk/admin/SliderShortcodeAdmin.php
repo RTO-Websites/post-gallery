@@ -170,8 +170,8 @@ class SliderShortcodeAdmin {
      * @return bool
      */
     public function _registerPostSettings() {
-        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', $this->textdomain ), array( $this, '_addSliderShortcodeView' ), 'postgalleryslider', 10 );
-        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', $this->textdomain ), array( $this, '_addSliderSettings' ), 'postgalleryslider', 9 );
+        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', $this->textdomain ), array( $this, '_addSliderShortcodeView' ), 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', $this->textdomain ), array( $this, '_addSliderSettings' ), 'postgalleryslider' );
 
         return false;
     }
