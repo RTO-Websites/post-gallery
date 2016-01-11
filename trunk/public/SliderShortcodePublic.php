@@ -59,6 +59,8 @@ class SliderShortcodePublic {
 
         $sliderid = $args[0];
 
+        $output = '';
+
         // get settings from post-meta
         $loadFrom = get_post_meta( $sliderid, 'sliderLoadFrom', true );
         $width = get_post_meta( $sliderid, 'sliderWidth', true );
@@ -121,27 +123,28 @@ class SliderShortcodePublic {
         $style .= !empty( $height ) ? 'max-height:' . $height . 'px;' : '';
 
         // output html
-        echo '<div class="pg-slider-' . $sliderid . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
+        $output .= '<div class="pg-slider-' . $sliderid . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
         foreach ( $images as $image ) {
-            echo '<div class="slider-image">
+            $output .= '<div class="slider-image">
                 <img width="' . $image['width'] . '" height="' . $image['height']
                 . '" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
 
 
             if ( !empty( $image['title'] ) ) {
-                echo '<div class="slider-image-title">' . $image['title'] . '</div>';
+                $output .= '<div class="slider-image-title">' . $image['title'] . '</div>';
             }
             if ( !empty( $image['desc'] ) ) {
-                echo '<div class="slider-image-desc">' . $image['desc'] . '</div>';
+                $output .= '<div class="slider-image-desc">' . $image['desc'] . '</div>';
             }
-            echo '</div>';
+            $output .= '</div>';
         }
-        echo '</div>';
+        $output .= '</div>';
 
         // output script
-        echo '<script>
+        $output .= '<script>
             jQuery(".pg-slider-' . $sliderid . '").owlCarousel({' . $owlConfig . '});
             </script>';
 
+        return $output;
     }
 }
