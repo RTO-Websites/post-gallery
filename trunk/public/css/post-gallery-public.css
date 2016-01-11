@@ -162,6 +162,10 @@ body.liteboxgallery-open {
   overflow: hidden;
 }
 
+.postgallery-slider .slider-image img {
+  display: inline-block;
+}
+
 .postgallery-slider .slider-image-title {
   position: absolute;
   top: 0.5em;
