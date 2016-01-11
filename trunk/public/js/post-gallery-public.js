@@ -1,51 +1,30 @@
-(function( $ ) {
+(function ($) {
 	'use strict';
-
-	/**
-	 * All of the code for your public-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note that this assume you're going to use jQuery, so it prepares
-	 * the $ function reference to be used within the scope of this
-	 * function.
-	 *
-	 * From here, you're able to define handlers for when the DOM is
-	 * ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * Or when the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and so on.
-	 *
-	 * Remember that ideally, we should not attach any more than a single DOM-ready or window-load handler
-	 * for any particular page. Though other scripts in WordPress core, other plugins, and other themes may
-	 * be doing this, we should try to minimize doing that in our own work.
-	 */
 
 	/**
 	 * DOM-Ready
 	 */
-	$(function() {
+	$(function () {
 		window.litebox = new LiteboxGallery(liteboxArgs);
 	});
 
+	$(window).on('resize', function () {
+		clearTimeout(window.pgRefreshTimeout);
+		window.pgRefreshTimeout = setTimeout(function () {
+			$('.postgallery-slider').each(function (index, element) {
+				$(element).trigger('refresh.owl.carousel');
+			});
+		}, 100);
+	});
 
-
-	window.getFullsizeThumbs = function(pics, owlSliderId, callback) {
+	window.getFullsizeThumbs = function (pics, owlSliderId, callback) {
 		var sizes = postGalleryCheckImageSize();
 
 		jQuery.ajax({
-			'type' : 'POST',
-			'url' : websiteUrl + '/?getThumbList',
-			'data' : { 'pics' : pics, 'width' : sizes[0], 'height' : sizes[1] },
-			'success' : function(data, textStatus) {
+			'type': 'POST',
+			'url': websiteUrl + '/?getThumbList',
+			'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
+			'success': function (data, textStatus) {
 				if (typeof(callback) === 'function') {
 					callback(jQuery.parseJSON(data));
 				}
@@ -53,15 +32,15 @@
 		});
 	};
 
-	window.getThumbs = function(pics, width, height, callback, scale) {
+	window.getThumbs = function (pics, width, height, callback, scale) {
 		if (typeof(scale) === 'undefined') {
 			scale = 0;
 		}
 		jQuery.ajax({
-			'type' : 'POST',
-			'url' : websiteUrl + '/?getThumbList',
-			'data' : { 'pics' : pics, 'width' : width, 'height' : height, scale: scale },
-			'success' : function(data, textStatus) {
+			'type': 'POST',
+			'url': websiteUrl + '/?getThumbList',
+			'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
+			'success': function (data, textStatus) {
 				if (typeof(callback) === 'function') {
 					callback(jQuery.parseJSON(data));
 				}
@@ -70,7 +49,7 @@
 	};
 
 
-	window.postGalleryCheckImageSize = function() {
+	window.postGalleryCheckImageSize = function () {
 		var galleryWidth = jQuery(window).width();
 		var galleryHeight = jQuery(window).height();
 		if (galleryHeight == 0) {
@@ -131,4 +110,4 @@
 		return [galleryWidth, galleryHeight];
 	};
 
-})( jQuery );
+})(jQuery);
