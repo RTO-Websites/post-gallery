@@ -117,8 +117,8 @@ class SliderShortcodePublic {
 
         // set style
         $style = '';
-        $style .= !empty( $width ) ? 'width:' . $width . 'px;' : '';
-        $style .= !empty( $height ) ? 'height:' . $height . 'px;' : '';
+        $style .= !empty( $width ) ? 'max-width:' . $width . 'px;' : '';
+        $style .= !empty( $height ) ? 'max-height:' . $height . 'px;' : '';
 
         // output html
         echo '<div class="pg-slider-' . $sliderid . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
