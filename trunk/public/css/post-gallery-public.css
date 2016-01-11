@@ -158,6 +158,8 @@ body.liteboxgallery-open {
 /** slider **/
 .postgallery-slider .slider-image {
   position: relative;
+  text-align: center;
+  overflow: hidden;
 }
 
 .postgallery-slider .slider-image-title {
