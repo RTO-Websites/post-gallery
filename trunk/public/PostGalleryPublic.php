@@ -119,7 +119,7 @@ class PostGalleryPublic {
             wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel.min.css' );
             wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme.default.min.css' );
         }
-        wp_enqueue_style( 'animate.css', $buildPath .  '/css/animate.min.css' );
+        wp_enqueue_style( 'animate.css', $buildPath . '/css/animate.min.css' );
     }
 
     /**
@@ -309,6 +309,10 @@ class PostGalleryPublic {
         $defaultTemplateDir = POSTGALLERY_DIR . '/templates';
 
         $images = PostGallery::getImages( $postid );
+
+        if ( empty( $images ) ) {
+            return '';
+        }
 
         if ( empty( $template ) || $template == 'global' ) {
             $template = $this->options['globalTemplate'];
