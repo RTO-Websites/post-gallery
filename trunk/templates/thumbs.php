@@ -7,14 +7,7 @@
      *            -> filename, path, thumbURL
      */
 ?>
-<style type="text/css">
-    .post-gallery_thumb {
-        display: inline-block;
-        margin: 10px;
-        max-width: 150px;
-    }
-</style>
-<section class="gallery">
+<section class="gallery pg-theme-thumbs">
     <?php foreach ( $images as $image ) { ?>
         <a href="<?php echo $image[ 'path' ] ?>">
             <img class="post-gallery_thumb"

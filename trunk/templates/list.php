@@ -7,7 +7,7 @@
      *            -> filename, path, thumbURL
      */
 ?>
-<section class="gallery">
+<section class="gallery pg-theme-list">
     <?php foreach ( $images as $image ) { ?>
         <a href="<?php echo $image[ 'path' ] ?>">
             <img style="max-width:100%;"

@@ -11,7 +11,7 @@
     array_unshift( $images, $first_image );
 ?>
 
-<section class="gallery">
+<section class="gallery pg-theme-slider-thumbs">
     <img id="gallery_image" onclick="nextImage();" style="max-width:100%;"
         src="<?php echo \Inc\PostGallery::getThumbUrl( $first_image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
         alt="<?php echo $first_image[ 'filename' ] ?>"/>
@@ -48,14 +48,4 @@
             jQuery('#gallery_image').attr('src', picList[currentPic]);
         }
     </script>
-
-    <style type="text/css">
-        .thumb {
-            display: inline-block;
-            position: relative;
-            width: 150px;
-            margin-right: 10px;
-        }
-    </style>
-
 </section>

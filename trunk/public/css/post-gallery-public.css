@@ -177,3 +177,17 @@ body.liteboxgallery-open {
   top: 1.5em;
   left: 0.5em;
 }
+
+/** themes **/
+.pg-theme-thumbs .post-gallery_thumb {
+  display: inline-block;
+  margin: 10px;
+  max-width: 150px;
+}
+
+.pg-theme-slider-thumbs .thumb {
+  display: inline-block;
+  position: relative;
+  width: 150px;
+  margin-right: 10px;
+}
