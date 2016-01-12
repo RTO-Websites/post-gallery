@@ -58,6 +58,11 @@ class SliderShortcodePublic {
         }
 
         $sliderid = $args[0];
+        $slider = get_post( $sliderid );
+
+        if ( empty( $slider ) ) {
+            return;
+        }
 
         $output = '';
 
@@ -72,6 +77,7 @@ class SliderShortcodePublic {
         $imgHeight = get_post_meta( $sliderid, 'sliderImageHeight', true );
 
         $images = PostGallery::getImages( $sliderid );
+        $class = '';
 
         // get from sgortcode-arguments
         if ( !empty( $args['width'] ) ) {
@@ -89,6 +95,11 @@ class SliderShortcodePublic {
         if ( !empty( $args['scale'] ) ) {
             $scale = $args['scale'];
         }
+        if ( !empty( $args['class'] ) ) {
+            $class = $args['class'];
+        }
+
+        $class .= ' pg-slider-' . $slider->post_name;
 
         // use slider-width/height as maximun for image-scaling
         if ( empty( $imgWidth ) ) {
@@ -123,12 +134,11 @@ class SliderShortcodePublic {
         $style .= !empty( $height ) ? 'max-height:' . $height . 'px;' : '';
 
         // output html
-        $output .= '<div class="pg-slider-' . $sliderid . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
+        $output .= '<div class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
         foreach ( $images as $image ) {
-            $output .= '<div class="slider-image">
-                <img width="' . $image['width'] . '" height="' . $image['height']
-                . '" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
-
+            $output .= '<div class="slider-image">';
+            $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
+                . '" src="#" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
 
             if ( !empty( $image['title'] ) ) {
                 $output .= '<div class="slider-image-title">' . $image['title'] . '</div>';
