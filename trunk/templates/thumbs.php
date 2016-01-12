@@ -7,7 +7,7 @@
      *            -> filename, path, thumbURL
      */
 ?>
-<section class="gallery pg-theme-thumbs">
+<figure class="gallery pg-theme-thumbs">
     <?php foreach ( $images as $image ) { ?>
         <a href="<?php echo $image[ 'path' ] ?>">
             <img class="post-gallery_thumb"
@@ -15,4 +15,4 @@
                 alt="<?php echo $image[ 'alt' ] ?>"/>
         </a>
     <?php } ?>
-</section>
+</figure>

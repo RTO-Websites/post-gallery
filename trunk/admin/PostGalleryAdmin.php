@@ -236,9 +236,8 @@ class PostGalleryAdmin {
      */
     public function getLiteboxTemplates() {
         $templateList = array(
-            'default' => __( 'Default', $this->textdomain ),
             'default-with-thumbs' => __( 'Default with thumbs', $this->textdomain ),
-            'default-with-thumbs-vertical' => __( 'Default with thumbs', $this->textdomain ) . ' - Vertical',
+            'default' => __( 'Default', $this->textdomain ),
         );
 
         $customTemplates = array();

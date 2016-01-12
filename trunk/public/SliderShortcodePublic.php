@@ -134,7 +134,7 @@ class SliderShortcodePublic {
         $style .= !empty( $height ) ? 'max-height:' . $height . 'px;' : '';
 
         // output html
-        $output .= '<div class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
+        $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
         foreach ( $images as $image ) {
             $output .= '<div class="slider-image">';
             $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
@@ -148,7 +148,7 @@ class SliderShortcodePublic {
             }
             $output .= '</div>';
         }
-        $output .= '</div>';
+        $output .= '</figure>';
 
         // output script
         $output .= '<script>

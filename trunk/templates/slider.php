@@ -10,7 +10,7 @@
     $first_image = array_shift( $images );
     array_unshift( $images, $first_image );
 ?>
-<section class="gallery pg-theme-slider">
+<figure class="gallery pg-theme-slider">
     <img id="gallery_image" onclick="nextImage();" style="max-width:100%;"
         src="<?php echo \Inc\PostGallery::getThumbUrl( $first_image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
         alt="<?php echo $first_image[ 'filename' ] ?>"/>
@@ -30,4 +30,4 @@
             jQuery('#gallery_image').attr ('src', picList[currentPic]);
         }
     </script>
-</section>
+</figure>
