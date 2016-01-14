@@ -63,6 +63,9 @@ class PostGalleryPublic {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
+        if ( is_admin() ) {
+            return;
+        }
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
         $this->version = $version;
@@ -83,7 +86,6 @@ class PostGalleryPublic {
 
         add_filter( 'post_thumbnail_html', array( $this, 'postgalleryThumbnail' ), 10, 5 );
         add_filter( 'get_post_metadata', array( $this, 'postgalleryHasPostThumbnail' ), 10, 5 );
-
     }
 
     /**
