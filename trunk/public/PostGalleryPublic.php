@@ -170,7 +170,6 @@ class PostGalleryPublic {
         }
     }
 
-
     /**
      * Hooks has_post_thumbnail and return true if a gallery-image exists
      *
@@ -181,12 +180,9 @@ class PostGalleryPublic {
      * @return bool|null
      */
     public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single ) {
-
         if ( $meta_key == '_thumbnail_id' ) {
-            return true;
+            return count(PostGallery::getImages($object_id)) ? true : null;
         }
-
-        return null;
     }
 
     /**
