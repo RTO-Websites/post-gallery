@@ -170,6 +170,7 @@ class PostGalleryPublic {
         }
     }
 
+
     /**
      * Hooks has_post_thumbnail and return true if a gallery-image exists
      *
@@ -181,7 +182,7 @@ class PostGalleryPublic {
      */
     public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single ) {
         if ( $meta_key == '_thumbnail_id' ) {
-            return count(PostGallery::getImages($object_id)) ? true : null;
+            return count( PostGallery::getImages( $object_id ) ) ? true : null;
         }
     }
 
@@ -410,8 +411,8 @@ class PostGalleryPublic {
         $script .= 'var websiteUrl = "' . get_bloginfo( 'wpurl' ) . '";';
         $script .= 'var pluginUrl = "' . WP_PLUGIN_URL . '";';
         $script .= 'var liteboxArgs = {'
-            . $clickEvents . $keyEvents . $oldOwl
-            . 'owlArgs: {' . $this->options['owlConfig'] . '}};';
+        . $clickEvents . $keyEvents . $oldOwl
+        . 'owlArgs: {' . !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' . '}};';
         $script .= '</script>';
 
         $header = $header . $script;
