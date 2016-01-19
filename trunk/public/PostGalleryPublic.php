@@ -407,12 +407,12 @@ class PostGalleryPublic {
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
 
         // script for websiteurl
-        $script = '<script type="text/javascript">';
+        $script = '<script>';
         $script .= 'var websiteUrl = "' . get_bloginfo( 'wpurl' ) . '";';
         $script .= 'var pluginUrl = "' . WP_PLUGIN_URL . '";';
         $script .= 'var liteboxArgs = {'
-        . $clickEvents . $keyEvents . $oldOwl
-        . 'owlArgs: {' . !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' . '}};';
+            . $clickEvents . $keyEvents . $oldOwl
+            . 'owlArgs: {' . ( !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' ) . '}};';
         $script .= '</script>';
 
         $header = $header . $script;
