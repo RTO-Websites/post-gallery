@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: crazypsycho
 Donate link: https://github.com/crazypsycho
-Tags: comments, spam
+Tags: post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider
 Requires at least: 3.4
 Tested up to: 4.5
 Stable tag: 4.3
@@ -23,8 +23,8 @@ https://github.com/crazypsycho/post-gallery
 
 == Screenshots ==
 
-1. This screenshot shows the main-settings-section
-1. This screenshot shows the upload-section under a post
+1. This is the Main-settings-section
+1. This is the upload-section under a post
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==

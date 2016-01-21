@@ -5,7 +5,7 @@
    * DOM-Ready
    */
   $(function () {
-    window.litebox = new LiteboxGallery(liteboxArgs);
+    window.litebox = new LiteboxGallery(window.pgConfig.liteboxArgs);
   });
 
   $(window).on('resize', function () {
@@ -18,11 +18,11 @@
   });
 
   window.getFullsizeThumbs = function (pics, owlSliderId, callback) {
-    var sizes = postGalleryCheckImageSize();
+    var sizes = pgCheckImageSize();
 
     jQuery.ajax({
       'type': 'POST',
-      'url': websiteUrl + '/?getThumbList',
+      'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
       'success': function (data, textStatus) {
         if (typeof(callback) === 'function') {
@@ -38,7 +38,7 @@
     }
     jQuery.ajax({
       'type': 'POST',
-      'url': websiteUrl + '/?getThumbList',
+      'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
       'success': function (data, textStatus) {
         if (typeof(callback) === 'function') {
@@ -49,65 +49,65 @@
   };
 
 
-  window.postGalleryCheckImageSize = function () {
-    var galleryWidth = jQuery(window).width();
-    var galleryHeight = jQuery(window).height();
-    if (galleryHeight == 0) {
-      galleryHeight = 1080;
-      galleryWidth = 1920;
+  window.pgCheckImageSize = function () {
+    var gWidth = jQuery(window).width();
+    var gHeight = jQuery(window).height();
+    if (gHeight == 0) {
+      gHeight = 1080;
+      gWidth = 1920;
     }
-    if (galleryHeight <= 1920 && galleryHeight > 1600) {
-      galleryHeight = 1920;
+    if (gHeight <= 1920 && gHeight > 1600) {
+      gHeight = 1920;
     }
-    if (galleryHeight <= 1600 && galleryHeight > 1280) {
-      galleryHeight = 1600;
+    if (gHeight <= 1600 && gHeight > 1280) {
+      gHeight = 1600;
     }
-    if (galleryHeight <= 1280 && galleryHeight > 1080) {
-      galleryHeight = 1280;
+    if (gHeight <= 1280 && gHeight > 1080) {
+      gHeight = 1280;
     }
-    if (galleryHeight <= 1080 && galleryHeight > 800) {
-      galleryHeight = 1080;
+    if (gHeight <= 1080 && gHeight > 800) {
+      gHeight = 1080;
     }
-    if (galleryHeight <= 800 && galleryHeight > 600) {
-      galleryHeight = 800;
+    if (gHeight <= 800 && gHeight > 600) {
+      gHeight = 800;
     }
-    if (galleryHeight <= 600 && galleryHeight > 480) {
-      galleryHeight = 600;
+    if (gHeight <= 600 && gHeight > 480) {
+      gHeight = 600;
     }
-    if (galleryHeight <= 480 && galleryHeight > 320) {
-      galleryHeight = 480;
+    if (gHeight <= 480 && gHeight > 320) {
+      gHeight = 480;
     }
-    if (galleryHeight <= 320) {
-      galleryHeight = 320;
-    }
-
-
-    if (galleryWidth <= 1920 && galleryWidth > 1600) {
-      galleryWidth = 1920;
-    }
-    if (galleryWidth <= 1600 && galleryWidth > 1280) {
-      galleryWidth = 1600;
-    }
-    if (galleryWidth <= 1280 && galleryWidth > 1080) {
-      galleryWidth = 1280;
-    }
-    if (galleryWidth <= 1080 && galleryWidth > 800) {
-      galleryWidth = 1080;
-    }
-    if (galleryWidth <= 800 && galleryWidth > 600) {
-      galleryWidth = 800;
-    }
-    if (galleryWidth <= 600 && galleryWidth > 480) {
-      galleryWidth = 600;
-    }
-    if (galleryWidth <= 480 && galleryWidth > 320) {
-      galleryWidth = 480;
-    }
-    if (galleryWidth <= 320) {
-      galleryWidth = 320;
+    if (gHeight <= 320) {
+      gHeight = 320;
     }
 
-    return [galleryWidth, galleryHeight];
+
+    if (gWidth <= 1920 && gWidth > 1600) {
+      gWidth = 1920;
+    }
+    if (gWidth <= 1600 && gWidth > 1280) {
+      gWidth = 1600;
+    }
+    if (gWidth <= 1280 && gWidth > 1080) {
+      gWidth = 1280;
+    }
+    if (gWidth <= 1080 && gWidth > 800) {
+      gWidth = 1080;
+    }
+    if (gWidth <= 800 && gWidth > 600) {
+      gWidth = 800;
+    }
+    if (gWidth <= 600 && gWidth > 480) {
+      gWidth = 600;
+    }
+    if (gWidth <= 480 && gWidth > 320) {
+      gWidth = 480;
+    }
+    if (gWidth <= 320) {
+      gWidth = 320;
+    }
+
+    return [gWidth, gHeight];
   };
 
 })(jQuery);

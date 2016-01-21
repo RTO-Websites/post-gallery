@@ -529,7 +529,7 @@ class PostGallery {
             return false;
         }
 
-        if ( has_post_thumbnail( $postid ) ) {
+        if ( has_post_thumbnail( $postid ) || is_admin() ) {
             return has_post_thumbnail( $postid );
         } else {
             return count( PostGallery::getImages( $postid ) );

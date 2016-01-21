@@ -151,7 +151,7 @@ var LiteboxGallery = function (args) {
     debug('openByPics', pics);
 
     for (var i = 0; i < pics.length; i += 1) {
-      thumbPics[i] = encodeURI(pics[i]).replace(websiteUrl, '');
+      thumbPics[i] = encodeURI(pics[i]).replace(window.pgConfig.websiteUrl, '');
     }
 
     // init gallery
@@ -203,7 +203,7 @@ var LiteboxGallery = function (args) {
         if ($(this).attr('href') === clickElement.attr('href')) {
           startPic = count;
         }
-        pics[count] = encodeURI($(this).attr('href')).replace(websiteUrl, '');
+        pics[count] = encodeURI($(this).attr('href')).replace(window.pgConfig.websiteUrl, '');
         count += 1;
       }
     });
@@ -321,7 +321,7 @@ var LiteboxGallery = function (args) {
 
       window.liteboxOpenProgress = false;
     });
-  }
+  };
 
   this.initThumbs = function (pics) {
     // Thumbs
@@ -357,6 +357,10 @@ var LiteboxGallery = function (args) {
           });
           thumbSlider.append(thumb);
         }
+
+        // dirty hotfix
+        var thumb = jQuery('<div class="litebox-thumb placeholder"></div>');
+        thumbSlider.append(thumb);
 
         jQuery('.thumb-container').owlCarousel(thumbArgs);
       }, 0);

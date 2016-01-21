@@ -338,7 +338,7 @@ class PostGalleryPublic {
      */
     public function insertFooterHtml( $footer ) {
         $options = $this->options;
-        $template = ( !empty( $options['template'] ) ? $options['template'] : 'default' );
+        $template = ( !empty( $options['liteboxTemplate'] ) ? $options['liteboxTemplate'] : 'default-with-thumbs' );
 
         $customTemplateDir = get_stylesheet_directory() . '/litebox';
         $defaultTemplateDir = POSTGALLERY_DIR . '/litebox-templates';
@@ -405,14 +405,24 @@ class PostGalleryPublic {
         $oldOwl = !empty( $this->options['useOldOwl'] ) ? 'owlVersion: 1,' : '';
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
+        $owlConfig = ( !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' );
+        $owlThumbConfig = ( !empty( $this->options['owlThumbConfig'] ) ? $this->options['owlThumbConfig'] : '' );
+
+        // minify
+        $owlConfig = preg_replace("/^\s{2,}?([^,]+?),?$/m", ',', $owlConfig);
+        $owlConfig = preg_replace("/(\r?\n?)*/", '', $owlConfig);
+
+        $owlThumbConfig = preg_replace("/^\s{2,}?([^,]+?),?$/m", ',', $owlThumbConfig);
+        $owlThumbConfig = preg_replace("/(\r?\n?)*/", '', $owlThumbConfig);
 
         // script for websiteurl
         $script = '<script>';
-        $script .= 'var websiteUrl = "' . get_bloginfo( 'wpurl' ) . '";';
-        $script .= 'var pluginUrl = "' . WP_PLUGIN_URL . '";';
-        $script .= 'var liteboxArgs = {'
+        $script .= 'window.pgConfig = { websiteUrl: "' . get_bloginfo( 'wpurl' ) . '",';
+        $script .= 'liteboxArgs: {'
             . $clickEvents . $keyEvents . $oldOwl
-            . 'owlArgs: {' . ( !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' ) . '}};';
+            . 'owlArgs: {' . $owlConfig . '},'
+            . 'owlThumbArgs: {' . $owlThumbConfig . '}'
+            .'}};';
         $script .= '</script>';
 
         $header = $header . $script;

@@ -76,6 +76,8 @@ class SliderShortcodePublic {
         $imgWidth = get_post_meta( $sliderid, 'sliderImageWidth', true );
         $imgHeight = get_post_meta( $sliderid, 'sliderImageHeight', true );
 
+        $noLazy = get_post_meta( $sliderid, 'sliderNoLazy', true );
+
         $images = PostGallery::getImages( $sliderid );
         $class = '';
 
@@ -97,6 +99,15 @@ class SliderShortcodePublic {
         }
         if ( !empty( $args['class'] ) ) {
             $class = $args['class'];
+        }
+        if ( !empty( $args['owlConfig'] ) ) {
+            $owlConfig = $args['owlConfig'];
+        }
+        if ( !empty( $args['owlExtra'] ) ) {
+            $owlConfig .= ',' . $args['owlExtra'];
+        }
+        if ( in_array( 'noLazy', $args ) ) {
+            $noLazy = true;
         }
 
         $class .= ' pg-slider-' . $slider->post_name;
@@ -137,8 +148,14 @@ class SliderShortcodePublic {
         $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
         foreach ( $images as $image ) {
             $output .= '<div class="slider-image">';
-            $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
-                . '" src="#" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+
+            if ( empty( $noLazy ) ) {
+                $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
+                    . '" src="#" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+            } else {
+                $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
+                    . '" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+            }
 
             if ( !empty( $image['title'] ) ) {
                 $output .= '<div class="slider-image-title">' . $image['title'] . '</div>';
