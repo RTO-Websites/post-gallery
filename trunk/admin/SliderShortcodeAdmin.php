@@ -110,7 +110,11 @@ class SliderShortcodeAdmin {
                 'inputClass' => 'owl-post-config',
                 'cols' => 50,
                 'rows' => 10,
-                'default' => 'items: 1'
+                'default' => 'items: 1',
+            ),
+            'sliderNoLazy' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Disable lazy load', $this->textdomain ),
             ),
         );
 
@@ -182,7 +186,8 @@ class SliderShortcodeAdmin {
      * @param $post
      */
     public function _addSliderShortcodeView( $post ) {
-        echo '<input type="text" value="[slider ' . $post->ID . ']" onClick="this.select();" />' . '<br />';
+        echo '<input type="text" value="[slider ' . $post->ID . ']" onClick="this.select();" /> &nbsp;';
+        echo '<a href="https://github.com/crazypsycho/post-gallery/blob/master/trunk/docs/slider.md" target="_blank">Slider Documentation</a><br />';
     }
 
     /**
@@ -247,6 +252,12 @@ class SliderShortcodeAdmin {
                         // Generate text-input
                         echo '<input class="field-input ' . $inputClass . '" type="text" name="' . $key . '" id="' . $key . '" value="'
                             . $value . '" />';
+                        break;
+
+                    case 'checkbox':
+                        // Generate checkbox
+                        echo '<input class="field-input ' . $inputClass . '" type="checkbox" name="' . $key . '" id="' . $key . '" value="1" '
+                            . ( !empty( $value ) ? 'checked="checked"' : '' ) . '" />';
                         break;
 
                     case 'textarea':
