@@ -182,7 +182,32 @@ class PostGalleryPublic {
      */
     public function postgalleryHasPostThumbnail( $null, $object_id, $meta_key, $single ) {
         if ( $meta_key == '_thumbnail_id' ) {
-            return count( PostGallery::getImages( $object_id ) ) ? true : null;
+            $meta_type = 'post';
+
+            $meta_cache = wp_cache_get($object_id, $meta_type . '_meta');
+
+            if ( !$meta_cache ) {
+                $meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
+                $meta_cache = $meta_cache[$object_id];
+            }
+
+            if ( ! $meta_key ) {
+                return $meta_cache;
+            }
+
+            if ( isset($meta_cache[$meta_key]) ) {
+                if ( $single )
+                    return maybe_unserialize( $meta_cache[$meta_key][0] );
+                else
+                    return array_map('maybe_unserialize', $meta_cache[$meta_key]);
+            }
+
+            if (count( PostGallery::getImages( $object_id ) ) )
+                return true;
+            if ($single)
+                return '';
+            else
+                return array();
         }
     }
 
