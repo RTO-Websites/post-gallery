@@ -17,8 +17,12 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 It comes with a fullscreen-litebox-gallery and also an easy to use slider-configurator.
 
 
+You can find the documentation on
+http://post-gallery.rtfd.org
+
 You can help to develop on
 https://github.com/crazypsycho/post-gallery
+
 
 
 == Screenshots ==
