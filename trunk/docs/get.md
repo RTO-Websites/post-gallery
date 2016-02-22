@@ -4,7 +4,7 @@ These functions returns all images of a post
 ### getImages
 Returns all images of a post (in fullsize, for smaller pics use PostGallery::getImagesResized() )
 ```
-PostGallery::getImages( $postid );
+\Inc\PostGallery::getImages( $postid );
 ```
 Returns an array with:
 'filename'
@@ -23,7 +23,7 @@ $args = array(
   'scale' => 0, // 0 = crop, 1 = scale 1:1
   'bw' => false, // optional, true returns greyscale images
 }
-$images = PostGallery::getImagesResized( $postid, $args );
+$images = \Inc\PostGallery::getImagesResized( $postid, $args );
 ```
 
 Returns an array with:
@@ -47,7 +47,7 @@ $args = array(
   'quotes' => false,
   'singlequotes' => false
 }
-$images = getImageString( $postid, $args );
+$images = \Inc\PostGallery::getImageString( $postid, $args );
 ```
 
 ### getPicsResized
@@ -59,7 +59,7 @@ $args = array(
   'scale' => 0, // 0 = crop, 1 = scale 1:1
   'bw' => false, // optional, true returns greyscale images
 }
-$images = PostGallery::getPicsResized( $pics, $args );
+$images = \Inc\PostGallery::getPicsResized( $pics, $args );
 ```
 
 Returns an array with:
