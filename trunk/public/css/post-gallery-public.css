@@ -101,12 +101,14 @@ body.liteboxgallery-open {
 
   display: inline-block;
 
+
   width: 100%;
 }
 
 .litebox-gallery .owl-item img.upright {
   width: auto;
   height: 100%;
+  max-height: 100vh;
 }
 
 .litebox-gallery .thumb-container {
