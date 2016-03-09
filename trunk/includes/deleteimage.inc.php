@@ -5,9 +5,9 @@ if ( !is_user_logged_in() ) {
     die( 'Login required!' );
 }
 
-$path = filter_input(INPUT_GET, 'path' );
+$path = filter_input( INPUT_GET, 'path' );
 if ( empty( $path ) ) {
-    $path = filter_input(INPUT_POST, 'path' );
+    $path = filter_input( INPUT_POST, 'path' );
 }
 if ( empty( $path ) ) {
     die( 'no path given' );
@@ -21,6 +21,8 @@ if ( !file_exists( $uploadDir . '/gallery/' . $path ) ) {
     die( 'file not exists or is folder' );
 }
 
+$deletedFiles = array();
+
 // If "path" is dir iterate through this dir and delete all files
 if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
     $dirname = $uploadDir . '/gallery/' . $path;
@@ -32,9 +34,9 @@ if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
     // Iterate through the directory and delete every single file in it.
     // Afterwards delete the directory itself.
     while ( $file = readdir( $dirHandle ) ) {
-        if ( $file != "." && $file != ".." ) {
-            if ( !is_dir( $dirname . "/" . $file ) )
-                $success = unlink( $dirname . "/" . $file );
+        if ( $file != "." && $file != ".." && !is_dir( $dirname . "/" . $file ) ) {
+            $success = unlink( $dirname . "/" . $file );
+            $deletedFiles[] = $file;
         }
     }
 
@@ -44,6 +46,25 @@ if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
 } else {
     // Deletes a single file
     $success = unlink( $uploadDir . '/gallery/' . $path );
+    $file = explode( '/', $path );
+    $file = array_pop( $file );
+    $deletedFiles[] = $file;
+}
+
+
+// delete from cache
+$cacheDir = scandir( $uploadDir . '/cache/' );
+foreach ( $deletedFiles as $file ) {
+    $file = explode( '.', $file );
+    $fileExtension = array_pop( $file );
+    $file = implode( '.', $file );
+    $length = strlen( $file );
+
+    foreach ( $cacheDir as $cacheFile ) {
+        if ( substr( $cacheFile, 0, $length ) == $file ) {
+            unlink( $uploadDir . '/cache/' . $cacheFile );
+        }
+    }
 }
 
 echo( intval( $success ) );
