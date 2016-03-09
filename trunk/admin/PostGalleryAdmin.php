@@ -228,7 +228,6 @@ class PostGalleryAdmin {
         add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
     }
 
-
     /**
      * Returns an array with all templates for litebox
      *

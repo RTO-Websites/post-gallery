@@ -82,6 +82,26 @@ class PostGallery {
         $this->defineAdminHooks();
         $this->definePublicHooks();
 
+        add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
+    }
+
+
+    /**
+     * Cron-Task: Delete cache images with no access for a month
+     */
+    public function postGalleryDeleteCachedImages() {
+        file_put_contents( wp_upload_dir()['path'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
+
+        $cacheFolder = wp_upload_dir()['path'] . '/cache';
+        foreach ( scandir( $cacheFolder ) as $file ) {
+            if ( !is_dir( $cacheFolder . '/' . $file ) ) {
+                $lastAccess = fileatime( $cacheFolder . '/' . $file );
+
+                if ( $lastAccess < strtotime('-1 month')) { // older than 1 month
+                    unlink( $cacheFolder . '/' . $file );
+                }
+            }
+        }
     }
 
     /**
@@ -290,9 +310,9 @@ class PostGallery {
                         'path' => $uploadUrl . '/' . $file,
                         'url' => $uploadFullUrl . '/' . $file,
                         'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
-                        'title' => !empty( $titles[$file]) ? $titles[$file] : '',
-                        'desc' => !empty( $descs[$file]) ? $descs[$file] : '',
-                        'alt' => !empty( $alts[$file]) ? $alts[$file] : '',
+                        'title' => !empty( $titles[$file] ) ? $titles[$file] : '',
+                        'desc' => !empty( $descs[$file] ) ? $descs[$file] : '',
+                        'alt' => !empty( $alts[$file] ) ? $alts[$file] : '',
                     );
                 }
             }
@@ -419,12 +439,13 @@ class PostGallery {
 
         $search = array( 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&' );
         $replace = array( 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-' );
+
+        $postName = str_replace( $search, $replace, $postName );
+
         $uploads = wp_upload_dir();
         $oldImageDir = strtolower( str_replace( 'http://', '', esc_url( $postName ) ) );
-        $newImageDir = str_replace(
-            $search, $replace, strtolower(
-                sanitize_file_name( str_replace( '&amp;', '-', $postName )
-                )
+        $newImageDir = strtolower(
+            sanitize_file_name( str_replace( '&amp;', '-', $postName )
             )
         );
 
@@ -434,10 +455,10 @@ class PostGallery {
             return false;
         }
 
-        // for very old swapper who used wrong dir
+        // for very old postgallery who used wrong dir
         PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );
 
-        // for old swapper who dont uses post-id in folder
+        // for old postgallery who dont uses post-id in folder
         $oldImageDir = $newImageDir;
         $newImageDir = $newImageDir . '_' . $postId;
         PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );

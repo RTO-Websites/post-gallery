@@ -30,7 +30,9 @@ class PostGalleryActivator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+		// add cron to delete old cache-images
+		if ( !wp_next_scheduled( 'cronPostGalleryDeleteCachedImages' ) ) {
+			wp_schedule_event( time(), 'daily', 'cronPostGalleryDeleteCachedImages' );
+		}
 	}
-
 }
