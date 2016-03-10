@@ -1,34 +1,34 @@
 (function () {
-  tinymce.create('tinymce.plugins.PostGallery', {
+  tinymce.create('tinymce.plugins.PostGallerySlider', {
     init: function (editor, url) {
 
-      editor.addCommand('mcePostGallery', function () {
+      editor.addCommand('mcePostGallerySlider', function () {
         editor.windowManager.open({
           title: 'Slider',
-          width: 300,
+          width: 210,
           height: 85,
           inline: 1,
           body: [{
             type: 'listbox',
-            name: 'postgalleryselect',
-            label: 'Galleries',
-            'values': postgalleryPosts,
+            name: 'postgallerysliderselect',
+            label: 'Slider',
+            'values': postgallerySliders,
           }],
 
 
           onsubmit: function( e ) {
-            editor.insertContent( '[postgallery post=' + e.data.postgalleryselect + ']');
+            editor.insertContent( '[slider ' + e.data.postgallerysliderselect + ']');
           }
         }, {
           plugin_url: url
         });
       });
 
-      editor.addButton('PostGallery', {
-        title: 'PostGallery',
+      editor.addButton('PostGallerySlider', {
+        title: 'Slider',
         icon: 'icon dashicons-images-alt mce-i-dashicon',
-        cmd: 'mcePostGallery',
-        text: ' PostGallery'
+        cmd: 'mcePostGallerySlider',
+        text: ' Slider'
       });
     },
 
@@ -38,7 +38,7 @@
 
     getInfo: function () {
       return {
-        longname: 'PostGallery',
+        longname: 'Slider',
         author: 'Crazypsycho',
         authorurl: 'https://github.com/crazypsycho',
         infourl: 'https://github.com/crazypsycho/post-gallery',
@@ -47,5 +47,5 @@
     }
   });
 
-  tinymce.PluginManager.add('PostGallery', tinymce.plugins.PostGallery);
+  tinymce.PluginManager.add('PostGallerySlider', tinymce.plugins.PostGallerySlider);
 })();
