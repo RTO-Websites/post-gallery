@@ -335,10 +335,10 @@ class PostGalleryAdmin {
     public function registerPostSettings() {
         $postTypes = get_post_types();
         foreach ( $postTypes as $postType ) {
+            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), array( $this, 'addGalleryPictures' ), $postType, 'normal', 'high' );
             if ( $postType !== 'postgalleryslider' ) {
-                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), array( $this, 'addGallerySettings' ), $postType );
+                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), array( $this, 'addGallerySettings' ), $postType, 'normal', 'high' );
             }
-            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), array( $this, 'addGalleryPictures' ), $postType );
         }
         return false;
     }
