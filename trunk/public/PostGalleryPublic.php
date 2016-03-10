@@ -391,7 +391,11 @@ class PostGalleryPublic {
         }
         $postid = 0;
         if ( !empty( $args['post'] ) ) {
-            $postid = $args['post'];
+            if (is_numeric($args['post'])) {
+                $postid = $args['post'];
+            } else {
+                $postid = url_to_postid($args['post']);
+            }
         }
 
         return $this->returnGalleryHtml( $template, $postid, $args );
