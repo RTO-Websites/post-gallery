@@ -154,8 +154,8 @@ class PostGalleryPublic {
             wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', array( 'jquery' ) );
         }
 
-        wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', array( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
+        wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
 
     }
 
@@ -184,27 +184,27 @@ class PostGalleryPublic {
         if ( $meta_key == '_thumbnail_id' ) {
             $meta_type = 'post';
 
-            $meta_cache = wp_cache_get($object_id, $meta_type . '_meta');
+            $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
 
             if ( !$meta_cache ) {
                 $meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
                 $meta_cache = $meta_cache[$object_id];
             }
 
-            if ( ! $meta_key ) {
+            if ( !$meta_key ) {
                 return $meta_cache;
             }
 
-            if ( isset($meta_cache[$meta_key]) ) {
+            if ( isset( $meta_cache[$meta_key] ) ) {
                 if ( $single )
                     return maybe_unserialize( $meta_cache[$meta_key][0] );
                 else
-                    return array_map('maybe_unserialize', $meta_cache[$meta_key]);
+                    return array_map( 'maybe_unserialize', $meta_cache[$meta_key] );
             }
 
-            if (count( PostGallery::getImages( $object_id ) ) )
+            if ( count( PostGallery::getImages( $object_id ) ) )
                 return true;
-            if ($single)
+            if ( $single )
                 return '';
             else
                 return array();
@@ -391,10 +391,10 @@ class PostGalleryPublic {
         }
         $postid = 0;
         if ( !empty( $args['post'] ) ) {
-            if (is_numeric($args['post'])) {
+            if ( is_numeric( $args['post'] ) ) {
                 $postid = $args['post'];
             } else {
-                $postid = url_to_postid($args['post']);
+                $postid = url_to_postid( $args['post'] );
             }
         }
 
@@ -439,11 +439,11 @@ class PostGalleryPublic {
         $owlThumbConfig = ( !empty( $this->options['owlThumbConfig'] ) ? $this->options['owlThumbConfig'] : '' );
 
         // minify
-        $owlConfig = preg_replace("/^\s{2,}?([^,]+?),?$/m", ',', $owlConfig);
-        $owlConfig = preg_replace("/(\r?\n?)*/", '', $owlConfig);
+        $owlConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlConfig );
+        $owlConfig = preg_replace( "/(\r?\n?)*/", '', $owlConfig );
 
-        $owlThumbConfig = preg_replace("/^\s{2,}?([^,]+?),?$/m", ',', $owlThumbConfig);
-        $owlThumbConfig = preg_replace("/(\r?\n?)*/", '', $owlThumbConfig);
+        $owlThumbConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlThumbConfig );
+        $owlThumbConfig = preg_replace( "/(\r?\n?)*/", '', $owlThumbConfig );
 
         // script for websiteurl
         $script = '<script>';
@@ -452,7 +452,7 @@ class PostGalleryPublic {
             . $clickEvents . $keyEvents . $oldOwl
             . 'owlArgs: {' . $owlConfig . '},'
             . 'owlThumbArgs: {' . $owlThumbConfig . '}'
-            .'}};';
+            . '}};';
         $script .= '</script>';
 
         $header = $header . $script;
