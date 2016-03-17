@@ -169,7 +169,7 @@ class SliderShortcodePublic {
 
         // output script
         $output .= '<script>
-            jQuery(".pg-slider-' . $sliderid . '").owlCarousel({' . $owlConfig . '});
+            jQuery(function($) {$(".pg-slider-' . $sliderid . '").owlCarousel({' . $owlConfig . '});});
             </script>';
 
         return $output;
