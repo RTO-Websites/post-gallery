@@ -90,9 +90,10 @@ class PostGallery {
      * Cron-Task: Delete cache images with no access for a month
      */
     public function postGalleryDeleteCachedImages() {
-        file_put_contents( wp_upload_dir()['path'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
+        $uploadDir = wp_upload_dir();
+        file_put_contents( $uploadDir['path'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
 
-        $cacheFolder = wp_upload_dir()['path'] . '/cache';
+        $cacheFolder = $uploadDir['path'] . '/cache';
         foreach ( scandir( $cacheFolder ) as $file ) {
             if ( !is_dir( $cacheFolder . '/' . $file ) ) {
                 $lastAccess = fileatime( $cacheFolder . '/' . $file );
