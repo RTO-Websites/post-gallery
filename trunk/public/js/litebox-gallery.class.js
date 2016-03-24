@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 24.03.2016 08:43
+ * Last change: 24.03.2016 08:53
  ************************************/
 var LiteboxGallery = function(args) {
     var win = window,
@@ -346,7 +346,7 @@ var LiteboxGallery = function(args) {
                 thumbSlider.addClass('owl-carousel owl-theme');
 
                 for (var i = 0; i < pics.length; i += 1) {
-                    var thumb = jQuery('<div class="litebox-thumb"><img src="' + pics[i]['url'] + '" alt="" /></div>');
+                    var thumb = $('<div class="litebox-thumb"><img src="' + pics[i]['url'] + '" alt="" /></div>');
                     thumb[0].liteboxIndex = i;
                     thumb.on('click', function() {
                         if (args.owlVersion == 1) {
@@ -359,7 +359,7 @@ var LiteboxGallery = function(args) {
                 }
 
                 // dirty hotfix
-                var thumb = jQuery('<div class="litebox-thumb placeholder"></div>');
+                var thumb = $('<div class="litebox-thumb placeholder"></div>');
                 thumbSlider.append(thumb);
 
                 $('.thumb-container').owlCarousel(thumbArgs);
