@@ -175,8 +175,8 @@ var LiteboxGallery = function(args) {
         self.picsData = pics;
 
         for (var i = 0; i < pics.length; i += 1) {
-            if (typeof(pics[i][url]) !== 'undefined') {
-                newPics[i] = pics[i][url];
+            if (typeof(pics[i]['url']) !== 'undefined') {
+                newPics[i] = pics[i]['url'];
             } else {
                 newPics[i] = pics[i];
             }
