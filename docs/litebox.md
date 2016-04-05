@@ -6,13 +6,19 @@ It search also in the parent (or ‘.gallery’) for more hrefs to images and ad
 Example:
 ```
 <section class="gallery">
-  <a href="/wp-content/uploads/image1.jpg">Bild 1</a><br />
-  <a href="/wp-content/uploads/image2.jpg">Bild 2</a><br />
-  <a href="/wp-content/uploads/image3.jpg">Bild 3</a><br />
-  <a href="/wp-content/uploads/image4.jpg">Bild 4</a><br />
+  <a href="/wp-content/uploads/image1.jpg">Image 1</a><br />
+  <a href="/wp-content/uploads/image2.jpg">Image 2</a><br />
+  <a href="/wp-content/uploads/image3.jpg">Image 3</a><br />
+  <a href="/wp-content/uploads/image4.jpg">Image 4</a><br />
 </section>
 ```
 If you click one of these links, it will open the litebox with the four images.
+
+You can add title and description to every image, litebox will show it in .pic-title and .pic-desc:
+```
+ <a href="/wp-content/uploads/image1.jpg" data-title="MyImageTitle" data-desc="My Description">Image 1</a>
+```
+
 
 ### Open with javascript
 You can also open the litebox with an array of pics
@@ -23,12 +29,37 @@ litebox.openGalleryByPics( [
 ] );
 ```
 
+Also with image title and description:
+```
+litebox.openGalleryByPics( [
+    {
+      url: 'wp-content/uploads/image1.jpg',
+      title: 'MyImageTitle',
+      desc: 'My Image-Description'
+    },
+    {
+      url: 'wp-content/uploads/image2.jpg',
+      title: 'MyImageTitle2',
+      desc: 'My Image-Description'
+    },
+] );
+```
+
 ### Combine with PostGallery
-You can load the image list from PortGallery and then open the litebox
+You can load the image list from PostGallery and then open the litebox
 ```
 <?php
   $images = \Inc\PostGallery::getImageString( $post_id );
 ?>
  
 <div onclick="litebox.openGalleryByPics( <?php echo $images; ?> ) ">Blub</div>
+```
+
+Or open it with image title and description:
+```
+<?php
+  $images = \Inc\PostGallery::getImages( $post_id );
+?>
+ 
+<div onclick="litebox.openGalleryByPics( <?php echo json_encode( $images ); ?> ) ">Blub</div>
 ```
