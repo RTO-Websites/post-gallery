@@ -171,15 +171,23 @@ var LiteboxGallery = function(args) {
      * @returns {undefined}
      */
     getUrlFromPics = function(pics) {
-        var newPics = [];
-        self.picsData = pics;
+        var newPics = [],
+          i = 0;
+        self.picsData = [];
 
-        for (var i = 0; i < pics.length; i += 1) {
-            if (typeof(pics[i]['url']) !== 'undefined') {
-                newPics[i] = pics[i]['url'];
+        for (var index in pics) {
+            if (typeof(pics[index]['url']) !== 'undefined') {
+                newPics[i] = pics[index]['url'];
             } else {
-                newPics[i] = pics[i];
+                newPics[i] = pics[index];
             }
+            self.picsData[i] = {
+                url: newPics[i],
+                title: pics[index]['title'],
+                desc: pics[index]['desc'],
+            };
+
+            i+=1;
         }
 
         return newPics;
