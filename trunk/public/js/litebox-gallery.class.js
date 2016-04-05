@@ -32,10 +32,14 @@ var LiteboxGallery = function(args) {
     // internal/private functions
         debug,
         setEvents,
+        getUrlFromPics,
+        createEmptyPicsData,
         init;
 
 
     init = function() {
+        self.picsData = [];
+
         window.liteboxOpenProgress = false;
 
         if (!win.$) {
@@ -150,12 +154,35 @@ var LiteboxGallery = function(args) {
 
         debug('openByPics', pics);
 
+        pics = getUrlFromPics(pics);
+
         for (var i = 0; i < pics.length; i += 1) {
             thumbPics[i] = encodeURI(pics[i]).replace(window.pgConfig.websiteUrl, '');
         }
 
         // init gallery
         self.initGallery(thumbPics, 0);
+    };
+
+    /**
+     * Opens the gallery-litebox with an object of pics
+     *
+     * @param {object} picsObject
+     * @returns {undefined}
+     */
+    getUrlFromPics = function(pics) {
+        var newPics = [];
+        self.picsData = pics;
+
+        for (var i = 0; i < pics.length; i += 1) {
+            if (typeof(pics[i][url]) !== 'undefined') {
+                newPics[i] = pics[i][url];
+            } else {
+                newPics[i] = pics[i];
+            }
+        }
+
+        return newPics;
     };
 
     /**
@@ -193,6 +220,8 @@ var LiteboxGallery = function(args) {
         var startPic = 0;
         // search image-urls in hrefs
         var items = imageContainer.find(linkSelector).filter(':not(.no-litebox)');
+        self.picsData = [];
+
         items.each(function(index) {
             if ($(this).attr('href').indexOf('/uploads/') !== -1
                 || $(this).attr('href').indexOf('/gallery/') !== -1
@@ -204,6 +233,13 @@ var LiteboxGallery = function(args) {
                     startPic = count;
                 }
                 pics[count] = encodeURI($(this).attr('href')).replace(window.pgConfig.websiteUrl, '');
+
+                // set pic-data
+                self.picsData[count] = {
+                    url: pics[count],
+                    title: $(this).data('title'),
+                    desc: $(this).data('desc'),
+                };
                 count += 1;
             }
         });
@@ -268,6 +304,12 @@ var LiteboxGallery = function(args) {
         });
     };
 
+  /**
+   * Create html with images
+   *
+   * @param pics
+   * @param galleryStartPic
+   */
     this.createGallery = function(pics, galleryStartPic) {
         getFullsizeThumbs(pics, 'gallery-image', function(pics) {
             debug('images-loaded', pics);
@@ -300,12 +342,24 @@ var LiteboxGallery = function(args) {
                     orientation = ' upright';
                 }
 
+                // add pic title and desc
+                thumbTitleDesc = '';
+                if (typeof(self.picsData[i]['title']) !== 'undefined') {
+                    thumbTitleDesc += '<div class="pic-title">' + self.picsData[i]['title'] + '</div>';
+                }
+                if (typeof(self.picsData[i]['desc']) !== 'undefined') {
+                    thumbTitleDesc += '<div class="pic-desc">' + self.picsData[i]['desc'] + '</div>';
+                }
+
                 thumb = $('<div class="litebox-image">' +
                     '<img width="' + width + '" height="' + height + '" class="lazyload '
                     + orientation + '" data-src="' + pics[i]['url'] + '" alt="" />' +
+                    thumbTitleDesc +
                     '</div>');
                 galleryContainer.append(thumb);
             }
+
+            self.pics = null;
 
             args.owlArgs.startPosition = galleryStartPic;
             args.owlArgs.loop = true;
@@ -323,7 +377,12 @@ var LiteboxGallery = function(args) {
         });
     };
 
-    this.initThumbs = function(pics) {
+
+  /**
+   * Load and create thumbnails via ajax
+   * @param pics
+   */
+  this.initThumbs = function(pics) {
         // Thumbs
         if (liteboxContainer.find('.thumb-container').length &&
             $(window).width() > 720 && $(window).height() > 360
