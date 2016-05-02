@@ -149,6 +149,13 @@ class SliderShortcodePublic {
         foreach ( $images as $image ) {
             $output .= '<div class="slider-image">';
 
+            if ( empty( $image['width'] ) ) {
+                $image['width'] = 'auto';
+            }
+            if ( empty( $image['height'] ) ) {
+                $image['height'] = 'auto';
+            }
+
             if ( empty( $noLazy ) ) {
                 $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
                     . '" src="#" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
