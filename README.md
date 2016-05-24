@@ -3,7 +3,7 @@
 *PostGallery* is a wordpress-plugin which can add a gallery to every post/page.
 It also delivers a javascript litebox-gallery and shortcode for a slider.
 
-You can directly install from wordpress.org https://wordpress.org/plugins/post-gallery/
+You can directly install from wordpress.org https://wordpress.org/plugins/postgallery/
 
 You can find the documentation on
 http://post-gallery.rtfd.org
