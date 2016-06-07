@@ -438,8 +438,8 @@ class PostGallery {
             return PostGallery::$cachedFolders[$postId];
         }
 
-        $search = array( 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&' );
-        $replace = array( 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-' );
+        $search = array( 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&', '€', 'ß', '–' );
+        $replace = array( 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-', 'E', 'ss', '-' );
 
         $postName = str_replace( $search, $replace, $postName );
 
