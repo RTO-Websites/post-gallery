@@ -108,7 +108,7 @@ class Thumb {
      * @param int $bw
      * @return mixed
      */
-    public function getCacheFilename( $path, $width, $height, $scale = 0, $bw = 0 ) {
+    public function getCacheFilename( $path, $width, $height, $scale = 0, $bw = 0, $blur = 0 ) {
         // create cache-filename
         $pathParts = explode( "/", $path );
         $filename = array_pop( $pathParts );
@@ -117,7 +117,9 @@ class Thumb {
         $cachefileExtension = array_pop( $filenameParts );
 
         $cachefile = str_replace( '.' . $cachefileExtension, '_' . $scale . '_' . $filetime
-            . '_' . $width . '_' . $height . ( $bw ? '_bw' : '' ) . '.'
+            . '_' . $width . '_' . $height
+            . ( $bw ? '_bw' : '' )
+            . ( !empty( $blur ) ? '_blur' : '' ) . '.'
             . $cachefileExtension, $filename );
 
         return $cachefile;
@@ -133,6 +135,8 @@ class Thumb {
         // Setting-Variables
         $scale = $args['scale'];
         $bw = $args['bw'];
+        $ownFunc = isset( $args['ownFunc'] ) ? $args['ownFunc'] : '';
+        $blur = isset( $args['blur'] ) ? $args['blur'] : '';
         $width = isset( $args['width'] ) ? $args['width'] : 10000;
         $height = isset( $args['height'] ) ? $args['height'] : 10000;
         $contentType = 'image/jpeg';
@@ -167,11 +171,24 @@ class Thumb {
         $orgWidth = $size[0];
         $orgHeight = $size[1];
 
-        if ( !$stretchImages && $orgWidth <= $width && $orgHeight <= $height && !$bw ) {
+        if ( !$stretchImages && $orgWidth <= $width && $orgHeight <= $height && !$bw
+            && empty( $blur ) && empty( $ownFunc )
+        ) {
             // Load original (do nothing)
         } else {
+            if ( !$stretchImages ) {
+                if ($orgWidth < $width ) {
+                    $width = $orgWidth;
+                }
+                if ($orgHeight < $height ) {
+                    $height = $orgHeight;
+                }
+            }
             // create cache-filename
-            $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw );
+            $cachefile = $this->getCacheFilename( $path, $width, $height, $scale, $bw, $blur );
+            if ( $ownFunc ) {
+                $cachefile = $ownFunc . '_' . $cachefile;
+            }
 
             if ( file_exists( $this->cacheDir . '/' . $cachefile ) &&
                 !filter_has_var( INPUT_GET, 'forceNew' ) &&
@@ -211,6 +228,24 @@ class Thumb {
                             $im->thumbnailimage( 0, $height );
                         }
                         break;
+                }
+
+                if ( $bw ) {
+                    $im->setImageColorspace( 2 );
+                }
+                if ( $blur ) {
+                    if ( is_array( $blur ) && count( $blur ) == 3 ) {
+                        $im->blurImage( $blur[0], $blur[1], $blur[2] );
+                    } else if ( is_array( $blur ) && count( $blur ) == 2 ) {
+                        $im->blurImage( $blur[0], $blur[1] );
+                    } else if ( !is_array( $blur ) ) {
+                        $im->blurImage( $blur, 3 );
+                    }
+                }
+
+                // calls own function to use filters
+                if ( $ownFunc ) {
+                    $im = call_user_func( $ownFunc, $im );
                 }
 
                 // write image to cache
