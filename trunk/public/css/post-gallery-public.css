@@ -24,9 +24,9 @@ body.liteboxgallery-open {
   overflow: hidden;
   z-index: -1;
 
-  -webkit-transition: opacity 0.6s linear, visibility 0.6s;
-  -moz-transition: opacity 0.6s linear, visibility 0.6s;
-  transition: opacity 0.6s linear, visibility 0.6s;
+  -webkit-transition: opacity 0.6s linear, visibility 0s linear 0.65s, z-index 0s linear 0.65s;
+  -moz-transition: opacity 0.6s linear, visibility 0s linear 0.65s, z-index 0s linear 0.65s;
+  transition: opacity 0.6s linear, visibility 0s linear 0.65s, z-index 0s linear 0.65s;
 }
 
 .litebox-gallery.open {
@@ -38,6 +38,10 @@ body.liteboxgallery-open {
   transition: opacity 0.6s linear;
 
   z-index: 100000000;
+}
+
+.litebox-gallery:not(.open) {
+  pointer-events: none;
 }
 
 .litebox-gallery .litebox-owlslider {

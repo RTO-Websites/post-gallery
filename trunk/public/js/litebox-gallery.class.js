@@ -149,8 +149,12 @@ var LiteboxGallery = function(args) {
      * @param {array} pics
      * @returns {undefined}
      */
-    this.openGalleryByPics = function(pics) {
+    this.openGalleryByPics = function(pics, startImage) {
         var thumbPics = [];
+
+        if (typeof(startImage) == 'undefined') {
+            startImage = 0;
+        }
 
         debug('openByPics', pics);
 
@@ -161,7 +165,7 @@ var LiteboxGallery = function(args) {
         }
 
         // init gallery
-        self.initGallery(thumbPics, 0);
+        self.initGallery(thumbPics, startImage);
     };
 
     /**
