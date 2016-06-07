@@ -236,7 +236,6 @@ class SliderShortcodeAdmin {
                         if ( !empty( $option['options'] ) && is_array( $option['options'] ) ) {
                             foreach ( $option['options'] as $optionKey => $optionTitle ) {
                                 $selected = '';
-                                echo "\nk:" . $optionKey . '-' . $value;
                                 if ( $optionKey == $value ||
                                     is_array( $value ) && in_array( $optionKey, $value )
                                 ) {
@@ -347,6 +346,10 @@ class SliderShortcodeAdmin {
         // Save form-fields
         if ( !empty( $this->optionFields ) ) {
             foreach ( $this->optionFields as $key => $postOption ) {
+                if ( !filter_has_var( INPUT_POST, $key ) ) {
+                    continue;
+                }
+                
                 if ( isset( $_POST[$key] ) && is_array( $_POST[$key] ) ) {
                     // multiselect
                     $value = array();

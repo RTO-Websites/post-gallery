@@ -610,6 +610,9 @@ class PostGalleryAdmin {
         // Save form-fields
         if ( !empty( $this->optionFields ) ) {
             foreach ( $this->optionFields as $key => $postOption ) {
+                if ( !filter_has_var( INPUT_POST, $key ) ) {
+                    continue;
+                }
                 update_post_meta( $curLangPostId, $key, filter_input( INPUT_POST, $key ) );
             }
         }
