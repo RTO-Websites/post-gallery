@@ -172,6 +172,11 @@ class PostGalleryAdmin {
                 'title' => __( 'Enable Keypress-Events', $this->textdomain ),
                 'default' => true,
             ),
+            'asBg' => array(
+                'type' => 'checkbox',
+                'title' => __( 'Images as Background', $this->textdomain ),
+                'default' => false,
+            ),
 
             'owlConfig' => array(
                 'type' => 'textarea',

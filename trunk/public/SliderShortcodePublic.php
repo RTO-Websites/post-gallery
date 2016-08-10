@@ -36,6 +36,8 @@ class SliderShortcodePublic {
      */
     private $textdomain;
 
+    private $thumbOnly = false;
+
     /**
      * Initialize the class and set its properties.
      *
@@ -77,6 +79,12 @@ class SliderShortcodePublic {
         $imgHeight = get_post_meta( $sliderid, 'sliderImageHeight', true );
 
         $noLazy = get_post_meta( $sliderid, 'sliderNoLazy', true );
+        $autoplay = get_post_meta( $sliderid, 'sliderAutoplay', true );
+        $loop = get_post_meta( $sliderid, 'sliderLoop', true );
+        $items = get_post_meta( $sliderid, 'sliderItems', true );
+        $asBg = get_post_meta( $sliderid, 'sliderAsBg', true );
+
+        $this->thumbOnly = get_post_meta( $sliderid, 'sliderThumbOnly', true );
 
         $images = PostGallery::getImages( $sliderid );
         $class = '';
@@ -94,15 +102,23 @@ class SliderShortcodePublic {
         if ( !empty( $args['imgheight'] ) ) {
             $imgHeight = $args['imgheight'];
         }
-        if ( !empty( $args['scale'] ) ) {
+        if ( isset( $args['scale'] ) ) {
             $scale = $args['scale'];
         }
         if ( !empty( $args['class'] ) ) {
             $class = $args['class'];
         }
-        if ( !empty( $args['owlConfig'] ) ) {
-            $owlConfig = $args['owlConfig'];
+
+        if ( in_array( 'autoplay', $args ) ) {
+            $autoplay = true;
         }
+        if ( in_array( 'loop', $args ) ) {
+            $loop = true;
+        }
+        if ( !empty( $args['items'] ) ) {
+            $items = $args['items'];
+        }
+
         if ( !empty( $args['owlExtra'] ) ) {
             $owlConfig .= ',' . $args['owlExtra'];
         }
@@ -110,7 +126,21 @@ class SliderShortcodePublic {
             $noLazy = true;
         }
 
+        if ( in_array( 'asbg', $args ) ) {
+            $asbg = true;
+        }
+
         $class .= ' pg-slider-' . $slider->post_name;
+
+        if ( $autoplay ) {
+            $owlConfig .= 'autoplay:1,' . $owlConfig;
+        }
+        if ( $loop ) {
+            $owlConfig .= 'loop:1,' . $owlConfig;
+        }
+        if ( $items ) {
+            $owlConfig .= 'items:' . $items . ',' . $owlConfig;
+        }
 
         // use slider-width/height as maximun for image-scaling
         if ( empty( $imgWidth ) ) {
@@ -122,12 +152,7 @@ class SliderShortcodePublic {
 
         // load images from other posts
         if ( !empty( $loadFrom ) && is_array( $loadFrom ) ) {
-            // load from other posts
-            foreach ( $loadFrom as $loadId ) {
-                if ( !empty( $loadId ) ) {
-                    $images = array_merge( $images, PostGallery::getImages( $loadId ) );
-                }
-            }
+            $images = $this->getImagesFromPostList( $loadFrom, $images );
         }
 
         // resize images
@@ -147,7 +172,13 @@ class SliderShortcodePublic {
         // output html
         $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
         foreach ( $images as $image ) {
-            $output .= '<div class="slider-image">';
+            $background = '';
+            if ( $asBg ) {
+                $background = ' style="background-image:url(' . $image['url'] . ');height: ' . $height . 'px;"';
+            }
+
+            $output .= '<div class="slider-image" data-post_id="' . $image['post_id'] .
+                '" data-post_title="' . $image['post_title'] . '" ' . $background . '>';
 
             if ( empty( $image['width'] ) ) {
                 $image['width'] = 'auto';
@@ -155,11 +186,15 @@ class SliderShortcodePublic {
             if ( empty( $image['height'] ) ) {
                 $image['height'] = 'auto';
             }
+            if ( empty( $image['alt'] ) ) {
+                $image['alt'] = '';
+            }
 
-            if ( empty( $noLazy ) ) {
+
+            if ( !$asBg && empty( $noLazy ) ) {
                 $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
                     . '" src="#" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
-            } else {
+            } else if ( !$asBg ) {
                 $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
                     . '" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
             }
@@ -180,5 +215,72 @@ class SliderShortcodePublic {
             </script>';
 
         return $output;
+    }
+
+
+    /**
+     * Load images from an image list
+     *
+     * @param $loadFrom
+     * @param array $images
+     * @return array
+     */
+    public function getImagesFromPostList( $loadFrom, $images = array() ) {
+        $postTypes = get_post_types();
+        unset( $postTypes['revision'] );
+        unset( $postTypes['nav_menu_item'] );
+
+        // load from other posts
+        foreach ( $loadFrom as $loadId ) {
+            if ( !empty( $loadId ) ) {
+                if ( is_numeric( $loadId ) ) {
+                    $images = array_merge( $images, $this->getImagesFromPost( $loadId ) );
+                } else {
+                    // is category
+                    // get posts from category
+                    $catPosts = get_posts( array(
+                        'post_type' => $postTypes,
+                        'category' => str_replace( 'cat-', '', $loadId ),
+                        'posts_per_page' => -1,
+                    ) );
+
+                    foreach ( $catPosts as $catPost ) {
+                        $images = array_merge( $images, $this->getImagesFromPost( $catPost->ID ) );
+                    }
+                }
+            }
+        }
+
+        return $images;
+    }
+
+    /**
+     * Get images of a post
+     *
+     * @param $loadId
+     * @return array|\Inc\type
+     */
+    public function getImagesFromPost( $loadId ) {
+        if ( $this->thumbOnly ) {
+            // only thumb
+            $url = wp_get_attachment_url( get_post_thumbnail_id( $loadId ) );
+
+            if ( empty( $url ) ) {
+                // no post-thumb, get first image
+                $images = PostGallery::getImages( $loadId );
+                $images = array_splice( $images, 0, 1 );
+                return $images;
+            }
+
+            return array(
+                array(
+                    'url' => $url,
+                    'post_id' => $loadId,
+                    'post_title' => get_the_title( $loadId ),
+                ),
+            );
+        } else {
+            return PostGallery::getImages( $loadId );
+        }
     }
 }

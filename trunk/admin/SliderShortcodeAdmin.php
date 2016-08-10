@@ -79,12 +79,34 @@ class SliderShortcodeAdmin {
                 'type' => 'text',
                 'label' => __( 'Image-Height', $this->textdomain ),
             ),
+            'sliderAsBg' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Images as Background', $this->textdomain ),
+            ),
 
             'sliderLoadFrom' => array(
                 'type' => 'select',
                 'label' => __( 'Load images from', $this->textdomain ),
                 'options' => '',
                 'multiple' => true,
+            ),
+            'sliderThumbOnly' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Show only Post-Thumbs', $this->textdomain ),
+            ),
+            'sliderItems' => array(
+                'type' => 'number',
+                'label' => __( 'Items', $this->textdomain ),
+                'default' => 3,
+            ),
+            'sliderLoop' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Loop', $this->textdomain ),
+                'default' => true,
+            ),
+            'sliderAutoplay' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Autoplay', $this->textdomain ),
             ),
             'sliderOwlConfig' => array(
                 'type' => 'textarea',
@@ -110,7 +132,7 @@ class SliderShortcodeAdmin {
                 'inputClass' => 'owl-post-config',
                 'cols' => 50,
                 'rows' => 10,
-                'default' => 'items: 1',
+                'default' => '',
             ),
             'sliderNoLazy' => array(
                 'type' => 'checkbox',
@@ -134,12 +156,36 @@ class SliderShortcodeAdmin {
 
         $postlist = array( '' );
 
-        $allPosts = get_posts( array(
+        $exclude = array( $GLOBALS['post']->ID );
+
+        // get categories
+        $allCategories = get_categories();
+        //var_dump( $allCategories );
+        foreach ( $allCategories as $category ) {
+            $postlist['cat-' . $category->cat_ID] = $category->name;
+
+            // get posts from category
+            $catPosts = get_posts( array(
+                'post_type' => $postTypes,
+                'category' => $category->cat_ID,
+                'exclude' => $GLOBALS['post']->ID,
+                'posts_per_page' => -1,
+            ) );
+
+            foreach ( $catPosts as $wPost ) {
+                $postlist[$wPost->ID] = '&nbsp;&nbsp;' . $wPost->post_title;
+                $exclude[] = $wPost->ID;
+            }
+        }
+
+        $remainingPosts = get_posts( array(
             'post_type' => $postTypes,
-            'exclude' => $GLOBALS['post']->ID,
+            'exclude' => $exclude,
+            'posts_per_page' => -1,
         ) );
-        foreach ( $allPosts as $wPost ) {
-            $postlist[$wPost->ID] = $wPost->post_title;
+
+        foreach ( $remainingPosts as $wPost ) {
+            $postlist[$wPost->ID] = ' ' . $wPost->post_title;
         }
 
         $this->optionFields['sliderLoadFrom']['options'] = $postlist;
@@ -347,9 +393,9 @@ class SliderShortcodeAdmin {
         if ( !empty( $this->optionFields ) ) {
             foreach ( $this->optionFields as $key => $postOption ) {
                 if ( !filter_has_var( INPUT_POST, $key ) ) {
-                    continue;
+                    #continue;
                 }
-                
+
                 if ( isset( $_POST[$key] ) && is_array( $_POST[$key] ) ) {
                     // multiselect
                     $value = array();
@@ -364,8 +410,13 @@ class SliderShortcodeAdmin {
                 if ( !empty( $postOption['isJson'] ) ) {
                     $value = json_decode( $value );
                 }
+
                 update_post_meta( $postId, $key, $value );
+
+                #echo '<br>'.$key.':'.$value;
             }
+
+            #exit();
         }
     }
 }

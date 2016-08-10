@@ -107,8 +107,6 @@ class PostGalleryPublic {
          * class.
          */
 
-        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
-
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
 
         if ( !empty( $this->options['useOldOwl'] ) ) {
@@ -122,6 +120,8 @@ class PostGalleryPublic {
             wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme.default.min.css' );
         }
         wp_enqueue_style( 'animate.css', $buildPath . '/css/animate.min.css' );
+
+        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
     }
 
     /**
@@ -154,8 +154,12 @@ class PostGalleryPublic {
             wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', array( 'jquery' ) );
         }
 
-        wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
-        wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
+        if ( !empty( $this->options['debugmode'] ) ) {
+            wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
+            wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
+        } else {
+            wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
+        }
 
     }
 
@@ -279,7 +283,7 @@ class PostGalleryPublic {
 
             $orientation = ' wide';
 
-            if ( $thumb['width'] > $thumb['height'] ) {
+            if ( $thumb['width'] >= $thumb['height'] ) {
                 $width = $thumb['width'];
             } else {
                 $height = $thumb['height'];
@@ -433,6 +437,7 @@ class PostGalleryPublic {
 
     public function insertHeaderscript( $header ) {
         $oldOwl = !empty( $this->options['useOldOwl'] ) ? 'owlVersion: 1,' : '';
+        $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
         $owlConfig = ( !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' );
@@ -449,7 +454,7 @@ class PostGalleryPublic {
         $script = '<script>';
         $script .= 'window.pgConfig = { websiteUrl: "' . get_bloginfo( 'wpurl' ) . '",';
         $script .= 'liteboxArgs: {'
-            . $clickEvents . $keyEvents . $oldOwl
+            . $asBg . $clickEvents . $keyEvents . $oldOwl
             . 'owlArgs: {' . $owlConfig . '},'
             . 'owlThumbArgs: {' . $owlThumbConfig . '}'
             . '}};';
