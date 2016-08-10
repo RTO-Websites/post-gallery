@@ -3,15 +3,15 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
     appConfig:
       src: 'bower_components'
-      dest: 'build'
+      dest: 'build',
+      public: 'public',
     clean:
       options:
         force: yes
       build:
         src: [
           '<%= appConfig.dest %>/'
-
-        ]
+        ],
     copy:
       dist:
         files: [
@@ -64,17 +64,35 @@ module.exports = (grunt) ->
           },
 
 
+          {
+            src: ['<%= appConfig.public %>/js/post-gallery-public.js']
+            dest: '<%= appConfig.dest %>/js/post-gallery-public.js'
+          },
+          {
+            src: ['<%= appConfig.public %>/js/litebox-gallery.class.js']
+            dest: '<%= appConfig.dest %>/js/litebox-gallery.class.js'
+          },
+
         ],
 
+    uglify:
+      dist:
+        files:
+            '<%= appConfig.dest %>/js/postgallery.min.js': [
+              '<%= appConfig.dest %>/js/post-gallery-public.js',
+              '<%= appConfig.dest %>/js/litebox-gallery.class.js'
+            ]
 
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-copy'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
 
   # Register tasks
   grunt.registerTask 'default', ->
     taskList = [
       'clean'
       'copy'
+      'uglify'
     ]
     if grunt.option('watch')
       taskList.push 'watch'
