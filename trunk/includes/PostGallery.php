@@ -314,6 +314,8 @@ class PostGallery {
                         'title' => !empty( $titles[$file] ) ? $titles[$file] : '',
                         'desc' => !empty( $descs[$file] ) ? $descs[$file] : '',
                         'alt' => !empty( $alts[$file] ) ? $alts[$file] : '',
+                        'post_id' => $postid,
+                        'post_title' => get_the_title( $postid ),
                     );
                 }
             }
@@ -344,6 +346,9 @@ class PostGallery {
      * @return {string}
      */
     public static function getImageString( $postid = null, $args = array() ) {
+        if (empty($postid)) {
+            global $postid;
+        }
         $images = PostGallery::getImages( $postid );
         if ( empty( $images ) ) {
             return '';
