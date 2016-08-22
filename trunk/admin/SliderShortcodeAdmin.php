@@ -108,6 +108,10 @@ class SliderShortcodeAdmin {
                 'type' => 'checkbox',
                 'label' => __( 'Autoplay', $this->textdomain ),
             ),
+            'sliderShuffle' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Shuffle images', $this->textdomain ),
+            ),
             'sliderOwlConfig' => array(
                 'type' => 'textarea',
                 'label' => __( 'Owl-Config', $this->textdomain ),

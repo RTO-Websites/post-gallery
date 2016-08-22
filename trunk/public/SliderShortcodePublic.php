@@ -83,6 +83,7 @@ class SliderShortcodePublic {
         $loop = get_post_meta( $sliderid, 'sliderLoop', true );
         $items = get_post_meta( $sliderid, 'sliderItems', true );
         $asBg = get_post_meta( $sliderid, 'sliderAsBg', true );
+        $shuffle = get_post_meta( $sliderid, 'sliderShuffle', true );
 
         $this->thumbOnly = get_post_meta( $sliderid, 'sliderThumbOnly', true );
 
@@ -127,7 +128,11 @@ class SliderShortcodePublic {
         }
 
         if ( in_array( 'asbg', $args ) ) {
-            $asbg = true;
+            $asBg = true;
+        }
+
+        if ( in_array( 'shuffle', $args ) || in_array( 'random', $args ) ) {
+            $shuffle = true;
         }
 
         $class .= ' pg-slider-' . $slider->post_name;
@@ -168,6 +173,10 @@ class SliderShortcodePublic {
         $style = '';
         $style .= !empty( $width ) ? 'max-width:' . $width . 'px;' : '';
         $style .= !empty( $height ) ? 'max-height:' . $height . 'px;' : '';
+
+        if ( $shuffle ) {
+            shuffle( $images );
+        }
 
         // output html
         $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
@@ -238,11 +247,14 @@ class SliderShortcodePublic {
                 } else {
                     // is category
                     // get posts from category
+                    ob_start();
                     $catPosts = get_posts( array(
                         'post_type' => $postTypes,
                         'category' => str_replace( 'cat-', '', $loadId ),
                         'posts_per_page' => -1,
+                        'suppress_filters' => false,
                     ) );
+                    ob_end_clean();
 
                     foreach ( $catPosts as $catPost ) {
                         $images = array_merge( $images, $this->getImagesFromPost( $catPost->ID ) );
