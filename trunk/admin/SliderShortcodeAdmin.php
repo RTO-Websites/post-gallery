@@ -112,6 +112,10 @@ class SliderShortcodeAdmin {
                 'type' => 'checkbox',
                 'label' => __( 'Shuffle images', $this->textdomain ),
             ),
+            'sliderLinkPost' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Link images with post', $this->textdomain ),
+            ),
             'sliderOwlConfig' => array(
                 'type' => 'textarea',
                 'label' => __( 'Owl-Config', $this->textdomain ),
@@ -124,7 +128,7 @@ class SliderShortcodeAdmin {
                     </select>',
 
                 'desc' => '<br />' . __( 'You can use these options', $this->textdomain ) . ':<br />' .
-                    '<a href="http://www.owlcarousel.owlgraphic.com/docs/api-options.html" target="_blank">
+                    '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
                                         OwlCarousel Options
                                     </a>
                                     <br />' .

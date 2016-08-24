@@ -166,6 +166,7 @@ body.liteboxgallery-open {
 }
 
 .postgallery-slider .slider-image {
+  display: inline-block;
   position: relative;
   text-align: center;
   overflow: hidden;

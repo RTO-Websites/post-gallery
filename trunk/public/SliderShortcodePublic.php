@@ -84,6 +84,7 @@ class SliderShortcodePublic {
         $items = get_post_meta( $sliderid, 'sliderItems', true );
         $asBg = get_post_meta( $sliderid, 'sliderAsBg', true );
         $shuffle = get_post_meta( $sliderid, 'sliderShuffle', true );
+        $linkPost = get_post_meta( $sliderid, 'sliderLinkPost', true );
 
         $this->thumbOnly = get_post_meta( $sliderid, 'sliderThumbOnly', true );
 
@@ -147,6 +148,10 @@ class SliderShortcodePublic {
             $owlConfig .= 'items:' . $items . ',' . $owlConfig;
         }
 
+        if ( in_array( 'link', $args ) ) {
+            $linkPost = true;
+        }
+
         // use slider-width/height as maximun for image-scaling
         if ( empty( $imgWidth ) ) {
             $imgWidth = $width;
@@ -178,15 +183,26 @@ class SliderShortcodePublic {
             shuffle( $images );
         }
 
+        $tag = 'div';
+
         // output html
         $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
         foreach ( $images as $image ) {
+            $permalink = get_the_permalink( $image['post_id'] );
             $background = '';
             if ( $asBg ) {
                 $background = ' style="background-image:url(' . $image['url'] . ');height: ' . $height . 'px;"';
             }
 
-            $output .= '<div class="slider-image" data-post_id="' . $image['post_id'] .
+            $href = '';
+            if ( $linkPost ) {
+                $tag = 'a';
+                $href = ' href="' . $permalink . '"';
+            }
+
+
+            $output .= '<' . $tag . ' ' . $href . ' class="slider-image" data-post_id="' . $image['post_id'] .
+                '" data-post_permalink="' . $permalink .
                 '" data-post_title="' . $image['post_title'] . '" ' . $background . '>';
 
             if ( empty( $image['width'] ) ) {
@@ -214,7 +230,7 @@ class SliderShortcodePublic {
             if ( !empty( $image['desc'] ) ) {
                 $output .= '<div class="slider-image-desc">' . $image['desc'] . '</div>';
             }
-            $output .= '</div>';
+            $output .= '</' . $tag . '>';
         }
         $output .= '</figure>';
 
