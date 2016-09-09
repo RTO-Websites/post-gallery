@@ -268,7 +268,7 @@ class SliderShortcodePublic {
                         'post_type' => $postTypes,
                         'category' => str_replace( 'cat-', '', $loadId ),
                         'posts_per_page' => -1,
-                        'suppress_filters' => false,
+                        'suppress_filters' => true,
                     ) );
                     ob_end_clean();
 
@@ -292,6 +292,7 @@ class SliderShortcodePublic {
         if ( $this->thumbOnly ) {
             // only thumb
             $url = wp_get_attachment_url( get_post_thumbnail_id( $loadId ) );
+            $url = apply_filters( 'postgallerySlider_getPostThumbUrl', $url, $loadId );
 
             if ( empty( $url ) ) {
                 // no post-thumb, get first image
@@ -299,6 +300,7 @@ class SliderShortcodePublic {
                 $images = array_splice( $images, 0, 1 );
                 return $images;
             }
+
 
             return array(
                 array(
