@@ -202,32 +202,37 @@ class Thumb {
                     return array( 'error' => 'Imagick fails', 'exceptions' => $e );
                 }
 
-                // crop images
-                switch ( $scale ) {
-                    case 0: // crop
-                        $im->cropThumbnailImage( $width, $height );
-                        break;
+                try {
+                    // crop images
+                    switch ( $scale ) {
+                        case 0: // crop
+                            $im->cropThumbnailImage( $width, $height );
+                            break;
 
-                    case 3: // Ignore proportions
-                        $im->thumbnailimage( $width, $height );
-                        break;
+                        case 3: // Ignore proportions
+                            $im->thumbnailimage( $width, $height );
+                            break;
 
-                    case 2: // use short edge, ignore long edge
-                        if ( $width > $height ) {
-                            $im->thumbnailimage( 0, $height );
-                        } else {
-                            $im->thumbnailimage( $width, 0 );
-                        }
-                        break;
+                        case 2: // use short edge, ignore long edge
+                            if ( $width > $height ) {
+                                $im->thumbnailimage( 0, $height );
+                            } else {
+                                $im->thumbnailimage( $width, 0 );
+                            }
+                            break;
 
-                    case 1: // use long edge, ignore short edge
-                    default:
-                        if ( $width > $height ) {
-                            $im->thumbnailimage( $width, 0 );
-                        } else {
-                            $im->thumbnailimage( 0, $height );
-                        }
-                        break;
+                        case 1: // use long edge, ignore short edge
+                        default:
+                            if ( $width > $height ) {
+                                $im->thumbnailimage( $width, 0 );
+                            } else {
+                                $im->thumbnailimage( 0, $height );
+                            }
+                            break;
+                    }
+                }
+                catch ( Exception $e ) {
+                    return array( 'error' => 'Imagick-Crop fails', 'exceptions' => $e );
                 }
 
                 if ( $bw ) {
@@ -337,11 +342,19 @@ class Thumb {
         }
 
         // Get imagedata
-        $size = GetImageSize( $path );
+        try {
+            $size = GetImageSize( $path );
+        } catch ( Exception $e ) {
+            return array( 'error' => 'GD getimagesize fails', 'exceptions' => $e );
+        }
         $orgWidth = $size[0];
         $orgHeight = $size[1];
         $newHeight = $height;
         $newWidth = $width;
+
+        if ($orgWidth > 2000 || $orgHeight > 2000) {
+            return array( 'error' => 'Resolution to big', 'exceptions' => '', 'width' => '', 'height' => '', 'url' => '' );
+        }
 
         switch ( $scale ) {
             case 0: // crop images
@@ -532,11 +545,17 @@ class Thumb {
                 }
 
                 // create thumb
-                $oldImage = @$createFunction( $path );
 
-                // Fallback -> create from string
-                if ( !$oldImage ) {
-                    $oldImage = @imagecreatefromstring( file_get_contents( $path ) );
+                try {
+                    $size = GetImageSize( $path );
+                    $oldImage = @$createFunction( $path );
+
+                    // Fallback -> create from string
+                    if ( !$oldImage ) {
+                        $oldImage = @imagecreatefromstring( file_get_contents( $path ) );
+                    }
+                } catch ( Exception $e ) {
+                    return array( 'error' => 'GD imagecreate fails', 'exceptions' => $e );
                 }
 
                 // if Fail, then load orginal image
@@ -553,7 +572,12 @@ class Thumb {
                 }
 
                 $newImage = imagecreatetruecolor( $newWidth, $newHeight );
-                imageCopyResampled( $newImage, $oldImage, $newOffsetX, $newOffsetY, $sourceOffsetX, $sourceOffsetY, $newWidth, $newHeight, $orgWidth, $orgHeight );
+
+                try {
+                    imageCopyResampled( $newImage, $oldImage, $newOffsetX, $newOffsetY, $sourceOffsetX, $sourceOffsetY, $newWidth, $newHeight, $orgWidth, $orgHeight );
+                } catch ( Exception $e ) {
+                    return array( 'error' => 'GD copyresampled fails', 'exceptions' => $e );
+                }
                 if ( $bw ) {
                     imagefilter( $newImage, IMG_FILTER_GRAYSCALE );
                 }
