@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 24.03.2016 08:53
+ * Last change: 15.09.2016 09:52
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -68,7 +68,7 @@ var LiteboxGallery = function (args) {
       $(linkSelector).addClass('no-ajax');
       if (!$(this).hasClass('no-litebox')) {
         event.preventDefault();
-        self.openGallery(this);
+        self.openGallery(event.target);
       }
     });
 
@@ -154,7 +154,7 @@ var LiteboxGallery = function (args) {
     element = jQuery(element);
     var pics = element.data('pgimages');
 
-    self.openGalleryByPics(pics);
+    self.openGalleryByPics(pics, 0, element);
   };
 
   /**
@@ -163,7 +163,7 @@ var LiteboxGallery = function (args) {
    * @param {array} pics
    * @returns {undefined}
    */
-  self.openGalleryByPics = function (pics, startImage) {
+  self.openGalleryByPics = function (pics, startImage, clickElement) {
     var thumbPics = [];
 
     if (typeof(startImage) == 'undefined') {
@@ -183,7 +183,7 @@ var LiteboxGallery = function (args) {
     }
 
     // init gallery
-    self.initGallery(thumbPics, startImage);
+    self.initGallery(thumbPics, startImage, clickElement);
   };
 
   /**
@@ -291,7 +291,8 @@ var LiteboxGallery = function (args) {
     liteboxContainer.trigger('box-init', {
       state: 'begin',
       pics: pics,
-      startPic: startPic
+      startPic: startPic,
+      clickElement: clickElement,
     });
 
     if (!pics.length) {
