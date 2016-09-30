@@ -398,7 +398,7 @@ class PostGallery {
      */
     static function getThumbUrl( $filepath, $args = array() ) {
         $thumb = PostGallery::getThumb( $filepath, $args );
-        $thumbUrl = ( !empty( $thumb['url'] ) ? $thumb['url'] : get_bloginfo( 'wpurl' ) . '/' . $args['path'] );
+        $thumbUrl = ( !empty( $thumb['url'] ) ? $thumb['url'] : get_bloginfo( 'wpurl' ) . '/' . $thumb['path'] );
         $thumbUrl = str_replace( '//wp-content', '/wp-content', $thumbUrl );
 
         return $thumbUrl;
