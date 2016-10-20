@@ -68,7 +68,7 @@ var LiteboxGallery = function (args) {
       $(linkSelector).addClass('no-ajax');
       if (!$(this).hasClass('no-litebox')) {
         event.preventDefault();
-        self.openGallery(event.target);
+        self.openGallery(event.currentTarget);
       }
     });
 
