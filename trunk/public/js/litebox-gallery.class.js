@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 20.10.2016 16:08
+ * Last change: 24.10.2016 13:35
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -482,6 +482,7 @@ var LiteboxGallery = function (args) {
     liteboxContainer.removeClass('open').animate({'opacity': '0'}, 500, function () {
       debug('close-end');
       liteboxContainer.css({'display': 'none'});
+      liteboxContainer.trigger('box-close', {state: 'afterAnimation'});
 
       // destroy gallery
       galleryContainer.trigger('destroy.owl.carousel');
