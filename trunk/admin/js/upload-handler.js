@@ -19,7 +19,7 @@ function checkForUpload() {
     };
 
     uploaderConfig.element = element;
-    uploaderConfig.allowedExtensions = ['JPG', 'PNG', 'GIF'];
+    uploaderConfig.allowedExtensions = ['JPG', 'PNG', 'GIF', 'JPEG'];
     uploaderConfig.sizeLimit = 8048576;
     uploaderConfig.multiple = true;
 
