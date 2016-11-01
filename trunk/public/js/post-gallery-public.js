@@ -58,8 +58,8 @@
       gWidth = 1920;
     }
 
-    if (gHeight <= 2560 && gHeight > 1920) {
-      gHeight = 1920;
+    if (gHeight > 1920) {
+      gHeight = 2560;
     }
     if (gHeight <= 1920 && gHeight > 1600) {
       gHeight = 1920;
@@ -87,7 +87,7 @@
     }
 
 
-    if (gWidth <= 2560 && gWidth > 1920) {
+    if (gWidth > 1920) {
       gWidth = 2560;
     }
     if (gWidth <= 1920 && gWidth > 1600) {
