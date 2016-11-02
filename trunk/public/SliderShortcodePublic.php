@@ -224,11 +224,15 @@ class SliderShortcodePublic {
                     . '" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
             }
 
-            if ( !empty( $image['title'] ) ) {
-                $output .= '<div class="slider-image-title">' . $image['title'] . '</div>';
-            }
-            if ( !empty( $image['desc'] ) ) {
-                $output .= '<div class="slider-image-desc">' . $image['desc'] . '</div>';
+            if ( !empty( $image['title'] ) || !empty( $image['desc'])) {
+                $output .= '<div class="slider-image-info">';
+                if ( !empty( $image['title'] ) ) {
+                    $output .= '<div class="slider-image-title">' . $image['title'] . '</div>';
+                }
+                if ( !empty( $image['desc'] ) ) {
+                    $output .= '<div class="slider-image-desc">' . $image['desc'] . '</div>';
+                }
+                $output .= '</div>';
             }
             $output .= '</' . $tag . '>';
         }

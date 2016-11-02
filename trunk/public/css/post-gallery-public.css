@@ -168,7 +168,7 @@ body.liteboxgallery-open {
 }
 
 .postgallery-slider .slider-image {
-  display: inline-block;
+  display: block;
   position: relative;
   text-align: center;
   overflow: hidden;
@@ -181,16 +181,12 @@ body.liteboxgallery-open {
   display: inline-block;
 }
 
-.postgallery-slider .slider-image-title {
+.postgallery-slider .slider-image-info {
   position: absolute;
   top: 0.5em;
-  left: 0.5em;
-}
-
-.postgallery-slider .slider-image-desc {
-  position: absolute;
-  top: 1.5em;
-  left: 0.5em;
+  right: 0.5em;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 /** themes **/
