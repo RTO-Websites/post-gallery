@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 24.10.2016 13:35
+ * Last change: 03.11.2016 11:04
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -33,7 +33,6 @@ var LiteboxGallery = function (args) {
     debug,
     setEvents,
     getUrlFromPics,
-    createEmptyPicsData,
     init;
 
 
@@ -354,19 +353,25 @@ var LiteboxGallery = function (args) {
 
 
       // destroy old gallery
-      if (args.owlVersion == 1) {
-        // owl v1
-        if (galleryContainer.data('owlCarousel')) {
-          galleryContainer.data('owlCarousel').destroy();
-        }
-      } else {
-        // owl v2
-        galleryContainer.trigger('destroy.owl.carousel');
+      switch (args.owlVersion) {
+        case 1:
+          // owl v1
+          if (galleryContainer.data('owlCarousel')) {
+            galleryContainer.data('owlCarousel').destroy();
+          }
+          break;
+        case 'noslider':
+          // do nothing
+          break;
+        default:
+          // owl v2
+          galleryContainer.trigger('destroy.owl.carousel');
+          break;
       }
 
       // add pics to container
       for (var i = 0; i < pics.length; i += 1) {
-        var thumb = null,
+        var pic = null,
           width = 'auto',
           height = 'auto',
           orientation = ' wide';
@@ -379,26 +384,33 @@ var LiteboxGallery = function (args) {
         }
 
         // add pic title and desc
-        thumbTitleDesc = '';
+        picTitleDesc = '';
         if (typeof(self.picsData[i]['title']) !== 'undefined') {
-          thumbTitleDesc += '<div class="pic-title">' + self.picsData[i]['title'] + '</div>';
+          picTitleDesc += '<div class="pic-title">' + self.picsData[i]['title'] + '</div>';
         }
         if (typeof(self.picsData[i]['desc']) !== 'undefined') {
-          thumbTitleDesc += '<div class="pic-desc">' + self.picsData[i]['desc'] + '</div>';
+          picTitleDesc += '<div class="pic-desc">' + self.picsData[i]['desc'] + '</div>';
+        }
+
+        // add wrapper around desc and title
+        if (picTitleDesc.length) {
+          picTitleDesc = '<div class="pic-info">' + picTitleDesc + '</div>';
         }
 
         if (args.asBg) {
-          thumb = $('<div class="litebox-image" style="background-image:url(' + pics[i]['url']  + ');">' +
-            thumbTitleDesc +
+          // embed images as background
+          pic = $('<div class="litebox-image" style="background-image:url(' + pics[i]['url']  + ');">' +
+            picTitleDesc +
             '</div>');
         } else {
-          thumb = $('<div class="litebox-image">' +
+          // embed images as <img>
+          pic = $('<div class="litebox-image">' +
             '<img width="' + width + '" height="' + height + '" class="lazyload '
             + orientation + '" data-src="' + pics[i]['url'] + '" alt="" />' +
-            thumbTitleDesc +
+            picTitleDesc +
             '</div>');
         }
-        galleryContainer.append(thumb);
+        galleryContainer.append(pic);
       }
 
       self.pics = null;
@@ -406,7 +418,9 @@ var LiteboxGallery = function (args) {
       args.owlArgs.startPosition = galleryStartPic;
       args.owlArgs.loop = true;
 
-      galleryContainer.owlCarousel(args.owlArgs);
+      if (args.owlVersion !== 'noslider') {
+        galleryContainer.owlCarousel(args.owlArgs);
+      }
 
       if (args.owlVersion == 1 && galleryStartPic) { // only needed for v1
         galleryContainer.data('owlCarousel').goTo(galleryStartPic);
@@ -427,7 +441,8 @@ var LiteboxGallery = function (args) {
   self.initThumbs = function (pics) {
     // Thumbs
     if (liteboxContainer.find('.thumb-container').length &&
-      $(window).width() > 720 && $(window).height() > 360
+      $(window).width() > 720 && $(window).height() > 360 &&
+      args.owlVersion !== 'noslider'
     ) {
       debug('load-thumbs');
       getThumbs(pics, 150, 150, function (pics) {
