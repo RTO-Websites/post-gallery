@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 03.11.2016 11:04
+ * Last change: 07.11.2016 08:25
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -48,6 +48,7 @@ var LiteboxGallery = function (args) {
     args = jQuery.extend(defaultArgs, args);
     thumbArgs = jQuery.extend(thumbDefaultArgs, args.owlThumbArgs);
     args.owlArgs.addClassActive = true;
+    args.owlArgs.lazyLoad = true;
     thumbArgs.addClassActive = true;
 
     liteboxContainer = $(args.liteboxContainer);
@@ -399,13 +400,13 @@ var LiteboxGallery = function (args) {
 
         if (args.asBg) {
           // embed images as background
-          pic = $('<div class="litebox-image" style="background-image:url(' + pics[i]['url']  + ');">' +
+          pic = $('<div class="litebox-image owl-lazy" data-src="' + pics[i]['url']  + '">' +
             picTitleDesc +
             '</div>');
         } else {
           // embed images as <img>
           pic = $('<div class="litebox-image">' +
-            '<img width="' + width + '" height="' + height + '" class="lazyload '
+            '<img width="' + width + '" height="' + height + '" class="owl-lazy '
             + orientation + '" data-src="' + pics[i]['url'] + '" alt="" />' +
             picTitleDesc +
             '</div>');
@@ -462,7 +463,7 @@ var LiteboxGallery = function (args) {
         thumbSlider.addClass('owl-carousel owl-theme');
 
         for (var i = 0; i < pics.length; i += 1) {
-          var thumb = $('<div class="litebox-thumb"><img src="' + pics[i]['url'] + '" alt="" /></div>');
+          var thumb = $('<div class="litebox-thumb"><img class="owl-lazy" data-src="' + pics[i]['url'] + '" alt="" /></div>');
           thumb[0].liteboxIndex = i;
           thumb.on('click', function () {
             if (args.owlVersion == 1) {

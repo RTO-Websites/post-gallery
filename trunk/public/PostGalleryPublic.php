@@ -145,9 +145,6 @@ class PostGalleryPublic {
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
 
-        wp_enqueue_script( 'lazysizes', $buildPath
-            . '/js/lazysizes.min.js' );
-
         if ( !empty( $this->options['useOldOwl'] ) ) {
             wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', array( 'jquery' ) );
         } else {

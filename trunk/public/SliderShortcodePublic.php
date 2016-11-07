@@ -124,15 +124,17 @@ class SliderShortcodePublic {
         if ( !empty( $args['owlExtra'] ) ) {
             $owlConfig .= ',' . $args['owlExtra'];
         }
-        if ( in_array( 'noLazy', $args ) ) {
+        if ( in_array( 'noLazy', $args, true ) ) {
             $noLazy = true;
+        } else {
+            $owlConfig = 'lazyLoad: true,' . $owlConfig;
         }
 
-        if ( in_array( 'asbg', $args ) ) {
+        if ( in_array( 'asbg', $args, true ) ) {
             $asBg = true;
         }
 
-        if ( in_array( 'shuffle', $args ) || in_array( 'random', $args ) ) {
+        if ( in_array( 'shuffle', $args, true ) || in_array( 'random', $args, true ) ) {
             $shuffle = true;
         }
 
@@ -190,8 +192,10 @@ class SliderShortcodePublic {
         foreach ( $images as $image ) {
             $permalink = get_the_permalink( $image['post_id'] );
             $background = '';
-            if ( $asBg ) {
+            if ( $asBg && empty($noLazy)) {
                 $background = ' style="background-image:url(' . $image['url'] . ');height: ' . $height . 'px;"';
+            } else if ( $asBg ) {
+                $background = ' data-src="'. $image['url'] . ' style="height: ' . $height . 'px;"';
             }
 
             $href = '';
@@ -218,7 +222,7 @@ class SliderShortcodePublic {
 
             if ( !$asBg && empty( $noLazy ) ) {
                 $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
-                    . '" src="#" class="lazyload" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+                    . '" src="#" class="owl-lazy" data-src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
             } else if ( !$asBg ) {
                 $output .= '<img width="' . $image['width'] . '" height="' . $image['height']
                     . '" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
