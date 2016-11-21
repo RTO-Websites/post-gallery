@@ -119,3 +119,10 @@
   };
 
 })(jQuery);
+
+function stopOwlPropagation(element) {
+  jQuery(element).on('to.owl.carousel', function(e) { e.stopPropagation(); });
+  jQuery(element).on('next.owl.carousel', function(e) { e.stopPropagation(); });
+  jQuery(element).on('prev.owl.carousel', function(e) { e.stopPropagation(); });
+  jQuery(element).on('destroy.owl.carousel', function(e) { e.stopPropagation(); });
+}

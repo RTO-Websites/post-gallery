@@ -245,6 +245,7 @@ class SliderShortcodePublic {
         // output script
         $output .= '<script>
             jQuery(function($) {$(".pg-slider-' . $sliderid . '").owlCarousel({' . $owlConfig . '});});
+            stopOwlPropagation(".pg-slider-' . $sliderid . '");
             </script>';
 
         return $output;
