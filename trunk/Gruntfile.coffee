@@ -72,6 +72,10 @@ module.exports = (grunt) ->
             src: ['<%= appConfig.public %>/js/litebox-gallery.class.js']
             dest: '<%= appConfig.dest %>/js/litebox-gallery.class.js'
           },
+          {
+            src: ['<%= appConfig.public %>/js/owl.postgallery.js']
+            dest: '<%= appConfig.dest %>/js/owl.postgallery.js'
+          },
 
         ],
 
@@ -81,6 +85,7 @@ module.exports = (grunt) ->
             '<%= appConfig.dest %>/js/postgallery.min.js': [
               '<%= appConfig.dest %>/js/post-gallery-public.js',
               '<%= appConfig.dest %>/js/litebox-gallery.class.js'
+              '<%= appConfig.dest %>/js/owl.postgallery.js'
             ]
 
   grunt.loadNpmTasks 'grunt-contrib-clean'

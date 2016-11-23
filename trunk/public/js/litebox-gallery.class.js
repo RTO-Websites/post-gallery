@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 07.11.2016 08:25
+ * Last change: 22.11.2016 16:22
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -9,24 +9,17 @@ var LiteboxGallery = function (args) {
     self = this,
     liteboxContainer = null,
     galleryContainer = null,
+    sliderArgs = {},
     defaultArgs = {
       galleryContainer: "#litebox-owlslider",
       liteboxContainer: "#litebox-gallery",
       owlArgs: {},
       owlThumbArgs: {},
       owlVersion: 2,
+      sliderType: 'owl',
       debug: false,
     },
 
-    thumbDefaultArgs = {
-      lazyLoad: true,
-      autoWidth: true,
-      dots: false,
-
-      // owl 1
-      pagination: false,
-    },
-    thumbArgs = null,
     linkSelector = 'a[href*=".jpg"], a[href*=".jpeg"], a[href*=".png"], a[href*=".gif"], a[href*=".JPG"], a[href*=".GIF"], a[href*=".PNG"], a[href*=".JPEG"]',
 
     // internal/private functions
@@ -46,13 +39,16 @@ var LiteboxGallery = function (args) {
     }
 
     args = jQuery.extend(defaultArgs, args);
-    thumbArgs = jQuery.extend(thumbDefaultArgs, args.owlThumbArgs);
-    args.owlArgs.addClassActive = true;
-    args.owlArgs.lazyLoad = true;
-    thumbArgs.addClassActive = true;
 
     liteboxContainer = $(args.liteboxContainer);
     galleryContainer = $(args.galleryContainer);
+
+    // args for slider
+    sliderArgs = {
+      liteboxContainer: liteboxContainer,
+      galleryContainer: galleryContainer,
+      args: args,
+    };
 
     // set onload events
     $(function () {
@@ -79,30 +75,7 @@ var LiteboxGallery = function (args) {
       /**
        * Gallery click
        */
-      $(document).on('click', '.litebox-owlslider .owl-stage-outer, litebox-owlslider .owl-wrapper-outer', function (e) {
-        var xPos,
-          yPos,
-          oldOwl = $('.litebox-gallery .owl-carousel').data('owlCarousel');
-
-        yPos = e.pageY - window.scrollY;
-        xPos = e.pageX;
-
-        if (xPos > $(document).width() / 2) {
-          // next
-          if (oldOwl) {
-            oldOwl.next();
-          } else {
-            $('.litebox-gallery .owl-next').trigger('click');
-          }
-        } else {
-          // prev
-          if (oldOwl) {
-            oldOwl.prev();
-          } else {
-            $('.litebox-gallery .owl-prev').trigger('click');
-          }
-        }
-      });
+      LiteboxGallery.sliders[args.sliderType].galleryClick();
     }
 
     if (args.keyEvents) {
@@ -110,7 +83,6 @@ var LiteboxGallery = function (args) {
        * Gallery keypress
        */
       $(document).on('keyup', function (e) {
-        var oldOwl = $('.litebox-gallery .owl-carousel').data('owlCarousel');
         /*
          * up: 38
          * down: 40
@@ -120,21 +92,11 @@ var LiteboxGallery = function (args) {
         switch (e.keyCode) {
           case 37:
             // prev
-            if (oldOwl) {
-              // need double because it wont work single?!
-              oldOwl.prev();
-              oldOwl.prev();
-            } else {
-              $('.litebox-gallery .owl-prev').trigger('click');
-            }
+            LiteboxGallery.sliders[args.sliderType].prev(sliderArgs);
             break;
           case 39:
             // next
-            if (oldOwl) {
-              oldOwl.next();
-            } else {
-              $('.litebox-gallery .owl-next').trigger('click');
-            }
+            LiteboxGallery.sliders[args.sliderType].next(sliderArgs);
             break;
           case 27:
             // ESC
@@ -354,21 +316,7 @@ var LiteboxGallery = function (args) {
 
 
       // destroy old gallery
-      switch (args.owlVersion) {
-        case 1:
-          // owl v1
-          if (galleryContainer.data('owlCarousel')) {
-            galleryContainer.data('owlCarousel').destroy();
-          }
-          break;
-        case 'noslider':
-          // do nothing
-          break;
-        default:
-          // owl v2
-          galleryContainer.trigger('destroy.owl.carousel');
-          break;
-      }
+      LiteboxGallery.sliders[args.sliderType].destroy(sliderArgs);
 
       // add pics to container
       for (var i = 0; i < pics.length; i += 1) {
@@ -416,16 +364,8 @@ var LiteboxGallery = function (args) {
 
       self.pics = null;
 
-      args.owlArgs.startPosition = galleryStartPic;
-      args.owlArgs.loop = true;
-
-      if (args.owlVersion !== 'noslider') {
-        galleryContainer.owlCarousel(args.owlArgs);
-      }
-
-      if (args.owlVersion == 1 && galleryStartPic) { // only needed for v1
-        galleryContainer.data('owlCarousel').goTo(galleryStartPic);
-      }
+      // init slider
+      LiteboxGallery.sliders[args.sliderType].init(sliderArgs, galleryStartPic);
 
       // open popup
       liteboxContainer.addClass('open').css({'display': 'block'}).animate({'opacity': '1'}, 500);
@@ -447,39 +387,7 @@ var LiteboxGallery = function (args) {
     ) {
       debug('load-thumbs');
       getThumbs(pics, 150, 150, function (pics) {
-        var thumbSlider = liteboxContainer.find('.thumb-container');
-
-        // destroy old gallery
-        if (args.owlVersion == 1) {
-          // owl v1
-          if (thumbSlider.data('owlCarousel')) {
-            thumbSlider.data('owlCarousel').destroy();
-          }
-        } else {
-          // owl v2
-          thumbSlider.trigger('destroy.owl.carousel');
-        }
-        thumbSlider.html('');
-        thumbSlider.addClass('owl-carousel owl-theme');
-
-        for (var i = 0; i < pics.length; i += 1) {
-          var thumb = $('<div class="litebox-thumb"><img class="owl-lazy" data-src="' + pics[i]['url'] + '" alt="" /></div>');
-          thumb[0].liteboxIndex = i;
-          thumb.on('click', function () {
-            if (args.owlVersion == 1) {
-              galleryContainer.data('owlCarousel').goTo(this.liteboxIndex); // v1
-            } else {
-              galleryContainer.trigger('to.owl.carousel', this.liteboxIndex);
-            }
-          });
-          thumbSlider.append(thumb);
-        }
-
-        // dirty hotfix
-        var thumb = $('<div class="litebox-thumb placeholder"></div>');
-        thumbSlider.append(thumb);
-
-        $('.thumb-container').owlCarousel(thumbArgs);
+        LiteboxGallery.sliders[args.sliderType].initThumbs(sliderArgs, pics);
       }, 0);
 
       // TODO: highlight current thumb
@@ -501,7 +409,7 @@ var LiteboxGallery = function (args) {
       liteboxContainer.trigger('box-close', {state: 'afterAnimation'});
 
       // destroy gallery
-      galleryContainer.trigger('destroy.owl.carousel');
+      LiteboxGallery.sliders[args.sliderType].destroy(sliderArgs);
     });
 
     $('body').removeClass('liteboxgallery-open');
@@ -524,3 +432,5 @@ var LiteboxGallery = function (args) {
 
   init();
 };
+
+LiteboxGallery.sliders = {};
