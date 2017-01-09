@@ -109,17 +109,29 @@ class PostGalleryPublic {
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
 
-        if ( !empty( $this->options['useOldOwl'] ) ) {
-            // owl 1
-            wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel-v1.css' );
-            wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme-v1.css' );
-            wp_enqueue_style( 'owl.carousel.transitions', $buildPath . '/css/owl.transition-v1.css' );
-        } else {
-            // owl 2
-            wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel.min.css' );
-            wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme.default.min.css' );
+
+        switch ( $this->options['sliderType'] ) {
+            case 'owl1':
+                // owl 1
+                wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel-v1.css' );
+                wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme-v1.css' );
+                wp_enqueue_style( 'owl.carousel.transitions', $buildPath . '/css/owl.transition-v1.css' );
+                break;
+
+            case 'swiper':
+                wp_enqueue_script( 'swiper', $buildPath . '/css/swiper.min.css' );
+                break;
+
+            case 'owl':
+                // nobreak
+            default:
+                // owl 2
+                wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel.min.css' );
+                wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme.default.min.css' );
+                wp_enqueue_style( 'animate.css', $buildPath . '/css/animate.min.css' );
+                break;
         }
-        wp_enqueue_style( 'animate.css', $buildPath . '/css/animate.min.css' );
+
 
         wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
     }
@@ -145,10 +157,20 @@ class PostGalleryPublic {
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
 
-        if ( !empty( $this->options['useOldOwl'] ) ) {
-            wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', array( 'jquery' ) );
-        } else {
-            wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', array( 'jquery' ) );
+        switch ( $this->options['sliderType'] ) {
+            case 'owl1':
+                wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', array( 'jquery' ) );
+                break;
+
+            case 'swiper':
+                wp_enqueue_script( 'swiper', $buildPath . '/js/swiper.jquery.min.js', array( 'jquery' ) );
+                break;
+
+            case 'owl':
+                // nobreak
+            default:
+                wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', array( 'jquery' ) );
+                break;
         }
 
         if ( !empty( $this->options['debugmode'] ) ) {
@@ -433,7 +455,8 @@ class PostGalleryPublic {
     }
 
     public function insertHeaderscript( $header ) {
-        $oldOwl = !empty( $this->options['useOldOwl'] ) ? 'owlVersion: 1,' : '';
+        $sliderType = ( !empty( $this->options['sliderType'] ) ? $this->options['sliderType'] : 'owl' );
+        $oldOwl = $this->options['sliderType'] == 'owl1' ? 'owlVersion: 1,' : '';
         $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
@@ -450,7 +473,8 @@ class PostGalleryPublic {
         // script for websiteurl
         $script = '<script>';
         $script .= 'window.pgConfig = { websiteUrl: "' . get_bloginfo( 'wpurl' ) . '",';
-        $script .= 'liteboxArgs: {'
+        $script .= 'liteboxArgs: {
+            sliderType: "' . $sliderType . '",'
             . $asBg . $clickEvents . $keyEvents . $oldOwl
             . 'owlArgs: {' . $owlConfig . '},'
             . 'owlThumbArgs: {' . $owlThumbConfig . '}'
