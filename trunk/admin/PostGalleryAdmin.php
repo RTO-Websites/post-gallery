@@ -110,9 +110,10 @@ class PostGalleryAdmin {
                 'title' => __( 'Debug-Mode', $this->textdomain ),
                 'default' => false,
             ),
-            'useOldOwl' => array(
-                'type' => 'checkbox',
-                'title' => __( 'Use old owl-carousel (v1.3)', $this->textdomain ),
+            'sliderType' => array(
+                'type' => 'select',
+                'title' => __( 'Slider-Type', $this->textdomain ),
+                'options' => array( 'owl', 'owl1' ), // Todo: Add swyper
             ),
 
             'globalPosition' => array(

@@ -63,6 +63,16 @@ module.exports = (grunt) ->
             dest: '<%= appConfig.dest %>/css/grabbing.png'
           },
 
+          # swiper
+          {
+            src: ['<%= appConfig.src %>/swiper/dist/js/swiper.jquery.min.js']
+            dest: '<%= appConfig.dest %>/js/swiper.jquery.min.js'
+          },
+          {
+            src: ['<%= appConfig.src %>/swiper/dist/css/swiper.min.css']
+            dest: '<%= appConfig.dest %>/css/swiper.min.css'
+          },
+
 
           {
             src: ['<%= appConfig.public %>/js/post-gallery-public.js']

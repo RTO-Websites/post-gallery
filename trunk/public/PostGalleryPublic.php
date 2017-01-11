@@ -176,6 +176,11 @@ class PostGalleryPublic {
         if ( !empty( $this->options['debugmode'] ) ) {
             wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
             wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
+
+            wp_enqueue_script( 'owl-postgallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery' ) );
+
+            // Todo: Add swyper
+            #wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery' ) );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
