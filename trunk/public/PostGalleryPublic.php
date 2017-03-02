@@ -70,6 +70,9 @@ class PostGalleryPublic {
         $this->textdomain = $pluginName;
         $this->version = $version;
         $this->options = MagicAdminPage::getOption( 'post-gallery' );
+        if ( empty( $this->options['sliderType'] ) ) {
+            $this->options['sliderType'] = 'owl';
+        }
 
         new SliderShortcodePublic( $pluginName, $version );
 
