@@ -514,7 +514,7 @@ class PostGalleryAdmin {
         }
 
         echo '
-			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . WP_PLUGIN_URL . '/post-gallery' . '"></div>
+			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '"></div>
 			<div class="postgallery-upload-error"></div>
 		';;
 
