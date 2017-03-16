@@ -207,7 +207,7 @@ class SliderShortcodePublic {
 
             $output .= '<' . $tag . ' ' . $href . ' class="slider-image" data-post_id="' . $image['post_id'] .
                 '" data-post_permalink="' . $permalink .
-                '" data-post_title="' . $image['post_title'] . '" ' . $background . '>';
+                '" data-post_title="' . strip_tags( $image['post_title'] ) . '" ' . $background . '>';
 
             if ( empty( $image['width'] ) ) {
                 $image['width'] = 'auto';
