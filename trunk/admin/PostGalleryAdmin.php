@@ -434,7 +434,11 @@ class PostGalleryAdmin {
     public function getCustomTemplates() {
         $output = array();
         // scan theme-dir for templates
-        $customTemplateDirs = array( get_stylesheet_directory() . '/post-gallery', get_stylesheet_directory() . '/plugins/post-gallery' );
+        $customTemplateDirs = array(
+            get_stylesheet_directory() . '/post-gallery',
+            get_stylesheet_directory() . '/plugins/post-gallery',
+            get_stylesheet_directory() . '/postgallery'
+        );
 
         foreach ( $customTemplateDirs as $customTemplateDir ) {
             if ( file_exists( $customTemplateDir ) && is_dir( $customTemplateDir ) ) {

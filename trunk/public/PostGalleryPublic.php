@@ -361,6 +361,7 @@ class PostGalleryPublic {
     public function returnGalleryHtml( $template, $postid = 0, $args = array() ) {
         $customTemplateDir = get_stylesheet_directory() . '/post-gallery';
         $customTemplateDir2 = get_stylesheet_directory() . '/plugins/post-gallery';
+        $customTemplateDir3 = get_stylesheet_directory() . '/postgallery';
         $defaultTemplateDir = POSTGALLERY_DIR . '/templates';
 
         $images = PostGallery::getImages( $postid );
@@ -378,6 +379,8 @@ class PostGalleryPublic {
             require( $customTemplateDir . '/' . $template . '.php' );
         } else if ( file_exists( $customTemplateDir2 . '/' . $template . '.php' ) ) {
             require( $customTemplateDir2 . '/' . $template . '.php' );
+        } else if ( file_exists( $customTemplateDir3 . '/' . $template . '.php' ) ) {
+            require( $customTemplateDir3 . '/' . $template . '.php' );
         } else if ( file_exists( $defaultTemplateDir . '/' . $template . '.php' ) ) {
             require( $defaultTemplateDir . '/' . $template . '.php' );
         }
