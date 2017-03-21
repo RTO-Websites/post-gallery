@@ -367,7 +367,7 @@ class PostGalleryPublic {
         $images = PostGallery::getImages( $postid );
 
         if ( empty( $images ) ) {
-            return '';
+            return '<!--postgallery: no images found-->';
         }
 
         if ( empty( $template ) || $template == 'global' ) {
@@ -375,6 +375,7 @@ class PostGalleryPublic {
         }
 
         ob_start();
+        echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
         if ( file_exists( $customTemplateDir . '/' . $template . '.php' ) ) {
             require( $customTemplateDir . '/' . $template . '.php' );
         } else if ( file_exists( $customTemplateDir2 . '/' . $template . '.php' ) ) {
@@ -384,6 +385,7 @@ class PostGalleryPublic {
         } else if ( file_exists( $defaultTemplateDir . '/' . $template . '.php' ) ) {
             require( $defaultTemplateDir . '/' . $template . '.php' );
         }
+        echo '<!--end postgallery-->';
 
         $content = ob_get_contents();
         ob_end_clean();
@@ -430,6 +432,10 @@ class PostGalleryPublic {
             } else {
                 $postid = url_to_postid( $args['post'] );
             }
+        }
+
+        if ( empty( $postid ) && empty( $args['post'] ) ) {
+            $postid = $GLOBALS['post']->ID;
         }
 
         return $this->returnGalleryHtml( $template, $postid, $args );
