@@ -1,33 +1,34 @@
 <?php
-    /**
-     * Template Page for the gallery slider
-     *
-     * Follow variables are useable:
-     *        $images
-     *            -> filename, path, thumbURL
-     */
+/**
+ * Template Page for the gallery slider
+ *
+ * Follow variables are useable:
+ *        $images
+ *            -> filename, path, thumbURL
+ */
 
-    $first_image = array_shift( $images );
-    array_unshift( $images, $first_image );
+$first_image = array_shift( $images );
+array_unshift( $images, $first_image );
 ?>
 <figure class="gallery pg-theme-slider">
-    <img id="gallery_image" onclick="nextImage();" style="max-width:100%;"
-        src="<?php echo \Inc\PostGallery::getThumbUrl( $first_image[ 'path' ], array( 'width' => 1024, 'height' => 768 ) ) ?>"
-        alt="<?php echo $first_image[ 'filename' ] ?>"/>
-    <script type="text/javascript">
-        var currentPic = 0;
-        var picList = [];
-        <?php $count = 0; foreach ($images as $image) {?>
-        picList[<?php echo $count?>] = '<?php echo \Inc\PostGallery::getThumbUrl($image['path'], array('width'=>1024, 'height'=>768))?>';
 
+    <div class="pg-slider owl-theme ow-carousel">
+        <?php foreach ( $images as $image ) { ?>
+            <img class="gallery-image"
+                    src="<?php echo \Inc\PostGallery::getThumbUrl( $image['path'],
+                        array(
+                            'width' => $this->option( 'thumbWidth' ),
+                            'height' => $this->option( 'thumbHeight' ),
+                            'scale' => $this->option('thumbScale'),
+                    ));
+                    ?>"
+                    alt="<?php echo $image['filename'] ?>" />
+        <?php } ?>
+    </div>
 
-        <?php $count+= 1; }?>
-        function nextImage() {
-            currentPic += 1;
-            if (currentPic >= picList.length) {
-                currentPic = 0;
-            }
-            jQuery('#gallery_image').attr ('src', picList[currentPic]);
-        }
+    <script>
+      jQuery('.pg-slider').owlCarousel({
+        <?php echo $this->option( 'sliderOwlConfig' ); ?>
+      });
     </script>
 </figure>

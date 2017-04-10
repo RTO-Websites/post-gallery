@@ -196,17 +196,22 @@ body.liteboxgallery-open {
 .pg-theme-thumbs .post-gallery_thumb {
   display: inline-block;
   margin: 10px;
-  max-width: 150px;
-}
-
-.pg-theme-slider-thumbs .thumb {
-  display: inline-block;
-  position: relative;
-  width: 150px;
-  margin-right: 10px;
+  width: auto;
 }
 
 [data-pgimages] {
   cursor: pointer;
+}
+
+.pg-slider .owl-item img {
+  -wekbit-transform-style: flat;
+  -moz-transform-style: flat;
+  -ms-transform-style: flat;
+  -o-transform-style: flat;
+  transform-style: flat;
+}
+
+.pg-slider {
+  position: relative;
 }
 

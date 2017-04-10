@@ -76,6 +76,7 @@ class PostGalleryPublic {
 
         new SliderShortcodePublic( $pluginName, $version );
 
+
         add_filter( 'the_content', array( $this, 'addGalleryToContent' ) );
         add_shortcode( 'postgallery', array( $this, 'postgalleryShortcode' ) );
         add_action( 'plugins_loaded', array( $this, 'postgalleryThumb' ) );
@@ -359,15 +360,17 @@ class PostGalleryPublic {
      * @return type
      */
     public function returnGalleryHtml( $template, $postid = 0, $args = array() ) {
-        $customTemplateDir = get_stylesheet_directory() . '/post-gallery';
-        $customTemplateDir2 = get_stylesheet_directory() . '/plugins/post-gallery';
-        $customTemplateDir3 = get_stylesheet_directory() . '/postgallery';
-        $defaultTemplateDir = POSTGALLERY_DIR . '/templates';
+        $templateDirs = array(
+            get_stylesheet_directory() . '/post-gallery',
+            get_stylesheet_directory() . '/plugins/post-gallery',
+            get_stylesheet_directory() . '/postgallery',
+            POSTGALLERY_DIR . '/templates',
+        );
 
         $images = PostGallery::getImages( $postid );
 
         if ( empty( $images ) ) {
-            return '<!--postgallery: no images found-->';
+            return '<!--postgallery: no images found for ' . $postid . '-->';
         }
 
         if ( empty( $template ) || $template == 'global' ) {
@@ -376,14 +379,11 @@ class PostGalleryPublic {
 
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
-        if ( file_exists( $customTemplateDir . '/' . $template . '.php' ) ) {
-            require( $customTemplateDir . '/' . $template . '.php' );
-        } else if ( file_exists( $customTemplateDir2 . '/' . $template . '.php' ) ) {
-            require( $customTemplateDir2 . '/' . $template . '.php' );
-        } else if ( file_exists( $customTemplateDir3 . '/' . $template . '.php' ) ) {
-            require( $customTemplateDir3 . '/' . $template . '.php' );
-        } else if ( file_exists( $defaultTemplateDir . '/' . $template . '.php' ) ) {
-            require( $defaultTemplateDir . '/' . $template . '.php' );
+        foreach ($templateDirs as $tplDir) {
+            if ( file_exists( $tplDir . '/' . $template . '.php' ) ) {
+                require( $tplDir . '/' . $template . '.php' );
+                break;
+            }
         }
         echo '<!--end postgallery-->';
 
@@ -501,5 +501,19 @@ class PostGalleryPublic {
         $header = $header . $script;
 
         echo $header;
+    }
+
+    /**
+     * Returns a single option, or all options if property is null
+     *
+     * @param null $property
+     * @return array|\array[]|\mixed[]|null
+     */
+    public function option( $property = null ) {
+        if ( !empty( $property ) ) {
+            return isset( $this->options[$property]) ? $this->options[$property] : null;
+        }
+
+        return $this->options;
     }
 }

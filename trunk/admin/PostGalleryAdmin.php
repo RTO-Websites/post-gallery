@@ -85,10 +85,8 @@ class PostGalleryAdmin {
         ) );
 
         $this->defaultTemplates = array(
-            'thumbs' => __( 'Thumbs (150x150)', $this->textdomain ),
-            'list' => __( 'List', $this->textdomain ),
-            'slider' => __( 'Slider', $this->textdomain ),
-            'slider-thumbs' => __( 'Slider with Thumbs', $this->textdomain ),
+            'thumbs' => __( 'Thumb-List', $this->textdomain ),
+            'slider' => __( 'Slider (with Owl-Carousel)', $this->textdomain ),
         );
 
         $postgalleryPage = new MagicAdminPage(
@@ -125,16 +123,54 @@ class PostGalleryAdmin {
                     'custom' => __( 'custom', $this->textdomain ),
                 ),
             ),
+
+
+            'templateSettings' => array(
+                'type' => 'headline',
+                'title' => __( 'Template-Settings', $this->textdomain ),
+            ),
             'globalTemplate' => array(
                 'title' => __( 'Global template', $this->textdomain ),
                 'type' => 'select',
                 'options' => array_merge( $this->getCustomTemplates(), $this->defaultTemplates ),
             ),
+
+            'thumbWidth' => array(
+                'title' => __( 'Thumb width', $this->textdomain ),
+                'type' => 'text',
+                'default' => 150,
+            ),
+
+            'thumbHeight' => array(
+                'title' => __( 'Thumb height', $this->textdomain ),
+                'type' => 'text',
+                'default' => 150,
+            ),
+            'thumbScale' => array(
+                'title' => __( 'Thumb scale', $this->textdomain ),
+                'type' => 'select',
+                'default' => '1',
+                'options' => array(
+                    '0' => __('crop', $this->textdomain ),
+                    '1' => __('long edge', $this->textdomain ),
+                    '2' => __('short edge', $this->textdomain ),
+                    '3' => __('ignore proportions', $this->textdomain ),
+                ),
+                'use_key' => true,
+            ),
+
+            'sliderOwlConfig' => array(
+                'type' => 'textarea',
+                'title' => __( 'Owl-Slider-Config (for Slider-Template)', $this->textdomain ),
+                'class' => '',
+                'default' => "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,",
+            ),
+
+
             'stretchImages' => array(
                 'title' => __( 'Stretch small images (for watermark)', $this->textdomain ),
                 'type' => 'checkbox',
             ),
-
 
             'liteboxSettings' => array(
                 'type' => 'headline',
@@ -210,7 +246,7 @@ class PostGalleryAdmin {
                 'type' => 'description',
                 'title' => __( 'Description', $this->textdomain ),
                 'description' => __( 'You can use these options', $this->textdomain ) . ':<br />' .
-                    '<a href="http://www.owlcarousel.owlgraphic.com/docs/api-options.html" target="_blank">
+                    '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
 							OwlCarousel Options
 						</a>
 						<br />' .

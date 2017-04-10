@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Post-Gallery v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-26 15:54+0100\n"
-"PO-Revision-Date: 2016-08-24 13:35+0100\n"
+"PO-Revision-Date: 2017-04-10 14:45+0100\n"
 "Language-Team: \n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -178,6 +178,24 @@ msgstr "Bild-Höhe"
 
 msgid "Image-Scale"
 msgstr "Bild-Skalierung"
+
+msgid "Thumb width"
+msgstr "Thumb-Breite"
+
+msgid "Thumb height"
+msgstr "Thumb-Höhe"
+
+msgid "Thumb scale"
+msgstr "Thumb-Skalierung"
+
+msgid "long edge"
+msgstr "Lange Kante"
+
+msgid "short edge"
+msgstr "Kurze Kante"
+
+msgid "ignore proporations"
+msgstr "Ignoriere Proportionen"
 
 msgid "Load images from"
 msgstr "Lade Bilder von"
