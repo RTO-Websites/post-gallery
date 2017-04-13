@@ -38,10 +38,7 @@
      */
     $(document).on('change', '.owl-slider-presets', function (e) {
       var selectBox = jQuery(e.target),
-        //owlContainerElement = $('#' + selectBox.data('container') + '-' + selectBox.data('lang'));
         owlContainerElement = selectBox.closest('.customize-control').find('textarea');
-
-      console.info('change', owlContainerElement);
 
       switch (selectBox.val()) {
         case 'fade':
