@@ -167,7 +167,7 @@ class SliderShortcodeAdmin {
 
         // get categories
         $allCategories = get_categories();
-        //var_dump( $allCategories );
+
         foreach ( $allCategories as $category ) {
             $postlist['cat-' . $category->cat_ID] = $category->name;
 
