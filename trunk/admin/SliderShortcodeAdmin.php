@@ -2,7 +2,6 @@
 namespace Admin;
 
 use Inc\PostGallery;
-use MagicAdminPage\MagicAdminPage;
 use Thumb\Thumb;
 
 

@@ -10,10 +10,11 @@
  * @subpackage PostGallery/admin
  */
 
+include_once( 'PostGalleryThemeCustomizer.php' );
+
 use Admin\SliderShortcodeAdmin;
 use Admin\PostGalleryMceButton;
 use Inc\PostGallery;
-use MagicAdminPage\MagicAdminPage;
 use Thumb\Thumb;
 
 /**
@@ -56,9 +57,11 @@ class PostGalleryAdmin {
      */
     private $textdomain;
 
-    private $defaultTemplates;
+    public $defaultTemplates;
 
     private $optionFields = null;
+
+    private static $instance;
 
     /**
      * Initialize the class and set its properties.
@@ -72,6 +75,7 @@ class PostGalleryAdmin {
         $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
+        self::$instance = $this;
 
         $this->optionFields = array( 'postgalleryPosition' => array(
             'label' => __( 'Position', 'post-gallery' ),
@@ -89,6 +93,23 @@ class PostGalleryAdmin {
             'slider' => __( 'Slider (with Owl-Carousel)', $this->textdomain ),
         );
 
+
+        // add options to customizer
+        add_action( 'customize_register', array( new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' ) );
+
+        // add menu page to link to customizer
+        add_action('admin_menu' , function() {
+            \add_menu_page(
+                'PostGallery',
+                'PostGallery',
+                'edit_theme_options',
+                'customize.php?return=/wp-admin/&autofocus[panel]=postgallery-panel',
+                null,
+                'dashicons-format-gallery'
+            );
+        });
+
+        /*
         $postgalleryPage = new MagicAdminPage(
             'post-gallery',
             'PostGallery',
@@ -257,6 +278,7 @@ class PostGalleryAdmin {
 					</div>',
             ),
         ) );
+        */
 
 
         new SliderShortcodeAdmin( $pluginName, $version );
@@ -705,5 +727,15 @@ class PostGalleryAdmin {
                 @rmdir( $uploadDir );
             }
         }
+    }
+
+
+    static function getInstance() {
+        // If the single instance hasn't been set, set it now.
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 }
