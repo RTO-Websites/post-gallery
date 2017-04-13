@@ -36,14 +36,12 @@
     /**
      * Set owl-config via presets
      */
-    $('.owl-slider-presets').on('change', function (e) {
+    $(document).on('change', '.owl-slider-presets', function (e) {
       var selectBox = jQuery(e.target),
-        owlContainerElement = $('#' + selectBox.data('container') + '-' + selectBox.data('lang'));
+        //owlContainerElement = $('#' + selectBox.data('container') + '-' + selectBox.data('lang'));
+        owlContainerElement = selectBox.closest('.customize-control').find('textarea');
 
-      if (!owlContainerElement.length) {
-        owlContainerElement = $('#' + selectBox.data('container'));
-        console.info('change', owlContainerElement, selectBox.data('container'));
-      }
+      console.info('change', owlContainerElement);
 
       switch (selectBox.val()) {
         case 'fade':

@@ -34,7 +34,7 @@ class PostGalleryThemeCustomizer {
                         'label' => __( 'Slider-Type', $this->textdomain ),
                         'choices' => array(
                             'owl' => 'OWL Carousel 2.x',
-                            'owl1' => 'OWL Carousel 1.3'
+                            'owl1' => 'OWL Carousel 1.3',
                         ), // Todo: Add swyper,
                         'default' => 'owl',
                     ),
@@ -59,7 +59,10 @@ class PostGalleryThemeCustomizer {
                     'globalTemplate' => array(
                         'label' => __( 'Global template', $this->textdomain ),
                         'type' => 'select',
-                        'choices' => array_merge( $this->postgalleryAdmin->getCustomTemplates(), $this->postgalleryAdmin->defaultTemplates ),
+                        'choices' => array_merge(
+                            $this->postgalleryAdmin->getCustomTemplates(),
+                            $this->postgalleryAdmin->defaultTemplates
+                        ),
                     ),
 
                     'thumbWidth' => array(
@@ -78,10 +81,10 @@ class PostGalleryThemeCustomizer {
                         'type' => 'select',
                         'default' => '1',
                         'choices' => array(
-                            '0' => __('crop', $this->textdomain ),
-                            '1' => __('long edge', $this->textdomain ),
-                            '2' => __('short edge', $this->textdomain ),
-                            '3' => __('ignore proportions', $this->textdomain ),
+                            '0' => __( 'crop', $this->textdomain ),
+                            '1' => __( 'long edge', $this->textdomain ),
+                            '2' => __( 'short edge', $this->textdomain ),
+                            '3' => __( 'ignore proportions', $this->textdomain ),
                         ),
                         'use_key' => true,
                     ),
@@ -89,7 +92,6 @@ class PostGalleryThemeCustomizer {
                     'sliderOwlConfig' => array(
                         'type' => 'textarea',
                         'label' => __( 'Owl-Slider-Config (for Slider-Template)', $this->textdomain ),
-                        'class' => '',
                         'default' => "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,",
                     ),
 
@@ -115,19 +117,15 @@ class PostGalleryThemeCustomizer {
                         'type' => 'select',
                         'default' => 'default',
                         'label' => __( 'Litebox-Template', $this->textdomain ),
-                        'options' => $this->postgalleryAdmin->getLiteboxTemplates(),
+                        'choices' => $this->postgalleryAdmin->getLiteboxTemplates(),
                     ),
 
-                    'liteboxOwlSettings' => array(
-                        'type' => 'headline',
-                        'title' => __( 'Litebox-Owl-Settings', $this->textdomain ),
-                    ),
                     'owlTheme' => array(
                         'type' => 'text',
                         'default' => 'default',
                         'label' => __( 'Owl-Theme', $this->textdomain ),
-                        'list' => 'postgallery-owl-theme',
-                        'options' => array( 'default', 'green' ),
+                        'input_attrs' => array( 'list' => 'postgallery-owl-theme' ),
+                        'description' => '<datalist id="postgallery-owl-theme"><option>default</option><option>green</option></datalist>',
                     ),
                     'clickEvents' => array(
                         'type' => 'checkbox',
@@ -149,13 +147,12 @@ class PostGalleryThemeCustomizer {
                         'type' => 'textarea',
                         'label' => __( 'Owl-Litebox-Config', $this->textdomain ),
                         'description' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
-                            . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="owlConfig">
+                            . '<select class="owl-slider-presets">
                                 <option value="">Slide (' . __( 'Default', $this->textdomain ) . ')</option>
                                 <option value="fade">Fade</option>
                                 <option value="slidevertical">SlideVertical</option>
                                 <option value="zoominout">Zoom In/out</option>
                                 </select>',
-                        'class' => 'owl-slider-config',
                         'default' => 'items: 1,',
                     ),
 
@@ -163,13 +160,12 @@ class PostGalleryThemeCustomizer {
                         'type' => 'textarea',
                         'label' => __( 'Owl-Config for Thumbnail-Slider', $this->textdomain ),
                         'description' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
-                            . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="owlThumbConfig">
+                            . '<select class="owl-slider-presets">
                                 <option value="">Slide (' . __( 'Default', $this->textdomain ) . ')</option>
                                 <option value="fade">Fade</option>
                                 <option value="slidevertical">SlideVertical</option>
                                 <option value="zoominout">Zoom In/out</option>
                                 </select>',
-                        'class' => 'owl-slider-config',
                     ),
 
                     'owlDesc' => array(
@@ -205,7 +201,7 @@ class PostGalleryThemeCustomizer {
             ) );
 
             foreach ( $section['fields'] as $fieldId => $field ) {
-                $settingId = !is_numeric($fieldId) ? $fieldId : $field['id'];
+                $settingId = !is_numeric( $fieldId ) ? $fieldId : $field['id'];
                 $controlId = $settingId . '-control';
 
                 $wp_customize->add_setting( $settingId, array(
@@ -220,6 +216,7 @@ class PostGalleryThemeCustomizer {
                     'settings' => $settingId,
                     'description' => !empty( $field['description'] ) ? __( $field['description'], $this->textdomain ) : '',
                     'choices' => !empty( $field['choices'] ) ? $field['choices'] : null,
+                    'input_attrs' => !empty( $field['input_attrs'] ) ? $field['input_attrs'] : null,
                 ) );
             }
         }
