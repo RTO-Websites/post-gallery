@@ -70,25 +70,25 @@ class PostGalleryPublic {
         $this->version = $version;
 
         $this->options = array(
-            'debugmode' => get_theme_mod('postgalleryDebugmode', false),
-            'sliderType' => get_theme_mod('sliderType', 'owl'),
-            'globalPosition' => get_theme_mod('globalPosition', 'bottom'),
+            'debugmode' => get_theme_mod('postgallery_postgalleryDebugmode', false),
+            'sliderType' => get_theme_mod('postgallery_sliderType', 'owl'),
+            'globalPosition' => get_theme_mod('postgallery_globalPosition', 'bottom'),
 
-            'globalTemplate' => get_theme_mod('globalTemplate'),
-            'thumbWidth' => get_theme_mod('thumbWidth', 150),
-            'thumbHeight' => get_theme_mod('thumbHeight', 150),
-            'thumbScale' => get_theme_mod('thumbScale', '1'),
-            'sliderOwlConfig' => get_theme_mod('thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,"),
-            'stretchImages' => get_theme_mod('stretchImages', false),
+            'globalTemplate' => get_theme_mod('postgallery_globalTemplate'),
+            'thumbWidth' => get_theme_mod('postgallery_thumbWidth', 150),
+            'thumbHeight' => get_theme_mod('postgallery_thumbHeight', 150),
+            'thumbScale' => get_theme_mod('postgallery_thumbScale', '1'),
+            'sliderOwlConfig' => get_theme_mod('postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,"),
+            'stretchImages' => get_theme_mod('postgallery_stretchImages', false),
 
-            'enableLitebox' => get_theme_mod('enableLitebox', true),
-            'liteboxTemplate' => get_theme_mod('liteboxTemplate', 'default'),
-            'owlTheme' => get_theme_mod('owlTheme', 'default'),
-            'clickEvents' => get_theme_mod('clickEvents', true),
-            'keyEvents' => get_theme_mod('keyEvents', true),
-            'asBg' => get_theme_mod('asBg', false),
-            'owlConfig' => get_theme_mod('owlConfig', 'items: 1'),
-            'owlThumbConfig' => get_theme_mod('owlThumbConfig', ''),
+            'enableLitebox' => get_theme_mod('postgallery_enableLitebox', true),
+            'liteboxTemplate' => get_theme_mod('postgallery_liteboxTemplate', 'default'),
+            'owlTheme' => get_theme_mod('postgallery_owlTheme', 'default'),
+            'clickEvents' => get_theme_mod('postgallery_clickEvents', true),
+            'keyEvents' => get_theme_mod('postgallery_keyEvents', true),
+            'asBg' => get_theme_mod('postgallery_asBg', false),
+            'owlConfig' => get_theme_mod('postgallery_owlConfig', 'items: 1'),
+            'owlThumbConfig' => get_theme_mod('postgallery_owlThumbConfig', ''),
         );
 
 

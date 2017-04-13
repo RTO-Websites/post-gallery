@@ -187,7 +187,7 @@ class PostGalleryThemeCustomizer {
     }
 
     public function actionCustomizeRegister( $wp_customize ) {
-
+        $prefix = 'postgallery_';
         $wp_customize->add_panel( 'postgallery-panel', array(
             'title' => __( 'PostGallery' ),
             'section' => 'postgallery',
@@ -201,7 +201,7 @@ class PostGalleryThemeCustomizer {
             ) );
 
             foreach ( $section['fields'] as $fieldId => $field ) {
-                $settingId = !is_numeric( $fieldId ) ? $fieldId : $field['id'];
+                $settingId = $prefix . ( !is_numeric( $fieldId ) ? $fieldId : $field['id'] );
                 $controlId = $settingId . '-control';
 
                 $wp_customize->add_setting( $settingId, array(
