@@ -24,7 +24,7 @@ class PostGalleryThemeCustomizer {
             array(
                 'title' => 'Main-Settings',
                 'fields' => array(
-                    'debugmode' => array(
+                    'postgalleryDebugmode' => array(
                         'type' => 'checkbox',
                         'label' => __( 'Debug-Mode', $this->textdomain ),
                         'default' => false,
@@ -86,7 +86,6 @@ class PostGalleryThemeCustomizer {
                             '2' => __( 'short edge', $this->textdomain ),
                             '3' => __( 'ignore proportions', $this->textdomain ),
                         ),
-                        'use_key' => true,
                     ),
 
                     'sliderOwlConfig' => array(
@@ -108,11 +107,12 @@ class PostGalleryThemeCustomizer {
             array(
                 'title' => 'Litebox-Settings',
                 'fields' => array(
-                    'enable' => array(
+                    /*'not yet implemented
+                    enableLitebox' => array(
                         'type' => 'checkbox',
                         'label' => __( 'Enable', $this->textdomain ) . ' Litebox',
                         'default' => true,
-                    ),
+                    ),*/
                     'liteboxTemplate' => array(
                         'type' => 'select',
                         'default' => 'default',
