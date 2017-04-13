@@ -10,7 +10,6 @@
  * @subpackage PostGallery/public
  */
 use Inc\PostGallery;
-use MagicAdminPage\MagicAdminPage;
 use Thumb\Thumb;
 
 /**
@@ -69,10 +68,29 @@ class PostGalleryPublic {
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
         $this->version = $version;
-        $this->options = MagicAdminPage::getOption( 'post-gallery' );
-        if ( empty( $this->options['sliderType'] ) ) {
-            $this->options['sliderType'] = 'owl';
-        }
+
+        $this->options = array(
+            'debugmode' => get_theme_mod('postgalleryDebugmode', false),
+            'sliderType' => get_theme_mod('sliderType', 'owl'),
+            'globalPosition' => get_theme_mod('globalPosition', 'bottom'),
+
+            'globalTemplate' => get_theme_mod('globalTemplate'),
+            'thumbWidth' => get_theme_mod('thumbWidth', 150),
+            'thumbHeight' => get_theme_mod('thumbHeight', 150),
+            'thumbScale' => get_theme_mod('thumbScale', '1'),
+            'sliderOwlConfig' => get_theme_mod('thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,"),
+            'stretchImages' => get_theme_mod('stretchImages', false),
+
+            'enableLitebox' => get_theme_mod('enableLitebox', true),
+            'liteboxTemplate' => get_theme_mod('liteboxTemplate', 'default'),
+            'owlTheme' => get_theme_mod('owlTheme', 'default'),
+            'clickEvents' => get_theme_mod('clickEvents', true),
+            'keyEvents' => get_theme_mod('keyEvents', true),
+            'asBg' => get_theme_mod('asBg', false),
+            'owlConfig' => get_theme_mod('owlConfig', 'items: 1'),
+            'owlThumbConfig' => get_theme_mod('owlThumbConfig', ''),
+        );
+
 
         new SliderShortcodePublic( $pluginName, $version );
 
@@ -400,7 +418,7 @@ class PostGalleryPublic {
      */
     public function insertFooterHtml( $footer ) {
         $options = $this->options;
-        $template = ( !empty( $options['liteboxTemplate'] ) ? $options['liteboxTemplate'] : 'default-with-thumbs' );
+        $template = $options['liteboxTemplate'];
 
         $customTemplateDir = get_stylesheet_directory() . '/litebox';
         $defaultTemplateDir = POSTGALLERY_DIR . '/litebox-templates';
@@ -472,13 +490,13 @@ class PostGalleryPublic {
     }
 
     public function insertHeaderscript( $header ) {
-        $sliderType = ( !empty( $this->options['sliderType'] ) ? $this->options['sliderType'] : 'owl' );
+        $sliderType = $this->options['sliderType'];
         $oldOwl = $this->options['sliderType'] == 'owl1' ? 'owlVersion: 1,' : '';
         $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
-        $owlConfig = ( !empty( $this->options['owlConfig'] ) ? $this->options['owlConfig'] : '' );
-        $owlThumbConfig = ( !empty( $this->options['owlThumbConfig'] ) ? $this->options['owlThumbConfig'] : '' );
+        $owlConfig = $this->options['owlConfig'];
+        $owlThumbConfig =  $this->options['owlThumbConfig'];
 
         // minify
         $owlConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlConfig );

@@ -6,8 +6,6 @@
      *        $images
      *            -> filename, path, thumbURL
      */
-
-    var_dump($this->options);
 ?>
 <figure class="gallery pg-theme-thumbs pg-theme-list">
     <?php foreach ( $images as $image ) { ?>

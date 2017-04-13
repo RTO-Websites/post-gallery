@@ -10,10 +10,11 @@
  * @subpackage PostGallery/admin
  */
 
+include_once( 'PostGalleryThemeCustomizer.php' );
+
 use Admin\SliderShortcodeAdmin;
 use Admin\PostGalleryMceButton;
 use Inc\PostGallery;
-use MagicAdminPage\MagicAdminPage;
 use Thumb\Thumb;
 
 /**
@@ -56,9 +57,11 @@ class PostGalleryAdmin {
      */
     private $textdomain;
 
-    private $defaultTemplates;
+    public $defaultTemplates;
 
     private $optionFields = null;
+
+    private static $instance;
 
     /**
      * Initialize the class and set its properties.
@@ -72,6 +75,7 @@ class PostGalleryAdmin {
         $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
+        self::$instance = $this;
 
         $this->optionFields = array( 'postgalleryPosition' => array(
             'label' => __( 'Position', 'post-gallery' ),
@@ -89,175 +93,21 @@ class PostGalleryAdmin {
             'slider' => __( 'Slider (with Owl-Carousel)', $this->textdomain ),
         );
 
-        $postgalleryPage = new MagicAdminPage(
-            'post-gallery',
-            'PostGallery',
-            'PostGallery',
-            null,
-            'dashicons-format-gallery'
-        );
 
-        $postgalleryPage->addFields( array(
-            'mainSettings' => array(
-                'type' => 'headline',
-                'title' => __( 'Main-Settings', $this->textdomain ),
-            ),
+        // add options to customizer
+        add_action( 'customize_register', array( new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' ) );
 
-            'debugmode' => array(
-                'type' => 'checkbox',
-                'title' => __( 'Debug-Mode', $this->textdomain ),
-                'default' => false,
-            ),
-            'sliderType' => array(
-                'type' => 'select',
-                'title' => __( 'Slider-Type', $this->textdomain ),
-                'options' => array( 'owl', 'owl1' ), // Todo: Add swyper
-            ),
-
-            'globalPosition' => array(
-                'title' => __( 'Global position', $this->textdomain ),
-                'type' => 'select',
-                'options' => array(
-                    'bottom' => __( 'bottom', $this->textdomain ),
-                    'top' => __( 'top', $this->textdomain ),
-                    'custom' => __( 'custom', $this->textdomain ),
-                ),
-            ),
-
-
-            'templateSettings' => array(
-                'type' => 'headline',
-                'title' => __( 'Template-Settings', $this->textdomain ),
-            ),
-            'globalTemplate' => array(
-                'title' => __( 'Global template', $this->textdomain ),
-                'type' => 'select',
-                'options' => array_merge( $this->getCustomTemplates(), $this->defaultTemplates ),
-            ),
-
-            'thumbWidth' => array(
-                'title' => __( 'Thumb width', $this->textdomain ),
-                'type' => 'text',
-                'default' => 150,
-            ),
-
-            'thumbHeight' => array(
-                'title' => __( 'Thumb height', $this->textdomain ),
-                'type' => 'text',
-                'default' => 150,
-            ),
-            'thumbScale' => array(
-                'title' => __( 'Thumb scale', $this->textdomain ),
-                'type' => 'select',
-                'default' => '1',
-                'options' => array(
-                    '0' => __('crop', $this->textdomain ),
-                    '1' => __('long edge', $this->textdomain ),
-                    '2' => __('short edge', $this->textdomain ),
-                    '3' => __('ignore proportions', $this->textdomain ),
-                ),
-                'use_key' => true,
-            ),
-
-            'sliderOwlConfig' => array(
-                'type' => 'textarea',
-                'title' => __( 'Owl-Slider-Config (for Slider-Template)', $this->textdomain ),
-                'class' => '',
-                'default' => "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,",
-            ),
-
-
-            'stretchImages' => array(
-                'title' => __( 'Stretch small images (for watermark)', $this->textdomain ),
-                'type' => 'checkbox',
-            ),
-
-            'liteboxSettings' => array(
-                'type' => 'headline',
-                'title' => __( 'Litebox-Settings', $this->textdomain ),
-            ),
-            'enable' => array(
-                'type' => 'checkbox',
-                'title' => __( 'Enable', $this->textdomain ) . ' Litebox',
-                'default' => true,
-            ),
-            'liteboxTemplate' => array(
-                'type' => 'select',
-                'default' => 'default',
-                'title' => __( 'Litebox-Template', $this->textdomain ),
-                'options' => $this->getLiteboxTemplates(),
-            ),
-
-            'liteboxOwlSettings' => array(
-                'type' => 'headline',
-                'title' => __( 'Litebox-Owl-Settings', $this->textdomain ),
-            ),
-            'owlTheme' => array(
-                'type' => 'text',
-                'default' => 'default',
-                'title' => __( 'Owl-Theme', $this->textdomain ),
-                'list' => 'postgallery-owl-theme',
-                'options' => array( 'default', 'green' ),
-            ),
-            'clickEvents' => array(
-                'type' => 'checkbox',
-                'title' => __( 'Enable Click-Events', $this->textdomain ),
-                'default' => true,
-            ),
-            'keyEvents' => array(
-                'type' => 'checkbox',
-                'title' => __( 'Enable Keypress-Events', $this->textdomain ),
-                'default' => true,
-            ),
-            'asBg' => array(
-                'type' => 'checkbox',
-                'title' => __( 'Images as Background', $this->textdomain ),
-                'default' => false,
-            ),
-
-            'owlConfig' => array(
-                'type' => 'textarea',
-                'title' => __( 'Owl-Litebox-Config', $this->textdomain ),
-                'description' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
-                    . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="owlConfig">
-                    <option value="">Slide (' . __( 'Default', $this->textdomain ) . ')</option>
-                    <option value="fade">Fade</option>
-                    <option value="slidevertical">SlideVertical</option>
-                    <option value="zoominout">Zoom In/out</option>
-                    </select>',
-                'class' => 'owl-slider-config',
-                'default' => 'items: 1,',
-            ),
-
-            'owlThumbConfig' => array(
-                'type' => 'textarea',
-                'title' => __( 'Owl-Config for Thumbnail-Slider', $this->textdomain ),
-                'description' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
-                    . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="owlThumbConfig">
-                    <option value="">Slide (' . __( 'Default', $this->textdomain ) . ')</option>
-                    <option value="fade">Fade</option>
-                    <option value="slidevertical">SlideVertical</option>
-                    <option value="zoominout">Zoom In/out</option>
-                    </select>',
-                'class' => 'owl-slider-config',
-            ),
-
-            'owlDesc' => array(
-                'type' => 'description',
-                'title' => __( 'Description', $this->textdomain ),
-                'description' => __( 'You can use these options', $this->textdomain ) . ':<br />' .
-                    '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
-							OwlCarousel Options
-						</a>
-						<br />' .
-                    __( 'You can use these animations', $this->textdomain ) . ':<br />
-						<a href="http://daneden.github.io/animate.css/" target="_blank">
-							Animate.css
-						</a>
-					</div>',
-            ),
-        ) );
-
+        // add menu page to link to customizer
+        add_action('admin_menu' , function() {
+            \add_menu_page(
+                'PostGallery',
+                'PostGallery',
+                'edit_theme_options',
+                'customize.php?return=/wp-admin/&autofocus[panel]=postgallery-panel',
+                null,
+                'dashicons-format-gallery'
+            );
+        });
 
         new SliderShortcodeAdmin( $pluginName, $version );
         new PostGalleryMceButton( $pluginName );
@@ -705,5 +555,15 @@ class PostGalleryAdmin {
                 @rmdir( $uploadDir );
             }
         }
+    }
+
+
+    static function getInstance() {
+        // If the single instance hasn't been set, set it now.
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 }
