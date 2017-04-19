@@ -7,8 +7,6 @@
 
 namespace Thumb;
 
-use MagicAdminPage\MagicAdminPage;
-
 set_time_limit( 0 );
 
 class Thumb {
@@ -37,7 +35,7 @@ class Thumb {
         $this->srvDir = ABSPATH;
 
         // Load Options from PostGallery
-        $this->pgOptions = MagicAdminPage::getOption( 'post-gallery' );
+        $this->pgOptions = \Inc\PostGallery::getOptions();
 
         // create cachedir
         $uploadDir = wp_upload_dir();

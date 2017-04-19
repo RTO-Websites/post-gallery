@@ -98,7 +98,7 @@ class PostGallery {
             if ( !is_dir( $cacheFolder . '/' . $file ) ) {
                 $lastAccess = fileatime( $cacheFolder . '/' . $file );
 
-                if ( $lastAccess < strtotime('-1 month')) { // older than 1 month
+                if ( $lastAccess < strtotime( '-1 month' ) ) { // older than 1 month
                     unlink( $cacheFolder . '/' . $file );
                 }
             }
@@ -346,7 +346,7 @@ class PostGallery {
      * @return {string}
      */
     public static function getImageString( $postid = null, $args = array() ) {
-        if (empty($postid)) {
+        if ( empty( $postid ) ) {
             global $postid;
         }
         $images = PostGallery::getImages( $postid );
@@ -561,6 +561,30 @@ class PostGallery {
         } else {
             return count( PostGallery::getImages( $postid ) );
         }
+    }
+
+    public static function getOptions() {
+        return array(
+            'debugmode' => get_theme_mod( 'postgallery_postgalleryDebugmode', false ),
+            'sliderType' => get_theme_mod( 'postgallery_sliderType', 'owl' ),
+            'globalPosition' => get_theme_mod( 'postgallery_globalPosition', 'bottom' ),
+
+            'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
+            'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 150 ),
+            'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 150 ),
+            'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
+            'sliderOwlConfig' => get_theme_mod( 'postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1," ),
+            'stretchImages' => get_theme_mod( 'postgallery_stretchImages', false ),
+
+            'enableLitebox' => get_theme_mod( 'postgallery_enableLitebox', true ),
+            'liteboxTemplate' => get_theme_mod( 'postgallery_liteboxTemplate', 'default' ),
+            'owlTheme' => get_theme_mod( 'postgallery_owlTheme', 'default' ),
+            'clickEvents' => get_theme_mod( 'postgallery_clickEvents', true ),
+            'keyEvents' => get_theme_mod( 'postgallery_keyEvents', true ),
+            'asBg' => get_theme_mod( 'postgallery_asBg', false ),
+            'owlConfig' => get_theme_mod( 'postgallery_owlConfig', 'items: 1' ),
+            'owlThumbConfig' => get_theme_mod( 'postgallery_owlThumbConfig', '' ),
+        );
     }
 
 }
