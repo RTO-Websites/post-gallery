@@ -98,16 +98,17 @@ class PostGalleryAdmin {
         add_action( 'customize_register', array( new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' ) );
 
         // add menu page to link to customizer
-        add_action('admin_menu' , function() {
+        add_action( 'admin_menu', function () {
+            $returnUrl = urlencode( $_SERVER['REQUEST_URI'] );
             \add_menu_page(
                 'PostGallery',
                 'PostGallery',
                 'edit_theme_options',
-                'customize.php?return=/wp-admin/&autofocus[panel]=postgallery-panel',
+                'customize.php?return=' . $returnUrl . '&autofocus[panel]=postgallery-panel',
                 null,
                 'dashicons-format-gallery'
             );
-        });
+        } );
 
         new SliderShortcodeAdmin( $pluginName, $version );
         new PostGalleryMceButton( $pluginName );
@@ -323,7 +324,7 @@ class PostGalleryAdmin {
         $customTemplateDirs = array(
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
-            get_stylesheet_directory() . '/postgallery'
+            get_stylesheet_directory() . '/postgallery',
         );
 
         foreach ( $customTemplateDirs as $customTemplateDir ) {
