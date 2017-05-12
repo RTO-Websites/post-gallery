@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 22.11.2016 16:22
+ * Last change: 12.05.2017 10:31
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -207,6 +207,8 @@ var LiteboxGallery = function (args) {
       imageContainer = clickElement.parent();
     }
 
+    debug('openGallery imageContainer', imageContainer);
+
     var pics = [];
     var count = 0;
     var startPic = 0;
@@ -219,7 +221,7 @@ var LiteboxGallery = function (args) {
         || $(this).attr('href').indexOf('/gallery/') !== -1
         || $(this).attr('href').indexOf('/bilder/galerie/') !== -1
         || $(this).hasClass('show-in-litebox')
-        || $(this).attr('href').indexOf('bilder.ladies.de') !== -1
+        || $(this).attr('href').indexOf('bilder1.ladies.de') !== -1
       ) {
         // set startImage
         if ($(this).attr('href') === clickElement.attr('href')) {
@@ -259,6 +261,7 @@ var LiteboxGallery = function (args) {
     });
 
     if (!pics.length) {
+      window.liteboxOpenProgress = false;
       return false;
     }
 
