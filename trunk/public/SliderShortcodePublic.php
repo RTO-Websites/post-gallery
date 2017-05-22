@@ -177,9 +177,17 @@ class SliderShortcodePublic {
         }
 
         // set style
+
+        if (is_numeric($width)) {
+            $width .= 'px';
+        }
+        if (is_numeric($height)) {
+            $height .= 'px';
+        }
+
         $style = '';
-        $style .= !empty( $width ) ? 'max-width:' . $width . 'px;' : '';
-        $style .= !empty( $height ) ? 'max-height:' . $height . 'px;' : '';
+        $style .= !empty( $width ) ? 'max-width:' . $width . ';' : '';
+        $style .= !empty( $height ) ? 'max-height:' . $height . ';' : '';
 
         if ( $shuffle ) {
             shuffle( $images );
@@ -193,9 +201,9 @@ class SliderShortcodePublic {
             $permalink = get_the_permalink( $image['post_id'] );
             $background = '';
             if ( $asBg && empty($noLazy)) {
-                $background = ' style="background-image:url(' . $image['url'] . ');height: ' . $height . 'px;"';
+                $background = ' style="background-image:url(' . $image['url'] . ');height: ' . $height . ';"';
             } else if ( $asBg ) {
-                $background = ' data-src="'. $image['url'] . ' style="height: ' . $height . 'px;"';
+                $background = ' data-src="'. $image['url'] . ' style="height: ' . $height . ';"';
             }
 
             $href = '';
