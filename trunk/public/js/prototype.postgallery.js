@@ -4,10 +4,27 @@
 
 
 LiteboxGallery.sliders.prototype = {
-  init: function (pg, galleryStartPic) {},
-  initThumbs: function (pg, pics) {},
-  galleryClick: function (pg) {},
-  next: function (pg) {},
-  prev: function (pg) {},
-  destroy: function (pg) {}
+  init: function (pg, galleryStartPic) {
+
+  },
+
+  initThumbs: function (pg, pics) {
+
+  },
+
+  galleryClick: function (pg) {
+
+  },
+
+  next: function (pg) {
+
+  },
+
+  prev: function (pg) {
+
+  },
+
+  destroy: function (pg) {
+
+  }
 };

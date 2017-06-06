@@ -54,6 +54,9 @@ class PostGalleryPublic {
      */
     private $options;
 
+    public $sliderClass = '';
+    public $jsFunction = 'owlCarousel';
+
     /**
      * Initialize the class and set its properties.
      *
@@ -71,6 +74,17 @@ class PostGalleryPublic {
 
         $this->options = PostGallery::getOptions();
 
+        $sliderType = !empty( $this->options['sliderType'] ) ? $this->options['sliderType'] : 'owl';
+
+
+        switch ( $sliderType ) {
+            case 'swiper':
+                $this->sliderClass = ' swiper-container';
+                break;
+            default:
+                $this->sliderClass = ' owl-carousel owl-theme';
+                break;
+        }
 
         new SliderShortcodePublic( $pluginName, $version );
 
@@ -121,7 +135,7 @@ class PostGalleryPublic {
                 break;
 
             case 'swiper':
-                wp_enqueue_script( 'swiper', $buildPath . '/css/swiper.min.css' );
+                wp_enqueue_style( 'swiper', $buildPath . '/css/swiper.min.css' );
                 break;
 
             case 'owl':
@@ -181,8 +195,7 @@ class PostGalleryPublic {
 
             wp_enqueue_script( 'owl-postgallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery' ) );
 
-            // Todo: Add swyper
-            #wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery' ) );
+            wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery' ) );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
@@ -475,12 +488,12 @@ class PostGalleryPublic {
         $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
-        $owlConfig = $this->options['owlConfig'];
+        $sliderConfig = $this->options['owlConfig'];
         $owlThumbConfig =  $this->options['owlThumbConfig'];
 
         // minify
-        $owlConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlConfig );
-        $owlConfig = preg_replace( "/(\r?\n?)*/", '', $owlConfig );
+        $sliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $sliderConfig );
+        $sliderConfig = preg_replace( "/(\r?\n?)*/", '', $sliderConfig );
 
         $owlThumbConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlThumbConfig );
         $owlThumbConfig = preg_replace( "/(\r?\n?)*/", '', $owlThumbConfig );
@@ -491,7 +504,7 @@ class PostGalleryPublic {
         $script .= 'liteboxArgs: {
             sliderType: "' . $sliderType . '",'
             . $asBg . $clickEvents . $keyEvents . $oldOwl
-            . 'owlArgs: {' . $owlConfig . '},'
+            . 'sliderArgs: {' . $sliderConfig . '},'
             . 'owlThumbArgs: {' . $owlThumbConfig . '}'
             . '}};';
         $script .= '</script>';

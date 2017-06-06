@@ -40,6 +40,10 @@
       var selectBox = jQuery(e.target),
         owlContainerElement = selectBox.closest('.customize-control').find('textarea');
 
+      if (!owlContainerElement.length) {
+        owlContainerElement = selectBox.parent().find('textarea');
+      }
+
       switch (selectBox.val()) {
         case 'fade':
           owlContainerElement.val("items: 1, \nanimateOut: 'fadeOut',\nanimateIn: 'fadeIn',");

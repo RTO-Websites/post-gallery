@@ -1,6 +1,6 @@
 
 <div id="litebox-gallery" class="litebox-gallery">
-	<div id="litebox-owlslider" class="litebox-owlslider owl-carousel owl-theme">
+	<div id="litebox-owlslider" class="litebox-owlslider <?php echo $this->sliderClass; ?>">
 
 	</div>
 	<div class="close-button"></div>

@@ -51,6 +51,15 @@ class SliderShortcodeAdmin {
         $this->version = $version;
 
         $this->optionFields = array(
+            'sliderType' => array(
+                'type' => 'select',
+                'label' => __( 'Type', $this->textdomain ),
+                'options' => array(
+                    'owl' => 'owl',
+                    'swiper' => 'swiper (experimental)'
+                ),
+            ),
+
             'sliderWidth' => array(
                 'type' => 'text',
                 'label' => __( 'Width', $this->textdomain ),

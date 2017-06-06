@@ -16,13 +16,13 @@ LiteboxGallery.sliders.owl = {
 
 
   init: function (pg, galleryStartPic) {
-    pg.args.owlArgs.startPosition = galleryStartPic;
-    pg.args.owlArgs.loop = true;
-    pg.args.owlArgs.addClassActive = true;
-    pg.args.owlArgs.lazyLoad = true;
+    pg.args.sliderArgs.startPosition = galleryStartPic;
+    pg.args.sliderArgs.loop = true;
+    pg.args.sliderArgs.addClassActive = true;
+    pg.args.sliderArgs.lazyLoad = true;
 
     if (pg.args.owlVersion !== 'noslider') {
-      pg.galleryContainer.owlCarousel(pg.args.owlArgs);
+      pg.galleryContainer.owlCarousel(pg.args.sliderArgs);
     }
 
     if (pg.args.owlVersion == 1 && galleryStartPic) { // only needed for v1

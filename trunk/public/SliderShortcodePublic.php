@@ -1,4 +1,5 @@
 <?php
+
 namespace Pub;
 
 use Inc\PostGallery;
@@ -73,7 +74,7 @@ class SliderShortcodePublic {
         $width = get_post_meta( $sliderid, 'sliderWidth', true );
         $height = get_post_meta( $sliderid, 'sliderHeight', true );
         $scale = get_post_meta( $sliderid, 'sliderScale', true );
-        $owlConfig = get_post_meta( $sliderid, 'sliderOwlConfig', true );
+        $sliderArgs = get_post_meta( $sliderid, 'sliderOwlConfig', true );
 
         $imgWidth = get_post_meta( $sliderid, 'sliderImageWidth', true );
         $imgHeight = get_post_meta( $sliderid, 'sliderImageHeight', true );
@@ -85,6 +86,28 @@ class SliderShortcodePublic {
         $asBg = get_post_meta( $sliderid, 'sliderAsBg', true );
         $shuffle = get_post_meta( $sliderid, 'sliderShuffle', true );
         $linkPost = get_post_meta( $sliderid, 'sliderLinkPost', true );
+
+        $sliderType = get_post_meta( $sliderid, 'sliderType', true );
+
+        switch ( $sliderType ) {
+            case 'swiper':
+                $jsFunction = 'swiper';
+                $containerClass = ' swiper-container';
+                $sliderInnerStart = '<div class="swiper-wrapper">';
+                $sliderInnerEnd = '</div>';
+                $itemClass = ' swiper-slide';
+                if ( $autoplay == 1 ) {
+                    $autoplay = 3000;
+                }
+                break;
+            default:
+                $jsFunction = 'owlCarousel';
+                $containerClass = ' owl-carousel owl-theme';
+                $sliderInnerStart = '';
+                $sliderInnerEnd = '';
+                $itemClass = '';
+                break;
+        }
 
         $this->thumbOnly = get_post_meta( $sliderid, 'sliderThumbOnly', true );
 
@@ -122,12 +145,12 @@ class SliderShortcodePublic {
         }
 
         if ( !empty( $args['owlExtra'] ) ) {
-            $owlConfig .= ',' . $args['owlExtra'];
+            $sliderArgs .= ',' . $args['owlExtra'];
         }
         if ( in_array( 'noLazy', $args, true ) ) {
             $noLazy = true;
         } else {
-            $owlConfig = 'lazyLoad: true,' . $owlConfig;
+            $sliderArgs = 'lazyLoad: true,' . $sliderArgs;
         }
 
         if ( in_array( 'asbg', $args, true ) ) {
@@ -141,13 +164,13 @@ class SliderShortcodePublic {
         $class .= ' pg-slider-' . $slider->post_name;
 
         if ( $autoplay ) {
-            $owlConfig .= 'autoplay:1,' . $owlConfig;
+            $sliderArgs .= 'autoplay:' . $autoplay . ',' . $sliderArgs;
         }
         if ( $loop ) {
-            $owlConfig .= 'loop:1,' . $owlConfig;
+            $sliderArgs .= 'loop:1,' . $sliderArgs;
         }
         if ( $items ) {
-            $owlConfig .= 'items:' . $items . ',' . $owlConfig;
+            $sliderArgs .= 'items:' . $items . ',slidesPerView:'. $items . ',' . $sliderArgs;
         }
 
         if ( in_array( 'link', $args ) ) {
@@ -178,10 +201,10 @@ class SliderShortcodePublic {
 
         // set style
 
-        if (is_numeric($width)) {
+        if ( is_numeric( $width ) ) {
             $width .= 'px';
         }
-        if (is_numeric($height)) {
+        if ( is_numeric( $height ) ) {
             $height .= 'px';
         }
 
@@ -196,14 +219,18 @@ class SliderShortcodePublic {
         $tag = 'div';
 
         // output html
-        $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class . ' postgallery-slider owl-carousel owl-theme" style="' . $style . '">';
+        $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class
+            . ' postgallery-slider ' . $containerClass . '" style="' . $style . '">';
+
+        $output .= $sliderInnerStart;
+
         foreach ( $images as $image ) {
             $permalink = get_the_permalink( $image['post_id'] );
             $background = '';
-            if ( $asBg && empty($noLazy)) {
+            if ( $asBg && empty( $noLazy ) ) {
                 $background = ' style="background-image:url(' . $image['url'] . ');height: ' . $height . ';"';
             } else if ( $asBg ) {
-                $background = ' data-src="'. $image['url'] . ' style="height: ' . $height . ';"';
+                $background = ' data-src="' . $image['url'] . ' style="height: ' . $height . ';"';
             }
 
             $href = '';
@@ -213,7 +240,8 @@ class SliderShortcodePublic {
             }
 
 
-            $output .= '<' . $tag . ' ' . $href . ' class="slider-image" data-post_id="' . $image['post_id'] .
+            $output .= '<' . $tag . ' ' . $href . ' class="slider-image ' . $itemClass
+                . '" data-post_id="' . $image['post_id'] .
                 '" data-post_permalink="' . $permalink .
                 '" data-post_title="' . strip_tags( $image['post_title'] ) . '" ' . $background . '>';
 
@@ -236,7 +264,7 @@ class SliderShortcodePublic {
                     . '" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
             }
 
-            if ( !empty( $image['title'] ) || !empty( $image['desc'])) {
+            if ( !empty( $image['title'] ) || !empty( $image['desc'] ) ) {
                 $output .= '<div class="slider-image-info">';
                 if ( !empty( $image['title'] ) ) {
                     $output .= '<div class="slider-image-title">' . $image['title'] . '</div>';
@@ -248,11 +276,13 @@ class SliderShortcodePublic {
             }
             $output .= '</' . $tag . '>';
         }
+
+        $output .= $sliderInnerEnd;
         $output .= '</figure>';
 
         // output script
         $output .= '<script>
-            jQuery(function($) {$(".pg-slider-' . $sliderid . '").owlCarousel({' . $owlConfig . '});
+            jQuery(function($) {$(".pg-slider-' . $sliderid . '").' . $jsFunction . '({' . $sliderArgs . '});
             stopOwlPropagation(".pg-slider-' . $sliderid . '");});
             </script>';
 

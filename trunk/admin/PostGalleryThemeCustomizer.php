@@ -35,7 +35,8 @@ class PostGalleryThemeCustomizer {
                         'choices' => array(
                             'owl' => 'OWL Carousel 2.x',
                             'owl1' => 'OWL Carousel 1.3',
-                        ), // Todo: Add swyper,
+                            'swiper' => 'Swiper (experimental)',
+                        ),
                         'default' => 'owl',
                     ),
 

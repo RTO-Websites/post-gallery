@@ -32,6 +32,9 @@ https://github.com/crazypsycho/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.2.3 =
+* Add experimental support for swiper
+
 = 1.0 =
 * Add support for owl 1.x
 * Release
