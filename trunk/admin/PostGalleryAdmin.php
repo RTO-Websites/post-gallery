@@ -397,6 +397,7 @@ class PostGalleryAdmin {
         // Load image titles and description
         $titles = get_post_meta( $currentLangPost->ID, 'postgalleryTitles', true );
         $descs = get_post_meta( $currentLangPost->ID, 'postgalleryDescs', true );
+        $imageOptions = get_post_meta( $currentLangPost->ID, 'postgalleryImageOptions', true );
         $altAttributes = get_post_meta( $currentLangPost->ID, 'postgalleryAltAttributes', true );
 
         if ( empty( $imageDir ) ) {
@@ -436,6 +437,7 @@ class PostGalleryAdmin {
                         $images[$file] .= '<div class="details">';
                         $images[$file] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[$file] ) ? $titles[$file] : '' ) . '" /></div>';
                         $images[$file] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[$file] ) ? $descs[$file] : '' ) . '</textarea></div>';
+                        $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'Options' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
                         $images[$file] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ) . '" /></div>';
                         $images[$file] .= '</div>';
                         $images[$file] .= '</li>';
@@ -532,6 +534,10 @@ class PostGalleryAdmin {
         // save image alt
         if ( filter_has_var( INPUT_POST, 'postgalleryAltAttributes' ) ) {
             update_post_meta( $postId, 'postgalleryAltAttributes', filter_input( INPUT_POST, 'postgalleryAltAttributes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
+        }
+        // save image alt
+        if ( filter_has_var( INPUT_POST, 'postgalleryImageOptions' ) ) {
+            update_post_meta( $postId, 'postgalleryImageOptions', filter_input( INPUT_POST, 'postgalleryImageOptions', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
 
         $imageDir = PostGallery::getImageDir( $post );

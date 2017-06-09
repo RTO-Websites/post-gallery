@@ -299,12 +299,13 @@ class PostGallery {
         $images = array();
 
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
+            $titles = get_post_meta( $postid, 'postgalleryTitles', true );
+            $descs = get_post_meta( $postid, 'postgalleryDescs', true );
+            $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
+            $imageOptions = get_post_meta( $postid, 'postgalleryImageOptions', true );
             $dir = scandir( $uploadDir );
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
-                    $titles = get_post_meta( $postid, 'postgalleryTitles', true );
-                    $descs = get_post_meta( $postid, 'postgalleryDescs', true );
-                    $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
 
                     $images[$file] = array(
                         'filename' => $file,
@@ -316,6 +317,7 @@ class PostGallery {
                         'alt' => !empty( $alts[$file] ) ? $alts[$file] : '',
                         'post_id' => $postid,
                         'post_title' => get_the_title( $postid ),
+                        'imageOptions' => !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '',
                     );
                 }
             }
