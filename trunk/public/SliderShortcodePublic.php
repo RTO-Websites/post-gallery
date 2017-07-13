@@ -75,7 +75,6 @@ class SliderShortcodePublic {
         $height = get_post_meta( $sliderid, 'sliderHeight', true );
         $scale = get_post_meta( $sliderid, 'sliderScale', true );
         $sliderArgs = get_post_meta( $sliderid, 'sliderOwlConfig', true );
-
         $imgWidth = get_post_meta( $sliderid, 'sliderImageWidth', true );
         $imgHeight = get_post_meta( $sliderid, 'sliderImageHeight', true );
 
@@ -164,13 +163,13 @@ class SliderShortcodePublic {
         $class .= ' pg-slider-' . $slider->post_name;
 
         if ( $autoplay ) {
-            $sliderArgs .= 'autoplay:' . $autoplay . ',' . $sliderArgs;
+            $sliderArgs = 'autoplay:' . $autoplay . ',' . $sliderArgs;
         }
         if ( $loop ) {
-            $sliderArgs .= 'loop:1,' . $sliderArgs;
+            $sliderArgs = 'loop:1,' . $sliderArgs;
         }
         if ( $items ) {
-            $sliderArgs .= 'items:' . $items . ',slidesPerView:'. $items . ',' . $sliderArgs;
+            $sliderArgs = 'items:' . $items . ',slidesPerView:'. $items . ',' . $sliderArgs;
         }
 
         if ( in_array( 'link', $args ) ) {
