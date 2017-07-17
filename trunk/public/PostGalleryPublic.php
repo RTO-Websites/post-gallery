@@ -102,7 +102,7 @@ class PostGalleryPublic {
 
         add_filter( 'post_thumbnail_html', array( $this, 'postgalleryThumbnail' ), 10, 5 );
         add_filter( 'get_post_metadata', array( $this, 'postgalleryHasPostThumbnail' ), 10, 5 );
-        add_filter( 'script_loader_tag', array( $this, 'addAsyncAttribute' ), 10, 2 );
+        //add_filter( 'script_loader_tag', array( $this, 'addAsyncAttribute' ), 10, 2 );
     }
 
     /**
