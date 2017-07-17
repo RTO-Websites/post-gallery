@@ -102,6 +102,7 @@ class PostGalleryPublic {
 
         add_filter( 'post_thumbnail_html', array( $this, 'postgalleryThumbnail' ), 10, 5 );
         add_filter( 'get_post_metadata', array( $this, 'postgalleryHasPostThumbnail' ), 10, 5 );
+        add_filter( 'script_loader_tag', array( $this, 'addAsyncAttribute' ), 10, 2 );
     }
 
     /**
@@ -193,13 +194,27 @@ class PostGalleryPublic {
             wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
             wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
 
-            wp_enqueue_script( 'owl-postgallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
+            wp_enqueue_script( 'owl-post-gallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
 
-            wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
+            wp_enqueue_script( 'swiper-post-gallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
+    }
 
+    /**
+     * Load scripts async
+     *
+     * @param $tag
+     * @param $handle
+     * @return mixed
+     */
+    public function addAsyncAttribute($tag, $handle) {
+        if ( strpos( $handle, 'post-gallery' ) === false ) {
+            return $tag;
+        }
+
+        return str_replace( ' src', ' async="async" src', $tag );
     }
 
 
@@ -390,7 +405,7 @@ class PostGalleryPublic {
 
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
-        foreach ($templateDirs as $tplDir) {
+        foreach ( $templateDirs as $tplDir ) {
             if ( file_exists( $tplDir . '/' . $template . '.php' ) ) {
                 require( $tplDir . '/' . $template . '.php' );
                 break;
@@ -515,6 +530,7 @@ class PostGalleryPublic {
 
         echo $header;
     }
+
     /**
      * Returns a single option, or all options if property is null
      *
@@ -523,7 +539,7 @@ class PostGalleryPublic {
      */
     public function option( $property = null ) {
         if ( !empty( $property ) ) {
-            return isset( $this->options[$property]) ? $this->options[$property] : null;
+            return isset( $this->options[$property] ) ? $this->options[$property] : null;
         }
 
         return $this->options;
