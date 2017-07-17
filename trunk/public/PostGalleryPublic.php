@@ -193,9 +193,9 @@ class PostGalleryPublic {
             wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
             wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
 
-            wp_enqueue_script( 'owl-postgallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery' ) );
+            wp_enqueue_script( 'owl-postgallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
 
-            wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery' ) );
+            wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
@@ -489,7 +489,8 @@ class PostGalleryPublic {
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
         $sliderConfig = $this->options['owlConfig'];
-        $owlThumbConfig =  $this->options['owlThumbConfig'];
+        $owlThumbConfig = $this->options['owlThumbConfig'];
+        $debug = !empty( $this->options['debugmode'] );
 
         // minify
         $sliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $sliderConfig );
@@ -506,6 +507,7 @@ class PostGalleryPublic {
             . $asBg . $clickEvents . $keyEvents . $oldOwl
             . 'sliderArgs: {' . $sliderConfig . '},'
             . 'owlThumbArgs: {' . $owlThumbConfig . '}'
+            . ( $debug ? ',debug: true,' : '' )
             . '}};';
         $script .= '</script>';
 
@@ -513,7 +515,6 @@ class PostGalleryPublic {
 
         echo $header;
     }
-
     /**
      * Returns a single option, or all options if property is null
      *
