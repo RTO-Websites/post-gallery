@@ -196,7 +196,7 @@ class PostGalleryPublic {
 
             wp_enqueue_script( 'owl-post-gallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
 
-            wp_enqueue_script( 'swiper-post-gallery', $buildPath . '/js/swyper.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
+            wp_enqueue_script( 'swiper-post-gallery', $buildPath . '/js/swiper.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }

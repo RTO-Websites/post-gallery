@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 12.05.2017 10:31
+ * Last change: 19.07.2017 09:24
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -209,35 +209,55 @@ var LiteboxGallery = function (args) {
 
     debug('openGallery imageContainer', imageContainer);
 
-    var pics = [];
-    var count = 0;
-    var startPic = 0;
-    // search image-urls in hrefs
-    var items = imageContainer.find(linkSelector).filter(':not(.no-litebox)');
+    var pics = [],
+      count = 0,
+      startPic = 0,
+      items = [];
+
     self.picsData = [];
 
-    items.each(function (index) {
-      if ($(this).attr('href').indexOf('/uploads/') !== -1
-        || $(this).attr('href').indexOf('/gallery/') !== -1
-        || $(this).attr('href').indexOf('/bilder/galerie/') !== -1
-        || $(this).hasClass('show-in-litebox')
-        || $(this).attr('href').indexOf('bilder1.ladies.de') !== -1
-      ) {
-        // set startImage
-        if ($(this).attr('href') === clickElement.attr('href')) {
+    if (typeof(imageContainer.data('pg-galleryx')) !== 'undefined') {
+      // get urls from container-data
+      items = imageContainer.data('pg-gallery');
+      for (var index in items) {
+        if (items[index]['path'] === clickElement.attr('href')) {
           startPic = count;
         }
-        pics[count] = encodeURI($(this).attr('href')).replace(window.pgConfig.websiteUrl, '');
-
-        // set pic-data
         self.picsData[count] = {
-          url: pics[count],
-          title: $(this).data('title'),
-          desc: $(this).data('desc'),
+          url: items[index]['url'],
+          title: items[index]['title'],
+          desc: items[index]['desc'],
         };
+        pics[count] = encodeURI(items[index]['url']).replace(window.pgConfig.websiteUrl, '');
         count += 1;
       }
-    });
+    } else {
+      // search image-urls in hrefs
+      items = imageContainer.find(linkSelector).filter(':not(.no-litebox)');
+      items.each(function (index) {
+        var item = $(this);
+        if (item.attr('href').indexOf('/uploads/') !== -1
+          || item.attr('href').indexOf('/gallery/') !== -1
+          || item.attr('href').indexOf('/bilder/galerie/') !== -1
+          || item.hasClass('show-in-litebox')
+          || item.attr('href').indexOf('bilder1.ladies.de') !== -1
+        ) {
+          // set startImage
+          if (item.attr('href') === clickElement.attr('href')) {
+            startPic = count;
+          }
+          pics[count] = encodeURI(item.attr('href')).replace(window.pgConfig.websiteUrl, '');
+
+          // set pic-data
+          self.picsData[count] = {
+            url: pics[count],
+            title: item.data('title'),
+            desc: item.data('desc'),
+          };
+          count += 1;
+        }
+      });
+    }
 
     // init gallery
     self.initGallery(pics, startPic, clickElement);
