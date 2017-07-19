@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 19.07.2017 09:24
+ * Last change: 19.07.2017 09:59
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -216,7 +216,7 @@ var LiteboxGallery = function (args) {
 
     self.picsData = [];
 
-    if (typeof(imageContainer.data('pg-galleryx')) !== 'undefined') {
+    if (typeof(imageContainer.data('pg-gallery')) !== 'undefined') {
       // get urls from container-data
       items = imageContainer.data('pg-gallery');
       for (var index in items) {

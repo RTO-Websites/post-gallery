@@ -20,7 +20,7 @@ use Inc\PostGalleryDeactivator;
  * Plugin Name:       PostGallery
  * Plugin URI:        http://mbv-media.com
  * Description:       Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
- * Version:           1.2.6
+ * Version:           1.2.7
  * Author:            crazypsycho
  * Author URI:        https://github.com/crazypsycho
  * License:           GPL-2.0+
