@@ -1,7 +1,7 @@
 <?php
 /* * **********************************
  * Author: shennemann
- * Last changed: 19.11.2014 10:25
+ * Last changed: 21.07.2017 09:55
  * ****************************'***** */
 
 
@@ -17,7 +17,7 @@ class Thumb {
         'width' => 1920,
         'height' => 1080,
         'bw' => false,
-        'quality' => 1,
+        'quality' => 75,
     );
     public $pgOptions = null;
 
@@ -139,6 +139,7 @@ class Thumb {
         $height = isset( $args['height'] ) ? $args['height'] : 10000;
         $contentType = 'image/jpeg';
         $stretchImages = !empty( $this->pgOptions['stretchImages'] );
+        $quality = !empty( $args['quality'] ) ? $args['quality'] : '75';
 
         if ( $width == 'auto' || !is_numeric( $width ) ) {
             $width = 10000;
@@ -175,10 +176,10 @@ class Thumb {
             // Load original (do nothing)
         } else {
             if ( !$stretchImages ) {
-                if ($orgWidth < $width ) {
+                if ( $orgWidth < $width ) {
                     $width = $orgWidth;
                 }
-                if ($orgHeight < $height ) {
+                if ( $orgHeight < $height ) {
                     $height = $orgHeight;
                 }
             }
@@ -196,6 +197,8 @@ class Thumb {
             } else {
                 try {
                     $im = new \Imagick( $path );
+                    $im->setImageCompression( Imagick::COMPRESSION_JPEG );
+                    $im->setImageCompressionQuality( $quality );
                 } catch ( Exception $e ) {
                     return array( 'error' => 'Imagick fails', 'exceptions' => $e );
                 }
@@ -228,8 +231,7 @@ class Thumb {
                             }
                             break;
                     }
-                }
-                catch ( Exception $e ) {
+                } catch ( Exception $e ) {
                     return array( 'error' => 'Imagick-Crop fails', 'exceptions' => $e );
                 }
 
@@ -291,7 +293,7 @@ class Thumb {
         $bw = $args['bw'];
         $width = $args['width'];
         $height = $args['height'];
-        $quality = $args['quality'];
+        $quality = !empty( $args['quality'] ) ? $args['quality'] : '75';
         $stretchImages = !empty( $this->pgOptions['stretchImages'] );
 
         $returnArray = array();
@@ -350,7 +352,7 @@ class Thumb {
         $newHeight = $height;
         $newWidth = $width;
 
-        if ($orgWidth > 2000 || $orgHeight > 2000) {
+        if ( $orgWidth > 2000 || $orgHeight > 2000 ) {
             return array( 'error' => 'Resolution to big', 'exceptions' => '', 'width' => '', 'height' => '', 'url' => '' );
         }
 
@@ -590,7 +592,6 @@ class Thumb {
 
                     case 2:
                         // JPG
-                        $quality = '100';
                         $returnArray['thumb'] = imagejpeg( $newImage, $this->cacheDir . '/' . $cachefile, $quality );
                         break;
 
