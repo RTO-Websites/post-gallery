@@ -197,7 +197,7 @@ class Thumb {
             } else {
                 try {
                     $im = new \Imagick( $path );
-                    $im->setImageCompression( Imagick::COMPRESSION_JPEG );
+                    $im->setImageCompression( \Imagick::COMPRESSION_JPEG );
                     $im->setImageCompressionQuality( $quality );
                 } catch ( Exception $e ) {
                     return array( 'error' => 'Imagick fails', 'exceptions' => $e );
