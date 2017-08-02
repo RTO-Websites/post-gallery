@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 19.07.2017 09:59
+ * Last change: 02.08.2017 08:47
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -289,7 +289,11 @@ var LiteboxGallery = function (args) {
     liteboxContainer.stop(true);
 
     galleryContainer.html('');
-    liteboxContainer.find('.close-button').on('click touchend', self.closeGallery);
+    liteboxContainer.find('.close-button').on('click touchend', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      self.closeGallery();
+    });
 
     // add some usefull classes
     liteboxContainer.removeClass('one-pic, under-five-pics, under-ten-pics, over-ten-pics');
