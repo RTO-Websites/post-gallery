@@ -21,12 +21,18 @@
     var sizes = pgCheckImageSize();
 
     jQuery.ajax({
-      'type': 'POST',
-      'url': window.pgConfig.websiteUrl + '/?getThumbList',
+      'type': 'get',
+      'url': window.pgConfig.websiteUrl + '?getThumbList',
       'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
       'success': function (data, textStatus) {
         if (typeof(callback) === 'function') {
           callback(jQuery.parseJSON(data));
+        }
+      },
+      'error': function(jqXHR, textStatus, errorThrown) {
+        console.log('pg load fail', jqXHR, textStatus, errorThrown);
+        if (typeof(callback) === 'function') {
+          callback(null);
         }
       }
     });
@@ -37,7 +43,7 @@
       scale = 0;
     }
     jQuery.ajax({
-      'type': 'POST',
+      'type': 'get',
       'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
       'success': function (data, textStatus) {

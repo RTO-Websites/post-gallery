@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 02.08.2017 08:47
+ * Last change: 01.09.2017 15:18
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -32,7 +32,7 @@ var LiteboxGallery = function (args) {
   init = function () {
     self.picsData = [];
 
-    window.liteboxOpenProgress = false;
+    win.liteboxOpenProgress = false;
 
     if (!win.$) {
       win.$ = jQuery;
@@ -55,7 +55,14 @@ var LiteboxGallery = function (args) {
       setEvents();
     });
 
-    $(document).on('click', '[data-pgimages]', function(e) { self.openByData(e.currentTarget); } );
+    $(doc).on('click', '[data-pgimages]', function(e) { self.openByData(e.currentTarget); } );
+
+
+    liteboxContainer.find('.close-button').on('click touchend', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      self.closeGallery();
+    });
   };
 
   setEvents = function () {
@@ -289,11 +296,6 @@ var LiteboxGallery = function (args) {
     liteboxContainer.stop(true);
 
     galleryContainer.html('');
-    liteboxContainer.find('.close-button').on('click touchend', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      self.closeGallery();
-    });
 
     // add some usefull classes
     liteboxContainer.removeClass('one-pic, under-five-pics, under-ten-pics, over-ten-pics');
