@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 23.11.2016 09:06
+ * Last change: 11.12.2017 11:16
  ************************************/
 LiteboxGallery.sliders.owl = {
 
@@ -114,7 +114,7 @@ LiteboxGallery.sliders.owl = {
       oldOwl.prev();
       oldOwl.prev();
     } else {
-      $('.litebox-gallery .owl-next').trigger('click');
+      $('.litebox-gallery .owl-prev').trigger('click');
     }
   },
 
