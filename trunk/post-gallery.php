@@ -12,17 +12,17 @@ use Inc\PostGalleryDeactivator;
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://github.com/crazypsycho
+ * @link              https://github.com/RTO-Websites/post-gallery
  * @since             1.0.0
  * @package           PostGallery
  *
  * @wordpress-plugin
  * Plugin Name:       PostGallery
- * Plugin URI:        http://mbv-media.com
+ * Plugin URI:        https://github.com/RTO-Websites/post-gallery
  * Description:       Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
  * Version:           1.2.11
- * Author:            crazypsycho
- * Author URI:        https://github.com/crazypsycho
+ * Author:            rtowebsites
+ * Author URI:        https://www.rto.de
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       post-gallery

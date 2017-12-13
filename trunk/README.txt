@@ -1,7 +1,7 @@
 === Plugin Name ===
-Contributors: crazypsycho
-Donate link: https://github.com/crazypsycho
-Tags: post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider
+Contributors: rtowebsites
+Donate link: https://www.rto.de
+Tags: post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de
 Requires at least: 3.4
 Tested up to: 4.8
 Stable tag: 4.3
@@ -21,7 +21,7 @@ You can find the documentation on
 http://post-gallery.rtfd.org
 
 You can help to develop on
-https://github.com/crazypsycho/post-gallery
+https://github.com/RTO-Websites/post-gallery
 
 
 
