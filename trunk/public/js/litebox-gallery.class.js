@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 01.09.2017 15:18
+ * Last change: 19.12.2017 14:46
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -13,7 +13,7 @@ var LiteboxGallery = function (args) {
     defaultArgs = {
       galleryContainer: "#litebox-owlslider",
       liteboxContainer: "#litebox-gallery",
-      owlArgs: {},
+      sliderArgs: {},
       owlThumbArgs: {},
       owlVersion: 2,
       sliderType: 'owl',
