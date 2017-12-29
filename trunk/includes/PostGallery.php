@@ -1,6 +1,7 @@
 <?php namespace Inc;
 
 use Admin\PostGalleryAdmin;
+use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Pub\PostGalleryPublic;
 use Thumb\Thumb;
 
@@ -81,6 +82,23 @@ class PostGallery {
         $this->setLocale();
         $this->defineAdminHooks();
         $this->definePublicHooks();
+
+
+        add_action( 'elementor/editor/before_enqueue_styles', array( PostGalleryAdmin::getInstance(), 'enqueueStyles' ) );
+        add_action( 'elementor/editor/before_enqueue_scripts', array( PostGalleryAdmin::getInstance(), 'enqueueScripts' ), 99999 );
+
+        add_action( 'elementor/widgets/widgets_registered', function () {
+            require_once( 'PostGalleryElementorControl.php' );
+            require_once( 'PostGalleryElementorWidget.php' );
+
+            \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
+        } );
+
+        add_action( 'elementor/editor/after_save', function( $post_id, $editor_data ) {
+            //var_dump($editor_data);
+            //die('blub');
+        });
+
 
         add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
     }

@@ -109,3 +109,13 @@
 .sortable-pics .details.active {
   display: block;
 }
+
+.elementor-control-content .sortable-pics {
+  margin-top: 1.5em;
+}
+
+.elementor-control-content .sortable-pics li {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}

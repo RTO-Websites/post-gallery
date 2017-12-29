@@ -200,6 +200,7 @@ class PostGalleryAdmin {
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', array( 'jquery' ), $this->version, false );
 
+        wp_localize_script($this->pluginName, 'postgalleryLang', $this->getPostGalleryLang());
     }
 
 
@@ -458,16 +459,22 @@ class PostGalleryAdmin {
 
         // hidden-input contains the id of main-lang-post
         echo '<input type="hidden" name="postgalleryMainlangId" id="postgalleryMainlangId" value="' . $post->ID . '" />';
+    }
 
+
+    /**
+     * @return string
+     */
+    public function getPostGalleryLang() {
         $scriptLanguage = array(
             'moveHere' => __( 'Move files here.', $this->textdomain ),
             'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
         );
 
         // Javascript for language
-        echo '<script type="text/javascript">window.postgalleryLang = ' . json_encode( $scriptLanguage ) . ';</script>';
+        return $scriptLanguage;
+        //return '<script type="text/javascript">window.postgalleryLang = ' . json_encode( $scriptLanguage ) . ';</script>';
     }
-
 
     /**
      * Method to save Post-Meta
