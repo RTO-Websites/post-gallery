@@ -99,11 +99,13 @@
 
 .sortable-pics .details input {
   width: 100%;
+  background-color: #fff;
 }
 
 .sortable-pics .details textarea {
   width: 100%;
   height: 120px;
+  background-color: #fff;
 }
 
 .sortable-pics .details.active {

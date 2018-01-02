@@ -33,6 +33,7 @@ jQuery(function () {
   initPostGallery();
 
   if (typeof(elementor) !== 'undefined') {
+    // init postgallery on elementor widget open
     elementor.hooks.addAction('panel/open_editor/widget/postgallery', function (panel, model, view) {
       initPostGallery();
     });
@@ -73,13 +74,43 @@ window.initPostGallery = function () {
     }
   });
 
+  /**
+   * Write titles, desc, alt to elementor fields
+   */
+  $(document).on('change, keydown', '.sortable-pics .details input,.sortable-pics .details textarea', function (e) {
+    var postgalleryTitles = {},
+      postgalleryDescs = {},
+      postgalleryAltAttributes = {},
+      postgalleryImageOptions = {};
+
+    var data = [];
+    var form = $('.sortable-pics .details input,.sortable-pics .details textarea');
+    form.each(function (index, element) {
+      var value = '';
+      element = $(element);
+      value = element.val();
+
+      data[element.attr('name')] = value;
+      eval(element.attr('name').replace("[", "['").replace("]", "']") + ' = `' + value + '`;');
+    });
+
+    $('input[data-setting="pgimgtitles"]').val(JSON.stringify(postgalleryTitles));
+    $('input[data-setting="pgimgdescs"]').val(JSON.stringify(postgalleryDescs));
+    $('input[data-setting="pgimgoptions"]').val(JSON.stringify(postgalleryImageOptions));
+    $('input[data-setting="pgimgalts"]').val(JSON.stringify(postgalleryAltAttributes));
+    $('input[data-setting="pgimgtitles"]').trigger('input');
+    $('input[data-setting="pgimgdescs"]').trigger('input');
+    $('input[data-setting="pgimgoptions"]').trigger('input');
+    $('input[data-setting="pgimgalts"]').trigger('input');
+  });
+
   // make pics sortable
   if ($.fn.sortable) {
     $(".sortable-pics").sortable();
     $(".sortable-pics").on("sortupdate", function (event, ui) {
       pgCloseDetails();
       var input = jQuery("#postgalleryImagesort"),
-        input2 = jQuery('input[data-setting="pgsort"]'),
+        elementorInput = jQuery('input[data-setting="pgsort"]'),
         value = [],
         count = 0;
 
@@ -88,8 +119,11 @@ window.initPostGallery = function () {
         count += 1;
       });
       input.val(value.join(","));
-      if (input2.length) {
-        input2[0].value = value.join(",");
+
+      // change elementor control
+      if (elementorInput.length) {
+        elementorInput.val(value.join(","));
+        elementorInput.trigger('input'); // triggers update, so it can be saved
       }
     });
   }

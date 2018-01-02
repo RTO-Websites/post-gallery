@@ -401,6 +401,20 @@ class PostGalleryAdmin {
         $imageOptions = get_post_meta( $currentLangPost->ID, 'postgalleryImageOptions', true );
         $altAttributes = get_post_meta( $currentLangPost->ID, 'postgalleryAltAttributes', true );
 
+
+        if ( !is_array( $titles ) ) {
+            $titles = json_decode( json_encode( $titles ), true );
+        }
+        if ( !is_array( $descs ) ) {
+            $descs = json_decode( json_encode( $descs ), true );
+        }
+        if ( !is_array( $altAttributes ) ) {
+            $altAttributes = json_decode( json_encode( $altAttributes ), true );
+        }
+        if ( !is_array( $imageOptions ) ) {
+            $imageOptions = json_decode( json_encode( $imageOptions ), true );
+        }
+
         if ( empty( $imageDir ) ) {
             echo __( 'You have to save the post to upload images.', $this->textdomain );
             return;

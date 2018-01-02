@@ -44,6 +44,8 @@ class PostGalleryPublic {
 
     private $textdomain;
 
+    public static $instance;
+
 
     /**
      * The options from admin-page
@@ -65,12 +67,13 @@ class PostGalleryPublic {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
-        if ( is_admin() ) {
+        if ( is_admin() && !class_exists('\Elementor\Plugin') ) {
             return;
         }
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
         $this->version = $version;
+        self::$instance = $this;
 
         $this->options = PostGallery::getOptions();
 
@@ -385,7 +388,7 @@ class PostGalleryPublic {
      * @param type $template
      * @return type
      */
-    public function returnGalleryHtml( $template, $postid = 0, $args = array() ) {
+    public function returnGalleryHtml( $template = '', $postid = 0, $args = array() ) {
         $templateDirs = array(
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
@@ -401,6 +404,10 @@ class PostGalleryPublic {
 
         if ( empty( $template ) || $template == 'global' ) {
             $template = $this->options['globalTemplate'];
+        }
+
+        if ( empty( $template ) ) {
+            $template = 'thumbs';
         }
 
         ob_start();
@@ -543,5 +550,14 @@ class PostGalleryPublic {
         }
 
         return $this->options;
+    }
+
+    static function getInstance() {
+        // If the single instance hasn't been set, set it now.
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 }

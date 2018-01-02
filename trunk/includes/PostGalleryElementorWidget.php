@@ -2,6 +2,8 @@
 namespace PostGalleryWidget\Widgets;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Pub\PostGalleryPublic;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Elementor Hello World
@@ -104,6 +106,42 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
         $this->add_control(
+            'pgimgdescs',
+            [
+                'label' => __( 'PostGallery Descs', 'postgallery' ),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+            ]
+        );
+        $this->add_control(
+            'pgimgtitles',
+            [
+                'label' => __( 'PostGallery Titles', 'postgallery' ),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+            ]
+        );
+        $this->add_control(
+            'pgimgalts',
+            [
+                'label' => __( 'PostGallery Alts', 'postgallery' ),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+            ]
+        );
+        $this->add_control(
+            'pgimgoptions',
+            [
+                'label' => __( 'PostGallery Options', 'postgallery' ),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+            ]
+        );
+        $this->add_control(
             'pgimages',
             [
                 'label' => __( 'PostGallery Images', 'postgallery' ),
@@ -123,9 +161,8 @@ class PostGalleryElementorWidget extends Widget_Base {
      */
     protected function render() {
         $settings = $this->get_settings();
-        echo '<div class="title">';
-        echo $settings['title'];
-        echo '</div>';
+        //echo PostGalleryPublic::getInstance()->returnGalleryHtml();
+        echo do_shortcode("[postgallery]");
     }
     /**
      * Render the widget output in the editor.
@@ -136,11 +173,11 @@ class PostGalleryElementorWidget extends Widget_Base {
      *
      * @access protected
      */
-    protected function _content_template() {
+    /*protected function _content_template() {
         ?>
         <div class="title">
             {{{ settings.title }}}
         </div>
         <?php
-    }
+    }*/
 }

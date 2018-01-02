@@ -84,6 +84,16 @@ class PostGallery {
         $this->definePublicHooks();
 
 
+        $this->initElementor();
+
+
+        add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
+    }
+
+    /**
+     * Init elementor widget
+     */
+    public function initElementor() {
         add_action( 'elementor/editor/before_enqueue_styles', array( PostGalleryAdmin::getInstance(), 'enqueueStyles' ) );
         add_action( 'elementor/editor/before_enqueue_scripts', array( PostGalleryAdmin::getInstance(), 'enqueueScripts' ), 99999 );
 
@@ -94,13 +104,54 @@ class PostGallery {
             \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
         } );
 
-        add_action( 'elementor/editor/after_save', function( $post_id, $editor_data ) {
-            //var_dump($editor_data);
-            //die('blub');
-        });
+        add_action( 'elementor/editor/after_save', function ( $post_id, $editor_data ) {
+            $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
 
+            $pgSort = self::arraySearch( $meta, 'pgsort' );
+            $pgTitles = self::arraySearch( $meta, 'pgimgtitles' );
+            $pgDescs = self::arraySearch( $meta, 'pgimgdescs' );
+            $pgAlts = self::arraySearch( $meta, 'pgimgalts' );
+            $pgOptions = self::arraySearch( $meta, 'pgimgoptions' );
 
-        add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
+            if ( !empty( $pgSort ) ) {
+                update_post_meta( $post_id, 'postgalleryImagesort', $pgSort[0] );
+            }
+            if ( !empty( $pgTitles ) ) {
+                update_post_meta( $post_id, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
+            }
+            if ( !empty( $pgDescs ) ) {
+                update_post_meta( $post_id, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
+            }
+            if ( !empty( $pgAlts ) ) {
+                update_post_meta( $post_id, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
+            }
+            if ( !empty( $pgOptions ) ) {
+                update_post_meta( $post_id, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
+            }
+        } );
+    }
+
+    /**
+     * Helper function, find value in mutlidimensonal array
+     *
+     * @param $array
+     * @param $key
+     * @return array
+     */
+    public static function arraySearch( $array, $key ) {
+        $results = array();
+
+        if ( is_array( $array ) ) {
+            if ( isset( $array[$key] ) ) {
+                $results[] = $array[$key];
+            }
+
+            foreach ( $array as $subarray ) {
+                $results = array_merge( $results, self::arraySearch( $subarray, $key ) );
+            }
+        }
+
+        return $results;
     }
 
 
@@ -322,6 +373,20 @@ class PostGallery {
             $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
             $imageOptions = get_post_meta( $postid, 'postgalleryImageOptions', true );
             $dir = scandir( $uploadDir );
+
+            if ( !is_array( $titles ) ) {
+                $titles = json_decode( json_encode( $titles ), true );
+            }
+            if ( !is_array( $descs ) ) {
+                $descs = json_decode( json_encode( $descs ), true );
+            }
+            if ( !is_array( $alts ) ) {
+                $alts = json_decode( json_encode( $alts ), true );
+            }
+            if ( !is_array( $imageOptions ) ) {
+                $imageOptions = json_decode( json_encode( $imageOptions ), true );
+            }
+
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
 
