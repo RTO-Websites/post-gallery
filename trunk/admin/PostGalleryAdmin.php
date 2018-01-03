@@ -119,6 +119,7 @@ class PostGalleryAdmin {
         // Register ajax
         add_action( 'wp_ajax_postgalleryUpload', array( $this, 'ajaxUpload' ) );
         add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
+        add_action( 'wp_ajax_postgalleryGetImages', array( $this, 'ajaxGetImages' ) );
     }
 
     /**
@@ -200,7 +201,7 @@ class PostGalleryAdmin {
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', array( 'jquery' ), $this->version, false );
 
-        wp_localize_script($this->pluginName, 'postgalleryLang', $this->getPostGalleryLang());
+        wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
 
 
@@ -220,6 +221,13 @@ class PostGalleryAdmin {
         exit();
     }
 
+
+    public function ajaxGetImages() {
+        $postid = filter_input( INPUT_GET, 'post' );
+        $post = get_post( $postid );
+        $this->addGalleryPictures( $post );
+        exit();
+    }
 
     /**
      * Register the Metaboxes for Gallery-Settings and Images

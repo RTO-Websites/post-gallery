@@ -10,8 +10,8 @@ class PostGalleryElementorControl extends Control_Base
 
     public function content_template() {
         global $post;
-        echo '<div class="wp-core-ui">';
-        \Admin\PostGalleryAdmin::getInstance()->addGalleryPictures($post);
+        echo '<div class="wp-core-ui pg-image-container">';
+        //\Admin\PostGalleryAdmin::getInstance()->addGalleryPictures($post);
         echo '</div>';
     }
 }

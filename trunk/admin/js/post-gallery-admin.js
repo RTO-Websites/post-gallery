@@ -36,6 +36,7 @@ jQuery(function () {
     // init postgallery on elementor widget open
     elementor.hooks.addAction('panel/open_editor/widget/postgallery', function (panel, model, view) {
       initPostGallery();
+      loadUpload();
     });
   }
 });
@@ -74,6 +75,9 @@ window.initPostGallery = function () {
     }
   });
 
+  // change elementor image-source, load new upload
+  $(document).on('change', 'select[data-setting="pgimgsource"]', loadUpload);
+
   /**
    * Write titles, desc, alt to elementor fields
    */
@@ -82,6 +86,13 @@ window.initPostGallery = function () {
   });
 
   // make pics sortable
+  initSortable();
+
+  initUpload();
+  updateElementorFields();
+};
+
+function initSortable() {
   if ($.fn.sortable) {
     $(".sortable-pics").sortable();
     $(".sortable-pics").on("sortupdate", function (event, ui) {
@@ -101,20 +112,43 @@ window.initPostGallery = function () {
       if (elementorInput.length) {
         elementorInput.val(value.join(","));
         elementorInput.trigger('input'); // triggers update, so it can be saved
+        //elementor.reloadPreview();
       }
     });
   }
+}
 
+
+/**
+ * Get images and upload-field with ajax
+ */
+function loadUpload() {
+  var postid = $('select[data-setting="pgimgsource"]').val();
+  jQuery.post(ajaxurl + "?action=postgalleryGetImages&post=" + postid,
+    function (data, textStatus) {
+      $('.pg-image-container').html(data);
+      initUpload();
+      initSortable();
+    }
+  );
+}
+
+/**
+ * Init drag&drop upload
+ */
+function initUpload() {
   if (typeof(postgalleryLang) !== 'undefined') {
     // add upload
     checkForUpload();
     $(".qq-upload-drop-area span").html(postgalleryLang.moveHere);
     $(".qq-upload-button").addClass("button");
   }
+}
 
-  updateElementorFields();
-};
-
+/**
+ * Trigger update on elementor hidden fields
+ *  Need to make saveable
+ */
 function updateElementorFields() {
   var postgalleryTitles = {},
     postgalleryDescs = {},
@@ -132,14 +166,18 @@ function updateElementorFields() {
     eval(element.attr('name').replace("[", "['").replace("]", "']") + ' = `' + value + '`;');
   });
 
-  $('input[data-setting="pgimgtitles"]').val(JSON.stringify(postgalleryTitles));
-  $('input[data-setting="pgimgdescs"]').val(JSON.stringify(postgalleryDescs));
-  $('input[data-setting="pgimgoptions"]').val(JSON.stringify(postgalleryImageOptions));
-  $('input[data-setting="pgimgalts"]').val(JSON.stringify(postgalleryAltAttributes));
-  $('input[data-setting="pgimgtitles"]').trigger('input');
-  $('input[data-setting="pgimgdescs"]').trigger('input');
-  $('input[data-setting="pgimgoptions"]').trigger('input');
-  $('input[data-setting="pgimgalts"]').trigger('input');
+  if (typeof(elementor) !== 'undefined') {
+    $('input[data-setting="pgimgtitles"]').val(JSON.stringify(postgalleryTitles));
+    $('input[data-setting="pgimgdescs"]').val(JSON.stringify(postgalleryDescs));
+    $('input[data-setting="pgimgoptions"]').val(JSON.stringify(postgalleryImageOptions));
+    $('input[data-setting="pgimgalts"]').val(JSON.stringify(postgalleryAltAttributes));
+    $('input[data-setting="pgimgtitles"]').trigger('input');
+    $('input[data-setting="pgimgdescs"]').trigger('input');
+    $('input[data-setting="pgimgoptions"]').trigger('input');
+    $('input[data-setting="pgimgalts"]').trigger('input');
+
+    //elementor.reloadPreview();
+  }
 }
 
 function deleteImages(path) {
