@@ -100,7 +100,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgsort',
             [
                 'label' => __( 'PostGallery Sort', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
             ]
@@ -109,7 +109,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgimgdescs',
             [
                 'label' => __( 'PostGallery Descs', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
             ]
@@ -118,7 +118,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgimgtitles',
             [
                 'label' => __( 'PostGallery Titles', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' =>  'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
             ]
@@ -127,7 +127,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgimgalts',
             [
                 'label' => __( 'PostGallery Alts', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' =>  'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
             ]
@@ -136,7 +136,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgimgoptions',
             [
                 'label' => __( 'PostGallery Options', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' =>  'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
             ]
