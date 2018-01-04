@@ -9,7 +9,7 @@
 ?>
 <figure class="gallery pg-theme-thumbs pg-theme-list">
     <?php foreach ( $images as $image ) { ?>
-        <a href="<?php echo $image[ 'path' ] ?>">
+        <a href="<?php echo $image[ 'url' ] ?>">
             <img class="post-gallery_thumb"
                 src="<?php echo \Inc\PostGallery::getThumbUrl( $image[ 'path' ],
                     array(

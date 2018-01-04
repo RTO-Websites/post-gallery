@@ -359,7 +359,7 @@ class PostGalleryPublic {
      * Adds the gallery to the_content
      *
      * @param type $content
-     * @return type
+     * @return string
      */
     public function addGalleryToContent( $content ) {
         $position = get_post_meta( $GLOBALS['post']->ID, 'postgalleryPosition', true );
@@ -385,8 +385,10 @@ class PostGalleryPublic {
     /**
      * Return the gallery-html
      *
-     * @param type $template
-     * @return type
+     * @param string $template
+     * @param int $postid
+     * @param array $args
+     * @return string
      */
     public function returnGalleryHtml( $template = '', $postid = 0, $args = array() ) {
         $templateDirs = array(
@@ -550,6 +552,16 @@ class PostGalleryPublic {
         }
 
         return $this->options;
+    }
+
+    /**
+     * Sets an option
+     *
+     * @param $property
+     * @param $value
+     */
+    public function setOption( $property, $value ) {
+        $this->options[$property] = $value;
     }
 
     static function getInstance() {

@@ -17,9 +17,11 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class PostGalleryElementorWidget extends Widget_Base {
     public static $instances = [];
+    public $textdomain;
 
     public function __construct( $data = [], $args = null ) {
         $instances[] = $this;
+        $this->textdomain = 'post-gallery';
         parent::__construct( $data, $args );
     }
 
@@ -128,13 +130,13 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->start_controls_section(
             'section_content',
             [
-                'label' => __( 'Images', 'postgallery' ),
+                'label' => __( 'Images', $this->textdomain ),
             ]
         );
         $this->add_control(
             'pgimgsource',
             [
-                'label' => __( 'PostGallery Source', 'postgallery' ),
+                'label' => __( 'Image-Source', $this->textdomain ),
                 'type' => Controls_Manager::SELECT,
                 'default' => filter_input( INPUT_GET, 'post' ),
                 'options' => $selectPosts,
@@ -142,9 +144,44 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
         $this->add_control(
+            'pgthumbwidth',
+            [
+                'label' => __( 'Thumb width', $this->textdomain ),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+                'placeholder' =>  PostGalleryPublic::getInstance()->option('thumbWidth')
+            ]
+        );
+        $this->add_control(
+            'pgthumbheight',
+            [
+                'label' => __( 'Thumb height', $this->textdomain ),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+                'placeholder' =>  PostGalleryPublic::getInstance()->option('thumbHeight')
+            ]
+        );
+        $this->add_control(
+            'pgthumbscale',
+            [
+                'label' => __( 'Thumb scale', $this->textdomain ),
+                'type' => Controls_Manager::SELECT,
+                'default' => '',
+                'selectors' => [],
+                'options' => [
+                    '0' => __( 'crop', $this->textdomain ),
+                    '1' => __( 'long edge', $this->textdomain ),
+                    '2' => __( 'short edge', $this->textdomain ),
+                    '3' => __( 'ignore proportions', $this->textdomain ),
+                ],
+            ]
+        );
+        $this->add_control(
             'pgsort',
             [
-                'label' => __( 'PostGallery Sort', 'postgallery' ),
+                'label' => __( 'PostGallery Sort', $this->textdomain ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -153,7 +190,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgdescs',
             [
-                'label' => __( 'PostGallery Descs', 'postgallery' ),
+                'label' => __( 'PostGallery Descs', $this->textdomain ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -162,7 +199,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgtitles',
             [
-                'label' => __( 'PostGallery Titles', 'postgallery' ),
+                'label' => __( 'PostGallery Titles', $this->textdomain ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -171,7 +208,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgalts',
             [
-                'label' => __( 'PostGallery Alts', 'postgallery' ),
+                'label' => __( 'PostGallery Alts', $this->textdomain ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -180,7 +217,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgoptions',
             [
-                'label' => __( 'PostGallery Options', 'postgallery' ),
+                'label' => __( 'PostGallery Options', $this->textdomain ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -189,7 +226,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimages',
             [
-                'label' => __( 'PostGallery Images', 'postgallery' ),
+                'label' => __( 'PostGallery Images', $this->textdomain ),
                 'type' => 'postgallerycontrol',
             ]
         );
@@ -207,9 +244,37 @@ class PostGalleryElementorWidget extends Widget_Base {
      */
     protected function render() {
         $settings = $this->get_settings();
-        //var_dump($settings);
-        echo PostGalleryPublic::getInstance()->returnGalleryHtml( '', $settings['pgimgsource'] );
-        //echo do_shortcode( "[postgallery]" );
+        $pgInstance = PostGalleryPublic::getInstance();
+
+        // override global settings with widget-settings
+        if ( !empty( $settings['pgthumbwidth'] ) ) {
+            $globalWidth = $pgInstance->option( 'thumbWidth');
+            $pgInstance->setOption( 'thumbWidth', $settings['pgthumbwidth'] );
+        }
+
+        if ( !empty( $settings['pgthumbheight'] ) ) {
+            $globalHeight = $pgInstance->option( 'thumbHeight');
+            $pgInstance->setOption( 'thumbHeight', $settings['pgthumbheight'] );
+        }
+
+        if ( isset( $settings['pgthumbscale'] ) ) {
+            $globalScale = $pgInstance->option( 'thumbScale');
+            $pgInstance->setOption( 'thumbScale', $settings['pgthumbscale'] );
+        }
+
+
+        echo $pgInstance->returnGalleryHtml( '', $settings['pgimgsource'] );
+
+        // reset global settings
+        if ( isset( $globalWidth)  ) {
+            $pgInstance->setOption( 'thumbWidth', $globalWidth );
+        }
+        if ( isset( $globalHeight)  ) {
+            $pgInstance->setOption( 'thumbHeight', $globalHeight );
+        }
+        if ( isset( $globalScale)  ) {
+            $pgInstance->setOption( 'thumbScale', $globalScale );
+        }
     }
     /**
      * Render the widget output in the editor.

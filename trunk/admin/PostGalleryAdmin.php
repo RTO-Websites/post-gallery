@@ -485,7 +485,7 @@ class PostGalleryAdmin {
 
 
     /**
-     * @return string
+     * @return array
      */
     public function getPostGalleryLang() {
         $scriptLanguage = array(
@@ -502,9 +502,9 @@ class PostGalleryAdmin {
      * Method to save Post-Meta
      *
      * @global type $post_options
-     * @param type $postId
-     * @param type $post
-     * @return type
+     * @param int $postId
+     * @param object $post
+     * @return null
      */
     public function savePostMeta( $postId, $post ) {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
