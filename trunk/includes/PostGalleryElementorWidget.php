@@ -16,6 +16,17 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @since 1.0.0
  */
 class PostGalleryElementorWidget extends Widget_Base {
+    public static $instances = [];
+
+    public function __construct( $data = [], $args = null ) {
+        $instances[] = $this;
+        parent::__construct( $data, $args );
+    }
+
+    public static function getInstances() {
+        return self::instances;
+    }
+
     /**
      * Retrieve the widget name.
      *
@@ -125,7 +136,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'PostGallery Source', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
-                'default' => filter_input(INPUT_GET, 'post'),
+                'default' => filter_input( INPUT_GET, 'post' ),
                 'options' => $selectPosts,
                 'selectors' => [],
             ]

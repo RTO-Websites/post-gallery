@@ -81,7 +81,7 @@ window.initPostGallery = function () {
   /**
    * Write titles, desc, alt to elementor fields
    */
-  $(document).on('change, keydown', '.sortable-pics .details input,.sortable-pics .details textarea', function (e) {
+  $(document).on('change, keyup', '.sortable-pics .details input,.sortable-pics .details textarea', function (e) {
     updateElementorFields();
   });
 
@@ -124,11 +124,12 @@ function initSortable() {
  */
 function loadUpload() {
   var postid = $('select[data-setting="pgimgsource"]').val();
-  jQuery.post(ajaxurl + "?action=postgalleryGetImages&post=" + postid,
+  jQuery.post(ajaxurl + "?action=postgalleryGetImageUpload&post=" + postid,
     function (data, textStatus) {
       $('.pg-image-container').html(data);
       initUpload();
       initSortable();
+      updateElementorFields();
     }
   );
 }
@@ -150,6 +151,10 @@ function initUpload() {
  *  Need to make saveable
  */
 function updateElementorFields() {
+
+  if (typeof(elementor) == 'undefined') {
+    return;
+  }
   var postgalleryTitles = {},
     postgalleryDescs = {},
     postgalleryAltAttributes = {},
@@ -158,26 +163,23 @@ function updateElementorFields() {
   var data = [];
   var form = $('.sortable-pics .details input,.sortable-pics .details textarea');
   form.each(function (index, element) {
-    var value = '';
     element = $(element);
-    value = element.val();
+    var value = element.val();
 
     data[element.attr('name')] = value;
     eval(element.attr('name').replace("[", "['").replace("]", "']") + ' = `' + value + '`;');
   });
 
-  if (typeof(elementor) !== 'undefined') {
-    $('input[data-setting="pgimgtitles"]').val(JSON.stringify(postgalleryTitles));
-    $('input[data-setting="pgimgdescs"]').val(JSON.stringify(postgalleryDescs));
-    $('input[data-setting="pgimgoptions"]').val(JSON.stringify(postgalleryImageOptions));
-    $('input[data-setting="pgimgalts"]').val(JSON.stringify(postgalleryAltAttributes));
-    $('input[data-setting="pgimgtitles"]').trigger('input');
-    $('input[data-setting="pgimgdescs"]').trigger('input');
-    $('input[data-setting="pgimgoptions"]').trigger('input');
-    $('input[data-setting="pgimgalts"]').trigger('input');
+  $('input[data-setting="pgimgtitles"]').val(JSON.stringify(postgalleryTitles));
+  $('input[data-setting="pgimgdescs"]').val(JSON.stringify(postgalleryDescs));
+  $('input[data-setting="pgimgoptions"]').val(JSON.stringify(postgalleryImageOptions));
+  $('input[data-setting="pgimgalts"]').val(JSON.stringify(postgalleryAltAttributes));
+  $('input[data-setting="pgimgtitles"]').trigger('input');
+  $('input[data-setting="pgimgdescs"]').trigger('input');
+  $('input[data-setting="pgimgoptions"]').trigger('input');
+  $('input[data-setting="pgimgalts"]').trigger('input');
 
-    //elementor.reloadPreview();
-  }
+  //elementor.reloadPreview();
 }
 
 function deleteImages(path) {

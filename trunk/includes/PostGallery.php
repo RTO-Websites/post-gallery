@@ -107,28 +107,54 @@ class PostGallery {
         add_action( 'elementor/editor/after_save', function ( $post_id, $editor_data ) {
             $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
 
-            $pgSort = self::arraySearch( $meta, 'pgsort' );
-            $pgTitles = self::arraySearch( $meta, 'pgimgtitles' );
-            $pgDescs = self::arraySearch( $meta, 'pgimgdescs' );
-            $pgAlts = self::arraySearch( $meta, 'pgimgalts' );
-            $pgOptions = self::arraySearch( $meta, 'pgimgoptions' );
+            // fetch elements
+            $widgets = [];
+            self::getAllWidgets( $widgets, $meta, 'postgallery' );
 
-            if ( !empty( $pgSort ) ) {
-                update_post_meta( $post_id, 'postgalleryImagesort', $pgSort[0] );
-            }
-            if ( !empty( $pgTitles ) ) {
-                update_post_meta( $post_id, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
-            }
-            if ( !empty( $pgDescs ) ) {
-                update_post_meta( $post_id, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
-            }
-            if ( !empty( $pgAlts ) ) {
-                update_post_meta( $post_id, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
-            }
-            if ( !empty( $pgOptions ) ) {
-                update_post_meta( $post_id, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
+            foreach ($widgets as $widget) {
+                $pgSort = self::arraySearch( $widget, 'pgsort' );
+                $pgTitles = self::arraySearch( $widget, 'pgimgtitles' );
+                $pgDescs = self::arraySearch( $widget, 'pgimgdescs' );
+                $pgAlts = self::arraySearch( $widget, 'pgimgalts' );
+                $pgOptions = self::arraySearch( $widget, 'pgimgoptions' );
+                $pgPostId = self::arraySearch( $widget, 'pgimgsource' );
+
+                if ( empty( $pgPostId ) ) {
+                    $pgPostId = $post_id;
+                } else {
+                    $pgPostId = $pgPostId[0];
+                }
+
+
+                if ( !empty( $pgSort ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
+                }
+                if ( !empty( $pgTitles ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
+                }
+                if ( !empty( $pgDescs ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
+                }
+                if ( !empty( $pgAlts ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
+                }
+                if ( !empty( $pgOptions ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
+                }
             }
         } );
+    }
+
+    public static function getAllWidgets( &$widgets = [], $meta, $widgetType = '' ) {
+        // fetch elements
+        foreach ( $meta as $data ) {
+            if ( $data['elType'] == 'widget' && (!empty($widgetType) && $widgetType == $data['widgetType'])) {
+                $widgets[] = $data;
+            }
+            if ( !empty( $data['elements'] ) ) {
+                self::getAllWidgets( $widgets, $data['elements'], $widgetType );
+            }
+        }
     }
 
     /**

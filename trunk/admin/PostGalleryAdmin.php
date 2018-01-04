@@ -119,7 +119,7 @@ class PostGalleryAdmin {
         // Register ajax
         add_action( 'wp_ajax_postgalleryUpload', array( $this, 'ajaxUpload' ) );
         add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
-        add_action( 'wp_ajax_postgalleryGetImages', array( $this, 'ajaxGetImages' ) );
+        add_action( 'wp_ajax_postgalleryGetImageUpload', array( $this, 'ajaxGetImageUpload' ) );
     }
 
     /**
@@ -222,7 +222,7 @@ class PostGalleryAdmin {
     }
 
 
-    public function ajaxGetImages() {
+    public function ajaxGetImageUpload() {
         $postid = filter_input( INPUT_GET, 'post' );
         $post = get_post( $postid );
         $this->addGalleryPictures( $post );
