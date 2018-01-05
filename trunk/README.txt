@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: rtowebsites
 Donate link: https://www.rto.de
-Tags: post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de
+Tags: post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
 Requires at least: 3.4
 Tested up to: 4.8
 Stable tag: 4.3
@@ -13,8 +13,10 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 == Description ==
 
 Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
+It also provides an elementor-widget.
 
 It comes with a fullscreen-litebox-gallery and also an easy to use slider-configurator.
+
 
 
 You can find the documentation on
@@ -32,6 +34,9 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.3.0 =
+* Add support for elementor
+
 = 1.2.3 =
 * Add experimental support for swiper
 
