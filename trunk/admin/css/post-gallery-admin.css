@@ -27,8 +27,10 @@
   right: 0px;
   font-size: 11px;
   text-align: center;
+  padding: 3px 5px;
   background-color: #fff;
   background-color: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
 }
 
 .imageupload-image {
@@ -121,4 +123,16 @@
   width: 120px;
   height: 120px;
   margin-bottom: 10px;
+}
+
+.pg-new-gallery {
+  margin-top: 10px;
+  width: calc(100% - 31px);
+}
+
+.elementor-button.pg-new-gallery-button {
+  position: relative;
+  top: -1px;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
 }
