@@ -87,6 +87,8 @@ class PostGallery {
         $this->initElementor();
 
 
+        add_action( 'init', array( $this, 'addPostTypeGallery' ) );
+
         add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
     }
 
@@ -111,7 +113,7 @@ class PostGallery {
             $widgets = [];
             self::getAllWidgets( $widgets, $meta, 'postgallery' );
 
-            foreach ($widgets as $widget) {
+            foreach ( $widgets as $widget ) {
                 $pgSort = self::arraySearch( $widget, 'pgsort' );
                 $pgTitles = self::arraySearch( $widget, 'pgimgtitles' );
                 $pgDescs = self::arraySearch( $widget, 'pgimgdescs' );
@@ -148,7 +150,7 @@ class PostGallery {
     public static function getAllWidgets( &$widgets = [], $meta, $widgetType = '' ) {
         // fetch elements
         foreach ( $meta as $data ) {
-            if ( $data['elType'] == 'widget' && (!empty($widgetType) && $widgetType == $data['widgetType'])) {
+            if ( $data['elType'] == 'widget' && ( !empty( $widgetType ) && $widgetType == $data['widgetType'] ) ) {
                 $widgets[] = $data;
             }
             if ( !empty( $data['elements'] ) ) {
@@ -441,7 +443,7 @@ class PostGallery {
      * Return an image-array with resized images
      *
      * @param type $postid
-     * @return type
+     * @return array
      */
     public static function getImagesResized( $postid = 0, $args ) {
         $images = PostGallery::getImages( $postid );
@@ -505,7 +507,7 @@ class PostGallery {
      *
      * @param type $filepath
      * @param type $args
-     * @return type
+     * @return string
      */
     static function getThumbUrl( $filepath, $args = array() ) {
         $thumb = PostGallery::getThumb( $filepath, $args );
@@ -520,7 +522,7 @@ class PostGallery {
      *
      * @param type $filepath
      * @param type $args
-     * @return type
+     * @return array
      */
     static function getThumb( $filepath, $args = array() ) {
         if ( empty( $args['width'] ) ) {
@@ -653,7 +655,7 @@ class PostGallery {
      * Check if post has a thumb or a postgallery-image
      *
      * @param type $postid
-     * @return boolean
+     * @return int
      */
     static function hasPostThumbnail( $postid = 0 ) {
         if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
@@ -672,6 +674,54 @@ class PostGallery {
         } else {
             return count( PostGallery::getImages( $postid ) );
         }
+    }
+
+
+    /**
+     * Returns url to compentents of bambee
+     *
+     * @return mixed
+     */
+    /*public function getComponentUrl() {
+        // fix for windows path
+        $fixedAbsPath = str_replace( '\\', '/', ABSPATH );
+        $fixedDirName = str_replace( '\\', '/', dirname( __FILE__ ) );
+        // replace absolute path with url
+        $componentUrl = str_replace( $fixedAbsPath, get_bloginfo( 'wpurl' ) . '/', $fixedDirName );
+
+        return $componentUrl;
+    }*/
+
+    /**
+     * Adds post-type gallery
+     */
+    public function addPostTypeGallery() {
+        register_post_type( 'gallery', array(
+            'labels' => array(
+                'name' => __( 'Galleries', TextDomain ),
+                'singular_name' => __( 'Gallery', TextDomain ),
+            ),
+            'taxonomies' => array( 'category' ),
+            'menu_icon' => 'dashicons-format-gallery',
+            'public' => true,
+            'has_archive' => true,
+            'show_in_nav_menus' => true,
+            'show_ui' => true,
+            'capability_type' => 'post',
+            'hierarchical' => true,
+            'supports' => array(
+                'title',
+                'author',
+                'editor',
+                'thumbnail',
+                'trackbacks',
+                'custom-fields',
+                'revisions',
+            ),
+            'exclude_from_search' => true,
+            'publicly_queryable' => true,
+            'excerpt' => true,
+        ) );
     }
 
     public static function getOptions() {
