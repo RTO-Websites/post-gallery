@@ -89,12 +89,15 @@ window.initPostGallery = function () {
   initSortable();
 
   initUpload();
-  updateElementorFields();
+  initElementorAddButton();
 };
+
 
 function initSortable() {
   if ($.fn.sortable) {
-    $(".sortable-pics").sortable();
+    $(".sortable-pics").sortable({
+      cursor: "move"
+    });
     $(".sortable-pics").on("sortupdate", function (event, ui) {
       pgCloseDetails();
       var input = jQuery("#postgalleryImagesort"),
@@ -119,68 +122,6 @@ function initSortable() {
 }
 
 
-/**
- * Get images and upload-field with ajax
- */
-function loadUpload() {
-  var postid = $('select[data-setting="pgimgsource"]').val();
-  jQuery.post(ajaxurl + "?action=postgalleryGetImageUpload&post=" + postid,
-    function (data, textStatus) {
-      $('.pg-image-container').html(data);
-      initUpload();
-      initSortable();
-      updateElementorFields();
-    }
-  );
-}
-
-/**
- * Init drag&drop upload
- */
-function initUpload() {
-  if (typeof(postgalleryLang) !== 'undefined') {
-    // add upload
-    checkForUpload();
-    $(".qq-upload-drop-area span").html(postgalleryLang.moveHere);
-    $(".qq-upload-button").addClass("button");
-  }
-}
-
-/**
- * Trigger update on elementor hidden fields
- *  Need to make saveable
- */
-function updateElementorFields() {
-
-  if (typeof(elementor) == 'undefined') {
-    return;
-  }
-  var postgalleryTitles = {},
-    postgalleryDescs = {},
-    postgalleryAltAttributes = {},
-    postgalleryImageOptions = {};
-
-  var data = [];
-  var form = $('.sortable-pics .details input,.sortable-pics .details textarea');
-  form.each(function (index, element) {
-    element = $(element);
-    var value = element.val();
-
-    data[element.attr('name')] = value;
-    eval(element.attr('name').replace("[", "['").replace("]", "']") + ' = `' + value + '`;');
-  });
-
-  $('input[data-setting="pgimgtitles"]').val(JSON.stringify(postgalleryTitles));
-  $('input[data-setting="pgimgdescs"]').val(JSON.stringify(postgalleryDescs));
-  $('input[data-setting="pgimgoptions"]').val(JSON.stringify(postgalleryImageOptions));
-  $('input[data-setting="pgimgalts"]').val(JSON.stringify(postgalleryAltAttributes));
-  $('input[data-setting="pgimgtitles"]').trigger('input');
-  $('input[data-setting="pgimgdescs"]').trigger('input');
-  $('input[data-setting="pgimgoptions"]').trigger('input');
-  $('input[data-setting="pgimgalts"]').trigger('input');
-
-  //elementor.reloadPreview();
-}
 
 function deleteImages(path) {
   var answer = confirm(postgalleryLang.askDeleteAll);
