@@ -452,7 +452,7 @@ class PostGalleryPublic {
      *
      * @param type $args
      * @param type $content
-     * @return {string}
+     * @return string
      */
     public function postgalleryShortcode( $args, $content = '' ) {
         if ( empty( $args['template'] ) ) {

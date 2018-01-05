@@ -150,7 +150,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
-                'placeholder' =>  PostGalleryPublic::getInstance()->option('thumbWidth')
+                'placeholder' => PostGalleryPublic::getInstance()->option( 'thumbWidth' ),
             ]
         );
         $this->add_control(
@@ -160,7 +160,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
-                'placeholder' =>  PostGalleryPublic::getInstance()->option('thumbHeight')
+                'placeholder' => PostGalleryPublic::getInstance()->option( 'thumbHeight' ),
             ]
         );
         $this->add_control(
@@ -178,6 +178,31 @@ class PostGalleryElementorWidget extends Widget_Base {
                 ],
             ]
         );
+        $this->add_control(
+            'pgmaxthumbs',
+            [
+                'label' => __( 'Max thumbs', $this->textdomain ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => '',
+                /*'selectors' => [
+                    '{{WRAPPER}} .gallery a:nth-child(n+{{VALUE}})' => 'display: none;'
+                ],*/
+            ]
+        );
+
+        $this->add_control(
+            'pgelementorlitebox',
+            [
+                'label' => __( 'Use Elementor-Litebox', $this->textdomain ),
+                'type' => Controls_Manager::CHECKBOX,
+                'default' => '',
+                /*'options' => [
+                    '0' => __( 'No'),
+                    '1' => __( 'Yes'),
+                ],*/
+            ]
+        );
+
         $this->add_control(
             'pgsort',
             [
@@ -248,31 +273,52 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         // override global settings with widget-settings
         if ( !empty( $settings['pgthumbwidth'] ) ) {
-            $globalWidth = $pgInstance->option( 'thumbWidth');
+            $globalWidth = $pgInstance->option( 'thumbWidth' );
             $pgInstance->setOption( 'thumbWidth', $settings['pgthumbwidth'] );
         }
 
         if ( !empty( $settings['pgthumbheight'] ) ) {
-            $globalHeight = $pgInstance->option( 'thumbHeight');
+            $globalHeight = $pgInstance->option( 'thumbHeight' );
             $pgInstance->setOption( 'thumbHeight', $settings['pgthumbheight'] );
         }
 
         if ( isset( $settings['pgthumbscale'] ) ) {
-            $globalScale = $pgInstance->option( 'thumbScale');
+            $globalScale = $pgInstance->option( 'thumbScale' );
             $pgInstance->setOption( 'thumbScale', $settings['pgthumbscale'] );
         }
 
+        // get gallery
+        $gallery = $pgInstance->returnGalleryHtml( '', $settings['pgimgsource'] );
 
-        echo $pgInstance->returnGalleryHtml( '', $settings['pgimgsource'] );
+        if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on') {
+            // use elementor litebox
+            $gallery = str_replace( '<a ', '<a class="no-litebox" ', $gallery );
+        } else {
+            // use postgallery litebox
+            $gallery = str_replace( '<a ', '<a data-elementor-open-lightbox="no" ', $gallery );
+        }
+
+        // echo gallery
+        echo $gallery;
+
+        // hide thumbs
+        if ( !empty( $settings['pgmaxthumbs'] ) ) {
+            echo '<style>';
+            echo '.elementor-element-' . $this->get_id()
+                . ' .gallery a:nth-child(n+' . ( $settings['pgmaxthumbs'] + 1 ) . ') { ';
+            echo 'display: none;';
+            echo '}';
+            echo '</style>';
+        }
 
         // reset global settings
-        if ( isset( $globalWidth)  ) {
+        if ( isset( $globalWidth ) ) {
             $pgInstance->setOption( 'thumbWidth', $globalWidth );
         }
-        if ( isset( $globalHeight)  ) {
+        if ( isset( $globalHeight ) ) {
             $pgInstance->setOption( 'thumbHeight', $globalHeight );
         }
-        if ( isset( $globalScale)  ) {
+        if ( isset( $globalScale ) ) {
             $pgInstance->setOption( 'thumbScale', $globalScale );
         }
     }

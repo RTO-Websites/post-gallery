@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 19.12.2017 14:46
+ * Last change: 05.01.2018 08:16
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -122,6 +122,9 @@ var LiteboxGallery = function (args) {
   self.openByData = function (element) {
     element = jQuery(element);
     var pics = element.data('pgimages');
+    if (!pics.length) {
+      pics = element.closest('.gallery').data('pgimages');
+    }
 
     self.openGalleryByPics(pics, 0, element);
   };

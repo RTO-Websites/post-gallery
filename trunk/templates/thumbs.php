@@ -17,7 +17,7 @@
                         'height' => $this->option( 'thumbHeight' ),
                         'scale' => $this->option('thumbScale'),
                     )); ?>"
-                alt="<?php echo $image[ 'alt' ] ?>"  data-width="<?php echo $this->option( 'thumbScale' ); ?>" />
+                alt="<?php echo $image[ 'alt' ] ?>"  data-scale="<?php echo $this->option( 'thumbScale' ); ?>" />
         </a>
     <?php } ?>
 </figure>
