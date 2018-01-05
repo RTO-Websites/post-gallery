@@ -196,10 +196,6 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'label' => __( 'Use Elementor-Litebox', $this->textdomain ),
                 'type' => Controls_Manager::CHECKBOX,
                 'default' => '',
-                /*'options' => [
-                    '0' => __( 'No'),
-                    '1' => __( 'Yes'),
-                ],*/
             ]
         );
 

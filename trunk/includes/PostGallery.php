@@ -351,8 +351,8 @@ class PostGallery {
     /**
      * Return an image-array
      *
-     * @param type $postid
-     * @return type
+     * @param int $postid
+     * @return array
      */
     public static function getImages( $postid = null ) {
         if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
@@ -442,10 +442,11 @@ class PostGallery {
     /**
      * Return an image-array with resized images
      *
-     * @param type $postid
+     * @param int $postid
+     * @param array $args
      * @return array
      */
-    public static function getImagesResized( $postid = 0, $args ) {
+    public static function getImagesResized( $postid = 0, $args = array() ) {
         $images = PostGallery::getImages( $postid );
 
         return PostGallery::getPicsResized( $images, $args );
@@ -505,8 +506,8 @@ class PostGallery {
     /**
      * Get path to thumb.php
      *
-     * @param type $filepath
-     * @param type $args
+     * @param string $filepath
+     * @param array $args
      * @return string
      */
     static function getThumbUrl( $filepath, $args = array() ) {
@@ -520,8 +521,8 @@ class PostGallery {
     /**
      * Get thumb (wrapper for Thumb->getThumb()
      *
-     * @param type $filepath
-     * @param type $args
+     * @param string $filepath
+     * @param array $args
      * @return array
      */
     static function getThumb( $filepath, $args = array() ) {
@@ -545,7 +546,7 @@ class PostGallery {
     /**
      * Returns the foldername for the gallery
      *
-     * @param type $post_name
+     * @param object $wpost
      * @return string
      */
     static function getImageDir( $wpost ) {
@@ -618,9 +619,9 @@ class PostGallery {
     /**
      * Generate thumb-path for an array of pics
      *
-     * @param type $pics
-     * @param type $args
-     * @return type
+     * @param array $pics
+     * @param array $args
+     * @return array
      */
     static function getPicsResized( $pics, $args ) {
         if ( !is_array( $pics ) ) {
@@ -654,7 +655,7 @@ class PostGallery {
     /**
      * Check if post has a thumb or a postgallery-image
      *
-     * @param type $postid
+     * @param int $postid
      * @return int
      */
     static function hasPostThumbnail( $postid = 0 ) {
@@ -675,22 +676,6 @@ class PostGallery {
             return count( PostGallery::getImages( $postid ) );
         }
     }
-
-
-    /**
-     * Returns url to compentents of bambee
-     *
-     * @return mixed
-     */
-    /*public function getComponentUrl() {
-        // fix for windows path
-        $fixedAbsPath = str_replace( '\\', '/', ABSPATH );
-        $fixedDirName = str_replace( '\\', '/', dirname( __FILE__ ) );
-        // replace absolute path with url
-        $componentUrl = str_replace( $fixedAbsPath, get_bloginfo( 'wpurl' ) . '/', $fixedDirName );
-
-        return $componentUrl;
-    }*/
 
     /**
      * Adds post-type gallery
