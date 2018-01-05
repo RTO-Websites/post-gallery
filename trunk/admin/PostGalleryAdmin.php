@@ -120,6 +120,8 @@ class PostGalleryAdmin {
         add_action( 'wp_ajax_postgalleryUpload', array( $this, 'ajaxUpload' ) );
         add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
         add_action( 'wp_ajax_postgalleryGetImageUpload', array( $this, 'ajaxGetImageUpload' ) );
+        add_action( 'wp_ajax_postgalleryNewGallery', array( $this, 'ajaxCreateGallery' ) );
+
     }
 
     /**
@@ -198,6 +200,7 @@ class PostGalleryAdmin {
         $pgUrl = plugin_dir_url( __FILE__ );
 
         wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', array( 'jquery' ), $this->version, false );
 
@@ -226,6 +229,27 @@ class PostGalleryAdmin {
         $postid = filter_input( INPUT_GET, 'post' );
         $post = get_post( $postid );
         $this->addGalleryPictures( $post );
+        exit();
+    }
+
+    /**
+     * Create new gallery via ajax
+     */
+    public function ajaxCreateGallery() {
+        global $user_ID;
+        $title = filter_input( INPUT_GET, 'title' );
+        $new_post = array(
+            'post_title' => $title,
+            'post_content' => '',
+            'post_status' => 'publish',
+            'post_date' => date( 'Y-m-d H:i:s' ),
+            'post_author' => $user_ID,
+            'post_type' => 'gallery',
+            'post_category' => array( 0 ),
+        );
+        $post_id = wp_insert_post( $new_post );
+
+        echo json_encode( get_post( $post_id ) );
         exit();
     }
 
