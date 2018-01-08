@@ -333,6 +333,13 @@ class PostGallery {
         }
         $sort = get_post_meta( $postid, 'postgalleryImagesort', true );
 
+        // sort by elementor-widget
+        if ( class_exists( '\Elementor\Plugin' ) && !empty( $GLOBALS['elementorWidgetSettings'] ) ) {
+            if ( !empty( $GLOBALS['elementorWidgetSettings']['pgsort'] ) ) {
+                $sort = $GLOBALS['elementorWidgetSettings']['pgsort'];
+            }
+        }
+
         $sortimages = array();
 
         if ( !empty( $sort ) ) {

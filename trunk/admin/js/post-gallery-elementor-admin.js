@@ -1,7 +1,39 @@
+
+function initPostGalleryElementor() {
+
+  /*
+   change elementor image-source, load new upload
+    */
+  $(document).on('change', 'select[data-setting="pgimgsource"]', loadUpload);
+
+  /**
+   * Write titles, desc, alt to elementor fields
+   */
+  $(document).on('change, keyup', '.sortable-pics .details input,.sortable-pics .details textarea', function (e) {
+    updateElementorFields();
+  });
+
+  /*
+   reload upload if tab is switched
+    */
+  $(document).on('click', '.elementor-tab-control-content a', function(e) {
+    var element = $(e.target),
+      container = element.closest('.ps-container'),
+      field = container.find('input[data-setting="pgsort"]');
+
+    if (field.length) {
+      loadUpload();
+      initElementorAddButton();
+    }
+  });
+}
+
 /**
  * add input and button to add new gallery
  */
 function initElementorAddButton() {
+  $('.pg-new-gallery').remove();
+  $('.pg-new-gallery-button').remove();
   // add input and button
   $('select[data-setting="pgimgsource"]').after('<input type="text" placeholder="New Gallery" class="pg-new-gallery" />'
     + '<button class="elementor-button elementor-button-default pg-new-gallery-button" type="button">' +

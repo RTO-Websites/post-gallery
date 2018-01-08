@@ -75,15 +75,8 @@ window.initPostGallery = function () {
     }
   });
 
-  // change elementor image-source, load new upload
-  $(document).on('change', 'select[data-setting="pgimgsource"]', loadUpload);
 
-  /**
-   * Write titles, desc, alt to elementor fields
-   */
-  $(document).on('change, keyup', '.sortable-pics .details input,.sortable-pics .details textarea', function (e) {
-    updateElementorFields();
-  });
+  initPostGalleryElementor();
 
   // make pics sortable
   initSortable();

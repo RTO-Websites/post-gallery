@@ -265,7 +265,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @access protected
      */
     protected function render() {
-        $settings = $this->get_settings();
+        $settings = $GLOBALS['elementorWidgetSettings'] = $this->get_settings();
         $pgInstance = PostGalleryPublic::getInstance();
 
         // override global settings with widget-settings
