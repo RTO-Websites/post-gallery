@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 09.01.2018 09:58
+ * Last change: 09.01.2018 13:41
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -400,7 +400,7 @@ var LiteboxGallery = function (args) {
       LiteboxGallery.sliders[args.sliderType].init(sliderArgs, galleryStartPic);
 
       // open popup
-      liteboxContainer.addClass('open'); //.css({'display': 'block'}).animate({'opacity': '1'}, 500);
+      liteboxContainer.addClass('open');
 
       window.liteboxOpenProgress = false;
     });
@@ -435,15 +435,18 @@ var LiteboxGallery = function (args) {
     debug('close-gallery');
     liteboxContainer.trigger('box-close', {state: 'begin'});
 
-    liteboxContainer.removeClass('open');//.animate({'opacity': '0'}, 500, function () {
-    setTimeout(function() {
+    liteboxContainer.on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', function(e) {
       debug('close-end');
       //liteboxContainer.css({'display': 'none'});
       liteboxContainer.trigger('box-close', {state: 'afterAnimation'});
 
       // destroy gallery
       LiteboxGallery.sliders[args.sliderType].destroy(sliderArgs);
-    }, 500);
+
+      $(this).off(e);
+    });
+
+    liteboxContainer.removeClass('open');
 
     $('body').removeClass('liteboxgallery-open');
     $('body').removeClass('liteboxgallery-loading');
