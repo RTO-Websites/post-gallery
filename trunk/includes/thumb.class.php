@@ -7,7 +7,7 @@
 
 namespace Thumb;
 
-set_time_limit( 0 );
+@set_time_limit( 0 );
 
 class Thumb {
     public $srvDir = ABSPATH;
