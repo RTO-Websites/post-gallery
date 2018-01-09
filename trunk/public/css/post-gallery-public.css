@@ -118,6 +118,7 @@ body.liteboxgallery-open {
 .litebox-gallery .thumb-container .owl-stage {
   white-space: nowrap;
   padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .litebox-gallery:hover .thumb-container {
@@ -136,11 +137,6 @@ body.liteboxgallery-open {
 
 .litebox-gallery .thumb-container .current-img img {
   box-shadow: 0 0 0px 2px #fff;
-}
-
-.litebox-gallery .thumb-container .litebox-thumb {
-  cursor: pointer;
-  width: 75px;
 }
 
 .litebox-gallery .thumb-container .owl-stage {
@@ -200,3 +196,13 @@ body.liteboxgallery-open {
   position: relative;
 }
 
+.litebox-gallery .thumb-container .litebox-thumb {
+  width: 75px;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.litebox-gallery .thumb-container .litebox-thumb img {
+  max-height: 75px;
+  max-width: 100%;
+}
