@@ -287,9 +287,9 @@ class PostGalleryElementorWidget extends Widget_Base {
         // get gallery
         $gallery = $pgInstance->returnGalleryHtml( '', $settings['pgimgsource'] );
 
-        if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on') {
+        if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
-            $gallery = str_replace( '<a ', '<a class="no-litebox" ', $gallery );
+            $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-lightbox-slideshow="' . $this->get_id() . '" ', $gallery );
         } else {
             // use postgallery litebox
             $gallery = str_replace( '<a ', '<a data-elementor-open-lightbox="no" ', $gallery );
