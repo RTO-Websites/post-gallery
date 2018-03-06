@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: rtowebsites
 Donate link: https://www.rto.de
-Tags: post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
+Tags: post gallery, post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
 Requires at least: 3.4
 Tested up to: 4.8
 Stable tag: 4.3
