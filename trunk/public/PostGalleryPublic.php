@@ -3,7 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery
@@ -20,7 +20,7 @@ use Thumb\Thumb;
  *
  * @package    PostGallery
  * @subpackage PostGallery/public
- * @author     crazypsycho <info@hennewelt.de>
+ * @author     RTO GmbH
  */
 class PostGalleryPublic {
 

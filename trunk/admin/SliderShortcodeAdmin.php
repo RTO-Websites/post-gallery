@@ -249,7 +249,7 @@ class SliderShortcodeAdmin {
      */
     public function _addSliderShortcodeView( $post ) {
         echo '<input type="text" value="[slider ' . $post->ID . ']" onClick="this.select();" /> &nbsp;';
-        echo '<a href="https://github.com/crazypsycho/post-gallery/blob/master/trunk/docs/slider.md" target="_blank">Slider Documentation</a><br />';
+        echo '<a href="https://github.com/RTO-Websites/post-gallery/post-gallery/blob/master/trunk/docs/slider.md" target="_blank">Slider Documentation</a><br />';
     }
 
     /**

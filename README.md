@@ -16,7 +16,7 @@ http://post-gallery.rtfd.org
 
 ### Run this
 ```
-$ git clone git@github.com:crazypsycho/post-gallery.git
+$ git clone git@github.com:RTO-Websites/post-gallery.git
 cd trunk
 bower install
 composer install

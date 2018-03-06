@@ -11,7 +11,7 @@ use Thumb\Thumb;
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery
@@ -30,7 +30,7 @@ use Thumb\Thumb;
  * @since      1.0.0
  * @package    PostGallery
  * @subpackage PostGallery/includes
- * @author     crazypsycho <info@hennewelt.de>
+ * @author     RTO GmbH
  */
 class PostGallery {
     static $cachedImages = array();
