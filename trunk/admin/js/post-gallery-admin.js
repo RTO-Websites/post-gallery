@@ -87,6 +87,9 @@ window.initPostGallery = function () {
 
 
 function initSortable() {
+  if (!$) {
+    var $ = jQuery;
+  }
   if ($.fn.sortable) {
     $(".sortable-pics").sortable({
       cursor: "move"
