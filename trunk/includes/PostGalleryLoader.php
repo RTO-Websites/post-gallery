@@ -3,7 +3,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery
@@ -19,7 +19,7 @@
  *
  * @package    PostGallery
  * @subpackage PostGallery/includes
- * @author     crazypsycho <info@hennewelt.de>
+ * @author     RTO GmbH
  */
 class PostGalleryLoader {
 

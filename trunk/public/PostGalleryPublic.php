@@ -3,7 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery
@@ -20,7 +20,7 @@ use Thumb\Thumb;
  *
  * @package    PostGallery
  * @subpackage PostGallery/public
- * @author     crazypsycho <info@hennewelt.de>
+ * @author     RTO GmbH
  */
 class PostGalleryPublic {
 
@@ -44,6 +44,8 @@ class PostGalleryPublic {
 
     private $textdomain;
 
+    public static $instance;
+
 
     /**
      * The options from admin-page
@@ -65,12 +67,13 @@ class PostGalleryPublic {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
-        if ( is_admin() ) {
+        if ( is_admin() && !class_exists('\Elementor\Plugin') ) {
             return;
         }
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
         $this->version = $version;
+        self::$instance = $this;
 
         $this->options = PostGallery::getOptions();
 
@@ -356,7 +359,7 @@ class PostGalleryPublic {
      * Adds the gallery to the_content
      *
      * @param type $content
-     * @return type
+     * @return string
      */
     public function addGalleryToContent( $content ) {
         $position = get_post_meta( $GLOBALS['post']->ID, 'postgalleryPosition', true );
@@ -382,10 +385,12 @@ class PostGalleryPublic {
     /**
      * Return the gallery-html
      *
-     * @param type $template
-     * @return type
+     * @param string $template
+     * @param int $postid
+     * @param array $args
+     * @return string
      */
-    public function returnGalleryHtml( $template, $postid = 0, $args = array() ) {
+    public function returnGalleryHtml( $template = '', $postid = 0, $args = array() ) {
         $templateDirs = array(
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
@@ -401,6 +406,10 @@ class PostGalleryPublic {
 
         if ( empty( $template ) || $template == 'global' ) {
             $template = $this->options['globalTemplate'];
+        }
+
+        if ( empty( $template ) ) {
+            $template = 'thumbs';
         }
 
         ob_start();
@@ -443,7 +452,7 @@ class PostGalleryPublic {
      *
      * @param type $args
      * @param type $content
-     * @return {string}
+     * @return string
      */
     public function postgalleryShortcode( $args, $content = '' ) {
         if ( empty( $args['template'] ) ) {
@@ -543,5 +552,24 @@ class PostGalleryPublic {
         }
 
         return $this->options;
+    }
+
+    /**
+     * Sets an option
+     *
+     * @param $property
+     * @param $value
+     */
+    public function setOption( $property, $value ) {
+        $this->options[$property] = $value;
+    }
+
+    static function getInstance() {
+        // If the single instance hasn't been set, set it now.
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 }

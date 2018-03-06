@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 11.12.2017 11:16
+ * Last change: 09.01.2018 16:26
  ************************************/
 LiteboxGallery.sliders.owl = {
 
@@ -15,7 +15,7 @@ LiteboxGallery.sliders.owl = {
   },
 
 
-  init: function (pg, galleryStartPic) {
+  init: function(pg, galleryStartPic) {
     pg.args.sliderArgs.startPosition = galleryStartPic;
     pg.args.sliderArgs.loop = true;
     pg.args.sliderArgs.addClassActive = true;
@@ -30,7 +30,7 @@ LiteboxGallery.sliders.owl = {
     }
   },
 
-  initThumbs: function (pg, pics) {
+  initThumbs: function(pg, pics) {
     var thumbSlider = pg.liteboxContainer.find('.thumb-container'),
       thumbArgs = jQuery.extend(LiteboxGallery.sliders.owl.thumbDefaultArgs, pg.args.owlThumbArgs);
 
@@ -52,7 +52,7 @@ LiteboxGallery.sliders.owl = {
     for (var i = 0; i < pics.length; i += 1) {
       var thumb = $('<div class="litebox-thumb"><img class="owl-lazy" data-src="' + pics[i]['url'] + '" alt="" /></div>');
       thumb[0].liteboxIndex = i;
-      thumb.on('click', function () {
+      thumb.on('click', function() {
         if (pg.args.owlVersion == 1) {
           pg.galleryContainer.data('owlCarousel').goTo(this.liteboxIndex); // v1
         } else {
@@ -67,10 +67,21 @@ LiteboxGallery.sliders.owl = {
     thumbSlider.append(thumb);
 
     $('.thumb-container').owlCarousel(thumbArgs);
+
+    // jump to thumb on change
+    pg.galleryContainer.on('changed.owl.carousel', function(event) {
+      if (event.page.index !== null) {
+        setTimeout(function() {
+          $('.thumb-container').trigger('to.owl.carousel', event.page.index);
+          $('.thumb-container').find('.owl-item:not(.cloned)').removeClass('current-img');
+          $($('.thumb-container').find('.owl-item:not(.cloned)').get(event.page.index)).addClass('current-img');
+        }, 50)
+      }
+    });
   },
 
-  galleryClick: function (pg) {
-    $(document).on('click', '.litebox-owlslider .owl-stage-outer, .litebox-owlslider .owl-wrapper-outer', function (e) {
+  galleryClick: function(pg) {
+    $(document).on('click', '.litebox-owlslider .owl-stage-outer, .litebox-owlslider .owl-wrapper-outer', function(e) {
       var xPos,
         yPos,
         oldOwl = $('.litebox-gallery .owl-carousel').data('owlCarousel');
@@ -96,7 +107,7 @@ LiteboxGallery.sliders.owl = {
     });
   },
 
-  next: function (pg) {
+  next: function(pg) {
     var oldOwl = $('.litebox-gallery .owl-carousel').data('owlCarousel');
 
     if (oldOwl) {
@@ -106,7 +117,7 @@ LiteboxGallery.sliders.owl = {
     }
   },
 
-  prev: function (pg) {
+  prev: function(pg) {
     var oldOwl = $('.litebox-gallery .owl-carousel').data('owlCarousel');
 
     if (oldOwl) {
@@ -118,8 +129,8 @@ LiteboxGallery.sliders.owl = {
     }
   },
 
-  destroy: function (pg) {
-    switch (pg.args.owlVersion) {
+  destroy: function(pg) {
+    switch(pg.args.owlVersion) {
       case 1:
         // owl v1
         if (pg.galleryContainer.data('owlCarousel')) {

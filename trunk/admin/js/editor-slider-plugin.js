@@ -40,8 +40,8 @@
       return {
         longname: 'Slider',
         author: 'Crazypsycho',
-        authorurl: 'https://github.com/crazypsycho',
-        infourl: 'https://github.com/crazypsycho/post-gallery',
+        authorurl: 'https://github.com/RTO-Websites/post-gallery',
+        infourl: 'https://github.com/RTO-Websites/post-gallery/post-gallery',
         version: '1.0'
       }
     }

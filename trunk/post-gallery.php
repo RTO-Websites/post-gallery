@@ -20,7 +20,7 @@ use Inc\PostGalleryDeactivator;
  * Plugin Name:       PostGallery
  * Plugin URI:        https://github.com/RTO-Websites/post-gallery
  * Description:       Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
- * Version:           1.2.11
+ * Version:           1.3.1
  * Author:            RTO GmbH
  * Author URI:        https://www.rto.de
  * License:           GPL-2.0+

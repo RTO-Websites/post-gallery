@@ -5,7 +5,7 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery

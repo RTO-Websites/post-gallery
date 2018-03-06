@@ -1,6 +1,7 @@
 <?php namespace Inc;
 
 use Admin\PostGalleryAdmin;
+use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Pub\PostGalleryPublic;
 use Thumb\Thumb;
 
@@ -10,7 +11,7 @@ use Thumb\Thumb;
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery
@@ -29,7 +30,7 @@ use Thumb\Thumb;
  * @since      1.0.0
  * @package    PostGallery
  * @subpackage PostGallery/includes
- * @author     crazypsycho <info@hennewelt.de>
+ * @author     RTO GmbH
  */
 class PostGallery {
     static $cachedImages = array();
@@ -63,6 +64,8 @@ class PostGallery {
      */
     protected $version;
 
+    protected $textdomain;
+
     /**
      * Define the core functionality of the plugin.
      *
@@ -75,6 +78,7 @@ class PostGallery {
     public function __construct() {
 
         $this->pluginName = 'post-gallery';
+        $this->textdomain = 'post-gallery';
         $this->version = '1.0.0';
 
         $this->loadDependencies();
@@ -82,7 +86,103 @@ class PostGallery {
         $this->defineAdminHooks();
         $this->definePublicHooks();
 
+
+        $this->initElementor();
+
+
+        add_action( 'init', array( $this, 'addPostTypeGallery' ) );
+
         add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
+    }
+
+    /**
+     * Init elementor widget
+     */
+    public function initElementor() {
+        add_action( 'elementor/editor/before_enqueue_styles', array( PostGalleryAdmin::getInstance(), 'enqueueStyles' ) );
+        add_action( 'elementor/editor/before_enqueue_scripts', array( PostGalleryAdmin::getInstance(), 'enqueueScripts' ), 99999 );
+
+        add_action( 'elementor/widgets/widgets_registered', function () {
+            require_once( 'PostGalleryElementorControl.php' );
+            require_once( 'PostGalleryElementorWidget.php' );
+
+            \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
+        } );
+
+        add_action( 'elementor/editor/after_save', function ( $post_id, $editor_data ) {
+            $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
+
+            // fetch elements
+            $widgets = [];
+            self::getAllWidgets( $widgets, $meta, 'postgallery' );
+
+            foreach ( $widgets as $widget ) {
+                $pgSort = self::arraySearch( $widget, 'pgsort' );
+                $pgTitles = self::arraySearch( $widget, 'pgimgtitles' );
+                $pgDescs = self::arraySearch( $widget, 'pgimgdescs' );
+                $pgAlts = self::arraySearch( $widget, 'pgimgalts' );
+                $pgOptions = self::arraySearch( $widget, 'pgimgoptions' );
+                $pgPostId = self::arraySearch( $widget, 'pgimgsource' );
+
+                if ( empty( $pgPostId ) ) {
+                    $pgPostId = $post_id;
+                } else {
+                    $pgPostId = $pgPostId[0];
+                }
+
+
+                if ( !empty( $pgSort ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
+                }
+                if ( !empty( $pgTitles ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
+                }
+                if ( !empty( $pgDescs ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
+                }
+                if ( !empty( $pgAlts ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
+                }
+                if ( !empty( $pgOptions ) ) {
+                    update_post_meta( $pgPostId, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
+                }
+            }
+        } );
+    }
+
+    public static function getAllWidgets( &$widgets = [], $meta, $widgetType = '' ) {
+        // fetch elements
+        foreach ( $meta as $data ) {
+            if ( $data['elType'] == 'widget' && ( !empty( $widgetType ) && $widgetType == $data['widgetType'] ) ) {
+                $widgets[] = $data;
+            }
+            if ( !empty( $data['elements'] ) ) {
+                self::getAllWidgets( $widgets, $data['elements'], $widgetType );
+            }
+        }
+    }
+
+    /**
+     * Helper function, find value in mutlidimensonal array
+     *
+     * @param $array
+     * @param $key
+     * @return array
+     */
+    public static function arraySearch( $array, $key ) {
+        $results = array();
+
+        if ( is_array( $array ) ) {
+            if ( isset( $array[$key] ) ) {
+                $results[] = $array[$key];
+            }
+
+            foreach ( $array as $subarray ) {
+                $results = array_merge( $results, self::arraySearch( $subarray, $key ) );
+            }
+        }
+
+        return $results;
     }
 
 
@@ -233,6 +333,13 @@ class PostGallery {
         }
         $sort = get_post_meta( $postid, 'postgalleryImagesort', true );
 
+        // sort by elementor-widget
+        if ( class_exists( '\Elementor\Plugin' ) && !empty( $GLOBALS['elementorWidgetSettings'] ) ) {
+            if ( !empty( $GLOBALS['elementorWidgetSettings']['pgsort'] ) ) {
+                $sort = $GLOBALS['elementorWidgetSettings']['pgsort'];
+            }
+        }
+
         $sortimages = array();
 
         if ( !empty( $sort ) ) {
@@ -254,8 +361,8 @@ class PostGallery {
     /**
      * Return an image-array
      *
-     * @param type $postid
-     * @return type
+     * @param int $postid
+     * @return array
      */
     public static function getImages( $postid = null ) {
         if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
@@ -304,6 +411,20 @@ class PostGallery {
             $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
             $imageOptions = get_post_meta( $postid, 'postgalleryImageOptions', true );
             $dir = scandir( $uploadDir );
+
+            if ( !is_array( $titles ) ) {
+                $titles = json_decode( json_encode( $titles ), true );
+            }
+            if ( !is_array( $descs ) ) {
+                $descs = json_decode( json_encode( $descs ), true );
+            }
+            if ( !is_array( $alts ) ) {
+                $alts = json_decode( json_encode( $alts ), true );
+            }
+            if ( !is_array( $imageOptions ) ) {
+                $imageOptions = json_decode( json_encode( $imageOptions ), true );
+            }
+
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
 
@@ -331,10 +452,11 @@ class PostGallery {
     /**
      * Return an image-array with resized images
      *
-     * @param type $postid
-     * @return type
+     * @param int $postid
+     * @param array $args
+     * @return array
      */
-    public static function getImagesResized( $postid = 0, $args ) {
+    public static function getImagesResized( $postid = 0, $args = array() ) {
         $images = PostGallery::getImages( $postid );
 
         return PostGallery::getPicsResized( $images, $args );
@@ -394,9 +516,9 @@ class PostGallery {
     /**
      * Get path to thumb.php
      *
-     * @param type $filepath
-     * @param type $args
-     * @return type
+     * @param string $filepath
+     * @param array $args
+     * @return string
      */
     static function getThumbUrl( $filepath, $args = array() ) {
         $thumb = PostGallery::getThumb( $filepath, $args );
@@ -409,9 +531,9 @@ class PostGallery {
     /**
      * Get thumb (wrapper for Thumb->getThumb()
      *
-     * @param type $filepath
-     * @param type $args
-     * @return type
+     * @param string $filepath
+     * @param array $args
+     * @return array
      */
     static function getThumb( $filepath, $args = array() ) {
         if ( empty( $args['width'] ) ) {
@@ -434,7 +556,7 @@ class PostGallery {
     /**
      * Returns the foldername for the gallery
      *
-     * @param type $post_name
+     * @param object $wpost
      * @return string
      */
     static function getImageDir( $wpost ) {
@@ -507,9 +629,9 @@ class PostGallery {
     /**
      * Generate thumb-path for an array of pics
      *
-     * @param type $pics
-     * @param type $args
-     * @return type
+     * @param array $pics
+     * @param array $args
+     * @return array
      */
     static function getPicsResized( $pics, $args ) {
         if ( !is_array( $pics ) ) {
@@ -543,8 +665,8 @@ class PostGallery {
     /**
      * Check if post has a thumb or a postgallery-image
      *
-     * @param type $postid
-     * @return boolean
+     * @param int $postid
+     * @return int
      */
     static function hasPostThumbnail( $postid = 0 ) {
         if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
@@ -563,6 +685,38 @@ class PostGallery {
         } else {
             return count( PostGallery::getImages( $postid ) );
         }
+    }
+
+    /**
+     * Adds post-type gallery
+     */
+    public function addPostTypeGallery() {
+        register_post_type( 'gallery', array(
+            'labels' => array(
+                'name' => __( 'Galleries', $this->textdomain ),
+                'singular_name' => __( 'Gallery', $this->textdomain ),
+            ),
+            'taxonomies' => array( 'category' ),
+            'menu_icon' => 'dashicons-format-gallery',
+            'public' => true,
+            'has_archive' => true,
+            'show_in_nav_menus' => true,
+            'show_ui' => true,
+            'capability_type' => 'post',
+            'hierarchical' => true,
+            'supports' => array(
+                'title',
+                'author',
+                'editor',
+                'thumbnail',
+                'trackbacks',
+                'custom-fields',
+                'revisions',
+            ),
+            'exclude_from_search' => true,
+            'publicly_queryable' => true,
+            'excerpt' => true,
+        ) );
     }
 
     public static function getOptions() {

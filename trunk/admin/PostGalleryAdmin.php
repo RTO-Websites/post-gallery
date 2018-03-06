@@ -3,7 +3,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       https://github.com/crazypsycho
+ * @link       https://github.com/RTO-Websites/post-gallery
  * @since      1.0.0
  *
  * @package    PostGallery
@@ -25,7 +25,7 @@ use Thumb\Thumb;
  *
  * @package    PostGallery
  * @subpackage PostGallery/admin
- * @author     crazypsycho <info@hennewelt.de>
+ * @author     RTO GmbH
  */
 class PostGalleryAdmin {
 
@@ -119,6 +119,9 @@ class PostGalleryAdmin {
         // Register ajax
         add_action( 'wp_ajax_postgalleryUpload', array( $this, 'ajaxUpload' ) );
         add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
+        add_action( 'wp_ajax_postgalleryGetImageUpload', array( $this, 'ajaxGetImageUpload' ) );
+        add_action( 'wp_ajax_postgalleryNewGallery', array( $this, 'ajaxCreateGallery' ) );
+
     }
 
     /**
@@ -197,9 +200,11 @@ class PostGalleryAdmin {
         $pgUrl = plugin_dir_url( __FILE__ );
 
         wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', array( 'jquery' ), $this->version, false );
 
+        wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
 
 
@@ -219,6 +224,34 @@ class PostGalleryAdmin {
         exit();
     }
 
+
+    public function ajaxGetImageUpload() {
+        $postid = filter_input( INPUT_GET, 'post' );
+        $post = get_post( $postid );
+        $this->addGalleryPictures( $post );
+        exit();
+    }
+
+    /**
+     * Create new gallery via ajax
+     */
+    public function ajaxCreateGallery() {
+        global $user_ID;
+        $title = filter_input( INPUT_GET, 'title' );
+        $new_post = array(
+            'post_title' => $title,
+            'post_content' => '',
+            'post_status' => 'publish',
+            'post_date' => date( 'Y-m-d H:i:s' ),
+            'post_author' => $user_ID,
+            'post_type' => 'gallery',
+            'post_category' => array( 0 ),
+        );
+        $post_id = wp_insert_post( $new_post );
+
+        echo json_encode( get_post( $post_id ) );
+        exit();
+    }
 
     /**
      * Register the Metaboxes for Gallery-Settings and Images
@@ -400,6 +433,20 @@ class PostGalleryAdmin {
         $imageOptions = get_post_meta( $currentLangPost->ID, 'postgalleryImageOptions', true );
         $altAttributes = get_post_meta( $currentLangPost->ID, 'postgalleryAltAttributes', true );
 
+
+        if ( !is_array( $titles ) ) {
+            $titles = json_decode( json_encode( $titles ), true );
+        }
+        if ( !is_array( $descs ) ) {
+            $descs = json_decode( json_encode( $descs ), true );
+        }
+        if ( !is_array( $altAttributes ) ) {
+            $altAttributes = json_decode( json_encode( $altAttributes ), true );
+        }
+        if ( !is_array( $imageOptions ) ) {
+            $imageOptions = json_decode( json_encode( $imageOptions ), true );
+        }
+
         if ( empty( $imageDir ) ) {
             echo __( 'You have to save the post to upload images.', $this->textdomain );
             return;
@@ -458,24 +505,30 @@ class PostGalleryAdmin {
 
         // hidden-input contains the id of main-lang-post
         echo '<input type="hidden" name="postgalleryMainlangId" id="postgalleryMainlangId" value="' . $post->ID . '" />';
+    }
 
+
+    /**
+     * @return array
+     */
+    public function getPostGalleryLang() {
         $scriptLanguage = array(
             'moveHere' => __( 'Move files here.', $this->textdomain ),
             'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
         );
 
         // Javascript for language
-        echo '<script type="text/javascript">window.postgalleryLang = ' . json_encode( $scriptLanguage ) . ';</script>';
+        return $scriptLanguage;
+        //return '<script type="text/javascript">window.postgalleryLang = ' . json_encode( $scriptLanguage ) . ';</script>';
     }
-
 
     /**
      * Method to save Post-Meta
      *
      * @global type $post_options
-     * @param type $postId
-     * @param type $post
-     * @return type
+     * @param int $postId
+     * @param object $post
+     * @return null
      */
     public function savePostMeta( $postId, $post ) {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
