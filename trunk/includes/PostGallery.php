@@ -33,6 +33,7 @@ use Thumb\Thumb;
  * @author     RTO GmbH
  */
 class PostGallery {
+
     static $cachedImages = array();
     static $cachedFolders = array();
 
@@ -66,6 +67,7 @@ class PostGallery {
 
     protected $textdomain;
 
+
     /**
      * Define the core functionality of the plugin.
      *
@@ -86,9 +88,7 @@ class PostGallery {
         $this->defineAdminHooks();
         $this->definePublicHooks();
 
-
         $this->initElementor();
-
 
         add_action( 'init', array( $this, 'addPostTypeGallery' ) );
 
@@ -740,6 +740,13 @@ class PostGallery {
             'asBg' => get_theme_mod( 'postgallery_asBg', false ),
             'owlConfig' => get_theme_mod( 'postgallery_owlConfig', 'items: 1' ),
             'owlThumbConfig' => get_theme_mod( 'postgallery_owlThumbConfig', '' ),
+
+            'autoplay' => get_theme_mod( 'postgallery_autoplay', '' ),
+            'loop' => get_theme_mod( 'postgallery_loop', '' ),
+            'items' => get_theme_mod( 'postgallery_items', '1' ),
+            'animateOut' => get_theme_mod( 'postgallery_animateOut', '' ),
+            'animateIn' => get_theme_mod( 'postgallery_animateIn', '' ),
+            'autoplayTimeout' => get_theme_mod( 'postgallery_autoplayTimeout', '' ),
         );
     }
 

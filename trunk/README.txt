@@ -34,6 +34,9 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.3.3 =
+* Add options for animations
+
 = 1.3.0 =
 * Add support for elementor
 

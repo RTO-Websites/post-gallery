@@ -507,24 +507,41 @@ class PostGalleryPublic {
     }
 
     public function insertHeaderscript( $header ) {
+        $args = $this->options;
         $sliderType = $this->options['sliderType'];
         $oldOwl = $this->options['sliderType'] == 'owl1' ? 'owlVersion: 1,' : '';
         $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';
         $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
         $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
-        $sliderConfig = $this->options['owlConfig'];
+        $customSliderConfig = $this->options['owlConfig'];
         $owlThumbConfig = $this->options['owlThumbConfig'];
         $debug = !empty( $this->options['debugmode'] );
+        $sliderConfig = '';
 
         // minify
-        $sliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $sliderConfig );
-        $sliderConfig = preg_replace( "/(\r?\n?)*/", '', $sliderConfig );
+        $customSliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $customSliderConfig );
+        $customSliderConfig = preg_replace( "/(\r?\n?)*/", '', $customSliderConfig );
+
+        echo '<!--blubowl';
+        var_dump($args);
+        echo '-->';
+
+        $sliderConfig .= ( !empty( $args[ 'autoplay' ] ) || in_array( 'autoplay', $args, true ) ? 'autoplay: true,' : '' );
+        $sliderConfig .= ( !empty( $args[ 'loop' ] ) || in_array( 'loop', $args, true ) ? 'loop: true,' : '' );
+        $sliderConfig .= ( !empty( $args[ 'animateOut' ] ) ? 'animateOut: "' . $args[ 'animateOut' ] . '",' : '' );
+        $sliderConfig .= ( !empty( $args[ 'animateIn' ] ) ? 'animateIn: "' . $args[ 'animateIn' ] . '",' : '' );
+        $sliderConfig .= ( !empty( $args[ 'autoplayTimeout' ] ) ? 'autoplayTimeout: ' . $args[ 'autoplayTimeout' ] . ',' : '' );
+        $sliderConfig .= ( !empty( $args[ 'items' ] ) ? 'items: ' . $args[ 'items' ] . ',' : 'items: 1,' );
+
+        $sliderConfig .= $customSliderConfig;
+
+
 
         $owlThumbConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlThumbConfig );
         $owlThumbConfig = preg_replace( "/(\r?\n?)*/", '', $owlThumbConfig );
 
         // script for websiteurl
-        $script = '<script>';
+        $script = PHP_EOL . '<script>';
         $script .= 'window.pgConfig = { websiteUrl: "' . get_bloginfo( 'wpurl' ) . '",';
         $script .= 'liteboxArgs: {
             sliderType: "' . $sliderType . '",'
@@ -533,7 +550,7 @@ class PostGalleryPublic {
             . 'owlThumbArgs: {' . $owlThumbConfig . '}'
             . ( $debug ? ',debug: true,' : '' )
             . '}};';
-        $script .= '</script>';
+        $script .= '</script>' . PHP_EOL;
 
         $header = $header . $script;
 
