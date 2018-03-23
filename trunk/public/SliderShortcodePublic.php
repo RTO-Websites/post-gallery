@@ -88,6 +88,11 @@ class SliderShortcodePublic {
 
         $sliderType = get_post_meta( $sliderid, 'sliderType', true );
 
+        $slideSpeed = get_post_meta( $sliderid, 'slideSpeed', true );
+        $autoplayTimeout = get_post_meta( $sliderid, 'autoplayTimeout', true );
+        $animateOut = get_post_meta( $sliderid, 'animateOut', true );
+        $animateIn = get_post_meta( $sliderid, 'animateIn', true );
+
         switch ( $sliderType ) {
             case 'swiper':
                 $jsFunction = 'swiper';
@@ -175,6 +180,21 @@ class SliderShortcodePublic {
         if ( in_array( 'link', $args ) ) {
             $linkPost = true;
         }
+
+
+        // set autoplay
+        if ( $autoplayTimeout ) {
+            $sliderArgs = 'autoplayTimeout:' . $autoplayTimeout . ',' . $sliderArgs;
+        }
+
+        // set animation
+        if ( $animateIn ) {
+            $sliderArgs = 'animateIn: "' . $animateIn . '",' . $sliderArgs;
+        }
+        if ( $animateOut ) {
+            $sliderArgs = 'animateOut: "' . $animateOut . '",' . $sliderArgs;
+        }
+
 
         // use slider-width/height as maximun for image-scaling
         if ( empty( $imgWidth ) ) {
@@ -284,6 +304,23 @@ class SliderShortcodePublic {
             jQuery(function($) {$(".pg-slider-' . $sliderid . '").' . $jsFunction . '({' . $sliderArgs . '});
             stopOwlPropagation(".pg-slider-' . $sliderid . '");});
             </script>';
+
+        // add css for slidespeed
+        if ( !empty( $slideSpeed ) ) {
+            $output .= '<style>';
+            $output .= '.pg-slider-' . $sliderid . '.owl-carousel .owl-item {
+                    -webkit-animation-duration: ' . $slideSpeed . 'ms !important;
+                    animation-duration: ' . $slideSpeed . 'ms !important;
+                }';
+            if ( empty( $animateIn ) && empty( $animateOut ) ) {
+                // for slide animation
+                $output .= '.pg-slider-' . $sliderid . '.owl-carousel .owl-stage {
+                        transition-duration: ' . $slideSpeed . 'ms !important;
+                    }';
+            }
+
+            $output .= '</style>';
+        }
 
         return $output;
     }

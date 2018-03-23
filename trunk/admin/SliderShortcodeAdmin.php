@@ -50,7 +50,42 @@ class SliderShortcodeAdmin {
         $this->pluginName = $pluginName;
         $this->version = $version;
 
+
+        // slide animations from animate.css
+        $sliderAnimations = explode( ',', 'bounce,	flash,	pulse,	rubberBand,
+shake,	headShake,	swing,	tada,
+wobble,	jello,	bounceIn,	bounceInDown,
+bounceInLeft,	bounceInRight,	bounceInUp,	bounceOut,
+bounceOutDown,	bounceOutLeft,	bounceOutRight,	bounceOutUp,
+fadeIn,	fadeInDown,	fadeInDownBig,	fadeInLeft,
+fadeInLeftBig,	fadeInRight,	fadeInRightBig,	fadeInUp,
+fadeInUpBig,	fadeOut,	fadeOutDown,	fadeOutDownBig,
+fadeOutLeft,	fadeOutLeftBig,	fadeOutRight,	fadeOutRightBig,
+fadeOutUp,	fadeOutUpBig,	flipInX,	flipInY,
+flipOutX,	flipOutY,	lightSpeedIn,	lightSpeedOut,
+rotateIn,	rotateInDownLeft,	rotateInDownRight,	rotateInUpLeft,
+rotateInUpRight,	rotateOut,	rotateOutDownLeft,	rotateOutDownRight,
+rotateOutUpLeft,	rotateOutUpRight,	hinge,	jackInTheBox,
+rollIn,	rollOut,	zoomIn,	zoomInDown,
+zoomInLeft,	zoomInRight,	zoomInUp,	zoomOut,
+zoomOutDown,	zoomOutLeft,	zoomOutRight,	zoomOutUp,
+slideInDown,	slideInLeft,	slideInRight,	slideInUp,
+slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
+        array_unshift( $sliderAnimations, '' );
+
+        // need as key-value pair
+        $sliderAnimationsKeyValue = array();
+        foreach ( $sliderAnimations as $value ) {
+            $sliderAnimationsKeyValue[trim( $value )] = trim( $value );
+        }
+        $sliderAnimations = $sliderAnimationsKeyValue;
+
         $this->optionFields = array(
+
+            'headline_base' => array(
+                'type' => 'headline',
+                'label' => 'Base-Settings',
+            ),
             'sliderType' => array(
                 'type' => 'select',
                 'label' => __( 'Type', $this->textdomain ),
@@ -78,7 +113,22 @@ class SliderShortcodeAdmin {
                     3 => __( 'Ignore proportions', $this->textdomain ),
                 ),
             ),
+            'sliderItems' => array(
+                'type' => 'number',
+                'label' => __( 'Items', $this->textdomain ),
+                'default' => 3,
+            ),
+            'sliderLoop' => array(
+                'type' => 'checkbox',
+                'label' => __( 'Loop', $this->textdomain ),
+                'default' => true,
+            ),
 
+            // images
+            'headline_image' => array(
+                'type' => 'headline',
+                'label' => 'Image-Settings',
+            ),
             'sliderImageWidth' => array(
                 'type' => 'text',
                 'label' => __( 'Image-Width', $this->textdomain ),
@@ -102,19 +152,56 @@ class SliderShortcodeAdmin {
                 'type' => 'checkbox',
                 'label' => __( 'Show only Post-Thumbs', $this->textdomain ),
             ),
-            'sliderItems' => array(
+
+            // animation
+            'headline_animation' => array(
+                'type' => 'headline',
+                'label' => 'Animation',
+            ),
+            'slideSpeed' => array(
+                'id' => 'slideSpeed',
+                'label' => 'Speed (ms)',
                 'type' => 'number',
-                'label' => __( 'Items', $this->textdomain ),
-                'default' => 3,
+                'datasrc' => 'moduldata',
+                //'tooltip' => 'Gibt an wie lange die Animation eines Slides dauert.'
             ),
-            'sliderLoop' => array(
-                'type' => 'checkbox',
-                'label' => __( 'Loop', $this->textdomain ),
-                'default' => true,
-            ),
+
             'sliderAutoplay' => array(
                 'type' => 'checkbox',
                 'label' => __( 'Autoplay', $this->textdomain ),
+            ),
+
+            'autoplayTimeout' => array(
+                'id' => 'autoplayTimeout',
+                'label' => 'Autoplay timeout (ms)',
+                'type' => 'number',
+                'placeholder' => 5000,
+                'datasrc' => 'moduldata',
+                //'description' => 'Gibt an wie lange ein Item angezeigt wird und bis die nächste Animation beginnt.'
+            ),
+            'animateOut' => array(
+                'id' => 'animateOut',
+                'label' => 'Animate out',
+                'type' => 'select',
+                'options' => $sliderAnimations,
+                'datasrc' => 'moduldata',
+                //'description' => 'Gibt die Animation an mit welcher ein Item ausgeblendet wird',
+            ),
+
+            'animateIn' => array(
+                'id' => 'animateIn',
+                'label' => 'AnimateIn',
+                'type' => 'select',
+                'options' => $sliderAnimations,
+                'datasrc' => 'moduldata',
+                //'description' => 'Gibt die Animation an mit welcher ein Item eingeblendet wird<br />'
+                //.'Look <a target="_blank" href="https://daneden.github.io/animate.css/">Animate.css</a>',
+            ),
+
+            // extra settings
+            'headline_extra' => array(
+                'type' => 'headline',
+                'label' => 'Extra-Settings',
             ),
             'sliderShuffle' => array(
                 'type' => 'checkbox',
@@ -127,13 +214,13 @@ class SliderShortcodeAdmin {
             'sliderOwlConfig' => array(
                 'type' => 'textarea',
                 'label' => __( 'Owl-Config', $this->textdomain ),
-                'descTop' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
+                /*'descTop' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
                     . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="sliderOwlConfig">
                     <option value="">Slide (' . __( 'Default', $this->textdomain ) . ')</option>
                     <option value="fade">Fade</option>
                     <option value="slidevertical">SlideVertical</option>
                     <option value="zoominout">Zoom In/out</option>
-                    </select>',
+                    </select>',*/
 
                 'desc' => '<br />' . __( 'You can use these options', $this->textdomain ) . ':<br />' .
                     '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
@@ -290,6 +377,9 @@ class SliderShortcodeAdmin {
                 }
 
                 switch ( $option['type'] ) {
+                    case 'headline':
+                        //echo '<h2 class="title">' . $option['label'] . '</h2>';
+                        break;
                     case 'select':
                         // Generate select
                         $multiple = !empty( $option['multiple'] ) ? ' multiple ' : '';
