@@ -522,10 +522,6 @@ class PostGalleryPublic {
         $customSliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $customSliderConfig );
         $customSliderConfig = preg_replace( "/(\r?\n?)*/", '', $customSliderConfig );
 
-        echo '<!--blubowl';
-        var_dump($args);
-        echo '-->';
-
         $sliderConfig .= ( !empty( $args[ 'autoplay' ] ) || in_array( 'autoplay', $args, true ) ? 'autoplay: true,' : '' );
         $sliderConfig .= ( !empty( $args[ 'loop' ] ) || in_array( 'loop', $args, true ) ? 'loop: true,' : '' );
         $sliderConfig .= ( !empty( $args[ 'animateOut' ] ) ? 'animateOut: "' . $args[ 'animateOut' ] . '",' : '' );
