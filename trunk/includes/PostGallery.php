@@ -102,14 +102,16 @@ class PostGallery {
         add_action( 'elementor/editor/before_enqueue_styles', array( PostGalleryAdmin::getInstance(), 'enqueueStyles' ) );
         add_action( 'elementor/editor/before_enqueue_scripts', array( PostGalleryAdmin::getInstance(), 'enqueueScripts' ), 99999 );
 
-        add_action( 'elementor/widgets/widgets_registered', function () {
+        if ( class_exists( '\Elementor\Plugin' ) ) {
             require_once( 'PostGalleryElementorControl.php' );
+        }
+        add_action( 'elementor/widgets/widgets_registered', function () {
             require_once( 'PostGalleryElementorWidget.php' );
 
             \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
         } );
 
-        add_action( 'elementor/editor/after_save', function ( $post_id, $editor_data ) {
+        add_action( 'elementor/editor/after_save', function ( $post_id, $editor_data = null ) {
             $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
 
             // fetch elements

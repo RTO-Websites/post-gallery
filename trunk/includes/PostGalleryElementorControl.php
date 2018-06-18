@@ -1,6 +1,6 @@
 <?php
-use \Elementor\Control_Base;
-class PostGalleryElementorControl extends Control_Base
+use \Elementor\Base_Control;
+class PostGalleryElementorControl extends Base_Control
 {
 
     public function get_type()
