@@ -67,7 +67,7 @@ class PostGalleryPublic {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
-        if ( is_admin() && !class_exists('\Elementor\Plugin') ) {
+        if ( is_admin() && !class_exists( '\Elementor\Plugin' ) ) {
             return;
         }
         $this->pluginName = $pluginName;
@@ -212,7 +212,7 @@ class PostGalleryPublic {
      * @param $handle
      * @return mixed
      */
-    public function addAsyncAttribute($tag, $handle) {
+    public function addAsyncAttribute( $tag, $handle ) {
         if ( strpos( $handle, 'post-gallery' ) === false ) {
             return $tag;
         }
@@ -284,76 +284,21 @@ class PostGalleryPublic {
      */
     public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
         if ( '' == $html ) {
-            // get id from main-language post
-            if ( class_exists( 'SitePress' ) ) {
-                global $sitepress;
 
-                $post_id = icl_object_id( $post_id, 'any', true, $sitepress->get_default_language() );
+            $image = PostGallery::getFirstImage( $size, $post_id );
+
+            if ( empty( $image ) || empty( $image['url'] ) ) {
+                return '';
             }
 
-            $postGalleryImages = PostGallery::getImages( $post_id );
-            if ( !count( $postGalleryImages ) ) {
-                return $html;
-            }
-
-            $firstThumb = array_shift( $postGalleryImages );
-
-            if ( empty( $size ) ) {
-                $size = 'post-thumbnail';
-            }
-
-            // get width of thumbnail
-            $width = intval( get_option( "{$size}_size_w" ) );
-            $height = intval( get_option( "{$size}_size_h" ) );
-            $crop = intval( get_option( "{$size}_crop" ) );
-
-            if ( empty( $width ) && empty( $height ) ) {
-                global $_wp_additional_image_sizes;
-                if ( !empty( $_wp_additional_image_sizes ) &&
-                    !empty( $_wp_additional_image_sizes[$size] )
-                ) {
-                    $width = $_wp_additional_image_sizes[$size]['width'];
-                    $height = $_wp_additional_image_sizes[$size]['height'];
-                }
-            }
-
-            if ( empty( $width ) ) {
-                $width = '1920';
-            }
-            if ( empty( $height ) ) {
-                $height = '1080';
-            }
-
-            $path = $firstThumb['path'];
-            $path = explode( '/wp-content/', $path );
-            $path = '/wp-content/' . array_pop( $path );
-
-            $thumbInstance = new Thumb();
-            $thumb = $thumbInstance->getThumb( array(
-                'path' => $path,
-                'width' => $width,
-                'height' => $height,
-                'scale' => 2,
-            ) );
-
-            $width = $height = 'auto';
-
-            $orientation = ' wide';
-
-            if ( $thumb['width'] >= $thumb['height'] ) {
-                $width = $thumb['width'];
-            } else {
-                $height = $thumb['height'];
-                $orientation = ' upright';
-            }
-
-            $html = '<img width="' . $width . '" height="' . $height . '" src="'
-                . $thumb['url']
-                . '" alt="" class="attachment-' . $size . $orientation . ' wp-post-image  post-image-from-postgallery" />';
+            $html = '<img width="' . $image['width'] . '" height="' . $image['height'] . '" src="'
+                . $image['url']
+                . '" alt="" class="attachment-' . $image['size'] . $image['orientation'] . ' wp-post-image  post-image-from-postgallery" />';
         }
 
         return $html;
     }
+
 
     /**
      * Adds the gallery to the_content
@@ -522,15 +467,14 @@ class PostGalleryPublic {
         $customSliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $customSliderConfig );
         $customSliderConfig = preg_replace( "/(\r?\n?)*/", '', $customSliderConfig );
 
-        $sliderConfig .= ( !empty( $args[ 'autoplay' ] ) || in_array( 'autoplay', $args, true ) ? 'autoplay: true,' : '' );
-        $sliderConfig .= ( !empty( $args[ 'loop' ] ) || in_array( 'loop', $args, true ) ? 'loop: true,' : '' );
-        $sliderConfig .= ( !empty( $args[ 'animateOut' ] ) ? 'animateOut: "' . $args[ 'animateOut' ] . '",' : '' );
-        $sliderConfig .= ( !empty( $args[ 'animateIn' ] ) ? 'animateIn: "' . $args[ 'animateIn' ] . '",' : '' );
-        $sliderConfig .= ( !empty( $args[ 'autoplayTimeout' ] ) ? 'autoplayTimeout: ' . $args[ 'autoplayTimeout' ] . ',' : '' );
-        $sliderConfig .= ( !empty( $args[ 'items' ] ) ? 'items: ' . $args[ 'items' ] . ',' : 'items: 1,' );
+        $sliderConfig .= ( !empty( $args['autoplay'] ) || in_array( 'autoplay', $args, true ) ? 'autoplay: true,' : '' );
+        $sliderConfig .= ( !empty( $args['loop'] ) || in_array( 'loop', $args, true ) ? 'loop: true,' : '' );
+        $sliderConfig .= ( !empty( $args['animateOut'] ) ? 'animateOut: "' . $args['animateOut'] . '",' : '' );
+        $sliderConfig .= ( !empty( $args['animateIn'] ) ? 'animateIn: "' . $args['animateIn'] . '",' : '' );
+        $sliderConfig .= ( !empty( $args['autoplayTimeout'] ) ? 'autoplayTimeout: ' . $args['autoplayTimeout'] . ',' : '' );
+        $sliderConfig .= ( !empty( $args['items'] ) ? 'items: ' . $args['items'] . ',' : 'items: 1,' );
 
         $sliderConfig .= $customSliderConfig;
-
 
 
         $owlThumbConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $owlThumbConfig );

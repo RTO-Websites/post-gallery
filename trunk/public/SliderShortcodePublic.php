@@ -174,7 +174,7 @@ class SliderShortcodePublic {
             $sliderArgs = 'loop:1,' . $sliderArgs;
         }
         if ( $items ) {
-            $sliderArgs = 'items:' . $items . ',slidesPerView:'. $items . ',' . $sliderArgs;
+            $sliderArgs = 'items:' . $items . ',slidesPerView:' . $items . ',' . $sliderArgs;
         }
 
         if ( in_array( 'link', $args ) ) {
@@ -258,11 +258,19 @@ class SliderShortcodePublic {
                 $href = ' href="' . $permalink . '"';
             }
 
+            // add custom-attribute hook
+            $customAttributes = apply_filters( 'pg_sliderimage_attributes', [], $image );
+            $customAttributesString = '';
+            foreach ( $customAttributes as $key => $value ) {
+                $customAttributesString .= ' ' . $key . '="' . $value . '" ';
+            }
 
             $output .= '<' . $tag . ' ' . $href . ' class="slider-image ' . $itemClass
                 . '" data-post_id="' . $image['post_id'] .
                 '" data-post_permalink="' . $permalink .
-                '" data-post_title="' . strip_tags( $image['post_title'] ) . '" ' . $background . '>';
+                '" data-post_title="' . strip_tags( $image['post_title'] ) . '" ' . $background
+                . $customAttributesString
+                . '>';
 
             if ( empty( $image['width'] ) ) {
                 $image['width'] = 'auto';
@@ -389,7 +397,10 @@ class SliderShortcodePublic {
                 array(
                     'url' => $url,
                     'post_id' => $loadId,
-                    'post_title' => get_the_title( $loadId ),
+                    'post_title' => the_title_attribute( array(
+                        'post' => $loadId,
+                        'echo' => false,
+                    ) ),
                 ),
             );
         } else {

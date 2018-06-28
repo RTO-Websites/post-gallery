@@ -690,6 +690,100 @@ class PostGallery {
     }
 
     /**
+     * Gets first image (for example to use as post_thumbnail)
+     *
+     * @param $post_id
+     * @param $size
+     * @return bool|array(width, height, size, url, orientation)
+     */
+    static function getFirstImage( $size = 'post-thumbnail', $post_id = null ) {
+        if ( empty( $post_id ) ) {
+            $post_id = $GLOBALS['post']->ID;
+        }
+        // get id from main-language post
+        if ( class_exists( 'SitePress' ) ) {
+            global $sitepress;
+
+            $post_id = icl_object_id( $post_id, 'any', true, $sitepress->get_default_language() );
+        }
+
+        $postGalleryImages = PostGallery::getImages( $post_id );
+        if ( !count( $postGalleryImages ) ) {
+            return false;
+        }
+
+        $firstThumb = array_shift( $postGalleryImages );
+
+        if ( empty( $size ) ) {
+            $size = 'post-thumbnail';
+        }
+
+        // get width of thumbnail
+        $width = intval( get_option( "{$size}_size_w" ) );
+        $height = intval( get_option( "{$size}_size_h" ) );
+        $crop = intval( get_option( "{$size}_crop" ) );
+
+        if ( empty( $width ) && empty( $height ) ) {
+            global $_wp_additional_image_sizes;
+            if ( !empty( $_wp_additional_image_sizes ) &&
+                !empty( $_wp_additional_image_sizes[$size] )
+            ) {
+                $width = $_wp_additional_image_sizes[$size]['width'];
+                $height = $_wp_additional_image_sizes[$size]['height'];
+            }
+        }
+
+        if ( empty( $width ) ) {
+            $width = '1920';
+        }
+        if ( empty( $height ) ) {
+            $height = '1080';
+        }
+
+        $path = $firstThumb['path'];
+        $path = explode( '/wp-content/', $path );
+        $path = '/wp-content/' . array_pop( $path );
+
+        if ( $size !== 'full' ) {
+            $thumbInstance = new Thumb();
+            $thumb = $thumbInstance->getThumb( array(
+                'path' => $path,
+                'width' => $width,
+                'height' => $height,
+                'scale' => 2,
+            ) );
+        } else {
+            $filesize = getimagesize( ABSPATH . $path );
+            $thumb = array(
+                'width' => $filesize[0],
+                'height' => $filesize[1],
+                'url' => get_bloginfo('wpurl') . $path,
+            );
+        }
+
+        $width = $height = 'auto';
+
+        $orientation = ' wide';
+
+        if ( $thumb['width'] >= $thumb['height'] ) {
+            $width = $thumb['width'];
+        } else {
+            $height = $thumb['height'];
+            $orientation = ' upright';
+        }
+
+        return array(
+            'width' => $width,
+            'height' => $height,
+            'orientation' => $orientation,
+            'thumb' => $thumb,
+            'url' => $thumb['url'],
+            'orgPath' => $path,
+            'size' => $size,
+        );
+    }
+
+    /**
      * Adds post-type gallery
      */
     public function addPostTypeGallery() {
