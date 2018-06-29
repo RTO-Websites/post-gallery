@@ -237,6 +237,10 @@ class SliderShortcodePublic {
 
         $tag = 'div';
 
+        if ( empty( $images ) ) {
+            return '<!--pg-slider-' . $sliderid . ': no images -->';
+        }
+
         // output html
         $output .= '<figure class="pg-slider-' . $sliderid . ' ' . $class
             . ' postgallery-slider ' . $containerClass . '" style="' . $style . '">';
@@ -389,7 +393,8 @@ class SliderShortcodePublic {
                 // no post-thumb, get first image
                 $images = PostGallery::getImages( $loadId );
                 $images = array_splice( $images, 0, 1 );
-                return $images;
+                $images = array_shift( $images );
+                return array( $images );
             }
 
 
