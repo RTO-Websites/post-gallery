@@ -70,8 +70,9 @@ class Thumb {
     /**
      * Checks if Imgick ist defined and calls the function to thumb an image
      *
-     * @param type $args
-     * @return type
+     * @param $args
+     * @return array|bool
+     * @throws \ImagickException
      */
     public function getThumb( $args ) {
         if ( empty( $args['path'] ) || !is_string( $args['path'] ) ) {
@@ -124,9 +125,9 @@ class Thumb {
     }
 
     /**
-     *
-     * @param type $args
+     * @param $args
      * @return array
+     * @throws \ImagickException
      */
     public function getThumbImagick( $args ) {
         $args = array_merge( $this->defaultSettings, $args );
@@ -138,7 +139,7 @@ class Thumb {
         $width = isset( $args['width'] ) ? $args['width'] : 10000;
         $height = isset( $args['height'] ) ? $args['height'] : 10000;
         $contentType = 'image/jpeg';
-        $stretchImages = !empty( $this->pgOptions['stretchImages'] );
+        $stretchImages = !empty( $this->pgOptions['stretchImages'] ) || !empty( $args['stretchImages'] );
         $quality = !empty( $args['quality'] ) ? $args['quality'] : '75';
 
         if ( $width == 'auto' || !is_numeric( $width ) ) {
