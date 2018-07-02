@@ -39,6 +39,8 @@ class SliderShortcodePublic {
 
     private $thumbOnly = false;
 
+    public static $instance;
+
     /**
      * Initialize the class and set its properties.
      *
@@ -47,12 +49,17 @@ class SliderShortcodePublic {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
+        self::$instance = $this;
         $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
 
         add_shortcode( 'postslider', array( $this, '_shortcode' ) );
         add_shortcode( 'slider', array( $this, '_shortcode' ) );
+    }
+
+    public static function run( $args = array(), $content = '' ) {
+        self::getInstance()->_shortcode( $args, $content );
     }
 
     public function _shortcode( $args, $content ) {
@@ -411,5 +418,14 @@ class SliderShortcodePublic {
         } else {
             return PostGallery::getImages( $loadId );
         }
+    }
+
+    static function getInstance() {
+        // If the single instance hasn't been set, set it now.
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 }
