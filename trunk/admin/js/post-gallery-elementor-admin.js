@@ -1,4 +1,3 @@
-
 function initPostGalleryElementor() {
 
   /*
@@ -16,7 +15,7 @@ function initPostGalleryElementor() {
   /*
    reload upload if tab is switched
     */
-  jQuery(document).on('click', '.elementor-tab-control-content a', function(e) {
+  jQuery(document).on('click', '.elementor-tab-control-content a', function (e) {
     var element = jQuery(e.target),
       container = element.closest('.ps-container'),
       field = container.find('input[data-setting="pgsort"]');
@@ -40,7 +39,7 @@ function initElementorAddButton() {
     '<span class="eicon-plus"></span></button>');
 
   // add click event
-  jQuery(document).on('click', '.pg-new-gallery-button', function(e) {
+  jQuery(document).on('click', '.pg-new-gallery-button', function (e) {
     var newTitle = jQuery('.pg-new-gallery').val();
     if (!newTitle.length) {
       return;
@@ -82,6 +81,9 @@ function initElementorAddButton() {
  */
 function loadUpload() {
   var postid = jQuery('select[data-setting="pgimgsource"]').val();
+  if (postid == 0) {
+    postid = ElementorConfig.post_id;
+  }
   jQuery.post(ajaxurl + "?action=postgalleryGetImageUpload&post=" + postid,
     function (data, textStatus) {
       jQuery('.pg-image-container').html(data);

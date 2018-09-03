@@ -828,6 +828,7 @@ class PostGallery {
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
             'sliderOwlConfig' => get_theme_mod( 'postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1," ),
             'stretchImages' => get_theme_mod( 'postgallery_stretchImages', false ),
+            'hookWpGallery' => get_theme_mod( 'postgallery_hookWpGallery', false ),
 
             'enableLitebox' => get_theme_mod( 'postgallery_enableLitebox', true ),
             'liteboxTemplate' => get_theme_mod( 'postgallery_liteboxTemplate', 'default' ),

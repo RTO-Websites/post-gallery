@@ -9,6 +9,8 @@
  * @package    PostGallery
  * @subpackage PostGallery/public
  */
+
+use Elementor\Core\Files\CSS\Post;
 use Inc\PostGallery;
 use Thumb\Thumb;
 
@@ -106,6 +108,168 @@ class PostGalleryPublic {
         add_filter( 'post_thumbnail_html', array( $this, 'postgalleryThumbnail' ), 10, 5 );
         add_filter( 'get_post_metadata', array( $this, 'postgalleryHasPostThumbnail' ), 10, 5 );
         //add_filter( 'script_loader_tag', array( $this, 'addAsyncAttribute' ), 10, 2 );
+
+
+        // hook wp-gallery
+        if ( !empty( $this->options['hookWpGallery'] ) ) {
+            add_filter( 'get_attached_file', array( $this, 'getAttachedFileHook' ), 10, 5 );
+            add_filter( 'get_attached_media', array( $this, 'getAttachedMediaHook' ), 10, 5 );
+            add_filter( 'get_post_gallery', array( $this, 'getPostGalleryHook' ), 10, 5 );
+            add_filter( 'post_gallery', array( $this, 'wpPostGalleryHook' ), 10, 2 );
+            add_filter( 'posts_pre_query', array( $this, 'wpPreGetPostsHook' ), 10, 2 );
+            add_filter( 'wp_get_attachment_url', array( $this, 'wpGetAttachmentUrlHook' ), 10, 5 );
+            //add_filter( 'posts_results', array( $this, 'wpPostResultsHook' ), 10, 2 );
+        }
+    }
+
+    /**
+     * Check if attachment-id is splitable and load postgallery-image
+     *
+     * @param $url
+     * @param $attachmentId
+     * @return mixed
+     */
+    public function wpGetAttachmentUrlHook( $url, $attachmentId ) {
+        $split = explode( '-', $attachmentId );
+        if ( count( $split ) !== 2 ) {
+            return $url;
+        }
+
+        $images = PostGallery::getImages( $split[0] );
+
+        if ( empty( $images[$split[1]] ) ) {
+            return $url;
+        }
+
+        return $images[$split[1]]['url'];
+    }
+
+
+    /**
+     * Add fake image-posts to attachment-query on pre_get_posts
+     *
+     * @param array $posts
+     * @param $query
+     * @return array
+     */
+    public function wpPreGetPostsHook( $posts = [], $query ) {
+        if ( empty( $query->query['post_type'] ) || $query->query['post_type'] !== 'attachment' ) {
+            return $posts;
+        }
+
+        if ( empty( $query->query['include'] ) ) {
+            return $posts;
+        }
+
+
+        $postids = explode( ',', $query->query['include'] );
+        foreach ( $postids as $postid ) {
+            $split = explode( '-', $postid );
+            if ( count( $split ) !== 2 ) {
+                $posts[$split[0]] = get_post( $split[0] );
+                continue;
+            }
+            $post = get_post( $split[0] );
+
+            $images = PostGallery::getImages( $postid );
+            if ( empty( $images ) ) {
+                continue;
+            }
+
+            $count = 0;
+            foreach ( $images as $image ) {
+                $newPost = json_decode( json_encode( $post ) ); // clone current post-object
+                $newId = $post->ID . '-' . $count;
+                $newPost->ID = $newId;
+                $newPost->post_content = '';
+                $newPost->post_title = '';
+                $newPost->permalink = '';
+                $newPost->link = 'none';
+                $newPost->post_type = 'attachment';
+                $newPost->post_mime_type = 'image/jpg';
+                $newPost->guid = $image['url'];
+                $posts[$newId] = $newPost;
+                $count += 1;
+            }
+        }
+
+        return $posts;
+    }
+
+    /* public function wpPostResultsHook( $posts, $query ) {
+
+        return $posts;
+    } */
+
+    /**
+     * Hook wp-gallery-shortcode to add images from post-gallery
+     *
+     * @param $output
+     * @param $attr
+     * @return array
+     */
+    public function wpPostGalleryHook( $output = '', $attr = [], $instance = null  ) {
+        include_once 'postgallery-gallery-shortcode.php';
+        return \customWpGalleryShortcode( $output, $attr, $instance );
+    }
+
+    public function getPostGalleryHook( $gallery = null, $post = null, $galleries = null ) {
+        return $galleries;
+    }
+
+    /**
+     * Adds post-gallery images to wordpress-media-list
+     *
+     * @param $children
+     * @param $type
+     * @param $post
+     *
+     * @return array
+     */
+    public function getAttachedMediaHook( $children = null, $type = null, $post = null ) {
+        if ( empty( $post ) ) {
+            return $children;
+
+        }
+        $images = PostGallery::getImages( $post->ID );
+        if ( empty( $images ) ) {
+            return $children;
+        }
+
+        $count = 0;
+        foreach ( $images as $image ) {
+            $newPost = json_decode( json_encode( $post ) ); // clone current post-object
+            $newId = $post->ID . '-' . $count;
+            $newPost->ID = $newId;
+            $newPost->post_content = '';
+            $children[$newId] = $newPost;
+            $count += 1;
+        }
+
+        return $children;
+    }
+
+    /**
+     * Returns postgallery-image-url if attachment-id is explodeable
+     *
+     * @param $file
+     * @param $attachment_id
+     * @return mixed
+     */
+    public function getAttachedFileHook( $file, $attachment_id ) {
+        $split = explode( '-', $attachment_id );
+
+        //var_dump( $attachment_id );
+
+        if ( count( $split ) !== 2 ) {
+            return $file;
+        }
+
+        $images = PostGallery::getImages( $attachment_id );
+
+        if ( !empty( $images[$split[1]] ) ) {
+            return $images[$split[1]]['url'];
+        }
     }
 
     /**

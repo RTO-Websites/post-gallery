@@ -81,6 +81,12 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         ),
                         'default' => 'bottom',
                     ),
+
+                    'hookWpGallery' => array(
+                        'type' => 'checkbox',
+                        'label' => __( 'Hook WP-Gallery (Beta)', $this->textdomain ),
+                        'default' => false,
+                    ),
                 ),
             );
 

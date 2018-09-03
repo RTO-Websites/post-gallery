@@ -83,7 +83,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @return array Widget categories.
      */
     public function get_categories() {
-        return [ 'general-elements' ];
+        return [ 'basic' ];
     }
 
     /**
@@ -119,7 +119,9 @@ class PostGalleryElementorWidget extends Widget_Base {
             'post_status' => 'any',
             'suppress_filters' => false,
         ) );
-        //$selectPosts = [0 => __('Self')];
+
+        $selectPosts = [ 0 => __( 'Dynamic', $this->textdomain ) ];
+
         foreach ( $allPosts as $post ) {
             if ( in_array( $post->post_type, $filerPostTypes ) ) {
                 continue;
@@ -138,7 +140,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Image-Source', $this->textdomain ),
                 'type' => Controls_Manager::SELECT,
-                'default' => filter_input( INPUT_GET, 'post' ),
+                'default' => 0,
                 'options' => $selectPosts,
                 'selectors' => [],
             ]
@@ -285,7 +287,11 @@ class PostGalleryElementorWidget extends Widget_Base {
         }
 
         // get gallery
-        $gallery = $pgInstance->returnGalleryHtml( '', $settings['pgimgsource'] );
+        $loadFrom = $settings['pgimgsource'];
+        if ( empty( $loadFrom ) ) {
+            $loadFrom = get_the_ID();
+        }
+        $gallery = $pgInstance->returnGalleryHtml( '', $loadFrom );
 
         if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
