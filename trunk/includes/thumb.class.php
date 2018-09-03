@@ -1,7 +1,7 @@
 <?php
 /* * **********************************
  * Author: shennemann
- * Last changed: 21.07.2017 09:55
+ * Last changed: 03.09.2018 08:49
  * ****************************'***** */
 
 
@@ -78,7 +78,8 @@ class Thumb {
         if ( empty( $args['path'] ) || !is_string( $args['path'] ) ) {
             return false;
         }
-        if ( strpos( $args['path'], 'http://' ) !== false
+        if ( ( strpos( $args['path'], 'http://' ) !== false
+                || strpos( $args['path'], 'https://' ) !== false )
             && strpos( $args['path'], get_bloginfo( 'wpurl' ) ) === false
         ) {
             // external
