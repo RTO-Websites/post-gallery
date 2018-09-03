@@ -692,9 +692,10 @@ class PostGallery {
     /**
      * Gets first image (for example to use as post_thumbnail)
      *
-     * @param $post_id
-     * @param $size
+     * @param string $size
+     * @param null|int $post_id
      * @return bool|array(width, height, size, url, orientation)
+     * @throws \ImagickException
      */
     static function getFirstImage( $size = 'post-thumbnail', $post_id = null ) {
         if ( empty( $post_id ) ) {
