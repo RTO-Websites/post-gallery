@@ -185,7 +185,7 @@ class PostGalleryAdmin {
      * Admin-ajax for image upload
      */
     public function ajaxUpload() {
-        include( POSTGALLERY_DIR . '/includes/imageupload.inc.php' );
+        include( POSTGALLERY_DIR . '/includes/imageupload.php' );
         exit();
     }
 
@@ -193,7 +193,7 @@ class PostGalleryAdmin {
      * Admin-ajax for image delete
      */
     public function ajaxDelete() {
-        include( POSTGALLERY_DIR . '/includes/deleteimage.inc.php' );
+        include( POSTGALLERY_DIR . '/includes/deleteimage.php' );
         exit();
     }
 
@@ -383,6 +383,7 @@ class PostGalleryAdmin {
         $uploads = wp_upload_dir();
         $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
         $uploadUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
+        $uploadFullUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
         $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadUrl );
         $sort = get_post_meta( $currentLangPost->ID, 'postgalleryImagesort', true );
 
@@ -426,7 +427,7 @@ class PostGalleryAdmin {
         }
 
         echo '
-			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '"></div>
+			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '" data-postid="' . $currentLangPost->ID . '"></div>
 			<div class="postgallery-upload-error"></div>
 		';;
 
@@ -441,27 +442,33 @@ class PostGalleryAdmin {
 
             if ( !empty( $dir ) ) {
                 foreach ( $dir as $file ) {
-                    if ( !is_dir( $uploadDir . '/' . $file ) ) {
-                        $thumb = $thumbInstance->getThumb( [
-                            'path' => $uploadUrl . '/' . $file,
-                            'width' => 150,
-                            'height' => 150,
-                            'scale' => 0,
-                        ] );
-
-                        $images[$file] = '<li>';
-                        $images[$file] .= '<img style="" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
-                        $images[$file] .= '<div class="img-title">' . $file . '</div>';
-                        $images[$file] .= '<div class="del" onclick="deleteImage(this.parentNode, \'' . $imageDir . '/' . $file . '\');">x</div>';
-                        $images[$file] .= '<div class="edit-details" onclick="pgToggleDetails(this);"></div>';
-                        $images[$file] .= '<div class="details">';
-                        $images[$file] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[$file] ) ? $titles[$file] : '' ) . '" /></div>';
-                        $images[$file] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[$file] ) ? $descs[$file] : '' ) . '</textarea></div>';
-                        $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'Options' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
-                        $images[$file] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ) . '" /></div>';
-                        $images[$file] .= '</div>';
-                        $images[$file] .= '</li>';
+                    if ( is_dir( $uploadDir . '/' . $file ) ) {
+                        continue;
                     }
+
+                    if ( PostGallery::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
+                        continue;
+                    }
+
+                    $thumb = $thumbInstance->getThumb( [
+                        'path' => $uploadUrl . '/' . $file,
+                        'width' => 150,
+                        'height' => 150,
+                        'scale' => 0,
+                    ] );
+
+                    $images[$file] = '<li>';
+                    $images[$file] .= '<img style="" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
+                    $images[$file] .= '<div class="img-title">' . $file . '</div>';
+                    $images[$file] .= '<div class="del" onclick="deleteImage(this.parentNode, \'' . $imageDir . '/' . $file . '\');">x</div>';
+                    $images[$file] .= '<div class="edit-details" onclick="pgToggleDetails(this);"></div>';
+                    $images[$file] .= '<div class="details">';
+                    $images[$file] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[$file] ) ? $titles[$file] : '' ) . '" /></div>';
+                    $images[$file] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[$file] ) ? $descs[$file] : '' ) . '</textarea></div>';
+                    $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'Options' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
+                    $images[$file] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ) . '" /></div>';
+                    $images[$file] .= '</div>';
+                    $images[$file] .= '</li>';
                 }
                 $sortimages = PostGallery::sortImages( $images, $post->ID );
                 echo implode( '', $sortimages );

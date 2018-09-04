@@ -490,11 +490,19 @@ class PostGallery {
 
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
+                    $fullUrl = $uploadFullUrl . '/' . $file;
+                    $path = $uploadUrl . '/' . $file;
+
+                    if ( self::urlIsThumbnail( $fullUrl ) ) {
+                        continue;
+                    }
+
+                    $attachmentId = self::checkForAttachmentData( $fullUrl, $path, $postid );
 
                     $images[$file] = [
                         'filename' => $file,
-                        'path' => $uploadUrl . '/' . $file,
-                        'url' => $uploadFullUrl . '/' . $file,
+                        'path' => $path,
+                        'url' => $fullUrl,
                         'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
                         'title' => !empty( $titles[$file] ) ? $titles[$file] : '',
                         'desc' => !empty( $descs[$file] ) ? $descs[$file] : '',
@@ -502,6 +510,7 @@ class PostGallery {
                         'post_id' => $postid,
                         'post_title' => get_the_title( $postid ),
                         'imageOptions' => !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '',
+                        'attachmentId' => $attachmentId,
                     ];
                 }
             }
@@ -510,6 +519,48 @@ class PostGallery {
         $images = PostGallery::sortImages( $images, $postid );
         PostGallery::$cachedImages[$postid] = $images;
         return $images;
+    }
+
+    /**
+     * Creates an attachment-post if not exists
+     *
+     * @param $fullUrl
+     * @param $path
+     * @param $parentId
+     * @return int|null|string|\WP_Error
+     */
+    public static function checkForAttachmentData( $fullUrl, $path, $parentId ) {
+        $attachmentId = self::getPostIdFromGuid( $fullUrl );
+
+        if ( !empty( $attachmentId ) ) {
+            return $attachmentId;
+        }
+
+        // no attachment exists, create new
+
+        // Check the type of file. We'll use this as the 'post_mime_type'.
+        $filetype = wp_check_filetype( basename( $path ), null );
+
+        // Prepare an array of post data for the attachment.
+        $attachment = array(
+            'guid' => $fullUrl,
+            'post_mime_type' => $filetype['type'],
+            'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $path ) ),
+            'post_content' => '',
+            'post_status' => 'inherit',
+        );
+
+        // Insert the attachment.
+        $attachmentId = wp_insert_attachment( $attachment, $path, $parentId );
+
+        // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+        require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+        // Generate the metadata for the attachment, and update the database record.
+        $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
+        wp_update_attachment_metadata( $attachmentId, $attachData );
+
+        return $attachmentId;
     }
 
     /**
@@ -625,6 +676,16 @@ class PostGallery {
     static function getImageDir( $wpost ) {
         $postName = $wpost->post_title;
         $postId = $wpost->ID;
+
+        $blockedPostTypes = [
+            'revision',
+            'attachment',
+            'mgmlp_media_folder',
+        ];
+
+        if ( in_array( $wpost->post_type, $blockedPostTypes, true ) ) {
+            return;
+        }
 
         if ( isset( PostGallery::$cachedFolders[$postId] ) ) {
             return PostGallery::$cachedFolders[$postId];
@@ -909,4 +970,47 @@ class PostGallery {
         ];
     }
 
+
+    /**
+     * Returns post-id for a guid
+     *
+     * @param $guid
+     * @return null|string
+     */
+    public static function getPostIdFromGuid( $guid ) {
+        global $wpdb;
+        return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid ) );
+    }
+
+    public static function urlIsThumbnail( $attachmentUrl = '' ) {
+
+        global $wpdb;
+        //$attachmentId = false;
+
+        // If there is no url, return.
+        if ( '' == $attachmentUrl )
+            return true;
+
+        // Get the upload directory paths
+        $upload_dir_paths = wp_upload_dir();
+
+        // Make sure the upload path base directory exists in the attachment URL, to verify that we're working with a media library image
+        if ( false !== strpos( $attachmentUrl, $upload_dir_paths['baseurl'] ) ) {
+
+            // If this is the URL of an auto-generated thumbnail, get the URL of the original image
+            $attachmentUrlNew = preg_replace( '/-\d+x\d+(?=\.(jpg|jpeg|png|gif)$)/i', '', $attachmentUrl );
+            if ( strcmp( $attachmentUrlNew, $attachmentUrl ) === 0 ) {
+                return false;
+            }
+
+            // Remove the upload path base directory from the attachment URL
+            //$attachmentUrl = str_replace( $upload_dir_paths['baseurl'] . '/', '', $attachmentUrl );
+
+            // Finally, run a custom database query to get the attachment ID from the modified attachment URL
+            //$attachmentId = $wpdb->get_var( $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $attachmentUrl ) );
+
+        }
+
+        return true;
+    }
 }

@@ -1,24 +1,24 @@
 <?php
 /* * **********************************
  * Author: shennemann
- * Last changed: 03.09.2018 08:49
+ * Last changed: 04.09.2018 08:49
  * ****************************'***** */
 
 
-namespace Thumb;
+namespace Inc\PostGallery\Thumb;
 
 @set_time_limit( 0 );
 
 class Thumb {
     public $srvDir = ABSPATH;
     public $cacheDir = '';
-    public $defaultSettings = array(
+    public $defaultSettings = [
         'scale' => 1,
         'width' => 1920,
         'height' => 1080,
         'bw' => false,
         'quality' => 75,
-    );
+    ];
     public $pgOptions = null;
 
     /**
@@ -83,11 +83,11 @@ class Thumb {
             && strpos( $args['path'], get_bloginfo( 'wpurl' ) ) === false
         ) {
             // external
-            return array(
+            return [
                 'path' => $args['path'],
                 'url' => $args['path'],
                 'thumb' => null,
-            );
+            ];
         }
 
         if ( class_exists( 'Imagick' ) && !filter_has_var( INPUT_GET, 'forceGd' ) ) {
@@ -157,13 +157,13 @@ class Thumb {
         } else if ( !empty( $args['url'] ) ) {
             $path = $args['url'];
         } else {
-            return array( 'error' => 'Filepath missed' );
+            return [ 'error' => 'Filepath missed' ];
         }
         $path = str_replace( '%20', ' ', $path );
         $path = $this->checkPath( $path );
 
         if ( !file_exists( $path ) || is_dir( $path ) ) {
-            return array( 'error' => 'File not found' );
+            return [ 'error' => 'File not found' ];
         }
 
         // Get imagedata
@@ -202,7 +202,7 @@ class Thumb {
                     $im->setImageCompression( \Imagick::COMPRESSION_JPEG );
                     $im->setImageCompressionQuality( $quality );
                 } catch ( Exception $e ) {
-                    return array( 'error' => 'Imagick fails', 'exceptions' => $e );
+                    return [ 'error' => 'Imagick fails', 'exceptions' => $e ];
                 }
 
                 try {
@@ -234,7 +234,7 @@ class Thumb {
                             break;
                     }
                 } catch ( Exception $e ) {
-                    return array( 'error' => 'Imagick-Crop fails', 'exceptions' => $e );
+                    return [ 'error' => 'Imagick-Crop fails', 'exceptions' => $e ];
                 }
 
                 if ( $bw ) {
@@ -272,14 +272,14 @@ class Thumb {
 
         $newSize = getimagesize( $path );
 
-        return array(
+        return [
             'thumb' => $thumbnail,
             'content-type' => $contentType,
             'path' => $path,
             'url' => str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $path ),
             'width' => $newSize[0],
             'height' => $newSize[1],
-        );
+        ];
     }
 
     /**
@@ -298,7 +298,7 @@ class Thumb {
         $quality = !empty( $args['quality'] ) ? $args['quality'] : '75';
         $stretchImages = !empty( $this->pgOptions['stretchImages'] );
 
-        $returnArray = array();
+        $returnArray = [];
 
         if ( $width == 'auto' || !is_numeric( $width ) ) {
             $width = 10000;
@@ -314,13 +314,13 @@ class Thumb {
         } else if ( !empty( $args['url'] ) ) {
             $path = $args['url'];
         } else {
-            return array( 'error' => 'Filepath missed' );
+            return [ 'error' => 'Filepath missed' ];
         }
 
         $path = $this->checkPath( $path );
 
         if ( !file_exists( $path ) ) {
-            return array( 'error' => 'File not found' );
+            return [ 'error' => 'File not found' ];
         }
 
         // create cache-filename
@@ -347,7 +347,7 @@ class Thumb {
         try {
             $size = GetImageSize( $path );
         } catch ( Exception $e ) {
-            return array( 'error' => 'GD getimagesize fails', 'exceptions' => $e );
+            return [ 'error' => 'GD getimagesize fails', 'exceptions' => $e ];
         }
         $orgWidth = $size[0];
         $orgHeight = $size[1];
@@ -355,7 +355,7 @@ class Thumb {
         $newWidth = $width;
 
         if ( $orgWidth > 2000 || $orgHeight > 2000 ) {
-            return array( 'error' => 'Resolution to big', 'exceptions' => '', 'width' => '', 'height' => '', 'url' => '' );
+            return [ 'error' => 'Resolution to big', 'exceptions' => '', 'width' => '', 'height' => '', 'url' => '' ];
         }
 
         switch ( $scale ) {
@@ -557,12 +557,12 @@ class Thumb {
                         $oldImage = @imagecreatefromstring( file_get_contents( $path ) );
                     }
                 } catch ( Exception $e ) {
-                    return array( 'error' => 'GD imagecreate fails', 'exceptions' => $e );
+                    return [ 'error' => 'GD imagecreate fails', 'exceptions' => $e ];
                 }
 
                 // if Fail, then load orginal image
                 if ( !$oldImage ) {
-                    return array(
+                    return [
                         'content-type' => 'image/jpg',
                         'show_org' => true,
                         'thumb' => file_get_contents( $path ),
@@ -570,7 +570,7 @@ class Thumb {
                         'url' => str_replace( $this->srvDir, get_bloginfo( 'wpurl' ) . '/', $path ),
                         'width' => $orgWidth,
                         'height' => $orgHeight,
-                    );
+                    ];
                 }
 
                 $newImage = imagecreatetruecolor( $newWidth, $newHeight );
@@ -578,7 +578,7 @@ class Thumb {
                 try {
                     imageCopyResampled( $newImage, $oldImage, $newOffsetX, $newOffsetY, $sourceOffsetX, $sourceOffsetY, $newWidth, $newHeight, $orgWidth, $orgHeight );
                 } catch ( Exception $e ) {
-                    return array( 'error' => 'GD copyresampled fails', 'exceptions' => $e );
+                    return [ 'error' => 'GD copyresampled fails', 'exceptions' => $e ];
                 }
                 if ( $bw ) {
                     imagefilter( $newImage, IMG_FILTER_GRAYSCALE );
@@ -666,7 +666,7 @@ class Thumb {
         $width = filter_input( INPUT_GET, 'width' );
         $height = filter_input( INPUT_GET, 'height' );
 
-        $thumbResult = $this->getThumb( array(
+        $thumbResult = $this->getThumb( [
             'path' => urldecode( $path ),
             'width' => ( !empty( $width ) ? $width : 0 ),
             'height' => ( !empty( $height ) ? $height : 0 ),
@@ -674,7 +674,7 @@ class Thumb {
             'quality' => $quality,
             'bw' => $bw,
             'returnThumb' => ( filter_has_var( INPUT_GET, 'returnThumb' ) ? true : false ),
-        ) );
+        ] );
 
         if ( empty( $thumbResult ) ) {
             echo 'Fatal error! -> Empty result';

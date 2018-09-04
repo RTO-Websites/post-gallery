@@ -23,7 +23,7 @@ function checkForUpload() {
     uploaderConfig.sizeLimit = 8048576;
     uploaderConfig.multiple = true;
 
-    uploaderConfig.action = ajaxurl + '?action=postgalleryUpload&uploadfolder=' + jQuery(element).data('uploadfolder');
+    uploaderConfig.action = ajaxurl + '?action=postgalleryUpload&postid=' + jQuery(element).data('postid') + '&uploadfolder=' + jQuery(element).data('uploadfolder');
 
     //uploaderConfig.extraDropzones = jQuery('#imageupload_bild');
 
