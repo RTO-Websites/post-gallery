@@ -12,7 +12,7 @@
 
 use Elementor\Core\Files\CSS\Post;
 use Inc\PostGallery;
-use Thumb\Thumb;
+use Inc\PostGallery\Thumb\Thumb;
 
 /**
  * The public-facing functionality of the plugin.
@@ -92,34 +92,6 @@ class PostGalleryPublic {
         }
 
         new SliderShortcodePublic( $pluginName, $version );
-
-
-        add_filter( 'the_content', array( $this, 'addGalleryToContent' ) );
-        add_shortcode( 'postgallery', array( $this, 'postgalleryShortcode' ) );
-        add_action( 'plugins_loaded', array( $this, 'postgalleryThumb' ) );
-        add_action( 'plugins_loaded', array( $this, 'getThumbList' ) );
-
-        // Embed headerscript
-        add_action( 'wp_head', array( $this, 'insertHeaderscript' ) );
-
-        // Embed footer-html
-        add_action( 'wp_footer', array( $this, 'insertFooterHtml' ) );
-
-        add_filter( 'post_thumbnail_html', array( $this, 'postgalleryThumbnail' ), 10, 5 );
-        add_filter( 'get_post_metadata', array( $this, 'postgalleryHasPostThumbnail' ), 10, 5 );
-        //add_filter( 'script_loader_tag', array( $this, 'addAsyncAttribute' ), 10, 2 );
-
-
-        // hook wp-gallery
-        if ( !empty( $this->options['hookWpGallery'] ) ) {
-            add_filter( 'get_attached_file', array( $this, 'getAttachedFileHook' ), 10, 5 );
-            add_filter( 'get_attached_media', array( $this, 'getAttachedMediaHook' ), 10, 5 );
-            add_filter( 'post_gallery', array( $this, 'wpPostGalleryHook' ), 10, 2 );
-            add_filter( 'posts_pre_query', array( $this, 'wpPreGetPostsHook' ), 10, 2 );
-            add_filter( 'wp_get_attachment_url', array( $this, 'wpGetAttachmentUrlHook' ), 10, 5 );
-            //add_filter( 'posts_results', array( $this, 'wpPostResultsHook' ), 10, 2 );
-            //add_filter( 'get_post_gallery', array( $this, 'getPostGalleryHook' ), 10, 5 );
-        }
     }
 
     /**
@@ -204,9 +176,9 @@ class PostGalleryPublic {
      * @param $attr
      * @return array
      */
-    public function wpPostGalleryHook( $output = '', $attr = [], $instance = null  ) {
+    public function wpPostGalleryHook( $output = '', $attr = [], $instance = null ) {
         include_once 'postgallery-gallery-shortcode.php';
-        return \customWpGalleryShortcode( $output, $attr, $instance );
+        return customWpGalleryShortcode( $output, $attr, $instance );
     }
 
     /* public function getPostGalleryHook( $gallery = null, $post = null, $galleries = null ) {
@@ -317,7 +289,7 @@ class PostGalleryPublic {
         }
 
 
-        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', array(), $this->version, 'all' );
+        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', [], $this->version, 'all' );
     }
 
     /**
@@ -343,17 +315,17 @@ class PostGalleryPublic {
 
         switch ( $this->options['sliderType'] ) {
             case 'owl1':
-                wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', array( 'jquery' ) );
+                wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', [ 'jquery' ] );
                 break;
 
             case 'swiper':
-                wp_enqueue_script( 'swiper', $buildPath . '/js/swiper.jquery.min.js', array( 'jquery' ) );
+                wp_enqueue_script( 'swiper', $buildPath . '/js/swiper.jquery.min.js', [ 'jquery' ] );
                 break;
 
             case 'owl':
                 // nobreak
             default:
-                wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', array( 'jquery' ) );
+                wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel.min.js', [ 'jquery' ] );
                 break;
         }
 
@@ -361,9 +333,9 @@ class PostGalleryPublic {
             wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
             wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
 
-            wp_enqueue_script( 'owl-post-gallery', $buildPath . '/js/owl.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
+            wp_enqueue_script( 'owl-post-gallery', $buildPath . '/js/owl.postgallery.js', [ 'jquery', $this->pluginName . '-litebox' ] );
 
-            wp_enqueue_script( 'swiper-post-gallery', $buildPath . '/js/swiper.postgallery.js', array( 'jquery', $this->pluginName . '-litebox' ) );
+            wp_enqueue_script( 'swiper-post-gallery', $buildPath . '/js/swiper.postgallery.js', [ 'jquery', $this->pluginName . '-litebox' ] );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
@@ -412,7 +384,7 @@ class PostGalleryPublic {
             $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
 
             if ( !$meta_cache ) {
-                $meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
+                $meta_cache = update_meta_cache( $meta_type, [ $object_id ] );
                 $meta_cache = $meta_cache[$object_id];
             }
 
@@ -432,7 +404,7 @@ class PostGalleryPublic {
             if ( $single )
                 return '';
             else
-                return array();
+                return [];
         }
     }
 
@@ -499,13 +471,13 @@ class PostGalleryPublic {
      * @param array $args
      * @return string
      */
-    public function returnGalleryHtml( $template = '', $postid = 0, $args = array() ) {
-        $templateDirs = array(
+    public function returnGalleryHtml( $template = '', $postid = 0, $args = [] ) {
+        $templateDirs = [
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
             get_stylesheet_directory() . '/postgallery',
             POSTGALLERY_DIR . '/templates',
-        );
+        ];
 
         $images = PostGallery::getImages( $postid );
 
@@ -592,10 +564,10 @@ class PostGalleryPublic {
     public function getThumbList() {
         if ( isset( $_REQUEST['getFullsizeThumbs'] ) || isset( $_REQUEST['getThumbList'] ) ) {
 
-            $_SESSION['postGalleryWindowSize'] = array(
+            $_SESSION['postGalleryWindowSize'] = [
                 'width' => $_REQUEST['width'],
                 'height' => $_REQUEST['height'],
-            );
+            ];
 
             if ( empty( $_REQUEST['pics'] ) ) {
                 die( '{}' );
@@ -603,11 +575,11 @@ class PostGalleryPublic {
             $pics = ( $_REQUEST['pics'] );
 
             if ( !empty( $pics ) ) {
-                $pics = PostGallery::getPicsResized( $pics, array(
+                $pics = PostGallery::getPicsResized( $pics, [
                     'width' => $_REQUEST['width'],
                     'height' => $_REQUEST['height'],
                     'scale' => ( !isset( $_REQUEST['scale'] ) ? 1 : $_REQUEST['scale'] ),
-                ) );
+                ] );
             }
             echo json_encode( $pics );
 

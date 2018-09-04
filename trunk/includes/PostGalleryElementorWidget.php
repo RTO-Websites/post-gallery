@@ -113,12 +113,12 @@ class PostGalleryElementorWidget extends Widget_Base {
     protected function _register_controls() {
         $filerPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
             . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
-        $allPosts = get_posts( array(
+        $allPosts = get_posts( [
             'post_type' => get_post_types(),
             'posts_per_page' => -1,
             'post_status' => 'any',
             'suppress_filters' => false,
-        ) );
+        ] );
 
         $selectPosts = [ 0 => __( 'Dynamic', $this->textdomain ) ];
 

@@ -16,19 +16,19 @@ array_unshift( $images, $first_image );
         <?php foreach ( $images as $image ) { ?>
             <img class="gallery-image"
                     src="<?php echo \Inc\PostGallery::getThumbUrl( $image['path'],
-                        array(
+                        [
                             'width' => $this->option( 'thumbWidth' ),
                             'height' => $this->option( 'thumbHeight' ),
-                            'scale' => $this->option('thumbScale'),
-                    ));
+                            'scale' => $this->option( 'thumbScale' ),
+                        ] );
                     ?>"
-                    alt="<?php echo $image['filename'] ?>" />
+                    alt="<?php echo $image['filename'] ?>"/>
         <?php } ?>
     </div>
 
     <script>
       jQuery('.pg-slider').owlCarousel({
-        <?php echo $this->option( 'sliderOwlConfig' ); ?>
+          <?php echo $this->option( 'sliderOwlConfig' ); ?>
       });
     </script>
 </figure>

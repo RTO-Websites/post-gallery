@@ -1,11 +1,13 @@
 <?php
+namespace Pub;
+
 
 function customWpGalleryShortcode( $output = '', $attr = [], $instance = null ) {
     $post = get_post();
     $output = '';
 
     $html5 = current_theme_supports( 'html5', 'gallery' );
-    $atts = shortcode_atts( array(
+    $atts = shortcode_atts( [
         'order' => 'ASC',
         'orderby' => 'menu_order ID',
         'id' => $post ? $post->ID : 0,
@@ -17,21 +19,21 @@ function customWpGalleryShortcode( $output = '', $attr = [], $instance = null ) 
         'include' => '',
         'exclude' => '',
         'link' => '',
-    ), $attr, 'gallery' );
+    ], $attr, 'gallery' );
 
     $id = intval( $atts['id'] );
 
     if ( !empty( $atts['include'] ) ) {
-        $_attachments = get_posts( array( 'include' => $atts['include'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+        $_attachments = get_posts( [ 'include' => $atts['include'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ] );
 
-        $attachments = array();
+        $attachments = [];
         foreach ( $_attachments as $key => $val ) {
             $attachments[$val->ID] = $_attachments[$key];
         }
     } elseif ( !empty( $atts['exclude'] ) ) {
-        $attachments = get_children( array( 'post_parent' => $id, 'exclude' => $atts['exclude'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+        $attachments = get_children( [ 'post_parent' => $id, 'exclude' => $atts['exclude'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ] );
     } else {
-        $attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+        $attachments = get_children( [ 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ] );
     }
 
     if ( empty( $attachments ) ) {
@@ -114,7 +116,7 @@ function customWpGalleryShortcode( $output = '', $attr = [], $instance = null ) 
 
     $i = 0;
     foreach ( $attachments as $id => $attachment ) {
-        $attr = ( trim( $attachment->post_excerpt ) ) ? array( 'aria-describedby' => "$selector-$id" ) : '';
+        $attr = ( trim( $attachment->post_excerpt ) ) ? [ 'aria-describedby' => "$selector-$id" ] : '';
 
         // postgallery custom start
         $split = explode( '-', $id );

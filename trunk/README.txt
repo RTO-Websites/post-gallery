@@ -3,7 +3,7 @@ Contributors: rtowebsites
 Donate link: https://www.rto.de
 Tags: post gallery, post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
 Requires at least: 3.4
-Tested up to: 4.8
+Tested up to: 4.9
 Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -34,6 +34,13 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.4.1 =
+* Do some refactoring
+
+= 1.4.0 =
+* Add dynamic content support for elementor
+* Add experimental wp-gallery-hooks
+
 = 1.3.5 =
 * Add options for animations in slider
 

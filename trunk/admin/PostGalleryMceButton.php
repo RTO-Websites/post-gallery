@@ -25,11 +25,11 @@ class PostGalleryMceButton {
         $this->pluginName = $pluginName;
         $this->textdomain = $pluginName;
 
-        add_action( 'init', array( $this, 'addSliderButton' ) );
-        add_filter( 'tiny_mce_version', array( $this, 'refreshMce' ) );
-        add_action( 'wp_ajax_postgalleryslider', array( $this, 'sliderGetOptionsWindow' ) );
-        add_filter( 'admin_head', array( $this, 'addSliderList' ) );
-        add_filter( 'admin_head', array( $this, 'addGalleryPostList' ) );
+        add_action( 'init', [ $this, 'addSliderButton' ] );
+        add_filter( 'tiny_mce_version', [ $this, 'refreshMce' ] );
+        add_action( 'wp_ajax_postgalleryslider', [ $this, 'sliderGetOptionsWindow' ] );
+        add_filter( 'admin_head', [ $this, 'addSliderList' ] );
+        add_filter( 'admin_head', [ $this, 'addGalleryPostList' ] );
     }
 
     /**
@@ -41,8 +41,8 @@ class PostGalleryMceButton {
         }
 
         if ( get_user_option( 'rich_editing' ) ) {
-            add_filter( 'mce_external_plugins', array( $this, 'addPostGalleryTinymcePlugins' ) );
-            add_filter( 'mce_buttons', array( $this, 'registerPostGalleryButtons' ) );
+            add_filter( 'mce_external_plugins', [ $this, 'addPostGalleryTinymcePlugins' ] );
+            add_filter( 'mce_buttons', [ $this, 'registerPostGalleryButtons' ] );
         }
     }
 
@@ -86,14 +86,14 @@ class PostGalleryMceButton {
      * Adds a js-variable to head
      */
     public function addSliderList() {
-        $list = array();
-        $list[] = array( 'text' => '', 'value' => '' );
-        $items = get_posts( array(
+        $list = [];
+        $list[] = [ 'text' => '', 'value' => '' ];
+        $items = get_posts( [
             'post_type' => 'postgalleryslider',
-        ) );
+        ] );
 
         foreach ( $items as $item ) {
-            $list[] = array( 'text' => $item->post_title, 'value' => $item->ID );
+            $list[] = [ 'text' => $item->post_title, 'value' => $item->ID ];
         }
 
         echo '<script>var postgallerySliders = ' . json_encode( $list ) . ';</script>';
@@ -103,26 +103,26 @@ class PostGalleryMceButton {
      * Adds a js-variable to head
      */
     public function addGalleryPostList() {
-        $list = array();
-        $list[] = array( 'text' => '', 'value' => '' );
+        $list = [];
+        $list[] = [ 'text' => '', 'value' => '' ];
 
         $postTypes = get_post_types(
         //array('exclude_from_search' => 'attachment,revision,nav_menu_item,wpcf7_contact_form,postgalleryslider')
-            array( 'public' => true )
+            [ 'public' => true ]
         );
         unset( $postTypes['attachment'] );
 
-        $items = get_posts( array(
+        $items = get_posts( [
             'post_type' => $postTypes,
             'numberposts' => -1,
             'posts_per_page' => -1,
-        ) );
+        ] );
 
         foreach ( $items as $item ) {
             $images = \Inc\PostGallery::getImages( $item->ID );
             if ( count( $images ) ) {
                 $link = str_replace( get_bloginfo( 'wpurl' ) . '/', '', get_the_permalink( $item ) );
-                $list[] = array( 'text' => $item->post_title . ' (' . $item->ID . ')', 'value' => $link );
+                $list[] = [ 'text' => $item->post_title . ' (' . $item->ID . ')', 'value' => $link ];
             }
         }
 
@@ -134,9 +134,9 @@ class PostGalleryMceButton {
      */
     public function sliderGetOptionsWindow() {
         // List all sliders
-        $sliders = get_posts( array(
+        $sliders = get_posts( [
             'post_type' => 'postgalleryslider',
-        ) );
+        ] );
 
         ?>
         <select id="postgalleryslider-select">

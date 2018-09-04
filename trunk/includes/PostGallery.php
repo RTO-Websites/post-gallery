@@ -3,7 +3,7 @@
 use Admin\PostGalleryAdmin;
 use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Pub\PostGalleryPublic;
-use Thumb\Thumb;
+use Inc\PostGallery\Thumb\Thumb;
 
 /**
  * The file that defines the core plugin class
@@ -34,8 +34,8 @@ use Thumb\Thumb;
  */
 class PostGallery {
 
-    static $cachedImages = array();
-    static $cachedFolders = array();
+    static $cachedImages = [];
+    static $cachedFolders = [];
 
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
@@ -65,6 +65,8 @@ class PostGallery {
      */
     protected $version;
 
+    protected $options;
+
     protected $textdomain;
 
 
@@ -82,6 +84,7 @@ class PostGallery {
         $this->pluginName = 'post-gallery';
         $this->textdomain = 'post-gallery';
         $this->version = '1.0.0';
+        $this->options = PostGallery::getOptions();
 
         $this->loadDependencies();
         $this->setLocale();
@@ -90,21 +93,24 @@ class PostGallery {
 
         $this->initElementor();
 
-        add_action( 'init', array( $this, 'addPostTypeGallery' ) );
+        add_action( 'init', [ $this, 'addPostTypeGallery' ] );
 
-        add_action( 'cronPostGalleryDeleteCachedImages', array( $this, 'postGalleryDeleteCachedImages' ) );
+        add_action( 'cronPostGalleryDeleteCachedImages', [ $this, 'postGalleryDeleteCachedImages' ] );
     }
 
     /**
      * Init elementor widget
      */
     public function initElementor() {
-        add_action( 'elementor/editor/before_enqueue_styles', array( PostGalleryAdmin::getInstance(), 'enqueueStyles' ) );
-        add_action( 'elementor/editor/before_enqueue_scripts', array( PostGalleryAdmin::getInstance(), 'enqueueScripts' ), 99999 );
-
-        if ( class_exists( '\Elementor\Plugin' ) ) {
-            require_once( 'PostGalleryElementorControl.php' );
+        if ( !class_exists( '\Elementor\Plugin' ) ) {
+            return;
         }
+
+        add_action( 'elementor/editor/before_enqueue_styles', [ PostGalleryAdmin::getInstance(), 'enqueueStyles' ] );
+        add_action( 'elementor/editor/before_enqueue_scripts', [ PostGalleryAdmin::getInstance(), 'enqueueScripts' ], 99999 );
+
+        require_once( 'PostGalleryElementorControl.php' );
+
         add_action( 'elementor/widgets/widgets_registered', function () {
             require_once( 'PostGalleryElementorWidget.php' );
 
@@ -172,7 +178,7 @@ class PostGallery {
      * @return array
      */
     public static function arraySearch( $array, $key ) {
-        $results = array();
+        $results = [];
 
         if ( is_array( $array ) ) {
             if ( isset( $array[$key] ) ) {
@@ -261,6 +267,33 @@ class PostGallery {
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueScripts' );
 
+
+        // add options to customizer
+        add_action( 'customize_register', [ new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' ] );
+
+        // add menu page to link to customizer
+        add_action( 'admin_menu', function () {
+            $returnUrl = urlencode( $_SERVER['REQUEST_URI'] );
+            \add_menu_page(
+                'PostGallery',
+                'PostGallery',
+                'edit_theme_options',
+                'customize.php?return=' . $returnUrl . '&autofocus[panel]=postgallery-panel',
+                null,
+                'dashicons-format-gallery'
+            );
+        } );
+
+
+        add_action( 'add_meta_boxes', [ $pluginAdmin, 'registerPostSettings' ] );
+        add_action( 'save_post', [ $pluginAdmin, 'savePostMeta' ], 10, 2 );
+
+        // Register ajax
+        add_action( 'wp_ajax_postgalleryUpload', [ $pluginAdmin, 'ajaxUpload' ] );
+        add_action( 'wp_ajax_postgalleryDeleteimage', [ $pluginAdmin, 'ajaxDelete' ] );
+        add_action( 'wp_ajax_postgalleryGetImageUpload', [ $pluginAdmin, 'ajaxGetImageUpload' ] );
+        add_action( 'wp_ajax_postgalleryNewGallery', [ $pluginAdmin, 'ajaxCreateGallery' ] );
+
     }
 
     /**
@@ -276,6 +309,34 @@ class PostGallery {
 
         $this->loader->addAction( 'wp_enqueue_scripts', $pluginPublic, 'enqueueStyles' );
         $this->loader->addAction( 'wp_enqueue_scripts', $pluginPublic, 'enqueueScripts' );
+
+
+        add_filter( 'the_content', [ $pluginPublic, 'addGalleryToContent' ] );
+        add_shortcode( 'postgallery', [ $pluginPublic, 'postgalleryShortcode' ] );
+        add_action( 'plugins_loaded', [ $pluginPublic, 'postgalleryThumb' ] );
+        add_action( 'plugins_loaded', [ $pluginPublic, 'getThumbList' ] );
+
+        // Embed headerscript
+        add_action( 'wp_head', [ $pluginPublic, 'insertHeaderscript' ] );
+
+        // Embed footer-html
+        add_action( 'wp_footer', [ $pluginPublic, 'insertFooterHtml' ] );
+
+        add_filter( 'post_thumbnail_html', [ $pluginPublic, 'postgalleryThumbnail' ], 10, 5 );
+        add_filter( 'get_post_metadata', [ $pluginPublic, 'postgalleryHasPostThumbnail' ], 10, 5 );
+        //add_filter( 'script_loader_tag', [ $this, 'addAsyncAttribute' ], 10, 2 );
+
+
+        // hook wp-gallery
+        if ( !empty( $this->options['hookWpGallery'] ) ) {
+            add_filter( 'get_attached_file', [ $pluginPublic, 'getAttachedFileHook' ], 10, 5 );
+            add_filter( 'get_attached_media', [ $pluginPublic, 'getAttachedMediaHook' ], 10, 5 );
+            add_filter( 'post_gallery', [ $pluginPublic, 'wpPostGalleryHook' ], 10, 2 );
+            add_filter( 'posts_pre_query', [ $pluginPublic, 'wpPreGetPostsHook' ], 10, 2 );
+            add_filter( 'wp_get_attachment_url', [ $pluginPublic, 'wpGetAttachmentUrlHook' ], 10, 5 );
+            //add_filter( 'posts_results', [ $this, 'wpPostResultsHook' ], 10, 2 );
+            //add_filter( 'get_post_gallery', [ $this, 'getPostGalleryHook' ], 10, 5 );
+        }
 
     }
 
@@ -342,7 +403,7 @@ class PostGallery {
             }
         }
 
-        $sortimages = array();
+        $sortimages = [];
 
         if ( !empty( $sort ) ) {
             $count = 0;
@@ -405,7 +466,7 @@ class PostGallery {
         $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
         $uploadFullUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
         $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadFullUrl );
-        $images = array();
+        $images = [];
 
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
             $titles = get_post_meta( $postid, 'postgalleryTitles', true );
@@ -430,7 +491,7 @@ class PostGallery {
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
 
-                    $images[$file] = array(
+                    $images[$file] = [
                         'filename' => $file,
                         'path' => $uploadUrl . '/' . $file,
                         'url' => $uploadFullUrl . '/' . $file,
@@ -441,7 +502,7 @@ class PostGallery {
                         'post_id' => $postid,
                         'post_title' => get_the_title( $postid ),
                         'imageOptions' => !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '',
-                    );
+                    ];
                 }
             }
         }
@@ -458,7 +519,7 @@ class PostGallery {
      * @param array $args
      * @return array
      */
-    public static function getImagesResized( $postid = 0, $args = array() ) {
+    public static function getImagesResized( $postid = 0, $args = [] ) {
         $images = PostGallery::getImages( $postid );
 
         return PostGallery::getPicsResized( $images, $args );
@@ -471,7 +532,7 @@ class PostGallery {
      * @param {array} $args (singlequotes, quotes)
      * @return {string}
      */
-    public static function getImageString( $postid = null, $args = array() ) {
+    public static function getImageString( $postid = null, $args = [] ) {
         if ( empty( $postid ) ) {
             global $postid;
         }
@@ -479,7 +540,7 @@ class PostGallery {
         if ( empty( $images ) ) {
             return '';
         }
-        $imageList = array();
+        $imageList = [];
         foreach ( $images as $image ) {
             $imageList[] = $image['path'];
         }
@@ -522,7 +583,7 @@ class PostGallery {
      * @param array $args
      * @return string
      */
-    static function getThumbUrl( $filepath, $args = array() ) {
+    static function getThumbUrl( $filepath, $args = [] ) {
         $thumb = PostGallery::getThumb( $filepath, $args );
         $thumbUrl = ( !empty( $thumb['url'] ) ? $thumb['url'] : get_bloginfo( 'wpurl' ) . '/' . $thumb['path'] );
         $thumbUrl = str_replace( '//wp-content', '/wp-content', $thumbUrl );
@@ -537,7 +598,7 @@ class PostGallery {
      * @param array $args
      * @return array
      */
-    static function getThumb( $filepath, $args = array() ) {
+    static function getThumb( $filepath, $args = [] ) {
         if ( empty( $args['width'] ) ) {
             $args['width'] = 1000;
         }
@@ -569,8 +630,8 @@ class PostGallery {
             return PostGallery::$cachedFolders[$postId];
         }
 
-        $search = array( 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&', '€', 'ß', '–' );
-        $replace = array( 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-', 'E', 'ss', '-' );
+        $search = [ 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&', '€', 'ß', '–' ];
+        $replace = [ 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-', 'E', 'ss', '-' ];
 
         $postName = str_replace( $search, $replace, $postName );
 
@@ -639,7 +700,7 @@ class PostGallery {
         if ( !is_array( $pics ) ) {
             return $pics;
         }
-        $newPics = array();
+        $newPics = [];
         foreach ( $pics as $pic ) {
             // create resized image
             if ( is_array( $pic ) ) {
@@ -747,19 +808,19 @@ class PostGallery {
 
         if ( $size !== 'full' ) {
             $thumbInstance = new Thumb();
-            $thumb = $thumbInstance->getThumb( array(
+            $thumb = $thumbInstance->getThumb( [
                 'path' => $path,
                 'width' => $width,
                 'height' => $height,
                 'scale' => 2,
-            ) );
+            ] );
         } else {
             $filesize = getimagesize( ABSPATH . $path );
-            $thumb = array(
+            $thumb = [
                 'width' => $filesize[0],
                 'height' => $filesize[1],
-                'url' => get_bloginfo('wpurl') . $path,
-            );
+                'url' => get_bloginfo( 'wpurl' ) . $path,
+            ];
         }
 
         $width = $height = 'auto';
@@ -773,7 +834,7 @@ class PostGallery {
             $orientation = ' upright';
         }
 
-        return array(
+        return [
             'width' => $width,
             'height' => $height,
             'orientation' => $orientation,
@@ -781,19 +842,19 @@ class PostGallery {
             'url' => $thumb['url'],
             'orgPath' => $path,
             'size' => $size,
-        );
+        ];
     }
 
     /**
      * Adds post-type gallery
      */
     public function addPostTypeGallery() {
-        register_post_type( 'gallery', array(
-            'labels' => array(
+        register_post_type( 'gallery', [
+            'labels' => [
                 'name' => __( 'Galleries', $this->textdomain ),
                 'singular_name' => __( 'Gallery', $this->textdomain ),
-            ),
-            'taxonomies' => array( 'category' ),
+            ],
+            'taxonomies' => [ 'category' ],
             'menu_icon' => 'dashicons-format-gallery',
             'public' => true,
             'has_archive' => true,
@@ -801,7 +862,7 @@ class PostGallery {
             'show_ui' => true,
             'capability_type' => 'post',
             'hierarchical' => true,
-            'supports' => array(
+            'supports' => [
                 'title',
                 'author',
                 'editor',
@@ -809,15 +870,15 @@ class PostGallery {
                 'trackbacks',
                 'custom-fields',
                 'revisions',
-            ),
+            ],
             'exclude_from_search' => true,
             'publicly_queryable' => true,
             'excerpt' => true,
-        ) );
+        ] );
     }
 
     public static function getOptions() {
-        return array(
+        return [
             'debugmode' => get_theme_mod( 'postgallery_postgalleryDebugmode', false ),
             'sliderType' => get_theme_mod( 'postgallery_sliderType', 'owl' ),
             'globalPosition' => get_theme_mod( 'postgallery_globalPosition', 'bottom' ),
@@ -845,7 +906,7 @@ class PostGallery {
             'animateOut' => get_theme_mod( 'postgallery_animateOut', '' ),
             'animateIn' => get_theme_mod( 'postgallery_animateIn', '' ),
             'autoplayTimeout' => get_theme_mod( 'postgallery_autoplayTimeout', '' ),
-        );
+        ];
     }
 
 }

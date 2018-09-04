@@ -74,121 +74,121 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
         array_unshift( $sliderAnimations, '' );
 
         // need as key-value pair
-        $sliderAnimationsKeyValue = array();
+        $sliderAnimationsKeyValue = [];
         foreach ( $sliderAnimations as $value ) {
             $sliderAnimationsKeyValue[trim( $value )] = trim( $value );
         }
         $sliderAnimations = $sliderAnimationsKeyValue;
 
-        $this->optionFields = array(
+        $this->optionFields = [
 
-            'headline_base' => array(
+            'headline_base' => [
                 'type' => 'headline',
                 'label' => 'Base-Settings',
-            ),
-            'sliderType' => array(
+            ],
+            'sliderType' => [
                 'type' => 'select',
                 'label' => __( 'Type', $this->textdomain ),
-                'options' => array(
+                'options' => [
                     'owl' => 'owl',
                     'swiper' => 'swiper (experimental)'
-                ),
-            ),
+                ],
+            ],
 
-            'sliderWidth' => array(
+            'sliderWidth' => [
                 'type' => 'text',
                 'label' => __( 'Width', $this->textdomain ),
-            ),
-            'sliderHeight' => array(
+            ],
+            'sliderHeight' => [
                 'type' => 'text',
                 'label' => __( 'Height', $this->textdomain ),
-            ),
-            'sliderScale' => array(
+            ],
+            'sliderScale' => [
                 'type' => 'select',
                 'label' => __( 'Image-Scale', $this->textdomain ),
-                'options' => array(
+                'options' => [
                     0 => __( 'crop', $this->textdomain ),
                     1 => __( 'Keep proportions (long edge)', $this->textdomain ),
                     2 => __( 'Keep proportions (short edge)', $this->textdomain ),
                     3 => __( 'Ignore proportions', $this->textdomain ),
-                ),
-            ),
-            'sliderItems' => array(
+                ],
+            ],
+            'sliderItems' => [
                 'type' => 'number',
                 'label' => __( 'Items', $this->textdomain ),
                 'default' => 3,
-            ),
-            'sliderLoop' => array(
+            ],
+            'sliderLoop' => [
                 'type' => 'checkbox',
                 'label' => __( 'Loop', $this->textdomain ),
                 'default' => true,
-            ),
+            ],
 
             // images
-            'headline_image' => array(
+            'headline_image' => [
                 'type' => 'headline',
                 'label' => 'Image-Settings',
-            ),
-            'sliderImageWidth' => array(
+            ],
+            'sliderImageWidth' => [
                 'type' => 'text',
                 'label' => __( 'Image-Width', $this->textdomain ),
-            ),
-            'sliderImageHeight' => array(
+            ],
+            'sliderImageHeight' => [
                 'type' => 'text',
                 'label' => __( 'Image-Height', $this->textdomain ),
-            ),
-            'sliderAsBg' => array(
+            ],
+            'sliderAsBg' => [
                 'type' => 'checkbox',
                 'label' => __( 'Images as Background', $this->textdomain ),
-            ),
+            ],
 
-            'sliderLoadFrom' => array(
+            'sliderLoadFrom' => [
                 'type' => 'select',
                 'label' => __( 'Load images from', $this->textdomain ),
                 'options' => '',
                 'multiple' => true,
-            ),
-            'sliderThumbOnly' => array(
+            ],
+            'sliderThumbOnly' => [
                 'type' => 'checkbox',
                 'label' => __( 'Show only Post-Thumbs', $this->textdomain ),
-            ),
+            ],
 
             // animation
-            'headline_animation' => array(
+            'headline_animation' => [
                 'type' => 'headline',
                 'label' => 'Animation',
-            ),
-            'slideSpeed' => array(
+            ],
+            'slideSpeed' => [
                 'id' => 'slideSpeed',
                 'label' => 'Speed (ms)',
                 'type' => 'number',
                 'datasrc' => 'moduldata',
                 //'tooltip' => 'Gibt an wie lange die Animation eines Slides dauert.'
-            ),
+            ],
 
-            'sliderAutoplay' => array(
+            'sliderAutoplay' => [
                 'type' => 'checkbox',
                 'label' => __( 'Autoplay', $this->textdomain ),
-            ),
+            ],
 
-            'autoplayTimeout' => array(
+            'autoplayTimeout' => [
                 'id' => 'autoplayTimeout',
                 'label' => 'Autoplay timeout (ms)',
                 'type' => 'number',
                 'placeholder' => 5000,
                 'datasrc' => 'moduldata',
                 //'description' => 'Gibt an wie lange ein Item angezeigt wird und bis die nächste Animation beginnt.'
-            ),
-            'animateOut' => array(
+            ],
+            'animateOut' => [
                 'id' => 'animateOut',
                 'label' => 'Animate out',
                 'type' => 'select',
                 'options' => $sliderAnimations,
                 'datasrc' => 'moduldata',
                 //'description' => 'Gibt die Animation an mit welcher ein Item ausgeblendet wird',
-            ),
+            ],
 
-            'animateIn' => array(
+            'animateIn' => [
                 'id' => 'animateIn',
                 'label' => 'AnimateIn',
                 'type' => 'select',
@@ -196,22 +196,22 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 'datasrc' => 'moduldata',
                 //'description' => 'Gibt die Animation an mit welcher ein Item eingeblendet wird<br />'
                 //.'Look <a target="_blank" href="https://daneden.github.io/animate.css/">Animate.css</a>',
-            ),
+            ],
 
             // extra settings
-            'headline_extra' => array(
+            'headline_extra' => [
                 'type' => 'headline',
                 'label' => 'Extra-Settings',
-            ),
-            'sliderShuffle' => array(
+            ],
+            'sliderShuffle' => [
                 'type' => 'checkbox',
                 'label' => __( 'Shuffle images', $this->textdomain ),
-            ),
-            'sliderLinkPost' => array(
+            ],
+            'sliderLinkPost' => [
                 'type' => 'checkbox',
                 'label' => __( 'Link images with post', $this->textdomain ),
-            ),
-            'sliderOwlConfig' => array(
+            ],
+            'sliderOwlConfig' => [
                 'type' => 'textarea',
                 'label' => __( 'Owl-Config', $this->textdomain ),
                 /*'descTop' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
@@ -236,16 +236,16 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 'cols' => 50,
                 'rows' => 10,
                 'default' => '',
-            ),
-            'sliderNoLazy' => array(
+            ],
+            'sliderNoLazy' => [
                 'type' => 'checkbox',
                 'label' => __( 'Disable lazy load', $this->textdomain ),
-            ),
-        );
+            ],
+        ];
 
-        add_action( 'init', array( $this, '_createPostTypes' ) );
-        add_action( 'add_meta_boxes', array( $this, '_registerPostSettings' ) );
-        add_action( 'save_post', array( $this, 'savePostMeta' ), 10, 2 );
+        add_action( 'init', [ $this, '_createPostTypes' ] );
+        add_action( 'add_meta_boxes', [ $this, '_registerPostSettings' ] );
+        add_action( 'save_post', [ $this, 'savePostMeta' ], 10, 2 );
     }
 
     /**
@@ -257,9 +257,9 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
         unset( $postTypes['revision'] );
         unset( $postTypes['nav_menu_item'] );
 
-        $postlist = array( '' );
+        $postlist = [ '' ];
 
-        $exclude = array( $GLOBALS['post']->ID );
+        $exclude = [ $GLOBALS['post']->ID ];
 
         // get categories
         $allCategories = get_categories();
@@ -268,12 +268,12 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             $postlist['cat-' . $category->cat_ID] = $category->name;
 
             // get posts from category
-            $catPosts = get_posts( array(
+            $catPosts = get_posts( [
                 'post_type' => $postTypes,
                 'category' => $category->cat_ID,
                 'exclude' => $GLOBALS['post']->ID,
                 'posts_per_page' => -1,
-            ) );
+            ] );
 
             foreach ( $catPosts as $wPost ) {
                 $postlist[$wPost->ID] = '&nbsp;&nbsp;' . $wPost->post_title;
@@ -281,11 +281,11 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             }
         }
 
-        $remainingPosts = get_posts( array(
+        $remainingPosts = get_posts( [
             'post_type' => $postTypes,
             'exclude' => $exclude,
             'posts_per_page' => -1,
-        ) );
+        ] );
 
         foreach ( $remainingPosts as $wPost ) {
             $postlist[$wPost->ID] = ' ' . $wPost->post_title;
@@ -298,22 +298,22 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
      * Create slider post-type
      */
     public function _createPostTypes() {
-        register_post_type( 'postgalleryslider', array(
-                'labels' => array(
+        register_post_type( 'postgalleryslider', [
+                'labels' => [
                     'name' => __( 'Slider', $this->textdomain ),
                     'singular_name' => __( 'Slider', $this->textdomain ),
-                ),
+                ],
                 'menu_icon' => 'dashicons-images-alt',
                 'public' => true,
                 'has_archiv' => false,
                 'show_ui' => true,
                 'capability_type' => 'post',
                 'hierarchical' => false,
-                'supports' => array( 'title' ),
+                'supports' => [ 'title' ],
                 'exclude_from_search' => true,
                 'publicly_queryable' => true,
                 'excerpt' => false,
-            )
+            ]
         );
     }
 
@@ -323,8 +323,8 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
      * @return bool
      */
     public function _registerPostSettings() {
-        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', $this->textdomain ), array( $this, '_addSliderShortcodeView' ), 'postgalleryslider' );
-        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', $this->textdomain ), array( $this, '_addSliderSettings' ), 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', $this->textdomain ), [ $this, '_addSliderShortcodeView' ], 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', $this->textdomain ), [ $this, '_addSliderSettings' ], 'postgalleryslider' );
 
         return false;
     }
@@ -504,7 +504,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
                 if ( isset( $_POST[$key] ) && is_array( $_POST[$key] ) ) {
                     // multiselect
-                    $value = array();
+                    $value = [];
                     foreach ( $_POST[$key] as $aKey => $aValue ) {
                         $value[] = filter_var( $aValue );
                     }

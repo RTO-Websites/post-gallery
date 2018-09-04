@@ -54,11 +54,11 @@ class SliderShortcodePublic {
         $this->pluginName = $pluginName;
         $this->version = $version;
 
-        add_shortcode( 'postslider', array( $this, '_shortcode' ) );
-        add_shortcode( 'slider', array( $this, '_shortcode' ) );
+        add_shortcode( 'postslider', [ $this, '_shortcode' ] );
+        add_shortcode( 'slider', [ $this, '_shortcode' ] );
     }
 
-    public static function run( $args = array(), $content = '' ) {
+    public static function run( $args = [], $content = '' ) {
         self::getInstance()->_shortcode( $args, $content );
     }
 
@@ -218,11 +218,11 @@ class SliderShortcodePublic {
 
         // resize images
         if ( !empty( $imgWidth ) || !empty( $imgHeight ) ) {
-            $images = PostGallery::getPicsResized( $images, array(
+            $images = PostGallery::getPicsResized( $images, [
                 'width' => !empty( $imgWidth ) ? $imgWidth : '9999',
                 'height' => !empty( $imgHeight ) ? $imgHeight : '9999',
                 'scale' => is_null( $scale ) ? 0 : $scale,
-            ) );
+            ] );
         }
 
         // set style
@@ -352,7 +352,7 @@ class SliderShortcodePublic {
      * @param array $images
      * @return array
      */
-    public function getImagesFromPostList( $loadFrom, $images = array() ) {
+    public function getImagesFromPostList( $loadFrom, $images = [] ) {
         $postTypes = get_post_types();
         unset( $postTypes['revision'] );
         unset( $postTypes['nav_menu_item'] );
@@ -366,12 +366,12 @@ class SliderShortcodePublic {
                     // is category
                     // get posts from category
                     ob_start();
-                    $catPosts = get_posts( array(
+                    $catPosts = get_posts( [
                         'post_type' => $postTypes,
                         'category' => str_replace( 'cat-', '', $loadId ),
                         'posts_per_page' => -1,
                         'suppress_filters' => true,
-                    ) );
+                    ] );
                     ob_end_clean();
 
                     foreach ( $catPosts as $catPost ) {
@@ -401,20 +401,20 @@ class SliderShortcodePublic {
                 $images = PostGallery::getImages( $loadId );
                 $images = array_splice( $images, 0, 1 );
                 $images = array_shift( $images );
-                return array( $images );
+                return [ $images ];
             }
 
 
-            return array(
-                array(
+            return [
+                [
                     'url' => $url,
                     'post_id' => $loadId,
-                    'post_title' => the_title_attribute( array(
+                    'post_title' => the_title_attribute( [
                         'post' => $loadId,
                         'echo' => false,
-                    ) ),
-                ),
-            );
+                    ] ),
+                ],
+            ];
         } else {
             return PostGallery::getImages( $loadId );
         }

@@ -48,8 +48,8 @@ class PostGalleryLoader {
 	 */
 	public function __construct() {
 
-		$this->actions = array();
-		$this->filters = array();
+		$this->actions = [];
+		$this->filters = [];
 
 	}
 
@@ -97,13 +97,13 @@ class PostGalleryLoader {
 	 */
 	private function add( $hooks, $hook, $component, $callback, $priority, $acceptedArgs ) {
 
-		$hooks[] = array(
+		$hooks[] = [
 			'hook'          => $hook,
 			'component'     => $component,
 			'callback'      => $callback,
 			'priority'      => $priority,
 			'acceptedArgs' => $acceptedArgs
-		);
+		];
 
 		return $hooks;
 
@@ -117,11 +117,11 @@ class PostGalleryLoader {
 	public function run() {
 
 		foreach ( $this->filters as $hook ) {
-			add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['acceptedArgs'] );
+			add_filter( $hook['hook'], [ $hook['component'], $hook['callback'] ], $hook['priority'], $hook['acceptedArgs'] );
 		}
 
 		foreach ( $this->actions as $hook ) {
-			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['acceptedArgs'] );
+			add_action( $hook['hook'], [ $hook['component'], $hook['callback'] ], $hook['priority'], $hook['acceptedArgs'] );
 		}
 
 	}

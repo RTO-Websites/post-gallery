@@ -15,7 +15,7 @@ include_once( 'PostGalleryThemeCustomizer.php' );
 use Admin\SliderShortcodeAdmin;
 use Admin\PostGalleryMceButton;
 use Inc\PostGallery;
-use Thumb\Thumb;
+use Inc\PostGallery\Thumb\Thumb;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -77,51 +77,24 @@ class PostGalleryAdmin {
         $this->version = $version;
         self::$instance = $this;
 
-        $this->optionFields = array( 'postgalleryPosition' => array(
+        $this->optionFields = [ 'postgalleryPosition' => [
             'label' => __( 'Position', 'post-gallery' ),
             'type' => 'select',
-            'value' => array(
+            'value' => [
                 'global' => __( 'From global setting', $this->textdomain ),
                 'bottom' => __( 'bottom', $this->textdomain ),
                 'top' => __( 'top', $this->textdomain ),
                 'custom' => __( 'custom', $this->textdomain ),
-            ),
-        ) );
+            ],
+        ] ];
 
-        $this->defaultTemplates = array(
+        $this->defaultTemplates = [
             'thumbs' => __( 'Thumb-List', $this->textdomain ),
             'slider' => __( 'Slider (with Owl-Carousel)', $this->textdomain ),
-        );
-
-
-        // add options to customizer
-        add_action( 'customize_register', array( new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' ) );
-
-        // add menu page to link to customizer
-        add_action( 'admin_menu', function () {
-            $returnUrl = urlencode( $_SERVER['REQUEST_URI'] );
-            \add_menu_page(
-                'PostGallery',
-                'PostGallery',
-                'edit_theme_options',
-                'customize.php?return=' . $returnUrl . '&autofocus[panel]=postgallery-panel',
-                null,
-                'dashicons-format-gallery'
-            );
-        } );
+        ];
 
         new SliderShortcodeAdmin( $pluginName, $version );
         new PostGalleryMceButton( $pluginName );
-
-        add_action( 'add_meta_boxes', array( $this, 'registerPostSettings' ) );
-        add_action( 'save_post', array( $this, 'savePostMeta' ), 10, 2 );
-
-        // Register ajax
-        add_action( 'wp_ajax_postgalleryUpload', array( $this, 'ajaxUpload' ) );
-        add_action( 'wp_ajax_postgalleryDeleteimage', array( $this, 'ajaxDelete' ) );
-        add_action( 'wp_ajax_postgalleryGetImageUpload', array( $this, 'ajaxGetImageUpload' ) );
-        add_action( 'wp_ajax_postgalleryNewGallery', array( $this, 'ajaxCreateGallery' ) );
-
     }
 
     /**
@@ -130,17 +103,17 @@ class PostGalleryAdmin {
      * @return array
      */
     public function getLiteboxTemplates() {
-        $templateList = array(
+        $templateList = [
             'default-with-thumbs' => __( 'Default with thumbs', $this->textdomain ),
             'default' => __( 'Default', $this->textdomain ),
-        );
+        ];
 
-        $customTemplates = array();
+        $customTemplates = [];
 
-        $customTplPaths = array( get_stylesheet_directory() . '/litebox', get_stylesheet_directory() . '/plugins/litebox' );
+        $customTplPaths = [ get_stylesheet_directory() . '/litebox', get_stylesheet_directory() . '/plugins/litebox' ];
 
         foreach ( $customTplPaths as $customTplPath ) {
-            $customTplFiles = ( file_exists( $customTplPath ) ? scandir( $customTplPath ) : array() );
+            $customTplFiles = ( file_exists( $customTplPath ) ? scandir( $customTplPath ) : [] );
             foreach ( $customTplFiles as $file ) {
                 if ( !is_dir( $customTplPath . '/' . $file ) ) {
                     $optionKey = str_replace( '.php', '', $file );
@@ -174,7 +147,7 @@ class PostGalleryAdmin {
          * class.
          */
 
-        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-admin.css', array(), $this->version, 'all' );
+        wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-admin.css', [], $this->version, 'all' );
 
     }
 
@@ -199,10 +172,10 @@ class PostGalleryAdmin {
 
         $pgUrl = plugin_dir_url( __FILE__ );
 
-        wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', array( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', array( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', array( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', [ 'jquery' ], $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', [ 'jquery' ], $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', [ 'jquery' ], $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery' ], $this->version, false );
 
         wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
@@ -238,15 +211,15 @@ class PostGalleryAdmin {
     public function ajaxCreateGallery() {
         global $user_ID;
         $title = filter_input( INPUT_GET, 'title' );
-        $new_post = array(
+        $new_post = [
             'post_title' => $title,
             'post_content' => '',
             'post_status' => 'publish',
             'post_date' => date( 'Y-m-d H:i:s' ),
             'post_author' => $user_ID,
             'post_type' => 'gallery',
-            'post_category' => array( 0 ),
-        );
+            'post_category' => [ 0 ],
+        ];
         $post_id = wp_insert_post( $new_post );
 
         echo json_encode( get_post( $post_id ) );
@@ -261,9 +234,9 @@ class PostGalleryAdmin {
     public function registerPostSettings() {
         $postTypes = get_post_types();
         foreach ( $postTypes as $postType ) {
-            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), array( $this, 'addGalleryPictures' ), $postType, 'normal', 'high' );
+            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), [ $this, 'addGalleryPictures' ], $postType, 'normal', 'high' );
             if ( $postType !== 'postgalleryslider' ) {
-                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), array( $this, 'addGallerySettings' ), $postType, 'normal', 'high' );
+                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), [ $this, 'addGallerySettings' ], $postType, 'normal', 'high' );
             }
         }
         return false;
@@ -352,13 +325,13 @@ class PostGalleryAdmin {
      *
      */
     public function getCustomTemplates() {
-        $output = array();
+        $output = [];
         // scan theme-dir for templates
-        $customTemplateDirs = array(
+        $customTemplateDirs = [
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
             get_stylesheet_directory() . '/postgallery',
-        );
+        ];
 
         foreach ( $customTemplateDirs as $customTemplateDir ) {
             if ( file_exists( $customTemplateDir ) && is_dir( $customTemplateDir ) ) {
@@ -457,7 +430,7 @@ class PostGalleryAdmin {
 			<div class="postgallery-upload-error"></div>
 		';;
 
-        $images = array();
+        $images = [];
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
             $thumbInstance = Thumb::getInstance();
             $dir = scandir( $uploadDir );
@@ -469,12 +442,12 @@ class PostGalleryAdmin {
             if ( !empty( $dir ) ) {
                 foreach ( $dir as $file ) {
                     if ( !is_dir( $uploadDir . '/' . $file ) ) {
-                        $thumb = $thumbInstance->getThumb( array(
+                        $thumb = $thumbInstance->getThumb( [
                             'path' => $uploadUrl . '/' . $file,
                             'width' => 150,
                             'height' => 150,
                             'scale' => 0,
-                        ) );
+                        ] );
 
                         $images[$file] = '<li>';
                         $images[$file] .= '<img style="" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
@@ -512,10 +485,10 @@ class PostGalleryAdmin {
      * @return array
      */
     public function getPostGalleryLang() {
-        $scriptLanguage = array(
+        $scriptLanguage = [
             'moveHere' => __( 'Move files here.', $this->textdomain ),
             'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
-        );
+        ];
 
         // Javascript for language
         return $scriptLanguage;

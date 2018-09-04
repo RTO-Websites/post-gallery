@@ -21,7 +21,7 @@ if ( !file_exists( $uploadDir . '/gallery/' . $path ) ) {
     die( 'file not exists or is folder' );
 }
 
-$deletedFiles = array();
+$deletedFiles = [];
 
 // If "path" is dir iterate through this dir and delete all files
 if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {

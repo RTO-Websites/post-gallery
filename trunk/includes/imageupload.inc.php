@@ -11,13 +11,13 @@ require_once( POSTGALLERY_DIR . '/includes/FineUploader.class.php' );
 $maxUploadSize = 8;
 $postSize = (int)( ini_get( 'post_max_size' ) );
 $uploadSize = (int)( ini_get( 'upload_max_filesize' ) );
-$maxUploadSize = min( array( $postSize, $uploadSize ) );
+$maxUploadSize = min( [ $postSize, $uploadSize ] );
 $uploads = wp_upload_dir();
 $uploadDir = $uploads['basedir'];
 $uploadUrl = $uploads['baseurl'];
 $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadUrl );
 
-$fileHandler = new qqFileUploader( array( 'JPG', 'PNG', 'GIF', 'JPEG' ), $maxUploadSize * 1024 * 1024 );
+$fileHandler = new qqFileUploader( [ 'JPG', 'PNG', 'GIF', 'JPEG' ], $maxUploadSize * 1024 * 1024 );
 $fileResult = $fileHandler->handleUpload( $uploadDir . '/cache/' );
 
 $safemode = ini_get( 'safe_mode' );
@@ -38,12 +38,12 @@ if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $uploadFo
     $uploadFile = $uploadDir . '/cache/' . $fileHandler->getName();
 
     $errorMsg = '';
-    $filename = str_replace( array( 'http://', 'https://', '//:' ), '', esc_url( $fileHandler->getName() ) ); // imagepath
-    $filename = str_replace( array( '%20', ' ' ), '_', $filename );
-    $filename = str_replace( array( 'ä', 'ö', 'ü' ), array( 'ae', 'oe', 'ue' ), $filename );
-    $filename = str_replace( array( '(', ')', '$', '&', '%', '<', '>', '[', ']', '{', '}', '?', '!', '*', '=', '+', '~' ), '', $filename );
+    $filename = str_replace( [ 'http://', 'https://', '//:' ], '', esc_url( $fileHandler->getName() ) ); // imagepath
+    $filename = str_replace( [ '%20', ' ' ], '_', $filename );
+    $filename = str_replace( [ 'ä', 'ö', 'ü' ], [ 'ae', 'oe', 'ue' ], $filename );
+    $filename = str_replace( [ '(', ')', '$', '&', '%', '<', '>', '[', ']', '{', '}', '?', '!', '*', '=', '+', '~' ], '', $filename );
 
-    $imageTypes = array( IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP );
+    $imageTypes = [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ];
     $allowTypes = array_map( 'image_type_to_mime_type', $imageTypes );
     array_push( $allowTypes, 'image/x-png', 'image/jpeg', 'application/octet-stream' );
 
@@ -74,17 +74,17 @@ if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $uploadFo
 
 if ( $success ) {
 
-    $returnValue = array();
+    $returnValue = [];
 
     // Return image
     if ( file_exists( $imagepath ) ) {
         $thumbInstance = Thumb::getInstance();
-        $thumb = $thumbInstance->getThumb( array(
+        $thumb = $thumbInstance->getThumb( [
             'path' => $imagepath,
             'width' => 150,
             'height' => 150,
             'scale' => 0,
-        ) );
+        ] );
         $imageSize = getimagesize( $imagepath );
         $returnValue['path'] = $imagepath;
         $returnValue['filename'] = $filename;
