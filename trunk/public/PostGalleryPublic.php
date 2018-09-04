@@ -114,11 +114,11 @@ class PostGalleryPublic {
         if ( !empty( $this->options['hookWpGallery'] ) ) {
             add_filter( 'get_attached_file', array( $this, 'getAttachedFileHook' ), 10, 5 );
             add_filter( 'get_attached_media', array( $this, 'getAttachedMediaHook' ), 10, 5 );
-            add_filter( 'get_post_gallery', array( $this, 'getPostGalleryHook' ), 10, 5 );
             add_filter( 'post_gallery', array( $this, 'wpPostGalleryHook' ), 10, 2 );
             add_filter( 'posts_pre_query', array( $this, 'wpPreGetPostsHook' ), 10, 2 );
             add_filter( 'wp_get_attachment_url', array( $this, 'wpGetAttachmentUrlHook' ), 10, 5 );
             //add_filter( 'posts_results', array( $this, 'wpPostResultsHook' ), 10, 2 );
+            //add_filter( 'get_post_gallery', array( $this, 'getPostGalleryHook' ), 10, 5 );
         }
     }
 
@@ -196,10 +196,6 @@ class PostGalleryPublic {
         return $posts;
     }
 
-    /* public function wpPostResultsHook( $posts, $query ) {
-
-        return $posts;
-    } */
 
     /**
      * Hook wp-gallery-shortcode to add images from post-gallery
@@ -213,9 +209,13 @@ class PostGalleryPublic {
         return \customWpGalleryShortcode( $output, $attr, $instance );
     }
 
-    public function getPostGalleryHook( $gallery = null, $post = null, $galleries = null ) {
+    /* public function getPostGalleryHook( $gallery = null, $post = null, $galleries = null ) {
         return $galleries;
-    }
+    } */
+
+    /* public function wpPostResultsHook( $posts, $query ) {
+        return $posts;
+    } */
 
     /**
      * Adds post-gallery images to wordpress-media-list
