@@ -3,7 +3,7 @@
 use Admin\PostGalleryAdmin;
 use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Pub\PostGalleryPublic;
-use Inc\PostGallery\Thumb\Thumb;
+use Thumb\Thumb;
 
 /**
  * The file that defines the core plugin class
@@ -293,6 +293,7 @@ class PostGallery {
         add_action( 'wp_ajax_postgalleryDeleteimage', [ $pluginAdmin, 'ajaxDelete' ] );
         add_action( 'wp_ajax_postgalleryGetImageUpload', [ $pluginAdmin, 'ajaxGetImageUpload' ] );
         add_action( 'wp_ajax_postgalleryNewGallery', [ $pluginAdmin, 'ajaxCreateGallery' ] );
+        add_action( 'wp_ajax_postgalleryGetGroupedMedia', [ $pluginAdmin, 'getGroupedMedia' ] );
 
     }
 
@@ -325,19 +326,6 @@ class PostGallery {
         add_filter( 'post_thumbnail_html', [ $pluginPublic, 'postgalleryThumbnail' ], 10, 5 );
         add_filter( 'get_post_metadata', [ $pluginPublic, 'postgalleryHasPostThumbnail' ], 10, 5 );
         //add_filter( 'script_loader_tag', [ $this, 'addAsyncAttribute' ], 10, 2 );
-
-
-        // hook wp-gallery
-        if ( !empty( $this->options['hookWpGallery'] ) ) {
-            add_filter( 'get_attached_file', [ $pluginPublic, 'getAttachedFileHook' ], 10, 5 );
-            add_filter( 'get_attached_media', [ $pluginPublic, 'getAttachedMediaHook' ], 10, 5 );
-            add_filter( 'post_gallery', [ $pluginPublic, 'wpPostGalleryHook' ], 10, 2 );
-            add_filter( 'posts_pre_query', [ $pluginPublic, 'wpPreGetPostsHook' ], 10, 2 );
-            add_filter( 'wp_get_attachment_url', [ $pluginPublic, 'wpGetAttachmentUrlHook' ], 10, 5 );
-            //add_filter( 'posts_results', [ $this, 'wpPostResultsHook' ], 10, 2 );
-            //add_filter( 'get_post_gallery', [ $this, 'getPostGalleryHook' ], 10, 5 );
-        }
-
     }
 
     /**
@@ -455,7 +443,7 @@ class PostGallery {
             }
         }
 
-        if ( empty( $post ) ) {
+        if ( empty( $post ) || $post->post_type === 'attachment' ) {
             return;
         }
 
@@ -469,24 +457,7 @@ class PostGallery {
         $images = [];
 
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
-            $titles = get_post_meta( $postid, 'postgalleryTitles', true );
-            $descs = get_post_meta( $postid, 'postgalleryDescs', true );
-            $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
-            $imageOptions = get_post_meta( $postid, 'postgalleryImageOptions', true );
             $dir = scandir( $uploadDir );
-
-            if ( !is_array( $titles ) ) {
-                $titles = json_decode( json_encode( $titles ), true );
-            }
-            if ( !is_array( $descs ) ) {
-                $descs = json_decode( json_encode( $descs ), true );
-            }
-            if ( !is_array( $alts ) ) {
-                $alts = json_decode( json_encode( $alts ), true );
-            }
-            if ( !is_array( $imageOptions ) ) {
-                $imageOptions = json_decode( json_encode( $imageOptions ), true );
-            }
 
             foreach ( $dir as $file ) {
                 if ( !is_dir( $uploadDir . '/' . $file ) ) {
@@ -497,19 +468,30 @@ class PostGallery {
                         continue;
                     }
 
+                    $alt = '';
+                    $imageTitle = '';
+                    $imageOptions = '';
+                    $imageDesc = '';
                     $attachmentId = self::checkForAttachmentData( $fullUrl, $path, $postid );
+                    if ( !empty( $attachmentId ) ) {
+                        $attachment = get_post( $attachmentId );
+                        $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
+                        $imageTitle = $attachment->post_title;
+                        $imageOptions = get_post_meta( $attachmentId, '_postgallery-image-options', true );
+                        $imageDesc = $attachment->post_content;
+                    }
 
                     $images[$file] = [
                         'filename' => $file,
                         'path' => $path,
                         'url' => $fullUrl,
                         'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
-                        'title' => !empty( $titles[$file] ) ? $titles[$file] : '',
-                        'desc' => !empty( $descs[$file] ) ? $descs[$file] : '',
-                        'alt' => !empty( $alts[$file] ) ? $alts[$file] : '',
+                        'title' => $imageTitle,
+                        'desc' => $imageDesc,
+                        'alt' => $alt,
                         'post_id' => $postid,
                         'post_title' => get_the_title( $postid ),
-                        'imageOptions' => !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '',
+                        'imageOptions' => $imageOptions,
                         'attachmentId' => $attachmentId,
                     ];
                 }
@@ -541,12 +523,41 @@ class PostGallery {
         // Check the type of file. We'll use this as the 'post_mime_type'.
         $filetype = wp_check_filetype( basename( $path ), null );
 
+
+        // get old data
+        $titles = get_post_meta( $parentId, 'postgalleryTitles', true );
+        $descs = get_post_meta( $parentId, 'postgalleryDescs', true );
+        $alts = get_post_meta( $parentId, 'postgalleryAltAttributes', true );
+        $imageOptions = get_post_meta( $parentId, 'postgalleryImageOptions', true );
+
+        $pathSplit = explode( '/', $path );
+        $filename = array_pop( $pathSplit );
+
+        if ( !is_array( $titles ) ) {
+            $titles = json_decode( json_encode( $titles ), true );
+        }
+        if ( !is_array( $descs ) ) {
+            $descs = json_decode( json_encode( $descs ), true );
+        }
+        if ( !is_array( $alts ) ) {
+            $alts = json_decode( json_encode( $alts ), true );
+        }
+        if ( !is_array( $imageOptions ) ) {
+            $imageOptions = json_decode( json_encode( $imageOptions ), true );
+        }
+
+        $imageTitle = !empty( $titles[$filename] )
+            ? $titles[$filename]
+            : preg_replace( '/\.[^.]+$/', '', basename( $path ) );
+
+        $imageDesc = !empty( $descs[$filename] ) ? $descs[$filename] : '';
+
         // Prepare an array of post data for the attachment.
         $attachment = array(
             'guid' => $fullUrl,
             'post_mime_type' => $filetype['type'],
-            'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $path ) ),
-            'post_content' => '',
+            'post_title' => $imageTitle,
+            'post_content' => $imageDesc,
             'post_status' => 'inherit',
         );
 
@@ -559,6 +570,13 @@ class PostGallery {
         // Generate the metadata for the attachment, and update the database record.
         $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
         wp_update_attachment_metadata( $attachmentId, $attachData );
+
+        if ( !empty( $alts[$filename] ) ) {
+            update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alts[$filename] );
+        }
+        if ( !empty( $imageOptions[$filename] ) ) {
+            update_post_meta( $attachmentId, '_postgallery-image-options', $imageOptions[$filename] );
+        }
 
         return $attachmentId;
     }

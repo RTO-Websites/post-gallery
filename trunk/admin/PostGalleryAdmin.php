@@ -15,7 +15,7 @@ include_once( 'PostGalleryThemeCustomizer.php' );
 use Admin\SliderShortcodeAdmin;
 use Admin\PostGalleryMceButton;
 use Inc\PostGallery;
-use Inc\PostGallery\Thumb\Thumb;
+use Thumb\Thumb;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -204,6 +204,50 @@ class PostGalleryAdmin {
         $this->addGalleryPictures( $post );
         exit();
     }
+
+
+    /**
+     * Ajax task to get grouped media-ids by parent-post
+     */
+    public function getGroupedMedia() {
+        $attachmentIds = filter_input( INPUT_GET, 'attachmentids' );
+        $attachments = get_posts( [
+            'post_type' => 'attachment',
+            'include' => $attachmentIds,
+            'posts_per_page' => -1,
+        ] );
+
+        $result = [
+            'none' => [
+                'title' => __( 'Unattached' ),
+                'posts' => [],
+            ],
+        ];
+
+        foreach ( $attachments as $attachment ) {
+            if ( empty( $attachment->post_parent ) ) {
+                // not attached
+                $result['none']['posts'][] = $attachment->ID;
+                continue;
+            }
+
+            if ( empty( $result[$attachment->post_parent] ) ) {
+                // group not yet in result, so add it
+                $parent = get_post( $attachment->post_parent );
+                $result[$attachment->post_parent] = [
+                    'title' => $parent->post_title,
+                    'posts' => [],
+                ];
+            }
+
+            $result[$attachment->post_parent]['posts'][] = $attachment->ID;
+        }
+
+        echo json_encode($result);
+
+        exit();
+    }
+
 
     /**
      * Create new gallery via ajax
@@ -402,12 +446,13 @@ class PostGalleryAdmin {
         }
 
         // Load image titles and description
-        $titles = get_post_meta( $currentLangPost->ID, 'postgalleryTitles', true );
+        /* $titles = get_post_meta( $currentLangPost->ID, 'postgalleryTitles', true );
         $descs = get_post_meta( $currentLangPost->ID, 'postgalleryDescs', true );
         $imageOptions = get_post_meta( $currentLangPost->ID, 'postgalleryImageOptions', true );
         $altAttributes = get_post_meta( $currentLangPost->ID, 'postgalleryAltAttributes', true );
 
 
+        // legacy
         if ( !is_array( $titles ) ) {
             $titles = json_decode( json_encode( $titles ), true );
         }
@@ -419,7 +464,11 @@ class PostGalleryAdmin {
         }
         if ( !is_array( $imageOptions ) ) {
             $imageOptions = json_decode( json_encode( $imageOptions ), true );
-        }
+        } */
+        $titles = [];
+        $descs = [];
+        $altAttributes = [];
+        $imageOptions = [];
 
         if ( empty( $imageDir ) ) {
             echo __( 'You have to save the post to upload images.', $this->textdomain );
@@ -457,8 +506,17 @@ class PostGalleryAdmin {
                         'scale' => 0,
                     ] );
 
+                    $attachmentId = PostGallery::getPostIdFromGuid( $uploadFullUrl . '/' . $file );
+                    if ( !empty( $attachmentId ) ) {
+                        $imgMeta = wp_prepare_attachment_for_js( $attachmentId );
+                        $titles[$file] = empty( $imgMeta['title'] ) ? '' : $imgMeta['title'];
+                        $altAttributes[$file] = empty( $imgMeta['alt'] ) ? '' : $imgMeta['alt'];
+                        $descs[$file] = empty( $imgMeta['description'] ) ? '' : $imgMeta['description'];
+                        $imageOptions[$file] = get_post_meta( $attachmentId, '_postgallery-image-options', true );
+                    }
+
                     $images[$file] = '<li>';
-                    $images[$file] .= '<img style="" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
+                    $images[$file] .= '<img style="" data-attachmentid="' . $attachmentId . '" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
                     $images[$file] .= '<div class="img-title">' . $file . '</div>';
                     $images[$file] .= '<div class="del" onclick="deleteImage(this.parentNode, \'' . $imageDir . '/' . $file . '\');">x</div>';
                     $images[$file] .= '<div class="edit-details" onclick="pgToggleDetails(this);"></div>';
@@ -522,6 +580,8 @@ class PostGalleryAdmin {
         $curLangPost = $post;
         $curLangPostId = $postId;
 
+        $imageDir = PostGallery::getImageDir( $post );
+        $uploads = wp_upload_dir();
 
         $postgalleryMainlangId = filter_input( INPUT_POST, 'postgalleryMainlangId' );
         if ( !empty( $postgalleryMainlangId ) && $postId !== $postgalleryMainlangId ) {
@@ -558,10 +618,31 @@ class PostGalleryAdmin {
         }
         // save image titles
         if ( filter_has_var( INPUT_POST, 'postgalleryTitles' ) ) {
-            update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
+            $titles = filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+            $descs = filter_input( INPUT_POST, 'postgalleryDescs', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+            $alts = filter_input( INPUT_POST, 'postgalleryAltAttributes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+            $imgOptions = filter_input( INPUT_POST, 'postgalleryImageOptions', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+
+            foreach ( $titles as $filename => $value ) {
+                $imageUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
+                $attachmentId = PostGallery::getPostIdFromGuid( $imageUrl . '/' . $filename );
+                if ( empty( $attachmentId ) ) {
+                    continue;
+                }
+                $attachData = [
+                    'ID' => $attachmentId,
+                    'post_title' => $titles[$filename],
+                    'post_content' => $descs[$filename],
+                ];
+                wp_update_post( $attachData );
+
+                update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alts[$filename] );
+                update_post_meta( $attachmentId, '_postgallery-image-options', $imgOptions[$filename] );
+            }
+            //update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
         // save image descriptions
-        if ( filter_has_var( INPUT_POST, 'postgalleryDescs' ) ) {
+        /* if ( filter_has_var( INPUT_POST, 'postgalleryDescs' ) ) {
             update_post_meta( $postId, 'postgalleryDescs', filter_input( INPUT_POST, 'postgalleryDescs', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
         // save image alt
@@ -571,9 +652,8 @@ class PostGalleryAdmin {
         // save image alt
         if ( filter_has_var( INPUT_POST, 'postgalleryImageOptions' ) ) {
             update_post_meta( $postId, 'postgalleryImageOptions', filter_input( INPUT_POST, 'postgalleryImageOptions', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
-        }
+        } */
 
-        $imageDir = PostGallery::getImageDir( $post );
         $currentImageDir = filter_input( INPUT_POST, 'currentImagedir' );
 
         // if post-title change, then move pictures

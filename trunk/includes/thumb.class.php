@@ -5,7 +5,7 @@
  * ****************************'***** */
 
 
-namespace Inc\PostGallery\Thumb;
+namespace Thumb;
 
 @set_time_limit( 0 );
 

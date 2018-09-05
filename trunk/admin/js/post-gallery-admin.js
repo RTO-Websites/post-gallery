@@ -10,14 +10,14 @@
  * ready:
  *
  * $(function() {
-	 *
-	 * });
+ *
+ * });
  *
  * Or when the window is loaded:
  *
  * $( window ).load(function() {
-	 *
-	 * });
+ *
+ * });
  *
  * ...and so on.
  *
@@ -39,8 +39,64 @@ jQuery(function () {
       loadUpload();
     });
   }
+
 });
 
+jQuery(window).on('load', function () {
+  setTimeout(hookMediaGrid, 500);
+});
+
+window.hookMediaGrid = function () {
+  var container = jQuery('.attachments-browser .attachments');
+
+  if (!container.length) {
+    return;
+  }
+
+  var children = container.find('.attachment'),
+    attachmentIds = [];
+
+  // collect all image-ids
+  children.each(function (index, element) {
+    attachmentIds.push(jQuery(element).data('id'));
+  });
+
+  if (!attachmentIds.length) {
+    return;
+  }
+
+  jQuery.get(
+    ajaxurl + '?action=postgalleryGetGroupedMedia&attachmentids=' + attachmentIds.join(','),
+    function (data) {
+      console.info('ajax', JSON.parse(data));
+      data = JSON.parse(data);
+
+      for (var index in data) {
+        var parent = data[index],
+          groupContainer = jQuery('<div class="media-group-by-parent" data-parent="' + index + '" />');
+
+        groupContainer.append('<h2>' + parent.title + '</h2>');
+
+        for (var attachmentIndex in data[index].posts) {
+          var posts = data[index].posts,
+            attachmentId = posts[attachmentIndex],
+            element = container.find('.attachment[data-id="' + attachmentId + '"]');
+
+          element.appendTo(groupContainer);
+        }
+
+        groupContainer.append('<div style="clear:left;" />');
+
+        groupContainer.appendTo(container);
+
+        console.info('parent', parent.title, index);
+
+      }
+    }
+  );
+
+  console.info('hood media', container, attachmentIds);
+};
 
 window.initPostGallery = function () {
   if (!$) {
@@ -116,7 +172,6 @@ function initSortable() {
     });
   }
 }
-
 
 
 function deleteImages(path) {
