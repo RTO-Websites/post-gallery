@@ -80,7 +80,7 @@ if ( $success ) {
     // Return image
     if ( file_exists( $imagepath ) ) {
         $fullUrl = get_bloginfo( 'wpurl' ) . $uploadUrl . '/gallery/' . $uploadFolder . '/' . $filename;
-        $attachmentId = \Inc\PostGallery::checkForAttachmentData( $fullUrl, $imagepath, $postid );
+        $attachmentId = \Inc\PostGallery::checkForAttachmentData( $fullUrl, $postid );
 
         $thumbInstance = Thumb::getInstance();
         $thumb = $thumbInstance->getThumb( [

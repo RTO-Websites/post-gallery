@@ -472,7 +472,7 @@ class PostGallery {
                     $imageTitle = '';
                     $imageOptions = '';
                     $imageDesc = '';
-                    $attachmentId = self::checkForAttachmentData( $fullUrl, $path, $postid );
+                    $attachmentId = self::checkForAttachmentData( $fullUrl, $postid );
                     if ( !empty( $attachmentId ) ) {
                         $attachment = get_post( $attachmentId );
                         $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
@@ -511,10 +511,23 @@ class PostGallery {
      * @param $parentId
      * @return int|null|string|\WP_Error
      */
-    public static function checkForAttachmentData( $fullUrl, $path, $parentId ) {
+    public static function checkForAttachmentData( $fullUrl, $parentId ) {
+        if ( strpos( $fullUrl, '/gallery/' ) === false ) {
+            return false;
+        }
+
         $attachmentId = self::getPostIdFromGuid( $fullUrl );
 
+        /*if ( strpos( $path, ABSPATH ) === false ) {
+            $path = ABSPATH . '/' . $path;
+        }*/
+
+        $path = str_replace( get_bloginfo( 'wpurl' ), ABSPATH, $fullUrl );
+
         if ( !empty( $attachmentId ) ) {
+            /* require_once( ABSPATH . 'wp-admin/includes/image.php' );
+            $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
+            wp_update_attachment_metadata( $attachmentId, $attachData ); */
             return $attachmentId;
         }
 
@@ -522,35 +535,16 @@ class PostGallery {
 
         // Check the type of file. We'll use this as the 'post_mime_type'.
         $filetype = wp_check_filetype( basename( $path ), null );
-
-
-        // get old data
-        $titles = get_post_meta( $parentId, 'postgalleryTitles', true );
-        $descs = get_post_meta( $parentId, 'postgalleryDescs', true );
-        $alts = get_post_meta( $parentId, 'postgalleryAltAttributes', true );
-        $imageOptions = get_post_meta( $parentId, 'postgalleryImageOptions', true );
-
         $pathSplit = explode( '/', $path );
         $filename = array_pop( $pathSplit );
 
-        if ( !is_array( $titles ) ) {
-            $titles = json_decode( json_encode( $titles ), true );
-        }
-        if ( !is_array( $descs ) ) {
-            $descs = json_decode( json_encode( $descs ), true );
-        }
-        if ( !is_array( $alts ) ) {
-            $alts = json_decode( json_encode( $alts ), true );
-        }
-        if ( !is_array( $imageOptions ) ) {
-            $imageOptions = json_decode( json_encode( $imageOptions ), true );
-        }
+        $legacyData = self::getLegacyData( $parentId );
 
-        $imageTitle = !empty( $titles[$filename] )
-            ? $titles[$filename]
-            : preg_replace( '/\.[^.]+$/', '', basename( $path ) );
+        $imageTitle = !empty( $legacyData['titles'][$filename] )
+            ? $legacyData['titles'][$filename]
+            : ''; //preg_replace( '/\.[^.]+$/', '', basename( $path ) );
 
-        $imageDesc = !empty( $descs[$filename] ) ? $descs[$filename] : '';
+        $imageDesc = !empty( $legacyData['descs'][$filename] ) ? $legacyData['descs'][$filename] : '';
 
         // Prepare an array of post data for the attachment.
         $attachment = array(
@@ -571,14 +565,48 @@ class PostGallery {
         $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
         wp_update_attachment_metadata( $attachmentId, $attachData );
 
-        if ( !empty( $alts[$filename] ) ) {
-            update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alts[$filename] );
+        if ( !empty( $legacyData['alts'][$filename] ) ) {
+            update_post_meta( $attachmentId, '_wp_attachment_image_alt', $legacyData['alts'][$filename] );
         }
-        if ( !empty( $imageOptions[$filename] ) ) {
-            update_post_meta( $attachmentId, '_postgallery-image-options', $imageOptions[$filename] );
+        if ( !empty( $legacyData['imageOptions'][$filename] ) ) {
+            update_post_meta( $attachmentId, '_postgallery-image-options', $legacyData['imageOptions'][$filename] );
         }
 
         return $attachmentId;
+    }
+
+    /**
+     * Return legacy data from post-meta of parent-post
+     *
+     * @param $postid
+     * @return array
+     */
+    public static function getLegacyData( $postid ) {
+        // get legacy data
+        $titles = get_post_meta( $postid, 'postgalleryTitles', true );
+        $descs = get_post_meta( $postid, 'postgalleryDescs', true );
+        $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
+        $imageOptions = get_post_meta( $postid, 'postgalleryImageOptions', true );
+
+        if ( !is_array( $titles ) ) {
+            $titles = json_decode( json_encode( $titles ), true );
+        }
+        if ( !is_array( $descs ) ) {
+            $descs = json_decode( json_encode( $descs ), true );
+        }
+        if ( !is_array( $alts ) ) {
+            $alts = json_decode( json_encode( $alts ), true );
+        }
+        if ( !is_array( $imageOptions ) ) {
+            $imageOptions = json_decode( json_encode( $imageOptions ), true );
+        }
+
+        return [
+            'titles' => $titles,
+            'descs' => $descs,
+            'alts' => $alts,
+            'imageOptions' => $imageOptions,
+        ];
     }
 
     /**
@@ -997,7 +1025,7 @@ class PostGallery {
      */
     public static function getPostIdFromGuid( $guid ) {
         global $wpdb;
-        return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid=%s", $guid ) );
+        return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid=%s", $guid ) );
     }
 
     public static function urlIsThumbnail( $attachmentUrl = '' ) {

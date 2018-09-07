@@ -140,3 +140,70 @@
 .input-type-headline .field-label {
   font-size: 1.3em;
 }
+
+.media-group-headline {
+  display: block;
+  position: relative;
+  margin-left: 0.5em;
+}
+
+.media-group-headline a {
+  text-decoration: none;
+}
+
+.media-group-headline a.media-group-permalink {
+  display: inline-block;
+  margin-left: 0.5em;
+}
+
+.media-group-by-parent {
+  position: relative;
+  clear: left;
+}
+
+.media-group-by-parent .attachment .media-group-path {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  font-size: 0.8em;
+  text-align: center;
+  /*overflow: hidden;
+  text-overflow: ellipsis;*/
+  word-break: break-all;
+}
+
+.media-group-by-parent .attachment .media-group-path .media-filename {
+  font-weight: bold;
+}
+
+.media-group-by-parent ul::after {
+  content: '';
+  display: block;
+  clear: left;
+}
+
+.media-group-by-parent .attachment .media-group-label {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 0px 5px 0px 25px;
+  background-color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8em;
+  z-index: 10;
+}
+
+.media-group-by-parent .attachment .media-group-label::before {
+  font-family: Dashicons;
+  display: inline;
+  font-size: 1.8em;
+  left: 4px;
+  top: 1px;
+  position: absolute;
+}
+.media-group-by-parent .attachment .media-group-label.is-postgallery-image::before {
+  content: "\f233 ";
+}
+
+.media-group-by-parent .attachment .media-group-label.is-post-thumbnail::before {
+  content: "\f128 ";
+}

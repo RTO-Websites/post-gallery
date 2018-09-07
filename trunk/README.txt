@@ -34,6 +34,11 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.5.0 =
+* Create attachment-posts for every image
+* Add grouped media-grid
+* Remove experimental wp-gallery-hooks
+
 = 1.4.1 =
 * Do some refactoring
 

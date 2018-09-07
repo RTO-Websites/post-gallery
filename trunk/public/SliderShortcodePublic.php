@@ -125,7 +125,7 @@ class SliderShortcodePublic {
         $images = PostGallery::getImages( $sliderid );
         $class = '';
 
-        // get from sgortcode-arguments
+        // get from shortcode-arguments
         if ( !empty( $args['width'] ) ) {
             $width = $args['width'];
         }

@@ -218,32 +218,58 @@ class PostGalleryAdmin {
         ] );
 
         $result = [
-            'none' => [
+            '000none' => [
                 'title' => __( 'Unattached' ),
                 'posts' => [],
             ],
         ];
 
         foreach ( $attachments as $attachment ) {
+            $url = wp_get_attachment_image_url( $attachment->ID, 'full' );
             if ( empty( $attachment->post_parent ) ) {
                 // not attached
-                $result['none']['posts'][] = $attachment->ID;
+                $result['000none']['posts'][] = [ 'id' => $attachment->ID, 'url' => $url ];
+                continue;
+            }
+            $parent = get_post( $attachment->post_parent );
+
+            if ( $parent->post_type === 'revision' ) {
+                // not attached
+                $result['000none']['posts'][] = $attachment->ID;
                 continue;
             }
 
-            if ( empty( $result[$attachment->post_parent] ) ) {
+            $key = $parent->post_title . '-' . $attachment->post_parent;
+            $title = !empty( $parent->post_title ) ? $parent->post_title : __( 'Undefined' ) . ' (' . $parent->post_name . ')';
+
+            $cats = wp_get_post_categories( $parent->ID );
+            if ( !empty( $cats ) ) {
+                $cat = get_category( array_shift( $cats ) );
+                if ( !empty( $cat ) && !empty( $cat->name ) ) {
+                    $key = $cat->name . '-' . $key;
+                    $title = $cat->name . ' - ' . $title;
+                }
+
+            }
+
+            if ( empty( $result[$key] ) ) {
                 // group not yet in result, so add it
-                $parent = get_post( $attachment->post_parent );
-                $result[$attachment->post_parent] = [
-                    'title' => $parent->post_title,
+                $result[$key] = [
+                    'title' => $title,
+                    'id' => $parent->ID,
+                    'thumbnail' => get_post_meta( $parent->ID, '_thumbnail_id', true ),
+                    'permalink' => get_the_permalink( $parent->ID ),
+                    'adminlink' => admin_url( 'post.php?post=' . $parent->ID . '&action=edit' ),
                     'posts' => [],
                 ];
             }
 
-            $result[$attachment->post_parent]['posts'][] = $attachment->ID;
+            $result[$key]['posts'][] = [ 'id' => $attachment->ID, 'url' => $url ];;
         }
 
-        echo json_encode($result);
+        asort( $result );
+
+        echo json_encode( $result );
 
         exit();
     }
@@ -445,26 +471,6 @@ class PostGalleryAdmin {
             @chmod( $uploadDir, octdec( '0777' ) );
         }
 
-        // Load image titles and description
-        /* $titles = get_post_meta( $currentLangPost->ID, 'postgalleryTitles', true );
-        $descs = get_post_meta( $currentLangPost->ID, 'postgalleryDescs', true );
-        $imageOptions = get_post_meta( $currentLangPost->ID, 'postgalleryImageOptions', true );
-        $altAttributes = get_post_meta( $currentLangPost->ID, 'postgalleryAltAttributes', true );
-
-
-        // legacy
-        if ( !is_array( $titles ) ) {
-            $titles = json_decode( json_encode( $titles ), true );
-        }
-        if ( !is_array( $descs ) ) {
-            $descs = json_decode( json_encode( $descs ), true );
-        }
-        if ( !is_array( $altAttributes ) ) {
-            $altAttributes = json_decode( json_encode( $altAttributes ), true );
-        }
-        if ( !is_array( $imageOptions ) ) {
-            $imageOptions = json_decode( json_encode( $imageOptions ), true );
-        } */
         $titles = [];
         $descs = [];
         $altAttributes = [];
@@ -506,7 +512,7 @@ class PostGalleryAdmin {
                         'scale' => 0,
                     ] );
 
-                    $attachmentId = PostGallery::getPostIdFromGuid( $uploadFullUrl . '/' . $file );
+                    $attachmentId = PostGallery::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
                     if ( !empty( $attachmentId ) ) {
                         $imgMeta = wp_prepare_attachment_for_js( $attachmentId );
                         $titles[$file] = empty( $imgMeta['title'] ) ? '' : $imgMeta['title'];
