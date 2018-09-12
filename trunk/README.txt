@@ -34,6 +34,9 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.5.1 =
+* Fix upload error
+
 = 1.5.0 =
 * Create attachment-posts for every image
 * Add grouped media-grid

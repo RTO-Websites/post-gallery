@@ -1,6 +1,6 @@
 <?php
 
-use Inc\PostGallery\Thumb\Thumb;
+use Thumb\Thumb;
 
 if ( !defined( 'ABSPATH' ) ) exit;
 
