@@ -582,6 +582,11 @@ class PostGalleryAdmin {
         if ( !filter_has_var( INPUT_POST, 'post_type' ) ) {
             return;
         }
+        $postType = filter_input( INPUT_POST, 'post_type' );
+        if ( $postType == 'attachment') {
+            return;
+        }
+
 
         $curLangPost = $post;
         $curLangPostId = $postId;
@@ -589,13 +594,16 @@ class PostGalleryAdmin {
         $imageDir = PostGallery::getImageDir( $post );
         $uploads = wp_upload_dir();
 
+        if ( empty( $imageDir ) ) {
+            return;
+        }
+
         $postgalleryMainlangId = filter_input( INPUT_POST, 'postgalleryMainlangId' );
         if ( !empty( $postgalleryMainlangId ) && $postId !== $postgalleryMainlangId ) {
             $postId = $postgalleryMainlangId;
             $post = get_post( $postId );
         }
 
-        $postType = filter_input( INPUT_POST, 'post_type' );
         if ( $postType == 'page' ) {
             if ( !current_user_can( 'edit_page', $postId ) ) {
                 return;
@@ -663,7 +671,7 @@ class PostGalleryAdmin {
         $currentImageDir = filter_input( INPUT_POST, 'currentImagedir' );
 
         // if post-title change, then move pictures
-        if ( !empty( $currentImageDir ) && $currentImageDir !== $imageDir ) {
+        if ( !empty( $imageDir ) && !empty( $currentImageDir ) && $currentImageDir !== $imageDir ) {
             $uploads = wp_upload_dir();
             $uploadDir = $uploads['basedir'] . '/gallery/' . $currentImageDir;
             $uploadDirNew = $uploads['basedir'] . '/gallery/' . $imageDir;
