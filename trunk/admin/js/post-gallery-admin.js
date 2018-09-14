@@ -43,7 +43,10 @@ jQuery(function () {
 
 jQuery(window).on('load', function () {
   setTimeout(hookMediaGrid, 400);
-  wp.media.frame.on('open', hookMediaGrid);
+
+  if (typeof(wp.media) !== 'undefined') {
+    wp.media.frame.on('open', hookMediaGrid);
+  }
 
   setInterval(function () {
     if (jQuery('.attachments > .attachment:not([data-id="true"])').length) {
