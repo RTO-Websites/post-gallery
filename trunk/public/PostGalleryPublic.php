@@ -59,6 +59,7 @@ class PostGalleryPublic {
     private $options;
 
     public $sliderClass = '';
+    public $liteboxClass = '';
     public $jsFunction = 'owlCarousel';
 
     /**
@@ -89,6 +90,10 @@ class PostGalleryPublic {
             default:
                 $this->sliderClass = ' owl-carousel owl-theme';
                 break;
+        }
+
+        if ($this->options['arrows']) {
+            $this->liteboxClass .= ' show-arrows';
         }
 
         new SliderShortcodePublic( $pluginName, $version );
@@ -438,6 +443,11 @@ class PostGalleryPublic {
         }
     }
 
+    /**
+     * Inserts script with settings in header
+     *
+     * @param $header
+     */
     public function insertHeaderscript( $header ) {
         $args = $this->options;
         $sliderType = $this->options['sliderType'];
@@ -482,6 +492,46 @@ class PostGalleryPublic {
         $header = $header . $script;
 
         echo $header;
+    }
+
+    /**
+     * Insert styles
+     *
+     * @param $header
+     */
+    public function insertHeaderstyle( $header ) {
+        $args = $this->options;
+        $style = '<style class="postgallery-style">';
+
+        /* if ( $args['arrows'] ) {
+
+        } */
+
+        // arrows und close-button color
+        $style .= '.litebox-gallery.show-arrows::after,
+            .litebox-gallery.show-arrows::before,
+            .litebox-gallery .close-button {
+                color: ' . $args['mainColor'] . ';
+            }';
+
+        // highlight color on active thumb
+        $style .= '.litebox-gallery .thumb-container .current-img img {
+                box-shadow: 0 0 0px 2px ' . $args['mainColor'] . ';
+            }';
+
+        // gallery background-color
+        $style .= '.litebox-gallery {
+                background-color: ' . $args['secondColor'] . ';
+            }';
+
+        // owl-dots color
+        $style .= '.owl-theme .owl-dots .owl-dot.active span, 
+            .owl-theme .owl-dots .owl-dot:hover span {
+                background-color: '. $args['mainColor'].';
+             }';
+
+        $style .= '</style>';
+        echo $style . $header;
     }
 
     /**

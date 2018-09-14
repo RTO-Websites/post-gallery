@@ -34,6 +34,10 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.5.2 =
+* Fix removed images on post-update
+* Add options for arrows and color in litebox
+
 = 1.5.1 =
 * Fix upload error
 

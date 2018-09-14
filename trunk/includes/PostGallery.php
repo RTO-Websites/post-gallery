@@ -319,6 +319,8 @@ class PostGallery {
 
         // Embed headerscript
         add_action( 'wp_head', [ $pluginPublic, 'insertHeaderscript' ] );
+        // Embed headerstyle
+        add_action( 'wp_head', [ $pluginPublic, 'insertHeaderstyle' ] );
 
         // Embed footer-html
         add_action( 'wp_footer', [ $pluginPublic, 'insertFooterHtml' ] );
@@ -1003,6 +1005,7 @@ class PostGallery {
             'owlTheme' => get_theme_mod( 'postgallery_owlTheme', 'default' ),
             'clickEvents' => get_theme_mod( 'postgallery_clickEvents', true ),
             'keyEvents' => get_theme_mod( 'postgallery_keyEvents', true ),
+            'arrows' => get_theme_mod( 'postgallery_arrows', false ),
             'asBg' => get_theme_mod( 'postgallery_asBg', false ),
             'owlConfig' => get_theme_mod( 'postgallery_owlConfig', 'items: 1' ),
             'owlThumbConfig' => get_theme_mod( 'postgallery_owlThumbConfig', '' ),
@@ -1013,6 +1016,9 @@ class PostGallery {
             'animateOut' => get_theme_mod( 'postgallery_animateOut', '' ),
             'animateIn' => get_theme_mod( 'postgallery_animateIn', '' ),
             'autoplayTimeout' => get_theme_mod( 'postgallery_autoplayTimeout', '' ),
+
+            'mainColor' => get_theme_mod( 'postgallery_mainColor', '#fff' ),
+            'secondColor' => get_theme_mod( 'postgallery_secondColor', '#333' ),
         ];
     }
 

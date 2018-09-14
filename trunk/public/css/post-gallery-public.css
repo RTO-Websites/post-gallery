@@ -206,3 +206,31 @@ body.liteboxgallery-open {
   max-height: 75px;
   max-width: 100%;
 }
+
+.litebox-gallery .owl-nav {
+  top: -75px;
+  position: relative;
+}
+
+.litebox-gallery.show-arrows::after,
+.litebox-gallery.show-arrows::before {
+  transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+  font-size: 32px;
+  color: #fff;
+  padding-left: 15px;
+  padding-right: 15px;
+  pointer-events: none;
+  z-index: 50000;
+}
+
+.litebox-gallery.show-arrows::before {
+  content: '\2BC7';
+  left: 0;
+}
+
+.litebox-gallery.show-arrows::after {
+  content: '\2BC8';
+  right: 0;
+}

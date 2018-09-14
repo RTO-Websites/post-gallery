@@ -216,6 +216,11 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'label' => __( 'Enable Keypress-Events', $this->textdomain ),
                         'default' => true,
                     ],
+                    'arrows' => [
+                        'type' => 'checkbox',
+                        'label' => __( 'Show arrows', $this->textdomain ),
+                        'default' => false,
+                    ],
                     'asBg' => [
                         'type' => 'checkbox',
                         'label' => __( 'Images as Background', $this->textdomain ),
@@ -227,6 +232,17 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'label' => 'Items',
                         'type' => 'number',
                         'default' => 1,
+                    ],
+
+                    'mainColor' => [
+                        'type' => 'text',
+                        'label' => __( 'Main-Color', $this->textdomain ),
+                        'default' => '#fff',
+                    ],
+                    'secondColor' => [
+                        'type' => 'text',
+                        'label' => __( 'Second-Color', $this->textdomain ),
+                        'default' => '#333',
                     ],
 
                     'owlConfig' => [
