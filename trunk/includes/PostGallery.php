@@ -478,9 +478,11 @@ class PostGallery {
                     if ( !empty( $attachmentId ) ) {
                         $attachment = get_post( $attachmentId );
                         $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
-                        $imageTitle = $attachment->post_title;
                         $imageOptions = get_post_meta( $attachmentId, '_postgallery-image-options', true );
-                        $imageDesc = $attachment->post_content;
+                        if ( !empty( $attachment ) ) {
+                            $imageTitle = $attachment->post_title;
+                            $imageDesc = $attachment->post_content;
+                        }
                     }
 
                     $images[$file] = [
@@ -518,13 +520,11 @@ class PostGallery {
             return false;
         }
 
-        $attachmentId = self::getPostIdFromGuid( $fullUrl );
+        $attachmentId = self::getAttachmentIdByUrl( $fullUrl );
 
         /*if ( strpos( $path, ABSPATH ) === false ) {
             $path = ABSPATH . '/' . $path;
         }*/
-
-        $path = str_replace( get_bloginfo( 'wpurl' ), ABSPATH, $fullUrl );
 
         if ( !empty( $attachmentId ) ) {
             /* require_once( ABSPATH . 'wp-admin/includes/image.php' );
@@ -532,6 +532,13 @@ class PostGallery {
             wp_update_attachment_metadata( $attachmentId, $attachData ); */
             return $attachmentId;
         }
+
+        // get relative path
+        $uploads = wp_upload_dir();
+        $uploadDir = $uploads['basedir'];
+        $uploadUrl = $uploads['baseurl'];
+        $path = str_replace( $uploadUrl, '', $fullUrl );
+
 
         // no attachment exists, create new
 
@@ -564,7 +571,7 @@ class PostGallery {
         require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
         // Generate the metadata for the attachment, and update the database record.
-        $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
+        $attachData = wp_generate_attachment_metadata( $attachmentId, $fullUrl );
         wp_update_attachment_metadata( $attachmentId, $attachData );
 
         if ( !empty( $legacyData['alts'][$filename] ) ) {
@@ -722,7 +729,7 @@ class PostGallery {
      * @return string
      */
     static function getImageDir( $wpost ) {
-        $postName = $wpost->post_title;
+        $postName = empty( $wpost->post_title ) ? 'undefined' : $wpost->post_title;
         $postId = $wpost->ID;
 
         $blockedPostTypes = [
@@ -1024,14 +1031,69 @@ class PostGallery {
 
 
     /**
+     * DEPRECATED
+     *
+     * use getAttachmentIdByUrl instead
+     *
      * Returns post-id for a guid
      *
      * @param $guid
      * @return null|string
      */
     public static function getPostIdFromGuid( $guid ) {
+        //return self::getAttachmentIdByUrl( $guid );
         global $wpdb;
         return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid=%s", $guid ) );
+    }
+
+    /**
+     * Get an attachment ID given a URL.
+     *
+     * @param string $url
+     *
+     * @return int Attachment ID on success, 0 on failure
+     */
+    public static function getAttachmentIdByUrl( $url ) {
+        global $wpdb;
+
+        // get relative path
+        $uploads = wp_upload_dir();
+        $uploadDir = $uploads['basedir'];
+        $uploadUrl = $uploads['baseurl'];
+        $path = str_replace( $uploadUrl, '', $url );
+
+        $attachment_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path ) );
+
+        if ( !empty( $attachment_id ) ) {
+            return $attachment_id;
+        }
+
+
+        // fallback
+        $attachment_id = 0;
+        $dir = wp_upload_dir();
+        if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) { // Is URL in uploads directory?
+            //$file = str_replace( $dir['baseurl'] . '/', '', $url );
+            $query_args = array(
+                'post_type' => 'attachment',
+                'post_status' => 'inherit',
+                'fields' => 'ids',
+                'meta_query' => array(
+                    array(
+                        'value' => $path,
+                        'compare' => 'LIKE',
+                        'key' => '_wp_attached_file',
+                    ),
+                ),
+            );
+            $query = new \WP_Query( $query_args );
+            if ( $query->have_posts() ) {
+                foreach ( $query->posts as $attachment_id ) {
+                    return $attachment_id;
+                }
+            }
+        }
+        return $attachment_id;
     }
 
     public static function urlIsThumbnail( $attachmentUrl = '' ) {

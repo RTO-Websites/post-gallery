@@ -210,6 +210,7 @@ class PostGalleryAdmin {
      * Ajax task to get grouped media-ids by parent-post
      */
     public function getGroupedMedia() {
+        ob_start();
         $attachmentIds = filter_input( INPUT_GET, 'attachmentids' );
         $attachments = get_posts( [
             'post_type' => 'attachment',
@@ -264,10 +265,11 @@ class PostGalleryAdmin {
                 ];
             }
 
-            $result[$key]['posts'][] = [ 'id' => $attachment->ID, 'url' => $url ];;
+            $result[$key]['posts'][] = [ 'id' => $attachment->ID, 'url' => $url ];
         }
 
         asort( $result );
+        ob_clean();
 
         echo json_encode( $result );
 
@@ -583,7 +585,7 @@ class PostGalleryAdmin {
             return;
         }
         $postType = filter_input( INPUT_POST, 'post_type' );
-        if ( $postType == 'attachment') {
+        if ( $postType == 'attachment' ) {
             return;
         }
 
@@ -598,11 +600,20 @@ class PostGalleryAdmin {
             return;
         }
 
+        if ( 'auto-draft' == $post->post_status ) {
+            return;
+        }
+
         $postgalleryMainlangId = filter_input( INPUT_POST, 'postgalleryMainlangId' );
         if ( !empty( $postgalleryMainlangId ) && $postId !== $postgalleryMainlangId ) {
             $postId = $postgalleryMainlangId;
             $post = get_post( $postId );
+
+            if ( 'auto-draft' == $post->post_status ) {
+                return;
+            }
         }
+
 
         if ( $postType == 'page' ) {
             if ( !current_user_can( 'edit_page', $postId ) ) {
@@ -630,6 +641,42 @@ class PostGalleryAdmin {
         if ( filter_has_var( INPUT_POST, 'postgalleryImagesort' ) ) {
             update_post_meta( $postId, 'postgalleryImagesort', filter_input( INPUT_POST, 'postgalleryImagesort' ) );
         }
+
+        $currentImageDir = filter_input( INPUT_POST, 'currentImagedir' );
+
+        // if post-title change, then move pictures
+        if ( !empty( $imageDir ) && !empty( $currentImageDir ) && $currentImageDir !== $imageDir ) {
+            $uploads = wp_upload_dir();
+            $uploadDir = $uploads['basedir'] . '/gallery/' . $currentImageDir;
+            $uploadDirNew = $uploads['basedir'] . '/gallery/' . $imageDir;
+            $imageUrlOld = $uploads['baseurl'] . '/gallery/' . $currentImageDir;
+            $imageUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
+            if ( file_exists( $uploadDir ) ) {
+                $files = scandir( $uploadDir );
+                @mkdir( $uploadDirNew );
+                @chmod( $uploadDirNew, octdec( '0777' ) );
+
+                foreach ( $files as $file ) {
+                    if ( is_dir( $uploadDir . '/' . $file ) ) {
+                        continue;
+                    }
+                    copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
+                    unlink( $uploadDir . '/' . $file );
+
+                    if ( PostGallery::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
+                        continue;
+                    }
+
+                    $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
+                    if ( $attachmentId ) {
+                        update_attached_file( $attachmentId, '/gallery/' . $imageDir . '/' . $file );
+                        update_metadata( 'post', $attachmentId, '_wp_attached_file', '/gallery/' . $imageDir . '/' . $file );
+                    }
+                }
+                @rmdir( $uploadDir );
+            }
+        }
+
         // save image titles
         if ( filter_has_var( INPUT_POST, 'postgalleryTitles' ) ) {
             $titles = filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
@@ -639,7 +686,13 @@ class PostGalleryAdmin {
 
             foreach ( $titles as $filename => $value ) {
                 $imageUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
-                $attachmentId = PostGallery::getPostIdFromGuid( $imageUrl . '/' . $filename );
+                $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrl . '/' . $filename );
+
+                // hotfix
+                if (empty( $attachmentId ) && !empty( $imageUrlOld ) ) { echo 'hotfix';
+                    $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrlOld . '/' . $filename );
+                }
+
                 if ( empty( $attachmentId ) ) {
                     continue;
                 }
@@ -654,40 +707,6 @@ class PostGalleryAdmin {
                 update_post_meta( $attachmentId, '_postgallery-image-options', $imgOptions[$filename] );
             }
             //update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
-        }
-        // save image descriptions
-        /* if ( filter_has_var( INPUT_POST, 'postgalleryDescs' ) ) {
-            update_post_meta( $postId, 'postgalleryDescs', filter_input( INPUT_POST, 'postgalleryDescs', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
-        }
-        // save image alt
-        if ( filter_has_var( INPUT_POST, 'postgalleryAltAttributes' ) ) {
-            update_post_meta( $postId, 'postgalleryAltAttributes', filter_input( INPUT_POST, 'postgalleryAltAttributes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
-        }
-        // save image alt
-        if ( filter_has_var( INPUT_POST, 'postgalleryImageOptions' ) ) {
-            update_post_meta( $postId, 'postgalleryImageOptions', filter_input( INPUT_POST, 'postgalleryImageOptions', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
-        } */
-
-        $currentImageDir = filter_input( INPUT_POST, 'currentImagedir' );
-
-        // if post-title change, then move pictures
-        if ( !empty( $imageDir ) && !empty( $currentImageDir ) && $currentImageDir !== $imageDir ) {
-            $uploads = wp_upload_dir();
-            $uploadDir = $uploads['basedir'] . '/gallery/' . $currentImageDir;
-            $uploadDirNew = $uploads['basedir'] . '/gallery/' . $imageDir;
-            if ( file_exists( $uploadDir ) ) {
-                $files = scandir( $uploadDir );
-                @mkdir( $uploadDirNew );
-                @chmod( $uploadDirNew, octdec( '0777' ) );
-
-                foreach ( $files as $file ) {
-                    if ( !is_dir( $uploadDir . '/' . $file ) ) {
-                        copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
-                        unlink( $uploadDir . '/' . $file );
-                    }
-                }
-                @rmdir( $uploadDir );
-            }
         }
     }
 

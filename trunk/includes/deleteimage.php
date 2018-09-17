@@ -37,7 +37,7 @@ if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
         if ( $file != "." && $file != ".." && !is_dir( $dirname . "/" . $file ) ) {
             $success = unlink( $dirname . "/" . $file );
 
-            $attachmentId = \Inc\PostGallery::getPostIdFromGuid( $uploadUrl . '/gallery/' . $path . '/' . $file );
+            $attachmentId = \Inc\PostGallery::getAttachmentIdByUrl( $uploadUrl . '/gallery/' . $path . '/' . $file );
             if ( $attachmentId ) {
                 wp_delete_attachment( $attachmentId );
             }
@@ -56,7 +56,7 @@ if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
     $file = array_pop( $file );
 
     // delete attachment and thumbnails
-    $attachmentId = \Inc\PostGallery::getPostIdFromGuid( $uploadUrl . '/gallery/' . $path );
+    $attachmentId = \Inc\PostGallery::getAttachmentIdByUrl( $uploadUrl . '/gallery/' . $path );
     if ( $attachmentId ) {
         wp_delete_attachment( $attachmentId );
     }

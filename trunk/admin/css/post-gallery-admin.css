@@ -170,6 +170,7 @@
   /*overflow: hidden;
   text-overflow: ellipsis;*/
   word-break: break-all;
+  min-height: 6em;
 }
 
 .media-group-by-parent .attachment .media-group-path .media-filename {

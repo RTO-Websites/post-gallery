@@ -34,6 +34,10 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.5.3 =
+* Fix renaming of posts and duplicated attachment-posts
+* Fix some other issues
+
 = 1.5.2 =
 * Fix removed images on post-update
 * Add options for arrows and color in litebox

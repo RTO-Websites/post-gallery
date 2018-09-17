@@ -43,7 +43,6 @@ jQuery(function () {
 
 jQuery(window).on('load', function () {
   setTimeout(hookMediaGrid, 400);
-
   if (typeof(wp.media) !== 'undefined') {
     wp.media.frame.on('open', hookMediaGrid);
   }
@@ -96,7 +95,12 @@ window.hookMediaGrid = function () {
   jQuery.get(
     ajaxurl + '?action=postgalleryGetGroupedMedia&attachmentids=' + attachmentIds.join(','),
     function (data) {
-      data = JSON.parse(data);
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        console.info('json parse fail', data);
+        return;
+      }
 
       // loop groups
       for (var index in data) {

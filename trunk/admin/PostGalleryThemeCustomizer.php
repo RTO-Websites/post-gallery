@@ -94,7 +94,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'choices' => array_merge(
                             $this->postgalleryAdmin->getCustomTemplates(),
                             $this->postgalleryAdmin->defaultTemplates
-                        ),
+                            ),
                     ],
 
                     'thumbWidth' => [
@@ -235,12 +235,12 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'mainColor' => [
-                        'type' => 'color',
+                        'type' => 'text',
                         'label' => __( 'Main-Color', $this->textdomain ),
                         'default' => '#fff',
                     ],
                     'secondColor' => [
-                        'type' => 'color',
+                        'type' => 'text',
                         'label' => __( 'Second-Color', $this->textdomain ),
                         'default' => '#333',
                     ],
@@ -311,7 +311,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     'transport' => !empty( $field['transport'] ) ? $field['transport'] : 'refresh',
                 ] );
 
-                $controlArgs = [
+                $wp_customize->add_control( $controlId, [
                     'label' => __( $field['label'], $this->textdomain ),
                     'section' => $sectionId,
                     'type' => !empty( $field['type'] ) ? $field['type'] : 'text',
@@ -319,19 +319,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     'description' => !empty( $field['description'] ) ? __( $field['description'], $this->textdomain ) : '',
                     'choices' => !empty( $field['choices'] ) ? $field['choices'] : null,
                     'input_attrs' => !empty( $field['input_attrs'] ) ? $field['input_attrs'] : null,
-                ];
-
-                switch ( $field['type'] ) {
-                    case 'color':
-                        $wp_customize->add_control( new WP_Customize_Color_Control(
-                            $wp_customize,
-                            $controlId,
-                            $controlArgs ) );
-                        break;
-                    default:
-                        $wp_customize->add_control( $controlId, $controlArgs );
-                        break;
-                }
+                ] );
             }
         }
     }
