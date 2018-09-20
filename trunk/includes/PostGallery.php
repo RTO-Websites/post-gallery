@@ -295,6 +295,7 @@ class PostGallery {
         add_action( 'wp_ajax_postgalleryNewGallery', [ $pluginAdmin, 'ajaxCreateGallery' ] );
         add_action( 'wp_ajax_postgalleryGetGroupedMedia', [ $pluginAdmin, 'getGroupedMedia' ] );
 
+        add_filter( 'sanitize_file_name', [ $pluginAdmin, 'sanitizeFilename' ] );
     }
 
     /**

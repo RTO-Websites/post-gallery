@@ -40,9 +40,7 @@ if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $uploadFo
 
     $errorMsg = '';
     $filename = str_replace( [ 'http://', 'https://', '//:' ], '', esc_url( $fileHandler->getName() ) ); // imagepath
-    $filename = str_replace( [ '%20', ' ' ], '_', $filename );
-    $filename = str_replace( [ 'ä', 'ö', 'ü' ], [ 'ae', 'oe', 'ue' ], $filename );
-    $filename = str_replace( [ '(', ')', '$', '&', '%', '<', '>', '[', ']', '{', '}', '?', '!', '*', '=', '+', '~' ], '', $filename );
+    $filename = sanitize_file_name( $filename );
 
     $imageTypes = [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ];
     $allowTypes = array_map( 'image_type_to_mime_type', $imageTypes );

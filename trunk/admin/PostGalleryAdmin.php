@@ -689,7 +689,7 @@ class PostGalleryAdmin {
                 $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrl . '/' . $filename );
 
                 // hotfix
-                if (empty( $attachmentId ) && !empty( $imageUrlOld ) ) { echo 'hotfix';
+                if ( empty( $attachmentId ) && !empty( $imageUrlOld ) ) {
                     $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrlOld . '/' . $filename );
                 }
 
@@ -708,6 +708,22 @@ class PostGalleryAdmin {
             }
             //update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
+    }
+
+    /**
+     * Hooks wordpress sanitize_filename and replace more special chars
+     * like €
+     *
+     * @param $filename
+     * @param string $filename_raw
+     * @return mixed
+     */
+    public function sanitizeFilename( $filename, $filename_raw = '' ) {
+        $filename = str_replace( [ '%20', ' ' ], '_', $filename );
+        $filename = str_replace( [ 'ä', 'ö', 'ü' ], [ 'ae', 'oe', 'ue' ], $filename );
+        $filename = str_replace( [ '(', ')', '$', '&', '%', '<', '>', '[', ']', '{', '}', '?', '!', '*', '=', '+', '~', '€' ], '', $filename );
+
+        return $filename;
     }
 
 
