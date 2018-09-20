@@ -43,7 +43,7 @@ jQuery(function () {
 
 jQuery(window).on('load', function () {
   setTimeout(hookMediaGrid, 400);
-  if (typeof(wp.media) !== 'undefined') {
+  if (typeof(wp.media) !== 'undefined' && typeof(wp.media.frame) !== 'undefined') {
     wp.media.frame.on('open', hookMediaGrid);
   }
 
