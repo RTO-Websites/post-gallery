@@ -184,6 +184,24 @@ body.liteboxgallery-open {
   width: auto;
 }
 
+
+.elementor-image-gallery .pg-theme-thumbs .post-gallery_thumb {
+  position: relative;
+  margin: 0 auto;
+  width: auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.elementor-image-gallery .pg-theme-thumbs {
+  font-size: 0;
+  letter-spacing: 0;
+}
+
+.elementor-image-gallery .gallery-columns-auto .gallery-item {
+  width: auto;
+}
+
 [data-pgimages] {
   cursor: pointer;
 }

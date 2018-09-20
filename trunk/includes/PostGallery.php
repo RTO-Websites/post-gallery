@@ -1001,6 +1001,7 @@ class PostGallery {
             'globalPosition' => get_theme_mod( 'postgallery_globalPosition', 'bottom' ),
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
+            'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),
             'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 150 ),
             'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 150 ),
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),

@@ -94,7 +94,28 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'choices' => array_merge(
                             $this->postgalleryAdmin->getCustomTemplates(),
                             $this->postgalleryAdmin->defaultTemplates
-                            ),
+                        ),
+                    ],
+
+                    'columns' => [
+                        'label' => __( 'Columns', $this->textdomain ),
+                        'type' => 'select',
+                        'choices' => [
+                            'auto' => 'Auto',
+                            '1' => '1',
+                            '2' => '2',
+                            '3' => '3',
+                            '4' => '4',
+                            '5' => '5',
+                            '6' => '6',
+                            '7' => '7',
+                            '8' => '8',
+                            '9' => '9',
+                            '10' => '10',
+                            '11' => '11',
+                            '12' => '12',
+                        ],
+                        'default' => 'auto'
                     ],
 
                     'thumbWidth' => [

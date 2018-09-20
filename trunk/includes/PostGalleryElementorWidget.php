@@ -2,6 +2,8 @@
 
 namespace PostGalleryWidget\Widgets;
 
+use Admin\PostGalleryAdmin;
+use Elementor\Group_Control_Border;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Pub\PostGalleryPublic;
@@ -18,10 +20,14 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class PostGalleryElementorWidget extends Widget_Base {
     public static $instances = [];
     public $textdomain;
+    public $postgalleryAdmin;
 
     public function __construct( $data = [], $args = null ) {
         $instances[] = $this;
         $this->textdomain = 'post-gallery';
+
+        $this->postgalleryAdmin = PostGalleryAdmin::getInstance();
+
         parent::__construct( $data, $args );
     }
 
@@ -135,6 +141,45 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'label' => __( 'Images', $this->textdomain ),
             ]
         );
+
+        $this->add_control(
+            'template',
+            [
+                'label' => __( 'Template', $this->textdomain ),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'thumbs',
+                'selectors' => [],
+                'options' => array_merge(
+                    ['global' => 'From Global'],
+                    $this->postgalleryAdmin->getCustomTemplates(),
+                    $this->postgalleryAdmin->defaultTemplates
+                ),
+            ]
+        );
+
+        $this->add_control(
+            'columns',
+            [
+                'label' => __( 'Columns', $this->textdomain ),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'auto',
+                'selectors' => [],
+                'options' => [
+                    'auto' => 'Auto',
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                ],
+            ]
+        );
+
         $this->add_control(
             'pgimgsource',
             [
@@ -180,6 +225,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 ],
             ]
         );
+
         $this->add_control(
             'pgmaxthumbs',
             [
@@ -255,6 +301,80 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
         $this->end_controls_section();
+
+
+
+        $this->start_controls_section(
+            'section_gallery_images',
+            [
+                'label' => __( 'Images', 'elementor' ),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'image_spacing',
+            [
+                'label' => __( 'Spacing', 'elementor' ),
+                'type' => Controls_Manager::SELECT,
+                'options' => [
+                    '' => __( 'Default', 'elementor' ),
+                    'custom' => __( 'Custom', 'elementor' ),
+                ],
+                'prefix_class' => 'gallery-spacing-',
+                'default' => '',
+            ]
+        );
+
+        $columns_margin = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
+        $columns_padding = is_rtl() ? '0 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}};' : '0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;';
+
+        $this->add_control(
+            'image_spacing_custom',
+            [
+                'label' => __( 'Image Spacing', 'elementor' ),
+                'type' => Controls_Manager::SLIDER,
+                'show_label' => false,
+                'range' => [
+                    'px' => [
+                        'max' => 100,
+                    ],
+                ],
+                'default' => [
+                    'size' => 15,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .gallery-item' => 'padding:' . $columns_padding,
+                    '{{WRAPPER}} .gallery' => 'margin: ' . $columns_margin,
+                ],
+                'condition' => [
+                    'image_spacing' => 'custom',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Border::get_type(),
+            [
+                'name' => 'image_border',
+                'selector' => '{{WRAPPER}} .gallery-item img',
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'image_border_radius',
+            [
+                'label' => __( 'Border Radius', 'elementor' ),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%' ],
+                'selectors' => [
+                    '{{WRAPPER}} .gallery-item img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -286,12 +406,27 @@ class PostGalleryElementorWidget extends Widget_Base {
             $pgInstance->setOption( 'thumbScale', $settings['pgthumbscale'] );
         }
 
+        if ( isset( $settings['columns'] ) ) {
+            $globalColumns = $pgInstance->option( 'columns' );
+            $pgInstance->setOption( 'columns', $settings['columns'] );
+        }
+
+        $template = '';
+        if ( isset( $settings['template'] ) ) {
+            $globalTemplate = $pgInstance->option( 'globalTemplate' );
+            $pgInstance->setOption( 'globalTemplate', $settings['template'] );
+            $template = $settings['template'];
+        }
+
         // get gallery
         $loadFrom = $settings['pgimgsource'];
         if ( empty( $loadFrom ) ) {
             $loadFrom = get_the_ID();
         }
-        $gallery = $pgInstance->returnGalleryHtml( '', $loadFrom );
+
+        $gallery = '<div class="elementor-image-gallery">';
+        $gallery .= $pgInstance->returnGalleryHtml( $template, $loadFrom );
+        $gallery .= '</div>';
 
         if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
@@ -323,6 +458,12 @@ class PostGalleryElementorWidget extends Widget_Base {
         }
         if ( isset( $globalScale ) ) {
             $pgInstance->setOption( 'thumbScale', $globalScale );
+        }
+        if ( isset( $globalColumns ) ) {
+            $pgInstance->setOption( 'globalColumns', $globalColumns );
+        }
+        if ( isset( $globalTemplate ) ) {
+            $pgInstance->setOption( 'globalTemplate', $globalTemplate );
         }
     }
     /**

@@ -34,6 +34,13 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.6.0
+* Add grid options to elementor-widget
+
+= 1.5.4
+* Fix js-error
+* Improve sanitizing of filenames
+
 = 1.5.3 =
 * Fix renaming of posts and duplicated attachment-posts
 * Fix some other issues

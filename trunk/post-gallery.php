@@ -20,7 +20,7 @@ use Inc\PostGalleryDeactivator;
  * Plugin Name:       PostGallery
  * Plugin URI:        https://github.com/RTO-Websites/post-gallery
  * Description:       Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
- * Version:           1.5.3
+ * Version:           1.6.0
  * Author:            RTO GmbH
  * Author URI:        https://www.rto.de
  * License:           GPL-2.0+
@@ -31,7 +31,7 @@ use Inc\PostGalleryDeactivator;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
-	die;
+    die;
 }
 
 
@@ -49,7 +49,7 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/Thumb.class.php';
  * This action is documented in includes/PostGalleryActivator.php
  */
 function activatePostGallery() {
-	PostGalleryActivator::activate();
+    PostGalleryActivator::activate();
 }
 
 /**
@@ -57,7 +57,7 @@ function activatePostGallery() {
  * This action is documented in includes/PostGalleryDeactivator.php
  */
 function deactivatePostGallery() {
-	PostGalleryDeactivator::deactivate();
+    PostGalleryDeactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activatePostGallery' );
@@ -74,8 +74,8 @@ register_deactivation_hook( __FILE__, 'deactivatePostGallery' );
  */
 function runPostGallery() {
 
-	$plugin = new PostGallery();
-	$plugin->run();
+    $plugin = new PostGallery();
+    $plugin->run();
 
 }
 runPostGallery();
