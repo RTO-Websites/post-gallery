@@ -6,6 +6,8 @@
    */
   $(function () {
     window.litebox = new LiteboxGallery(window.pgConfig.liteboxArgs);
+    // init masonry
+    window.pgInitMasonry();
   });
 
   $(window).on('resize', function () {
@@ -16,6 +18,31 @@
       });
     }, 100);
   });
+
+  window.pgInitMasonry = function () {
+    $('.pg-theme-thumbs[data-pgmasonry]').each(function (index, element) {
+      if (element.postgalleryMasonry) {
+        $(element).masonry('destroy');
+      }
+
+      if (!$(element).data('pgmasonry')) {
+        return;
+      }
+
+      element.postgalleryMasonry = $(element).masonry({
+        // set itemSelector so .grid-sizer is not used in layout
+        itemSelector: '.gallery-item',
+        // use element for option
+        columnWidth: '.gallery-item',
+        percentPosition: true,
+        horizontalOrder: $(element).data('pgmasonry') == 'horizontal',
+      });
+
+      element.postgalleryMasonry.imagesLoaded().progress(function () {
+        element.postgalleryMasonry.masonry('layout');
+      });
+    });
+  };
 
   window.getFullsizeThumbs = function (pics, owlSliderId, callback) {
     var sizes = pgCheckImageSize();
@@ -29,7 +56,7 @@
           callback(jQuery.parseJSON(data));
         }
       },
-      'error': function(jqXHR, textStatus, errorThrown) {
+      'error': function (jqXHR, textStatus, errorThrown) {
         console.log('pg load fail', jqXHR, textStatus, errorThrown);
         if (typeof(callback) === 'function') {
           callback(null);
@@ -53,7 +80,6 @@
       }
     });
   };
-
 
   window.pgCheckImageSize = function () {
     var gWidth = jQuery(window).width();
@@ -127,8 +153,16 @@
 })(jQuery);
 
 function stopOwlPropagation(element) {
-  jQuery(element).on('to.owl.carousel', function(e) { e.stopPropagation(); });
-  jQuery(element).on('next.owl.carousel', function(e) { e.stopPropagation(); });
-  jQuery(element).on('prev.owl.carousel', function(e) { e.stopPropagation(); });
-  jQuery(element).on('destroy.owl.carousel', function(e) { e.stopPropagation(); });
+  jQuery(element).on('to.owl.carousel', function (e) {
+    e.stopPropagation();
+  });
+  jQuery(element).on('next.owl.carousel', function (e) {
+    e.stopPropagation();
+  });
+  jQuery(element).on('prev.owl.carousel', function (e) {
+    e.stopPropagation();
+  });
+  jQuery(element).on('destroy.owl.carousel', function (e) {
+    e.stopPropagation();
+  });
 }

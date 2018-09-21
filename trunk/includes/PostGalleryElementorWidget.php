@@ -150,7 +150,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'default' => 'thumbs',
                 'selectors' => [],
                 'options' => array_merge(
-                    ['global' => 'From Global'],
+                    [ 'global' => 'From Global' ],
                     $this->postgalleryAdmin->getCustomTemplates(),
                     $this->postgalleryAdmin->defaultTemplates
                 ),
@@ -249,6 +249,21 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
+            'masonry',
+            [
+                'label' => __( 'Masonry', $this->textdomain ),
+                'type' => Controls_Manager::SELECT,
+                'default' => 0,
+                'options' => [
+                    0 => __( 'off' ),
+                    'vertical' => 'vertical',
+                    'horizontal' => 'horizontal',
+                ],
+                'selectors' => [],
+            ]
+        );
+
+        $this->add_control(
             'pgsort',
             [
                 'label' => __( 'PostGallery Sort', $this->textdomain ),
@@ -301,7 +316,6 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
         $this->end_controls_section();
-
 
 
         $this->start_controls_section(
@@ -418,6 +432,10 @@ class PostGalleryElementorWidget extends Widget_Base {
             $template = $settings['template'];
         }
 
+        if ( !empty( $settings['masonry'] ) ) {
+            $pgInstance->setOption( 'masonry', $settings['masonry'] );
+        }
+
         // get gallery
         $loadFrom = $settings['pgimgsource'];
         if ( empty( $loadFrom ) ) {
@@ -465,6 +483,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         if ( isset( $globalTemplate ) ) {
             $pgInstance->setOption( 'globalTemplate', $globalTemplate );
         }
+        $pgInstance->setOption( 'masonry', '' );
     }
     /**
      * Render the widget output in the editor.

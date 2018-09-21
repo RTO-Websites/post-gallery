@@ -1002,8 +1002,8 @@ class PostGallery {
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
             'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),
-            'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 150 ),
-            'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 150 ),
+            'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 500 ),
+            'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 500 ),
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
             'sliderOwlConfig' => get_theme_mod( 'postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1," ),
             'stretchImages' => get_theme_mod( 'postgallery_stretchImages', false ),
@@ -1028,6 +1028,8 @@ class PostGallery {
 
             'mainColor' => get_theme_mod( 'postgallery_mainColor', '#fff' ),
             'secondColor' => get_theme_mod( 'postgallery_secondColor', '#333' ),
+
+            'masonry' => '',
         ];
     }
 

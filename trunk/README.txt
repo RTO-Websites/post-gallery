@@ -36,6 +36,7 @@ https://github.com/RTO-Websites/post-gallery
 == Changelog ==
 = 1.6.0
 * Add grid options to elementor-widget
+* Add masonry option
 
 = 1.5.4
 * Fix js-error

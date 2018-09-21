@@ -92,7 +92,7 @@ class PostGalleryPublic {
                 break;
         }
 
-        if ($this->options['arrows']) {
+        if ( $this->options['arrows'] ) {
             $this->liteboxClass .= ' show-arrows';
         }
 
@@ -272,6 +272,7 @@ class PostGalleryPublic {
      * @param $post_thumbnail_id
      * @param $size
      * @param $attr
+     * @throws \ImagickException
      * @return string
      */
     public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
@@ -302,12 +303,12 @@ class PostGalleryPublic {
         $position = get_post_meta( $GLOBALS['post']->ID, 'postgalleryPosition', true );
         $template = get_post_meta( $GLOBALS['post']->ID, 'postgalleryTemplate', true );
         if ( empty( $position ) || $position == 'global' ) {
-            $position = ( !empty( $this->options['globalPosition'] ) ? $this->options['globalPosition'] : 'bottom' );
+            $position = ( !empty( $this->option( 'globalPosition' ) ) ? $this->option( 'globalPosition' ) : 'bottom' );
         }
 
         // from global
         if ( empty( $template ) || $template == 'global' ) {
-            $template = ( !empty( $this->options['globalTemplate'] ) ? $this->options['globalTemplate'] : 'thumbs' );
+            $template = ( !empty( $this->option( 'globalTemplate' ) ) ? $this->option( 'globalTemplate' ) : 'thumbs' );
         }
 
         if ( $position === 'top' ) {
@@ -335,6 +336,7 @@ class PostGalleryPublic {
             POSTGALLERY_DIR . '/templates',
         ];
 
+        $tmpOptions = $this->options;
         $images = PostGallery::getImages( $postid );
 
         if ( empty( $images ) ) {
@@ -349,6 +351,9 @@ class PostGalleryPublic {
             $template = 'thumbs';
         }
 
+        $this->options = array_change_key_case( (array)$this->options, CASE_LOWER );
+        $this->options = array_merge( $this->options, $args );
+
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
         foreach ( $templateDirs as $tplDir ) {
@@ -361,6 +366,8 @@ class PostGalleryPublic {
 
         $content = ob_get_contents();
         ob_end_clean();
+
+        $this->options = $tmpOptions;
 
         return $content;
     }
@@ -387,8 +394,8 @@ class PostGalleryPublic {
     /**
      * Adds shortcode for custom gallery-position
      *
-     * @param type $args
-     * @param type $content
+     * @param array $args
+     * @param string $content
      * @return string
      */
     public function postgalleryShortcode( $args, $content = '' ) {
@@ -527,7 +534,7 @@ class PostGalleryPublic {
         // owl-dots color
         $style .= '.owl-theme .owl-dots .owl-dot.active span, 
             .owl-theme .owl-dots .owl-dot:hover span {
-                background-color: '. $args['mainColor'].';
+                background-color: ' . $args['mainColor'] . ';
              }';
 
         $style .= '</style>';
@@ -542,7 +549,10 @@ class PostGalleryPublic {
      */
     public function option( $property = null ) {
         if ( !empty( $property ) ) {
-            return isset( $this->options[$property] ) ? $this->options[$property] : null;
+            $options = array_change_key_case( (array)$this->options, CASE_LOWER );
+            $property = strtolower( $property );
+
+            return isset( $options[$property] ) ? $options[$property] : null;
         }
 
         return $this->options;

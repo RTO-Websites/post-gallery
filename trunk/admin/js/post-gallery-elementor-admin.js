@@ -139,5 +139,8 @@ function updateElementorFields() {
   jQuery('input[data-setting="pgimgoptions"]').trigger('input');
   jQuery('input[data-setting="pgimgalts"]').trigger('input');
 
+
+  window.pgInitMasonry();
+
   //elementor.reloadPreview();
 }
