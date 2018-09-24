@@ -4,6 +4,7 @@ namespace PostGalleryWidget\Widgets;
 
 use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Image_Size;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Pub\PostGalleryPublic;
@@ -190,6 +191,28 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'selectors' => [],
             ]
         );
+
+        $imageSizes = [
+            0 => __('Custom')
+        ];
+
+        foreach ( Group_Control_Image_Size::get_all_image_sizes() as $name => $size ) {
+            $key = $size['width'] . 'x' . $size['height'];
+            $label = ucfirst( $name ) . ' (' . $key . ')';
+            $imageSizes[$key] = $label;
+        }
+
+        $this->add_control(
+            'imageSize',
+            [
+                'label' => __( 'Image-Size', $this->textdomain ),
+                'type' => Controls_Manager::SELECT,
+                'default' => 0,
+                'options' => $imageSizes,
+                'selectors' => [],
+            ]
+        );
+
         $this->add_control(
             'pgthumbwidth',
             [

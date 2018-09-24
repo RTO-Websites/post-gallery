@@ -27,7 +27,7 @@
     <?php } ?>
 </figure>
 <script>
-    $(function() {
+    jQuery(function() {
       window.pgInitMasonry();
     });
 </script>

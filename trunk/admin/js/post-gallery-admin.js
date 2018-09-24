@@ -37,6 +37,8 @@ jQuery(function () {
     elementor.hooks.addAction('panel/open_editor/widget/postgallery', function (panel, model, view) {
       initPostGallery();
       loadUpload();
+      checkMasonry();
+      checkThumbsize();
     });
   }
 });

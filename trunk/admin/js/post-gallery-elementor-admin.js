@@ -5,6 +5,9 @@ function initPostGalleryElementor() {
     */
   jQuery(document).on('change', 'select[data-setting="pgimgsource"]', loadUpload);
 
+  jQuery(document).on('change', 'select[data-setting="imageSize"]', checkThumbsize);
+
+
   /**
    * Write titles, desc, alt to elementor fields
    */
@@ -30,7 +33,7 @@ function initPostGalleryElementor() {
 
 
 function checkMasonry() {
-  if (jQuery.fn.masonry) {
+  if (typeof(jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery.fn.masonry) !== 'undefined') {
     return true;
   }
 
@@ -148,4 +151,24 @@ function updateElementorFields() {
   jQuery('input[data-setting="pgimgdescs"]').trigger('input');
   jQuery('input[data-setting="pgimgoptions"]').trigger('input');
   jQuery('input[data-setting="pgimgalts"]').trigger('input');
+}
+
+/**
+ * Checks image-size and set width&height
+ */
+function checkThumbsize() {
+  var select = jQuery('.elementor-control-imageSize select'),
+    selectedVal = select.val(),
+    sizes = selectedVal.split('x');
+
+  if (selectedVal == 0) {
+    // custom size
+    $('.elementor-control-pgthumbwidth').show();
+    $('.elementor-control-pgthumbheight').show();
+  } else {
+    $('.elementor-control-pgthumbwidth input').val(sizes[0]);
+    $('.elementor-control-pgthumbheight input').val(sizes[1]);
+    $('.elementor-control-pgthumbwidth').hide();
+    $('.elementor-control-pgthumbheight').hide();
+  }
 }
