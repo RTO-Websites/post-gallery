@@ -193,7 +193,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $imageSizes = [
-            0 => __('Custom')
+            0 => __( 'Custom' ),
         ];
 
         foreach ( Group_Control_Image_Size::get_all_image_sizes() as $name => $size ) {
@@ -428,14 +428,23 @@ class PostGalleryElementorWidget extends Widget_Base {
         $pgInstance = PostGalleryPublic::getInstance();
 
         // override global settings with widget-settings
-        if ( !empty( $settings['pgthumbwidth'] ) ) {
+        if ( !empty( $settings['imageSize'] ) ) {
             $globalWidth = $pgInstance->option( 'thumbWidth' );
-            $pgInstance->setOption( 'thumbWidth', $settings['pgthumbwidth'] );
-        }
-
-        if ( !empty( $settings['pgthumbheight'] ) ) {
             $globalHeight = $pgInstance->option( 'thumbHeight' );
-            $pgInstance->setOption( 'thumbHeight', $settings['pgthumbheight'] );
+
+            $sizes = explode( 'x', $settings['imageSize'] );
+            $pgInstance->setOption( 'thumbWidth', $sizes[0] );
+            $pgInstance->setOption( 'thumbHeight', $sizes[1] );
+        } else {
+            if ( !empty( $settings['pgthumbwidth'] ) ) {
+                $globalWidth = $pgInstance->option( 'thumbWidth' );
+                $pgInstance->setOption( 'thumbWidth', $settings['pgthumbwidth'] );
+            }
+
+            if ( !empty( $settings['pgthumbheight'] ) ) {
+                $globalHeight = $pgInstance->option( 'thumbHeight' );
+                $pgInstance->setOption( 'thumbHeight', $settings['pgthumbheight'] );
+            }
         }
 
         if ( isset( $settings['pgthumbscale'] ) ) {
