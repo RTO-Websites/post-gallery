@@ -23,8 +23,18 @@ function initPostGalleryElementor() {
     if (field.length) {
       loadUpload();
       initElementorAddButton();
+      checkMasonry();
     }
   });
+}
+
+
+function checkMasonry() {
+  if (jQuery.fn.masonry) {
+    return true;
+  }
+
+  jQuery('.elementor-control-masonry').hide();
 }
 
 /**
@@ -138,9 +148,4 @@ function updateElementorFields() {
   jQuery('input[data-setting="pgimgdescs"]').trigger('input');
   jQuery('input[data-setting="pgimgoptions"]').trigger('input');
   jQuery('input[data-setting="pgimgalts"]').trigger('input');
-
-
-  window.pgInitMasonry();
-
-  //elementor.reloadPreview();
 }

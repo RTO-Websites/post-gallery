@@ -20,6 +20,9 @@
   });
 
   window.pgInitMasonry = function () {
+    if (!jQuery.fn.masonry) {
+      return;
+    }
     $('.pg-theme-thumbs[data-pgmasonry]').each(function (index, element) {
       if (element.postgalleryMasonry) {
         $(element).masonry('destroy');
