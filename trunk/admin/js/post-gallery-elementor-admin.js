@@ -166,8 +166,8 @@ function checkThumbsize() {
     $('.elementor-control-pgthumbwidth').show();
     $('.elementor-control-pgthumbheight').show();
   } else {
-    $('.elementor-control-pgthumbwidth input').val(sizes[0]);
-    $('.elementor-control-pgthumbheight input').val(sizes[1]);
+    //$('.elementor-control-pgthumbwidth input').val(sizes[0]);
+    //$('.elementor-control-pgthumbheight input').val(sizes[1]);
     $('.elementor-control-pgthumbwidth').hide();
     $('.elementor-control-pgthumbheight').hide();
   }

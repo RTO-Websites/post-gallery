@@ -166,7 +166,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'default' => 'auto',
                 'selectors' => [],
                 'options' => [
-                    'auto' => 'Auto',
+                    'none' => __( 'None' ),
                     '1' => '1',
                     '2' => '2',
                     '3' => '3',
