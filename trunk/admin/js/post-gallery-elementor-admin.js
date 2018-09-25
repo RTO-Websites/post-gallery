@@ -7,6 +7,13 @@ function initPostGalleryElementor() {
 
   jQuery(document).on('change', 'select[data-setting="imageSize"]', checkThumbsize);
 
+  // change gap or item-ratio
+  jQuery(document).on('change', 'input[data-setting="size"],' +
+    '.elementor-control-column_gap input,' +
+    '.elementor-control-row_gap input', checkItemRatio);
+  jQuery(document).on('slide', '.elementor-control-item_ratio .ui-slider,' +
+    '.elementor-control-column_gap .ui-slider,' +
+    '.elementor-control-row_gap .ui-slider', checkItemRatio);
 
   /**
    * Write titles, desc, alt to elementor fields
@@ -31,7 +38,22 @@ function initPostGalleryElementor() {
   });
 }
 
+/**
+ * Triggers on item-ratio change
+ *  Relayout masonry if masonry is active.
+ */
+function checkItemRatio() {
+  if (checkMasonry()) {
+    var galleries = jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery('.elementor-image-gallery .gallery[data-pgmasonry]');
+    galleries.masonry('layout');
+  }
+}
 
+/**
+ * Checks if website in preview-frame has masonry
+ *
+ * @returns {boolean}
+ */
 function checkMasonry() {
   if (typeof(jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery.fn.masonry) !== 'undefined') {
     return true;

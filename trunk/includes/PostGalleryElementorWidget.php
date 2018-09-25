@@ -286,6 +286,43 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
+
+        $this->add_control(
+            'equal_height',
+            [
+                'label' => __( 'Equal height', $this->textdomain ),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'return_value' => 'on',
+            ]
+        );
+
+        $this->add_control(
+            'item_ratio',
+            [
+                'label' => __( 'Item Ratio', 'elementor-pro' ),
+                'type' => Controls_Manager::SLIDER,
+                'default' => [
+                    'size' => 0.66,
+                ],
+                'range' => [
+                    'px' => [
+                        'min' => 0.1,
+                        'max' => 2,
+                        'step' => 0.01,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .gallery-item .bg-image' => 'padding-bottom: calc( {{SIZE}} * 100% )',
+                    '{{WRAPPER}}:after' => 'content: "{{SIZE}}"; position: absolute; color: transparent;',
+                ],
+                'condition' => [
+                    'equal_height' => 'on',
+                ],
+                'frontend_available' => true,
+            ]
+        );
+
         $this->add_control(
             'pgsort',
             [
@@ -349,7 +386,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
+        /*$this->add_control(
             'image_spacing',
             [
                 'label' => __( 'Spacing', 'elementor' ),
@@ -388,13 +425,50 @@ class PostGalleryElementorWidget extends Widget_Base {
                     'image_spacing' => 'custom',
                 ],
             ]
+        );*/
+
+
+        $this->add_control(
+            'column_gap',
+            [
+                'label' => __( 'Columns Gap', 'elementor-pro' ),
+                'type' => Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-image-gallery' => 'margin-left: calc(-{{SIZE}}{{UNIT}} / 2);margin-right: calc(-{{SIZE}}{{UNIT}} / 2);',
+                    '{{WRAPPER}} .elementor-image-gallery .gallery-item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2);padding-right: calc({{SIZE}}{{UNIT}} / 2);',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'row_gap',
+            [
+                'label' => __( 'Rows Gap', 'elementor-pro' ),
+                'type' => Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'frontend_available' => true,
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-image-gallery .gallery-item' => 'padding-bottom: {{SIZE}}{{UNIT}}',
+                ],
+            ]
         );
 
         $this->add_group_control(
             Group_Control_Border::get_type(),
             [
                 'name' => 'image_border',
-                'selector' => '{{WRAPPER}} .gallery-item img',
+                'selector' => '{{WRAPPER}} .gallery-item img, {{WRAPPER}} .gallery-item .bg-image',
                 'separator' => 'before',
             ]
         );
@@ -406,7 +480,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::DIMENSIONS,
                 'size_units' => [ 'px', '%' ],
                 'selectors' => [
-                    '{{WRAPPER}} .gallery-item img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .gallery-item img, {{WRAPPER}} .gallery-item .bg-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
@@ -426,6 +500,8 @@ class PostGalleryElementorWidget extends Widget_Base {
     protected function render() {
         $settings = $GLOBALS['elementorWidgetSettings'] = $this->get_settings();
         $pgInstance = PostGalleryPublic::getInstance();
+
+        $wrapperClass = '';
 
         // override global settings with widget-settings
         if ( !empty( $settings['imageSize'] ) ) {
@@ -468,13 +544,17 @@ class PostGalleryElementorWidget extends Widget_Base {
             $pgInstance->setOption( 'masonry', $settings['masonry'] );
         }
 
+        if ( !empty( $settings['equal_height'] ) ) {
+            $wrapperClass .= ' items-equal';
+        }
+
         // get gallery
         $loadFrom = $settings['pgimgsource'];
         if ( empty( $loadFrom ) ) {
             $loadFrom = get_the_ID();
         }
 
-        $gallery = '<div class="elementor-image-gallery">';
+        $gallery = '<div class="elementor-image-gallery ' . $wrapperClass . '">';
         $gallery .= $pgInstance->returnGalleryHtml( $template, $loadFrom );
         $gallery .= '</div>';
 
