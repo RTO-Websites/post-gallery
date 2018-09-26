@@ -199,15 +199,17 @@ class PostGallery {
      */
     public function postGalleryDeleteCachedImages() {
         $uploadDir = wp_upload_dir();
-        file_put_contents( $uploadDir['path'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
+        file_put_contents( $uploadDir['basedir'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
 
-        $cacheFolder = $uploadDir['path'] . '/cache';
-        foreach ( scandir( $cacheFolder ) as $file ) {
-            if ( !is_dir( $cacheFolder . '/' . $file ) ) {
-                $lastAccess = fileatime( $cacheFolder . '/' . $file );
+        $cacheFolder = $uploadDir['basedir'] . '/cache';
+        if ( file_exists( $cacheFolder ) ) {
+            foreach ( scandir( $cacheFolder ) as $file ) {
+                if ( !is_dir( $cacheFolder . '/' . $file ) ) {
+                    $lastAccess = fileatime( $cacheFolder . '/' . $file );
 
-                if ( $lastAccess < strtotime( '-1 month' ) ) { // older than 1 month
-                    unlink( $cacheFolder . '/' . $file );
+                    if ( $lastAccess < strtotime( '-1 month' ) ) { // older than 1 month
+                        unlink( $cacheFolder . '/' . $file );
+                    }
                 }
             }
         }
