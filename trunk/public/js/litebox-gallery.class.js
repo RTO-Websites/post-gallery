@@ -1,7 +1,7 @@
 /************************************
  * Author: shennemann
  *
- * Last change: 09.01.2018 13:41
+ * Last change: 01.10.2018 15:46
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -69,7 +69,7 @@ var LiteboxGallery = function (args) {
     // Find links with jpg/gif/png
     $(doc).on('click', linkSelector, function (event) {
       $(linkSelector).addClass('no-ajax');
-      if (!$(this).hasClass('no-litebox')) {
+      if (!$(this).hasClass('no-litebox') && !$(this).data('elementor-lightbox-slideshow')) {
         event.preventDefault();
         self.openGallery(event.currentTarget);
       }
