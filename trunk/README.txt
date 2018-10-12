@@ -34,6 +34,10 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.6.1
+* Refactoring
+* Litebox can now handle iframes
+
 = 1.6.0
 * Add grid options to elementor-widget
 * Add masonry option

@@ -52,17 +52,18 @@
 
     jQuery.ajax({
       'type': 'get',
-      'url': window.pgConfig.websiteUrl + '?getThumbList',
+      'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
       'success': function (data, textStatus) {
+        window.litebox.picsData = jQuery.parseJSON(data);
         if (typeof(callback) === 'function') {
-          callback(jQuery.parseJSON(data));
+          callback();
         }
       },
       'error': function (jqXHR, textStatus, errorThrown) {
         console.log('pg load fail', jqXHR, textStatus, errorThrown);
         if (typeof(callback) === 'function') {
-          callback(null);
+          callback();
         }
       }
     });
@@ -77,8 +78,9 @@
       'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
       'success': function (data, textStatus) {
+        window.litebox.picsData = jQuery.parseJSON(data);
         if (typeof(callback) === 'function') {
-          callback(jQuery.parseJSON(data));
+          callback();
         }
       }
     });
