@@ -56,9 +56,13 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 'title' => 'Main-Settings',
                 'fields' => [
                     'postgalleryDebugmode' => [
-                        'type' => 'checkbox',
+                        'type' => 'radio',
                         'label' => __( 'Debug-Mode', $this->textdomain ),
-                        'default' => false,
+                        'default' => '0',
+                        'choices' => [
+                            '1' => __('Yes'),
+                            '0' => __('No'),
+                        ]
                     ],
                     'sliderType' => [
                         'type' => 'select',
