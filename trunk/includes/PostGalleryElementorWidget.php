@@ -12,9 +12,9 @@ use Pub\PostGalleryPublic;
 if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Elementor Hello World
+ * Elementor PostGallery
  *
- * Elementor widget for hello world.
+ * Elementor widget for PostGallery.
  *
  * @since 1.0.0
  */
@@ -385,48 +385,6 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'tab' => Controls_Manager::TAB_STYLE,
             ]
         );
-
-        /*$this->add_control(
-            'image_spacing',
-            [
-                'label' => __( 'Spacing', 'elementor' ),
-                'type' => Controls_Manager::SELECT,
-                'options' => [
-                    '' => __( 'Default', 'elementor' ),
-                    'custom' => __( 'Custom', 'elementor' ),
-                ],
-                'prefix_class' => 'gallery-spacing-',
-                'default' => '',
-            ]
-        );
-
-        $columns_margin = is_rtl() ? '0 0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}};' : '0 -{{SIZE}}{{UNIT}} -{{SIZE}}{{UNIT}} 0;';
-        $columns_padding = is_rtl() ? '0 0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}};' : '0 {{SIZE}}{{UNIT}} {{SIZE}}{{UNIT}} 0;';
-
-        $this->add_control(
-            'image_spacing_custom',
-            [
-                'label' => __( 'Image Spacing', 'elementor' ),
-                'type' => Controls_Manager::SLIDER,
-                'show_label' => false,
-                'range' => [
-                    'px' => [
-                        'max' => 100,
-                    ],
-                ],
-                'default' => [
-                    'size' => 15,
-                ],
-                'selectors' => [
-                    '{{WRAPPER}} .gallery-item' => 'padding:' . $columns_padding,
-                    '{{WRAPPER}} .gallery' => 'margin: ' . $columns_margin,
-                ],
-                'condition' => [
-                    'image_spacing' => 'custom',
-                ],
-            ]
-        );*/
-
 
         $this->add_control(
             'column_gap',
