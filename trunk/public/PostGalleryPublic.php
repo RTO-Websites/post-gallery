@@ -44,10 +44,14 @@ class PostGalleryPublic {
      */
     private $version;
 
-    private $textdomain;
-
     public static $instance;
 
+    /**
+     * Counts how often gallery is called (used for gallery-id)
+     *
+     * @var int
+     */
+    public static $count = 0;
 
     /**
      * The options from admin-page
@@ -74,7 +78,6 @@ class PostGalleryPublic {
             return;
         }
         $this->pluginName = $pluginName;
-        $this->textdomain = $pluginName;
         $this->version = $version;
         self::$instance = $this;
 
@@ -120,7 +123,10 @@ class PostGalleryPublic {
          */
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
-
+        if ( !empty( $this->options['disableScripts'] ) ) {
+            wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', [], $this->version, 'all' );
+            return;
+        }
 
         switch ( $this->options['sliderType'] ) {
             case 'owl1':
@@ -143,7 +149,6 @@ class PostGalleryPublic {
                 wp_enqueue_style( 'animate.css', $buildPath . '/css/animate.min.css' );
                 break;
         }
-
 
         wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', [], $this->version, 'all' );
     }
@@ -168,6 +173,9 @@ class PostGalleryPublic {
          */
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
+        if ( !empty( $this->options['disableScripts'] ) ) {
+            return;
+        }
 
         switch ( $this->options['sliderType'] ) {
             case 'owl1':
@@ -195,6 +203,10 @@ class PostGalleryPublic {
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
+
+        // masonry
+        wp_enqueue_script( 'masonry' );
+        wp_enqueue_script( 'imagesLoaded' );
     }
 
     /**
@@ -329,6 +341,8 @@ class PostGalleryPublic {
      * @return string
      */
     public function returnGalleryHtml( $template = '', $postid = 0, $args = [] ) {
+        self::$count += 1;
+
         $templateDirs = [
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
@@ -379,6 +393,9 @@ class PostGalleryPublic {
      */
     public function insertFooterHtml( $footer ) {
         $options = $this->options;
+        if ( empty( $options['enableLitebox'] ) || !empty( $options['disableScripts'] ) ) {
+            return;
+        }
         $template = $options['liteboxTemplate'];
 
         $customTemplateDir = get_stylesheet_directory() . '/litebox';
@@ -457,6 +474,12 @@ class PostGalleryPublic {
      */
     public function insertHeaderscript( $header ) {
         $args = $this->options;
+
+        if ( empty( $args['enableLitebox'] ) || !empty( $args['disableScripts'] ) ) {
+            echo $header;
+            return;
+        }
+
         $sliderType = $this->options['sliderType'];
         $oldOwl = $this->options['sliderType'] == 'owl1' ? 'owlVersion: 1,' : '';
         $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';

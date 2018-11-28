@@ -188,12 +188,25 @@ body.liteboxgallery-open {
   position: relative;
 }
 
+.with-animation .gallery-item {
+  transition: all 0.3s linear;
+  opacity: 0;
+}
+
+.with-animation .gallery-item.show {
+  opacity: 1;
+}
+
 .elementor-image-gallery .pg-theme-thumbs .post-gallery_thumb {
   position: relative;
   margin: 0 auto;
   width: auto;
   text-align: center;
   max-width: 100%;
+}
+
+.elementor-editor-active .gallery-item a {
+  pointer-events: none;
 }
 
 .elementor-image-gallery .pg-theme-thumbs {

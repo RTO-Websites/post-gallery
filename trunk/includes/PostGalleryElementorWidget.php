@@ -20,12 +20,10 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class PostGalleryElementorWidget extends Widget_Base {
     public static $instances = [];
-    public $textdomain;
     public $postgalleryAdmin;
 
     public function __construct( $data = [], $args = null ) {
         $instances[] = $this;
-        $this->textdomain = 'post-gallery';
 
         $this->postgalleryAdmin = PostGalleryAdmin::getInstance();
 
@@ -72,7 +70,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @return string Widget icon.
      */
     public function get_icon() {
-        return 'eicon-posts-ticker';
+        return 'fa fa-image';
     }
 
     /**
@@ -127,7 +125,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'suppress_filters' => false,
         ] );
 
-        $selectPosts = [ 0 => __( 'Dynamic', $this->textdomain ) ];
+        $selectPosts = [ 0 => __( 'Dynamic', 'post-gallery' ) ];
 
         foreach ( $allPosts as $post ) {
             if ( in_array( $post->post_type, $filerPostTypes ) ) {
@@ -139,14 +137,14 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->start_controls_section(
             'section_content',
             [
-                'label' => __( 'Images', $this->textdomain ),
+                'label' => __( 'Images', 'post-gallery' ),
             ]
         );
 
         $this->add_control(
             'template',
             [
-                'label' => __( 'Template', $this->textdomain ),
+                'label' => __( 'Template', 'post-gallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'thumbs',
                 'selectors' => [],
@@ -161,7 +159,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'columns',
             [
-                'label' => __( 'Columns', $this->textdomain ),
+                'label' => __( 'Columns', 'post-gallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'auto',
                 'selectors' => [],
@@ -184,7 +182,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgsource',
             [
-                'label' => __( 'Image-Source', $this->textdomain ),
+                'label' => __( 'Image-Source', 'post-gallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 0,
                 'options' => $selectPosts,
@@ -205,7 +203,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'imageSize',
             [
-                'label' => __( 'Image-Size', $this->textdomain ),
+                'label' => __( 'Image-Size', 'post-gallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 0,
                 'options' => $imageSizes,
@@ -216,7 +214,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgthumbwidth',
             [
-                'label' => __( 'Thumb width', $this->textdomain ),
+                'label' => __( 'Thumb width', 'post-gallery' ),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -226,7 +224,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgthumbheight',
             [
-                'label' => __( 'Thumb height', $this->textdomain ),
+                'label' => __( 'Thumb height', 'post-gallery' ),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -236,15 +234,15 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgthumbscale',
             [
-                'label' => __( 'Thumb scale', $this->textdomain ),
+                'label' => __( 'Thumb scale', 'post-gallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => '',
                 'selectors' => [],
                 'options' => [
-                    '0' => __( 'crop', $this->textdomain ),
-                    '1' => __( 'long edge', $this->textdomain ),
-                    '2' => __( 'short edge', $this->textdomain ),
-                    '3' => __( 'ignore proportions', $this->textdomain ),
+                    '0' => __( 'crop', 'post-gallery' ),
+                    '1' => __( 'long edge', 'post-gallery' ),
+                    '2' => __( 'short edge', 'post-gallery' ),
+                    '3' => __( 'ignore proportions', 'post-gallery' ),
                 ],
             ]
         );
@@ -252,7 +250,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgmaxthumbs',
             [
-                'label' => __( 'Thumb amount', $this->textdomain ),
+                'label' => __( 'Thumb amount', 'post-gallery' ),
                 'type' => Controls_Manager::NUMBER,
                 'default' => '',
                 /*'selectors' => [
@@ -264,7 +262,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgelementorlitebox',
             [
-                'label' => __( 'Use Elementor-Litebox', $this->textdomain ),
+                'label' => __( 'Use Elementor-Litebox', 'post-gallery' ),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
@@ -274,7 +272,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'masonry',
             [
-                'label' => __( 'Masonry', $this->textdomain ),
+                'label' => __( 'Masonry', 'post-gallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 0,
                 'options' => [
@@ -290,7 +288,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'equal_height',
             [
-                'label' => __( 'Equal height', $this->textdomain ),
+                'label' => __( 'Equal height', 'post-gallery' ),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
@@ -326,7 +324,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgsort',
             [
-                'label' => __( 'PostGallery Sort', $this->textdomain ),
+                'label' => __( 'PostGallery Sort', 'post-gallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -335,7 +333,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgdescs',
             [
-                'label' => __( 'PostGallery Descs', $this->textdomain ),
+                'label' => __( 'PostGallery Descs', 'post-gallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -344,7 +342,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgtitles',
             [
-                'label' => __( 'PostGallery Titles', $this->textdomain ),
+                'label' => __( 'PostGallery Titles', 'post-gallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -353,7 +351,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgalts',
             [
-                'label' => __( 'PostGallery Alts', $this->textdomain ),
+                'label' => __( 'PostGallery Alts', 'post-gallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -362,7 +360,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgoptions',
             [
-                'label' => __( 'PostGallery Options', $this->textdomain ),
+                'label' => __( 'PostGallery Options', 'post-gallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -371,7 +369,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimages',
             [
-                'label' => __( 'PostGallery Images', $this->textdomain ),
+                'label' => __( 'PostGallery Images', 'post-gallery' ),
                 'type' => 'postgallerycontrol',
             ]
         );
@@ -444,6 +442,75 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->end_controls_section();
+
+
+        $this->start_controls_section(
+            'section_gallery_animation',
+            [
+                'label' => __( 'Image animation', 'post-gallery' ),
+                'tab' => Controls_Manager::TAB_ADVANCED,
+            ]
+        );
+
+        $this->add_control(
+            'image_animation',
+            [
+                'label' => __( 'Image Animation', 'post-gallery' ),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'return_value' => 'on',
+            ]
+        );
+
+        $this->add_control(
+            'image_animation_duration',
+            [
+                'label' => __( 'Animation Duration', 'post-gallery' ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 300,
+                'condition' => [
+                    'image_animation' => 'on',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'image_animation_time_between',
+            [
+                'label' => __( 'Time between images', 'post-gallery' ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 200,
+                'condition' => [
+                    'image_animation' => 'on',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'image_animation_css',
+            [
+                'label' => __( 'Custom-CSS for Image', 'post-gallery' ),
+                'type' => Controls_Manager::CODE,
+                'default' => '',
+                'condition' => [
+                    'image_animation' => 'on',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'image_animation_css_animated',
+            [
+                'label' => __( 'Custom-CSS for animated Image', 'post-gallery' ),
+                'type' => Controls_Manager::CODE,
+                'default' => '',
+                'condition' => [
+                    'image_animation' => 'on',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -460,50 +527,18 @@ class PostGalleryElementorWidget extends Widget_Base {
         $pgInstance = PostGalleryPublic::getInstance();
 
         $wrapperClass = '';
-
-        // override global settings with widget-settings
-        if ( !empty( $settings['imageSize'] ) ) {
-            $globalWidth = $pgInstance->option( 'thumbWidth' );
-            $globalHeight = $pgInstance->option( 'thumbHeight' );
-
-            $sizes = explode( 'x', $settings['imageSize'] );
-            $pgInstance->setOption( 'thumbWidth', $sizes[0] );
-            $pgInstance->setOption( 'thumbHeight', $sizes[1] );
-        } else {
-            if ( !empty( $settings['pgthumbwidth'] ) ) {
-                $globalWidth = $pgInstance->option( 'thumbWidth' );
-                $pgInstance->setOption( 'thumbWidth', $settings['pgthumbwidth'] );
-            }
-
-            if ( !empty( $settings['pgthumbheight'] ) ) {
-                $globalHeight = $pgInstance->option( 'thumbHeight' );
-                $pgInstance->setOption( 'thumbHeight', $settings['pgthumbheight'] );
-            }
+        if ( !empty( $pgInstance->option( 'disableScripts' ) ) || empty( $pgInstance->option( 'enableLitebox' ) ) ) {
+            $settings['pgelementorlitebox'] = 'on';
         }
 
-        if ( isset( $settings['pgthumbscale'] ) ) {
-            $globalScale = $pgInstance->option( 'thumbScale' );
-            $pgInstance->setOption( 'thumbScale', $settings['pgthumbscale'] );
-        }
-
-        if ( isset( $settings['columns'] ) ) {
-            $globalColumns = $pgInstance->option( 'columns' );
-            $pgInstance->setOption( 'columns', $settings['columns'] );
-        }
-
-        $template = '';
-        if ( isset( $settings['template'] ) ) {
-            $globalTemplate = $pgInstance->option( 'globalTemplate' );
-            $pgInstance->setOption( 'globalTemplate', $settings['template'] );
-            $template = $settings['template'];
-        }
-
-        if ( !empty( $settings['masonry'] ) ) {
-            $pgInstance->setOption( 'masonry', $settings['masonry'] );
-        }
+        $args = $this->createArgs( $settings );
 
         if ( !empty( $settings['equal_height'] ) ) {
             $wrapperClass .= ' items-equal';
+        }
+
+        if ( !empty( $settings['image_animation'] ) ) {
+            $wrapperClass .= ' with-animation';
         }
 
         // get gallery
@@ -513,7 +548,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         }
 
         $gallery = '<div class="elementor-image-gallery ' . $wrapperClass . '">';
-        $gallery .= $pgInstance->returnGalleryHtml( $template, $loadFrom );
+        $gallery .= $pgInstance->returnGalleryHtml( $settings['template'], $loadFrom, $args );
         $gallery .= '</div>';
 
         if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
@@ -527,34 +562,107 @@ class PostGalleryElementorWidget extends Widget_Base {
         // echo gallery
         echo $gallery;
 
-        // hide thumbs
-        if ( !empty( $settings['pgmaxthumbs'] ) ) {
+        // echo extra style
+        $extraStyle = $this->createExtraCss( $settings );
+        if ( !empty( $extraStyle ) ) {
             echo '<style>';
-            echo '.elementor-element-' . $this->get_id()
-                . ' .gallery a:nth-child(n+' . ( $settings['pgmaxthumbs'] + 1 ) . ') { ';
-            echo 'display: none;';
-            echo '}';
+            echo $extraStyle;
             echo '</style>';
         }
-
-        // reset global settings
-        if ( isset( $globalWidth ) ) {
-            $pgInstance->setOption( 'thumbWidth', $globalWidth );
-        }
-        if ( isset( $globalHeight ) ) {
-            $pgInstance->setOption( 'thumbHeight', $globalHeight );
-        }
-        if ( isset( $globalScale ) ) {
-            $pgInstance->setOption( 'thumbScale', $globalScale );
-        }
-        if ( isset( $globalColumns ) ) {
-            $pgInstance->setOption( 'globalColumns', $globalColumns );
-        }
-        if ( isset( $globalTemplate ) ) {
-            $pgInstance->setOption( 'globalTemplate', $globalTemplate );
-        }
-        $pgInstance->setOption( 'masonry', '' );
     }
+
+    /**
+     * Create style for widget
+     *
+     * @param $settings
+     * @return string
+     */
+    private function createExtraCss( $settings ) {
+        $extraStyle = '';
+
+        // hide thumbs
+        if ( !empty( $settings['pgmaxthumbs'] ) ) {
+            $extraStyle .= '.elementor-element-' . $this->get_id()
+                . ' .gallery .gallery-item:nth-child(n+' . ( $settings['pgmaxthumbs'] + 1 ) . ') { ';
+            $extraStyle .= 'display: none;';
+            $extraStyle .= '}';
+        }
+
+        // image animation
+        if ( !empty( $settings['image_animation_duration'] ) ) {
+            $extraStyle .= '.elementor-element-' . $this->get_id()
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= 'transition-duration: ' . $settings['image_animation_duration'] . 'ms;';
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css'] ) ) {
+            $extraStyle .= '.elementor-element-' . $this->get_id()
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= $settings['image_animation_css'];
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css_animated'] ) ) {
+            $extraStyle .= '.elementor-element-' . $this->get_id()
+                . ' .gallery .gallery-item.show { ';
+            $extraStyle .= $settings['image_animation_css_animated'];
+            $extraStyle .= '}';
+        }
+
+        return $extraStyle;
+    }
+
+    /**
+     *  Create widget-args for rendering
+     *
+     * @param $settings
+     * @return array
+     */
+    private function createArgs( $settings ) {
+        $args = [];
+        // create args
+        if ( !empty( $settings['imageSize'] ) ) {
+            $sizes = explode( 'x', $settings['imageSize'] );
+            $args['thumbWidth'] = $sizes[0];
+            $args['thumbHeight'] = $sizes[1];
+        } else {
+            if ( !empty( $settings['pgthumbwidth'] ) ) {
+                $args['thumbWidth'] = $settings['pgthumbwidth'];
+            }
+
+            if ( !empty( $settings['pgthumbheight'] ) ) {
+                $args['thumbHeight'] = $settings['pgthumbheight'];
+            }
+        }
+
+        if ( isset( $settings['pgthumbscale'] ) ) {
+            $args['thumbScale'] = $settings['pgthumbscale'];
+        }
+
+        if ( isset( $settings['columns'] ) ) {
+            $args['columns'] = $settings['columns'];
+        }
+
+        if ( isset( $settings['template'] ) ) {
+            $args['globalTemplate'] = $settings['template'];
+        } else {
+            $settings['template'] = '';
+        }
+
+        if ( !empty( $settings['masonry'] ) ) {
+            $args['masonry'] = $settings['masonry'];
+        }
+
+
+        if ( !empty( $settings['image_animation'] ) ) {
+            $args['imageAnimation'] = $settings['image_animation'];
+            $args['imageAnimationTimeBetween'] = $settings['image_animation_time_between'];
+        }
+
+        return $args;
+    }
+
     /**
      * Render the widget output in the editor.
      *

@@ -26,15 +26,6 @@ class SliderShortcodeAdmin {
     private $version;
 
 
-    /**
-     * Textdomain of the plugin
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string $version The current version of this plugin.
-     */
-    private $textdomain;
-
 
     private $optionFields;
 
@@ -46,7 +37,6 @@ class SliderShortcodeAdmin {
      * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
-        $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
 
@@ -88,7 +78,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderType' => [
                 'type' => 'select',
-                'label' => __( 'Type', $this->textdomain ),
+                'label' => __( 'Type', 'post-gallery' ),
                 'options' => [
                     'owl' => 'owl',
                     'swiper' => 'swiper (experimental)'
@@ -97,30 +87,30 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
             'sliderWidth' => [
                 'type' => 'text',
-                'label' => __( 'Width', $this->textdomain ),
+                'label' => __( 'Width', 'post-gallery' ),
             ],
             'sliderHeight' => [
                 'type' => 'text',
-                'label' => __( 'Height', $this->textdomain ),
+                'label' => __( 'Height', 'post-gallery' ),
             ],
             'sliderScale' => [
                 'type' => 'select',
-                'label' => __( 'Image-Scale', $this->textdomain ),
+                'label' => __( 'Image-Scale', 'post-gallery' ),
                 'options' => [
-                    0 => __( 'crop', $this->textdomain ),
-                    1 => __( 'Keep proportions (long edge)', $this->textdomain ),
-                    2 => __( 'Keep proportions (short edge)', $this->textdomain ),
-                    3 => __( 'Ignore proportions', $this->textdomain ),
+                    0 => __( 'crop', 'post-gallery' ),
+                    1 => __( 'Keep proportions (long edge)', 'post-gallery' ),
+                    2 => __( 'Keep proportions (short edge)', 'post-gallery' ),
+                    3 => __( 'Ignore proportions', 'post-gallery' ),
                 ],
             ],
             'sliderItems' => [
                 'type' => 'number',
-                'label' => __( 'Items', $this->textdomain ),
+                'label' => __( 'Items', 'post-gallery' ),
                 'default' => 3,
             ],
             'sliderLoop' => [
                 'type' => 'checkbox',
-                'label' => __( 'Loop', $this->textdomain ),
+                'label' => __( 'Loop', 'post-gallery' ),
                 'default' => true,
             ],
 
@@ -131,26 +121,26 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderImageWidth' => [
                 'type' => 'text',
-                'label' => __( 'Image-Width', $this->textdomain ),
+                'label' => __( 'Image-Width', 'post-gallery' ),
             ],
             'sliderImageHeight' => [
                 'type' => 'text',
-                'label' => __( 'Image-Height', $this->textdomain ),
+                'label' => __( 'Image-Height', 'post-gallery' ),
             ],
             'sliderAsBg' => [
                 'type' => 'checkbox',
-                'label' => __( 'Images as Background', $this->textdomain ),
+                'label' => __( 'Images as Background', 'post-gallery' ),
             ],
 
             'sliderLoadFrom' => [
                 'type' => 'select',
-                'label' => __( 'Load images from', $this->textdomain ),
+                'label' => __( 'Load images from', 'post-gallery' ),
                 'options' => '',
                 'multiple' => true,
             ],
             'sliderThumbOnly' => [
                 'type' => 'checkbox',
-                'label' => __( 'Show only Post-Thumbs', $this->textdomain ),
+                'label' => __( 'Show only Post-Thumbs', 'post-gallery' ),
             ],
 
             // animation
@@ -168,7 +158,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
             'sliderAutoplay' => [
                 'type' => 'checkbox',
-                'label' => __( 'Autoplay', $this->textdomain ),
+                'label' => __( 'Autoplay', 'post-gallery' ),
             ],
 
             'autoplayTimeout' => [
@@ -205,29 +195,29 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderShuffle' => [
                 'type' => 'checkbox',
-                'label' => __( 'Shuffle images', $this->textdomain ),
+                'label' => __( 'Shuffle images', 'post-gallery' ),
             ],
             'sliderLinkPost' => [
                 'type' => 'checkbox',
-                'label' => __( 'Link images with post', $this->textdomain ),
+                'label' => __( 'Link images with post', 'post-gallery' ),
             ],
             'sliderOwlConfig' => [
                 'type' => 'textarea',
-                'label' => __( 'Owl-Config', $this->textdomain ),
-                /*'descTop' => '<b>' . __( 'Presets', $this->textdomain ) . '</b>:'
+                'label' => __( 'Owl-Config', 'post-gallery' ),
+                /*'descTop' => '<b>' . __( 'Presets', 'post-gallery' ) . '</b>:'
                     . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="sliderOwlConfig">
-                    <option value="">Slide (' . __( 'Default', $this->textdomain ) . ')</option>
+                    <option value="">Slide (' . __( 'Default', 'post-gallery' ) . ')</option>
                     <option value="fade">Fade</option>
                     <option value="slidevertical">SlideVertical</option>
                     <option value="zoominout">Zoom In/out</option>
                     </select>',*/
 
-                'desc' => '<br />' . __( 'You can use these options', $this->textdomain ) . ':<br />' .
+                'desc' => '<br />' . __( 'You can use these options', 'post-gallery' ) . ':<br />' .
                     '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
                                         OwlCarousel Options
                                     </a>
                                     <br />' .
-                    __( 'You can use these animations', $this->textdomain ) . ':<br />
+                    __( 'You can use these animations', 'post-gallery' ) . ':<br />
                                     <a href="http://daneden.github.io/animate.css/" target="_blank">
                                         Animate.css
                                     </a>
@@ -239,7 +229,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderNoLazy' => [
                 'type' => 'checkbox',
-                'label' => __( 'Disable lazy load', $this->textdomain ),
+                'label' => __( 'Disable lazy load', 'post-gallery' ),
             ],
         ];
 
@@ -300,8 +290,8 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
     public function _createPostTypes() {
         register_post_type( 'postgalleryslider', [
                 'labels' => [
-                    'name' => __( 'Slider', $this->textdomain ),
-                    'singular_name' => __( 'Slider', $this->textdomain ),
+                    'name' => __( 'Slider', 'post-gallery' ),
+                    'singular_name' => __( 'Slider', 'post-gallery' ),
                 ],
                 'menu_icon' => 'dashicons-images-alt',
                 'public' => true,
@@ -323,8 +313,8 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
      * @return bool
      */
     public function _registerPostSettings() {
-        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', $this->textdomain ), [ $this, '_addSliderShortcodeView' ], 'postgalleryslider' );
-        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', $this->textdomain ), [ $this, '_addSliderSettings' ], 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', 'post-gallery' ), [ $this, '_addSliderShortcodeView' ], 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', 'post-gallery' ), [ $this, '_addSliderSettings' ], 'postgalleryslider' );
 
         return false;
     }
@@ -421,16 +411,16 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         break;
 
                     case 'background':
-                        echo '<span class="sublabel">' . __( 'Image', $this->textdomain ) . '</span>
+                        echo '<span class="sublabel">' . __( 'Image', 'post-gallery' ) . '</span>
                                 <input class="field-input ' . $inputClass . ' upload-field" type="hidden" name="' . $key . '-image" id="'
                             . $key . '-image" value=\''
                             . $value . '\' />
                             <input class="field-button ' . $inputClass . ' upload-button" type="button" name="' . $key . '-image-button" id="'
                             . $key . '-image-button" value=\''
-                            . __( 'Select image', $this->textdomain ) . '\' />
+                            . __( 'Select image', 'post-gallery' ) . '\' />
                             <img src="" alt="" id="' . $key . '-image-img" class=" upload-preview-image" />
                             <br />';
-                        echo '<span class="sublabel">' . __( 'Color', $this->textdomain ) . '</span>
+                        echo '<span class="sublabel">' . __( 'Color', 'post-gallery' ) . '</span>
                                 <input class="field-input ' . $inputClass . '" type="text" name="' . $key . '-color" id="'
                             . $key . '-color" value=\''
                             . $value . '\' /><br />';

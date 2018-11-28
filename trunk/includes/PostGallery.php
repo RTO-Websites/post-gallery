@@ -1000,7 +1000,9 @@ class PostGallery {
         return [
             'debugmode' => get_theme_mod( 'postgallery_postgalleryDebugmode', false ),
             'sliderType' => get_theme_mod( 'postgallery_sliderType', 'owl' ),
-            'globalPosition' => get_theme_mod( 'postgallery_globalPosition', 'bottom' ),
+            'globalPosition' => get_theme_mod( 'postgallery_globalPosition', defined( 'ELEMENTOR_VERSION' ) ? 'custom' : 'bottom' ),
+            'disableScripts' => get_theme_mod( 'postgallery_disableScripts', false ),
+            'disableGroupedMedia' => get_theme_mod( 'postgallery_disableGroupedMedia', false ),
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
             'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),

@@ -48,15 +48,6 @@ class PostGalleryAdmin {
     private $version;
 
 
-    /**
-     * Textdomain of the plugin
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string $version The current version of this plugin.
-     */
-    private $textdomain;
-
     public $defaultTemplates;
 
     private $optionFields = null;
@@ -72,7 +63,6 @@ class PostGalleryAdmin {
      */
     public function __construct( $pluginName, $version ) {
         load_plugin_textdomain( $pluginName, false, '/postgallery/languages' );
-        $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
         self::$instance = $this;
@@ -81,16 +71,16 @@ class PostGalleryAdmin {
             'label' => __( 'Position', 'post-gallery' ),
             'type' => 'select',
             'value' => [
-                'global' => __( 'From global setting', $this->textdomain ),
-                'bottom' => __( 'bottom', $this->textdomain ),
-                'top' => __( 'top', $this->textdomain ),
-                'custom' => __( 'custom', $this->textdomain ),
+                'global' => __( 'From global setting', 'post-gallery' ),
+                'bottom' => __( 'bottom', 'post-gallery' ),
+                'top' => __( 'top', 'post-gallery' ),
+                'custom' => __( 'custom', 'post-gallery' ),
             ],
         ] ];
 
         $this->defaultTemplates = [
-            'thumbs' => __( 'Thumb-List', $this->textdomain ),
-            'slider' => __( 'Slider (with Owl-Carousel)', $this->textdomain ),
+            'thumbs' => __( 'Thumb-List', 'post-gallery' ),
+            'slider' => __( 'Slider (with Owl-Carousel)', 'post-gallery' ),
         ];
 
         new SliderShortcodeAdmin( $pluginName, $version );
@@ -104,8 +94,8 @@ class PostGalleryAdmin {
      */
     public function getLiteboxTemplates() {
         $templateList = [
-            'default-with-thumbs' => __( 'Default with thumbs', $this->textdomain ),
-            'default' => __( 'Default', $this->textdomain ),
+            'default-with-thumbs' => __( 'Default with thumbs', 'post-gallery' ),
+            'default' => __( 'Default', 'post-gallery' ),
         ];
 
         $customTemplates = [];
@@ -117,7 +107,7 @@ class PostGalleryAdmin {
             foreach ( $customTplFiles as $file ) {
                 if ( !is_dir( $customTplPath . '/' . $file ) ) {
                     $optionKey = str_replace( '.php', '', $file );
-                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', $this->textdomain );
+                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', 'post-gallery' );
 
                     $customTemplates[$optionKey] = $option_title;
                 }
@@ -304,11 +294,15 @@ class PostGalleryAdmin {
      * @return boolean
      */
     public function registerPostSettings() {
+        $blacklist = [ 'acf-field-group' ];
         $postTypes = get_post_types();
         foreach ( $postTypes as $postType ) {
-            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), [ $this, 'addGalleryPictures' ], $postType, 'normal', 'high' );
+            if ( in_array( $postType, $blacklist, true ) ) {
+                continue;
+            }
+            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', 'post-gallery' ), [ $this, 'addGalleryPictures' ], $postType, 'normal', 'high' );
             if ( $postType !== 'postgalleryslider' ) {
-                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), [ $this, 'addGallerySettings' ], $postType, 'normal', 'high' );
+                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', 'post-gallery' ), [ $this, 'addGallerySettings' ], $postType, 'normal', 'high' );
             }
         }
         return false;
@@ -360,11 +354,11 @@ class PostGalleryAdmin {
         // Template list
         echo '<tr valign="top">';
         $key = 'postgalleryTemplate';
-        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', $this->textdomain ) . '</label></th>';
+        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', 'post-gallery' ) . '</label></th>';
         echo '<td>';
         echo '<select class="field-input" name="' . $key . '" id="' . $key . '">';
 
-        echo '<option value="global">' . __( 'From global setting', $this->textdomain ) . '</option>';
+        echo '<option value="global">' . __( 'From global setting', 'post-gallery' ) . '</option>';
         // get templates from tpl-dir
         $this->getCustomTemplateDirOptions( get_post_meta( $curLangPost->ID, $key, true ) );
 
@@ -411,7 +405,7 @@ class PostGalleryAdmin {
                 foreach ( $dir as $file ) {
                     if ( !is_dir( $customTemplateDir . '/' . $file ) ) {
                         $file = str_replace( '.php', '', $file );
-                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', $this->textdomain );
+                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', 'post-gallery' );
                         $output[$file] = $title;
                     }
                 }
@@ -479,7 +473,7 @@ class PostGalleryAdmin {
         $imageOptions = [];
 
         if ( empty( $imageDir ) ) {
-            echo __( 'You have to save the post to upload images.', $this->textdomain );
+            echo __( 'You have to save the post to upload images.', 'post-gallery' );
             return;
         }
 
@@ -559,8 +553,8 @@ class PostGalleryAdmin {
      */
     public function getPostGalleryLang() {
         $scriptLanguage = [
-            'moveHere' => __( 'Move files here.', $this->textdomain ),
-            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
+            'moveHere' => __( 'Move files here.', 'post-gallery' ),
+            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', 'post-gallery' ),
         ];
 
         // Javascript for language

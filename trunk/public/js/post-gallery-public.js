@@ -155,6 +155,66 @@
     return [gWidth, gHeight];
   };
 
+
+  /**
+   * Register an new imageAnimation
+   *
+   * @param id
+   * @param timeBetween
+   */
+  window.registerPgImageAnimation = function (id, timeBetween) {
+    if (typeof(window.pgImageAnimations) === 'undefined') {
+      window.pgImageAnimations = {};
+    }
+    window.pgImageAnimations[id] = timeBetween;
+  };
+
+
+  /**
+   * Start imageAnimation
+   */
+  window.startPgImageAnimation = function () {
+    if (typeof(window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
+      return;
+    }
+
+    // loop all container
+    for (var id in window.pgImageAnimations) {
+      if (jQuery('#' + id).isVisible()) {
+        var items = jQuery('#' + id + ' .gallery-item'),
+          timeBetween = window.pgImageAnimations[id];
+
+        items.each(function (index, element) {
+          // loop items
+          setTimeout(function () {
+            jQuery(element).addClass('show');
+          }, timeBetween * index);
+        });
+
+        delete(window.pgImageAnimations[id]);
+      }
+    }
+  };
+
+  /**
+   * Set pg image animation on scroll and load event
+   */
+  jQuery(function () {
+    if (typeof(window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
+      return;
+    }
+
+    window.startPgImageAnimation();
+
+    jQuery(document).on('scroll', function () {
+      clearTimeout(window.pgImageAnimationTimeout);
+
+      window.pgImageAnimationTimeout = setTimeout(function () {
+        window.startPgImageAnimation();
+      }, 200);
+    });
+  });
+
 })(jQuery);
 
 function stopOwlPropagation(element) {
@@ -171,3 +231,19 @@ function stopOwlPropagation(element) {
     e.stopPropagation();
   });
 }
+
+jQuery.fn.isVisible = function() {
+  // Am I visible?
+  // Height and Width are not explicitly necessary in visibility detection, the bottom, right, top and left are the
+  // essential checks. If an image is 0x0, it is technically not visible, so it should not be marked as such.
+  // That is why either width or height have to be > 0.
+  var rect = this[0].getBoundingClientRect();
+  return (
+    (rect.height > 0 || rect.width > 0) &&
+    rect.bottom >= 0 &&
+    rect.right >= 0 &&
+    rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.left <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
+

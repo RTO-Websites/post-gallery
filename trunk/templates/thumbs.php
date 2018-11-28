@@ -6,8 +6,12 @@
  *        $images
  *            -> filename, path, thumbURL
  */
+
+
+$id = 'postgallery-' . \Pub\PostGalleryPublic::$count;
 ?>
-    <figure class="gallery pg-theme-thumbs pg-theme-list gallery-columns-<?php echo $this->option( 'columns' ); ?>"
+    <figure id="<?php echo $id; ?>"
+            class="gallery pg-theme-thumbs pg-theme-list gallery-columns-<?php echo $this->option( 'columns' ); ?> <?php echo $this->option( 'containerClass' ); ?>"
         <?php echo !empty( $this->option( 'masonry' ) ) ? ' data-pgmasonry="' . $this->option( 'masonry' ) . '" ' : ''; ?>>
         <?php foreach ( $images as $image ) { ?>
             <?php
@@ -35,6 +39,14 @@
     <script>
       jQuery(function () {
         window.pgInitMasonry();
+      });
+    </script>
+<?php } ?>
+
+<?php if ( $this->option( 'imageAnimation' ) ) { ?>
+    <script>
+      jQuery(function () {
+        window.registerPgImageAnimation('<?php echo $id; ?>', <?php echo $this->option( 'imageAnimationTimeBetween' ); ?>);
       });
     </script>
 <?php } ?>

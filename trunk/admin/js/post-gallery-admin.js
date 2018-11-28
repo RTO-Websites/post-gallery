@@ -44,6 +44,7 @@ jQuery(function () {
 });
 
 jQuery(window).on('load', function () {
+  wp.media.model.Query.defaultArgs.posts_per_page = -1;
   setTimeout(hookMediaGrid, 400);
   if (typeof(wp.media) !== 'undefined' && typeof(wp.media.frame) !== 'undefined') {
     wp.media.frame.on('open', hookMediaGrid);
@@ -63,88 +64,91 @@ window.hookMediaGrid = function () {
   if (window.groupMediaGridProgress) {
     return;
   }
-  var container = jQuery('.attachments-browser .attachments');
+  var containers = jQuery('.attachments-browser .attachments');
 
-  if (!container.length) {
+  if (!containers.length) {
     return;
   }
 
-  var children = container.find('.attachment'),
-    directChildren = container.find('> .attachment'),
-    attachmentIds = [];
+  containers.each(function (index, container) {
+    container = jQuery(container);
+    var children = container.find('.attachment'),
+      directChildren = container.find('> .attachment'),
+      attachmentIds = [];
 
-  if (!directChildren.length) {
-    return;
-  }
+    if (!directChildren.length) {
+      return;
+    }
 
-  window.groupMediaGridProgress = true;
+    window.groupMediaGridProgress = true;
 
-  if (container.find('.media-group-by-parent').length) {
-    container.find('.media-group-by-parent').addClass('to-remove');
-    container.find('.attachment.cloned').remove();
-  }
+    if (container.find('.media-group-by-parent').length) {
+      container.find('.media-group-by-parent').addClass('to-remove');
+      container.find('.attachment.cloned').remove();
+    }
 
-  // collect all image-ids
-  children.each(function (index, element) {
-    attachmentIds.push(jQuery(element).data('id'));
-  });
+    // collect all image-ids
+    children.each(function (index, element) {
+      attachmentIds.push(jQuery(element).data('id'));
+    });
 
-  if (!attachmentIds.length) {
-    return;
-  }
+    if (!attachmentIds.length) {
+      return;
+    }
 
-  // get ids grouped by parent
-  jQuery.get(
-    ajaxurl + '?action=postgalleryGetGroupedMedia&attachmentids=' + attachmentIds.join(','),
-    function (data) {
-      try {
-        data = JSON.parse(data);
-      } catch (e) {
-        console.info('json parse fail', data);
-        return;
-      }
-
-      // loop groups
-      for (var index in data) {
-        var parent = data[index],
-          groupContainer = jQuery('<li class="media-group-by-parent" data-parent="' + index + '">'),
-          groupContainerUl = jQuery('<ul class="media-group-ul" />'),
-          headline = jQuery('<h2 class="media-group-headline" />');
-
-        headline.append('<a class="media-group-adminlink" href="' + parent.adminlink + '">' + parent.title + '</a>');
-        headline.append('<a class="media-group-permalink" href="' + parent.permalink + '" target="_blank"><span class="dashicons dashicons-visibility"></span></a>');
-
-        groupContainer.append(headline);
-        groupContainer.append(groupContainerUl);
-
-        // loop attachments
-        for (var attachmentIndex in data[index].posts) {
-          var posts = data[index].posts,
-            attachmentId = posts[attachmentIndex]['id'],
-            element = container.find('.attachment[data-id="' + attachmentId + '"]:not(.cloned)'),
-            url = posts[attachmentIndex]['url'];
-
-          // add path to element
-          window.addPathToMediaItem(element, url);
-
-          // add labels to element
-          window.addLabelsToMediaItem(element, parent, url);
-
-          // add attachment to group-container
-          element.appendTo(groupContainerUl);
+    // get ids grouped by parent
+    jQuery.get(
+      ajaxurl + '?action=postgalleryGetGroupedMedia&attachmentids=' + attachmentIds.join(','),
+      function (data) {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          console.info('json parse fail', data);
+          return;
         }
 
-        // add post-thumbnail, also if it has not the post-parent
-        window.addMediaGroupPostThumbnail(parent, groupContainerUl, container);
+        // loop groups
+        for (var index in data) {
+          var parent = data[index],
+            groupContainer = jQuery('<li class="media-group-by-parent" data-parent="' + index + '">'),
+            groupContainerUl = jQuery('<ul class="media-group-ul" />'),
+            headline = jQuery('<h2 class="media-group-headline" />');
 
-        groupContainer.appendTo(container);
+          headline.append('<a class="media-group-adminlink" href="' + parent.adminlink + '">' + parent.title + '</a>');
+          headline.append('<a class="media-group-permalink" href="' + parent.permalink + '" target="_blank"><span class="dashicons dashicons-visibility"></span></a>');
+
+          groupContainer.append(headline);
+          groupContainer.append(groupContainerUl);
+
+          // loop attachments
+          for (var attachmentIndex in data[index].posts) {
+            var posts = data[index].posts,
+              attachmentId = posts[attachmentIndex]['id'],
+              element = container.find('.attachment[data-id="' + attachmentId + '"]:not(.cloned)'),
+              url = posts[attachmentIndex]['url'];
+
+            // add path to element
+            window.addPathToMediaItem(element, url);
+
+            // add labels to element
+            window.addLabelsToMediaItem(element, parent, url);
+
+            // add attachment to group-container
+            element.appendTo(groupContainerUl);
+          }
+
+          // add post-thumbnail, also if it has not the post-parent
+          window.addMediaGroupPostThumbnail(parent, groupContainerUl, container);
+
+          groupContainer.appendTo(container);
+        }
+
+        container.find('.media-group-by-parent.to-remove').remove();
+
+        window.groupMediaGridProgress = false;
       }
-
-      container.find('.media-group-by-parent.to-remove').remove();
-
-      window.groupMediaGridProgress = false;
-    }
-  );
+    );
+  });
 };
 
 /**
