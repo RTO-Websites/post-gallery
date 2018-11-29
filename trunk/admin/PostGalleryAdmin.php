@@ -12,8 +12,7 @@
 
 include_once( 'PostGalleryThemeCustomizer.php' );
 
-use Admin\SliderShortcodeAdmin;
-use Admin\PostGalleryMceButton;
+use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Inc\PostGallery;
 use Thumb\Thumb;
 
@@ -107,9 +106,9 @@ class PostGalleryAdmin {
             foreach ( $customTplFiles as $file ) {
                 if ( !is_dir( $customTplPath . '/' . $file ) ) {
                     $optionKey = str_replace( '.php', '', $file );
-                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', 'postgallery' );
+                    $optionTitle = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', 'postgallery' );
 
-                    $customTemplates[$optionKey] = $option_title;
+                    $customTemplates[$optionKey] = $optionTitle;
                 }
             }
         }
@@ -700,8 +699,83 @@ class PostGalleryAdmin {
                 update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alts[$filename] );
                 update_post_meta( $attachmentId, '_postgallery-image-options', $imgOptions[$filename] );
             }
-            //update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
+    }
+
+    public function addAdminPage() {
+        $returnUrl = urlencode( $_SERVER['REQUEST_URI'] );
+        \add_menu_page(
+            'PostGallery',
+            'PostGallery',
+            'edit_theme_options',
+            'customize.php?return=' . $returnUrl . '&autofocus[panel]=postgallery-panel',
+            null,
+            'dashicons-format-gallery'
+        );
+    }
+
+    /**
+     * Hook 'elementor/editor/after_save'
+     *
+     * @param $post_id
+     * @param null $editor_data
+     */
+    public function elementorAfterSave( $post_id, $editor_data = null ) {
+        $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
+
+        // fetch elements
+        $widgets = [];
+        PostGallery::getAllWidgets( $widgets, $meta, 'postgallery' );
+
+        foreach ( $widgets as $widget ) {
+            $pgSort = self::arraySearch( $widget, 'pgsort' );
+            $pgTitles = self::arraySearch( $widget, 'pgimgtitles' );
+            $pgDescs = self::arraySearch( $widget, 'pgimgdescs' );
+            $pgAlts = self::arraySearch( $widget, 'pgimgalts' );
+            $pgOptions = self::arraySearch( $widget, 'pgimgoptions' );
+            $pgPostId = self::arraySearch( $widget, 'pgimgsource' );
+
+            if ( empty( $pgPostId ) ) {
+                $pgPostId = $post_id;
+            } else {
+                $pgPostId = $pgPostId[0];
+            }
+
+
+            if ( !empty( $pgSort ) ) {
+                update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
+            }
+            if ( !empty( $pgTitles ) ) {
+                update_post_meta( $pgPostId, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
+            }
+            if ( !empty( $pgDescs ) ) {
+                update_post_meta( $pgPostId, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
+            }
+            if ( !empty( $pgAlts ) ) {
+                update_post_meta( $pgPostId, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
+            }
+            if ( !empty( $pgOptions ) ) {
+                update_post_meta( $pgPostId, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
+            }
+        }
+    }
+
+    /**
+     * Hook 'elementor/widgets/widgets_registered'
+     *
+     * @throws \Exception
+     */
+    public function registerElementorWidget() {
+        require_once( POSTGALLERY_DIR . '/includes/PostGalleryElementorWidget.php' );
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
+    }
+
+    /**
+     * Hook 'elementor/controls/controls_registered'
+     */
+    public function registerElementorControls() {
+        \Elementor\Plugin::instance()->controls_manager->get_controls();
+        \Elementor\Plugin::instance()->controls_manager->register_control( 'postgallerycontrol', new \PostGalleryElementorControl() );
     }
 
     /**

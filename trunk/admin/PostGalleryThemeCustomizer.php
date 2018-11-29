@@ -327,7 +327,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
         foreach ( $this->fields as $sectionId => $section ) {
             $wp_customize->add_section( $sectionId, [
-                'title' => __( $section['title'], 'postgallery' ),
+                'title' => $section['title'],
                 'panel' => 'postgallery-panel',
             ] );
 
@@ -341,11 +341,11 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 ] );
 
                 $wp_customize->add_control( $controlId, [
-                    'label' => __( $field['label'], 'postgallery' ),
+                    'label' =>  $field['label'],
                     'section' => $sectionId,
                     'type' => !empty( $field['type'] ) ? $field['type'] : 'text',
                     'settings' => $settingId,
-                    'description' => !empty( $field['description'] ) ? __( $field['description'], 'postgallery' ) : '',
+                    'description' => !empty( $field['description'] ) ? $field['description'] : '',
                     'choices' => !empty( $field['choices'] ) ? $field['choices'] : null,
                     'input_attrs' => !empty( $field['input_attrs'] ) ? $field['input_attrs'] : null,
                 ] );
@@ -354,12 +354,3 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
     }
 }
 
-/*if( class_exists( 'WP_Customize_Control' ) ) {
-    class WP_Customize_Headline_Control extends WP_Customize_Control {
-        public $type = 'headline';
-
-        public function render_content() {
-            echo '<span class="customize-control-title">' . esc_html( $this->label ) . '</span>';
-        }
-    }
-}*/

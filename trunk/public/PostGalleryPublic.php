@@ -342,6 +342,7 @@ class PostGalleryPublic {
      */
     public function returnGalleryHtml( $template = '', $postid = 0, $args = [] ) {
         self::$count += 1;
+        $id = 'postgallery-' . self::$count;
 
         $templateDirs = [
             get_stylesheet_directory() . '/post-gallery',
@@ -370,12 +371,14 @@ class PostGalleryPublic {
 
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
+        echo '<div class="postgallery-wrapper ' . $this->option( 'wrapperClass' ) . '"  id="' . $id . '">';
         foreach ( $templateDirs as $tplDir ) {
             if ( file_exists( $tplDir . '/' . $template . '.php' ) ) {
                 require( $tplDir . '/' . $template . '.php' );
                 break;
             }
         }
+        echo '</div>';
         echo '<!--end postgallery-->';
 
         $content = ob_get_contents();

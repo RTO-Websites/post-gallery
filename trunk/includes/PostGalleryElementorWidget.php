@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class PostGalleryElementorWidget extends Widget_Base {
     public static $instances = [];
-    public $postgalleryAdmin;
+    private $postgalleryAdmin;
 
     public function __construct( $data = [], $args = null ) {
         $instances[] = $this;
@@ -526,20 +526,11 @@ class PostGalleryElementorWidget extends Widget_Base {
         $settings = $GLOBALS['elementorWidgetSettings'] = $this->get_settings();
         $pgInstance = PostGalleryPublic::getInstance();
 
-        $wrapperClass = '';
         if ( !empty( $pgInstance->option( 'disableScripts' ) ) || empty( $pgInstance->option( 'enableLitebox' ) ) ) {
             $settings['pgelementorlitebox'] = 'on';
         }
 
         $args = $this->createArgs( $settings );
-
-        if ( !empty( $settings['equal_height'] ) ) {
-            $wrapperClass .= ' items-equal';
-        }
-
-        if ( !empty( $settings['image_animation'] ) ) {
-            $wrapperClass .= ' with-animation';
-        }
 
         // get gallery
         $loadFrom = $settings['pgimgsource'];
@@ -547,9 +538,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             $loadFrom = get_the_ID();
         }
 
-        $gallery = '<div class="elementor-image-gallery ' . $wrapperClass . '">';
-        $gallery .= $pgInstance->returnGalleryHtml( $settings['template'], $loadFrom, $args );
-        $gallery .= '</div>';
+        $gallery = $pgInstance->returnGalleryHtml( $settings['template'], $loadFrom, $args );
 
         if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
@@ -658,6 +647,15 @@ class PostGalleryElementorWidget extends Widget_Base {
         if ( !empty( $settings['image_animation'] ) ) {
             $args['imageAnimation'] = $settings['image_animation'];
             $args['imageAnimationTimeBetween'] = $settings['image_animation_time_between'];
+        }
+
+        $args['wrapperClass'] = ' elementor-image-gallery';
+        if ( !empty( $settings['equal_height'] ) ) {
+            $args['wrapperClass']  .= ' items-equal';
+        }
+
+        if ( !empty( $settings['image_animation'] ) ) {
+            $args['wrapperClass'] .= ' with-animation';
         }
 
         return $args;
