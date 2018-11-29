@@ -87,67 +87,43 @@
   };
 
   window.pgCheckImageSize = function () {
-    var gWidth = jQuery(window).width();
-    var gHeight = jQuery(window).height();
+    var gWidth = jQuery(window).width(),
+      gHeight = jQuery(window).height(),
+      sizes = [
+        [1920, 1600],
+        [1600, 1280],
+        [1280, 1080],
+        [1080, 800],
+        [800, 600],
+        [600, 480],
+        [480, 320]
+      ];
 
     if (gHeight == 0) {
       gHeight = 1080;
       gWidth = 1920;
     }
 
+    if (gWidth > 1920) {
+      gWidth = 2560;
+    }
     if (gHeight > 1920) {
       gHeight = 2560;
     }
-    if (gHeight <= 1920 && gHeight > 1600) {
-      gHeight = 1920;
+
+    for (var i in sizes) {
+      if (gHeight <= sizes[i][0] && gHeight > sizes[i][1]) {
+        gHeight = sizes[i][0];
+      }
+      if (gWidth <= sizes[i][0] && gWidth > sizes[i][1]) {
+        gWidth = sizes[i][0];
+      }
     }
-    if (gHeight <= 1600 && gHeight > 1280) {
-      gHeight = 1600;
-    }
-    if (gHeight <= 1280 && gHeight > 1080) {
-      gHeight = 1280;
-    }
-    if (gHeight <= 1080 && gHeight > 800) {
-      gHeight = 1080;
-    }
-    if (gHeight <= 800 && gHeight > 600) {
-      gHeight = 800;
-    }
-    if (gHeight <= 600 && gHeight > 480) {
-      gHeight = 600;
-    }
-    if (gHeight <= 480 && gHeight > 320) {
-      gHeight = 480;
-    }
+
     if (gHeight <= 320) {
       gHeight = 320;
     }
 
-
-    if (gWidth > 1920) {
-      gWidth = 2560;
-    }
-    if (gWidth <= 1920 && gWidth > 1600) {
-      gWidth = 1920;
-    }
-    if (gWidth <= 1600 && gWidth > 1280) {
-      gWidth = 1600;
-    }
-    if (gWidth <= 1280 && gWidth > 1080) {
-      gWidth = 1280;
-    }
-    if (gWidth <= 1080 && gWidth > 800) {
-      gWidth = 1080;
-    }
-    if (gWidth <= 800 && gWidth > 600) {
-      gWidth = 800;
-    }
-    if (gWidth <= 600 && gWidth > 480) {
-      gWidth = 600;
-    }
-    if (gWidth <= 480 && gWidth > 320) {
-      gWidth = 480;
-    }
     if (gWidth <= 320) {
       gWidth = 320;
     }
@@ -199,22 +175,15 @@
   /**
    * Set pg image animation on scroll and load event
    */
-  jQuery(function () {
-    if (typeof(window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
-      return;
-    }
+  jQuery(document).on('scroll', function () {
+    clearTimeout(window.pgImageAnimationTimeout);
 
-    window.startPgImageAnimation();
-
-    jQuery(document).on('scroll', function () {
-      clearTimeout(window.pgImageAnimationTimeout);
-
-      window.pgImageAnimationTimeout = setTimeout(function () {
-        window.startPgImageAnimation();
-      }, 200);
-    });
+    window.pgImageAnimationTimeout = setTimeout(function () {
+      window.startPgImageAnimation();
+    }, 200);
   });
 
+  window.startPgImageAnimation();
 })(jQuery);
 
 function stopOwlPropagation(element) {

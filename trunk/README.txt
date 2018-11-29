@@ -38,6 +38,7 @@ https://github.com/RTO-Websites/post-gallery
 * Add image animation to elementor-widget
 * Fix issue with grouped mediathek
 * Script loading can now be disabled
+* Update owl.carousel to 2.3.4
 
 = 1.6.1
 * Refactoring
