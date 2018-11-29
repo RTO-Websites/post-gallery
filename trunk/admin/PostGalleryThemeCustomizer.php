@@ -55,12 +55,12 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 'fields' => [
                     'postgalleryDebugmode' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Debug-Mode', 'post-gallery' ),
+                        'label' => __( 'Debug-Mode', 'postgallery' ),
                         'default' => false,
                     ],
                     'sliderType' => [
                         'type' => 'select',
-                        'label' => __( 'Slider-Type', 'post-gallery' ),
+                        'label' => __( 'Slider-Type', 'postgallery' ),
                         'choices' => [
                             'owl' => 'OWL Carousel 2.x',
                             'owl1' => 'OWL Carousel 1.3',
@@ -70,24 +70,24 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'globalPosition' => [
-                        'label' => __( 'Global position', 'post-gallery' ),
+                        'label' => __( 'Global position', 'postgallery' ),
                         'type' => 'select',
                         'choices' => [
-                            'bottom' => __( 'bottom', 'post-gallery' ),
-                            'top' => __( 'top', 'post-gallery' ),
-                            'custom' => __( 'custom', 'post-gallery' ),
+                            'bottom' => __( 'bottom', 'postgallery' ),
+                            'top' => __( 'top', 'postgallery' ),
+                            'custom' => __( 'custom', 'postgallery' ),
                         ],
                         'default' => defined( 'ELEMENTOR_VERSION' ) ? 'custom' : 'bottom',
                     ],
                     'disableScripts' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Disable scripts loading', 'post-gallery' ),
+                        'label' => __( 'Disable scripts loading', 'postgallery' ),
                         'default' => false,
                         'description' => 'Will disable litebox and slider',
                     ],
                     'disableGroupedMedia' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Disable grouped media', 'post-gallery' ),
+                        'label' => __( 'Disable grouped media', 'postgallery' ),
                         'default' => false,
                     ],
                 ],
@@ -98,7 +98,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 'title' => 'Template-Settings',
                 'fields' => [
                     'globalTemplate' => [
-                        'label' => __( 'Global template', 'post-gallery' ),
+                        'label' => __( 'Global template', 'postgallery' ),
                         'type' => 'select',
                         'choices' => array_merge(
                             $this->postgalleryAdmin->getCustomTemplates(),
@@ -107,7 +107,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'columns' => [
-                        'label' => __( 'Columns', 'post-gallery' ),
+                        'label' => __( 'Columns', 'postgallery' ),
                         'type' => 'select',
                         'choices' => [
                             'auto' => 'Auto',
@@ -128,37 +128,37 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'thumbWidth' => [
-                        'label' => __( 'Thumb width', 'post-gallery' ),
+                        'label' => __( 'Thumb width', 'postgallery' ),
                         'type' => 'text',
                         'default' => 150,
                     ],
 
                     'thumbHeight' => [
-                        'label' => __( 'Thumb height', 'post-gallery' ),
+                        'label' => __( 'Thumb height', 'postgallery' ),
                         'type' => 'text',
                         'default' => 150,
                     ],
                     'thumbScale' => [
-                        'label' => __( 'Thumb scale', 'post-gallery' ),
+                        'label' => __( 'Thumb scale', 'postgallery' ),
                         'type' => 'select',
                         'default' => '1',
                         'choices' => [
-                            '0' => __( 'crop', 'post-gallery' ),
-                            '1' => __( 'long edge', 'post-gallery' ),
-                            '2' => __( 'short edge', 'post-gallery' ),
-                            '3' => __( 'ignore proportions', 'post-gallery' ),
+                            '0' => __( 'crop', 'postgallery' ),
+                            '1' => __( 'long edge', 'postgallery' ),
+                            '2' => __( 'short edge', 'postgallery' ),
+                            '3' => __( 'ignore proportions', 'postgallery' ),
                         ],
                     ],
 
                     'sliderOwlConfig' => [
                         'type' => 'textarea',
-                        'label' => __( 'Owl-Slider-Config (for Slider-Template)', 'post-gallery' ),
+                        'label' => __( 'Owl-Slider-Config (for Slider-Template)', 'postgallery' ),
                         'default' => "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,",
                     ],
 
 
                     'stretchImages' => [
-                        'label' => __( 'Stretch small images (for watermark)', 'post-gallery' ),
+                        'label' => __( 'Stretch small images (for watermark)', 'postgallery' ),
                         'type' => 'checkbox',
                     ],
                 ],
@@ -218,41 +218,41 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 'fields' => [
                     'enableLitebox' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Enable', 'post-gallery' ) . ' Litebox',
+                        'label' => __( 'Enable', 'postgallery' ) . ' Litebox',
                         'default' => true,
                     ],
                     'liteboxTemplate' => [
                         'type' => 'select',
                         'default' => 'default',
-                        'label' => __( 'Litebox-Template', 'post-gallery' ),
+                        'label' => __( 'Litebox-Template', 'postgallery' ),
                         'choices' => $this->postgalleryAdmin->getLiteboxTemplates(),
                     ],
 
                     'owlTheme' => [
                         'type' => 'text',
                         'default' => 'default',
-                        'label' => __( 'Owl-Theme', 'post-gallery' ),
+                        'label' => __( 'Owl-Theme', 'postgallery' ),
                         'input_attrs' => [ 'list' => 'postgallery-owl-theme' ],
                         'description' => '<datalist id="postgallery-owl-theme"><option>default</option><option>green</option></datalist>',
                     ],
                     'clickEvents' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Enable Click-Events', 'post-gallery' ),
+                        'label' => __( 'Enable Click-Events', 'postgallery' ),
                         'default' => true,
                     ],
                     'keyEvents' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Enable Keypress-Events', 'post-gallery' ),
+                        'label' => __( 'Enable Keypress-Events', 'postgallery' ),
                         'default' => true,
                     ],
                     'arrows' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Show arrows', 'post-gallery' ),
+                        'label' => __( 'Show arrows', 'postgallery' ),
                         'default' => false,
                     ],
                     'asBg' => [
                         'type' => 'checkbox',
-                        'label' => __( 'Images as Background', 'post-gallery' ),
+                        'label' => __( 'Images as Background', 'postgallery' ),
                         'default' => false,
                     ],
 
@@ -265,21 +265,21 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
                     'mainColor' => [
                         'type' => 'text',
-                        'label' => __( 'Main-Color', 'post-gallery' ),
+                        'label' => __( 'Main-Color', 'postgallery' ),
                         'default' => '#fff',
                     ],
                     'secondColor' => [
                         'type' => 'text',
-                        'label' => __( 'Second-Color', 'post-gallery' ),
+                        'label' => __( 'Second-Color', 'postgallery' ),
                         'default' => '#333',
                     ],
 
                     'owlConfig' => [
                         'type' => 'textarea',
-                        'label' => __( 'Owl-Litebox-Config', 'post-gallery' ),
-                        /*'description' => '<b>' . __( 'Presets', 'post-gallery' ) . '</b>:'
+                        'label' => __( 'Owl-Litebox-Config', 'postgallery' ),
+                        /*'description' => '<b>' . __( 'Presets', 'postgallery' ) . '</b>:'
                             . '<select class="owl-slider-presets">
-                                <option value="">Slide (' . __( 'Default', 'post-gallery' ) . ')</option>
+                                <option value="">Slide (' . __( 'Default', 'postgallery' ) . ')</option>
                                 <option value="fade">Fade</option>
                                 <option value="slidevertical">SlideVertical</option>
                                 <option value="zoominout">Zoom In/out</option>
@@ -289,10 +289,10 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
                     'owlThumbConfig' => [
                         'type' => 'textarea',
-                        'label' => __( 'Owl-Config for Thumbnail-Slider', 'post-gallery' ),
-                        'description' => '<b>' . __( 'Presets', 'post-gallery' ) . '</b>:'
+                        'label' => __( 'Owl-Config for Thumbnail-Slider', 'postgallery' ),
+                        'description' => '<b>' . __( 'Presets', 'postgallery' ) . '</b>:'
                             . '<select class="owl-slider-presets">
-                                <option value="">Slide (' . __( 'Default', 'post-gallery' ) . ')</option>
+                                <option value="">Slide (' . __( 'Default', 'postgallery' ) . ')</option>
                                 <option value="fade">Fade</option>
                                 <option value="slidevertical">SlideVertical</option>
                                 <option value="zoominout">Zoom In/out</option>
@@ -301,13 +301,13 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
                     'owlDesc' => [
                         'type' => 'hidden',
-                        'label' => __( 'Description', 'post-gallery' ),
-                        'description' => __( 'You can use these options', 'post-gallery' ) . ':<br />' .
+                        'label' => __( 'Description', 'postgallery' ),
+                        'description' => __( 'You can use these options', 'postgallery' ) . ':<br />' .
                             '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
 							OwlCarousel Options
 						</a>
 						<br />' .
-                            __( 'You can use these animations', 'post-gallery' ) . ':<br />
+                            __( 'You can use these animations', 'postgallery' ) . ':<br />
 						<a href="http://daneden.github.io/animate.css/" target="_blank">
 							Animate.css
 						</a>
@@ -327,7 +327,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
         foreach ( $this->fields as $sectionId => $section ) {
             $wp_customize->add_section( $sectionId, [
-                'title' => __( $section['title'], 'post-gallery' ),
+                'title' => __( $section['title'], 'postgallery' ),
                 'panel' => 'postgallery-panel',
             ] );
 
@@ -341,11 +341,11 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 ] );
 
                 $wp_customize->add_control( $controlId, [
-                    'label' => __( $field['label'], 'post-gallery' ),
+                    'label' => __( $field['label'], 'postgallery' ),
                     'section' => $sectionId,
                     'type' => !empty( $field['type'] ) ? $field['type'] : 'text',
                     'settings' => $settingId,
-                    'description' => !empty( $field['description'] ) ? __( $field['description'], 'post-gallery' ) : '',
+                    'description' => !empty( $field['description'] ) ? __( $field['description'], 'postgallery' ) : '',
                     'choices' => !empty( $field['choices'] ) ? $field['choices'] : null,
                     'input_attrs' => !empty( $field['input_attrs'] ) ? $field['input_attrs'] : null,
                 ] );

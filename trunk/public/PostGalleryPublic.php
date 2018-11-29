@@ -197,9 +197,9 @@ class PostGalleryPublic {
             wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
             wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
 
-            wp_enqueue_script( 'owl-post-gallery', $buildPath . '/js/owl.postgallery.js', [ 'jquery', $this->pluginName . '-litebox' ] );
+            wp_enqueue_script( 'owl-postgallery', $buildPath . '/js/owl.postgallery.js', [ 'jquery', $this->pluginName . '-litebox' ] );
 
-            wp_enqueue_script( 'swiper-post-gallery', $buildPath . '/js/swiper.postgallery.js', [ 'jquery', $this->pluginName . '-litebox' ] );
+            wp_enqueue_script( 'swiper-postgallery', $buildPath . '/js/swiper.postgallery.js', [ 'jquery', $this->pluginName . '-litebox' ] );
         } else {
             wp_enqueue_script( $this->pluginName, $buildPath . '/js/postgallery.min.js', null, $this->version, true );
         }
@@ -217,7 +217,7 @@ class PostGalleryPublic {
      * @return mixed
      */
     public function addAsyncAttribute( $tag, $handle ) {
-        if ( strpos( $handle, 'post-gallery' ) === false ) {
+        if ( strpos( $handle, 'postgallery' ) === false ) {
             return $tag;
         }
 

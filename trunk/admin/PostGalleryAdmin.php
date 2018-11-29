@@ -68,19 +68,19 @@ class PostGalleryAdmin {
         self::$instance = $this;
 
         $this->optionFields = [ 'postgalleryPosition' => [
-            'label' => __( 'Position', 'post-gallery' ),
+            'label' => __( 'Position', 'postgallery' ),
             'type' => 'select',
             'value' => [
-                'global' => __( 'From global setting', 'post-gallery' ),
-                'bottom' => __( 'bottom', 'post-gallery' ),
-                'top' => __( 'top', 'post-gallery' ),
-                'custom' => __( 'custom', 'post-gallery' ),
+                'global' => __( 'From global setting', 'postgallery' ),
+                'bottom' => __( 'bottom', 'postgallery' ),
+                'top' => __( 'top', 'postgallery' ),
+                'custom' => __( 'custom', 'postgallery' ),
             ],
         ] ];
 
         $this->defaultTemplates = [
-            'thumbs' => __( 'Thumb-List', 'post-gallery' ),
-            'slider' => __( 'Slider (with Owl-Carousel)', 'post-gallery' ),
+            'thumbs' => __( 'Thumb-List', 'postgallery' ),
+            'slider' => __( 'Slider (with Owl-Carousel)', 'postgallery' ),
         ];
 
         new SliderShortcodeAdmin( $pluginName, $version );
@@ -94,8 +94,8 @@ class PostGalleryAdmin {
      */
     public function getLiteboxTemplates() {
         $templateList = [
-            'default-with-thumbs' => __( 'Default with thumbs', 'post-gallery' ),
-            'default' => __( 'Default', 'post-gallery' ),
+            'default-with-thumbs' => __( 'Default with thumbs', 'postgallery' ),
+            'default' => __( 'Default', 'postgallery' ),
         ];
 
         $customTemplates = [];
@@ -107,7 +107,7 @@ class PostGalleryAdmin {
             foreach ( $customTplFiles as $file ) {
                 if ( !is_dir( $customTplPath . '/' . $file ) ) {
                     $optionKey = str_replace( '.php', '', $file );
-                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', 'post-gallery' );
+                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', 'postgallery' );
 
                     $customTemplates[$optionKey] = $option_title;
                 }
@@ -354,11 +354,11 @@ class PostGalleryAdmin {
         // Template list
         echo '<tr valign="top">';
         $key = 'postgalleryTemplate';
-        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', 'post-gallery' ) . '</label></th>';
+        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', 'postgallery' ) . '</label></th>';
         echo '<td>';
         echo '<select class="field-input" name="' . $key . '" id="' . $key . '">';
 
-        echo '<option value="global">' . __( 'From global setting', 'post-gallery' ) . '</option>';
+        echo '<option value="global">' . __( 'From global setting', 'postgallery' ) . '</option>';
         // get templates from tpl-dir
         $this->getCustomTemplateDirOptions( get_post_meta( $curLangPost->ID, $key, true ) );
 
@@ -405,7 +405,7 @@ class PostGalleryAdmin {
                 foreach ( $dir as $file ) {
                     if ( !is_dir( $customTemplateDir . '/' . $file ) ) {
                         $file = str_replace( '.php', '', $file );
-                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', 'post-gallery' );
+                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', 'postgallery' );
                         $output[$file] = $title;
                     }
                 }
@@ -473,7 +473,7 @@ class PostGalleryAdmin {
         $imageOptions = [];
 
         if ( empty( $imageDir ) ) {
-            echo __( 'You have to save the post to upload images.', 'post-gallery' );
+            echo __( 'You have to save the post to upload images.', 'postgallery' );
             return;
         }
 
@@ -487,7 +487,7 @@ class PostGalleryAdmin {
             $thumbInstance = Thumb::getInstance();
             $dir = scandir( $uploadDir );
 
-            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $imageDir . '\');">Alle löschen</div>';
+            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $imageDir . '\');">' . __( 'Delete all', 'postgallery' ) . '</div>';
 
             echo '<ul class="sortable-pics">';
 
@@ -553,8 +553,8 @@ class PostGalleryAdmin {
      */
     public function getPostGalleryLang() {
         $scriptLanguage = [
-            'moveHere' => __( 'Move files here.', 'post-gallery' ),
-            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', 'post-gallery' ),
+            'moveHere' => __( 'Move files here.', 'postgallery' ),
+            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', 'postgallery' ),
         ];
 
         // Javascript for language

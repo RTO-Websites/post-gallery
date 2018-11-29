@@ -78,7 +78,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderType' => [
                 'type' => 'select',
-                'label' => __( 'Type', 'post-gallery' ),
+                'label' => __( 'Type', 'postgallery' ),
                 'options' => [
                     'owl' => 'owl',
                     'swiper' => 'swiper (experimental)'
@@ -87,30 +87,30 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
             'sliderWidth' => [
                 'type' => 'text',
-                'label' => __( 'Width', 'post-gallery' ),
+                'label' => __( 'Width', 'postgallery' ),
             ],
             'sliderHeight' => [
                 'type' => 'text',
-                'label' => __( 'Height', 'post-gallery' ),
+                'label' => __( 'Height', 'postgallery' ),
             ],
             'sliderScale' => [
                 'type' => 'select',
-                'label' => __( 'Image-Scale', 'post-gallery' ),
+                'label' => __( 'Image-Scale', 'postgallery' ),
                 'options' => [
-                    0 => __( 'crop', 'post-gallery' ),
-                    1 => __( 'Keep proportions (long edge)', 'post-gallery' ),
-                    2 => __( 'Keep proportions (short edge)', 'post-gallery' ),
-                    3 => __( 'Ignore proportions', 'post-gallery' ),
+                    0 => __( 'crop', 'postgallery' ),
+                    1 => __( 'Keep proportions (long edge)', 'postgallery' ),
+                    2 => __( 'Keep proportions (short edge)', 'postgallery' ),
+                    3 => __( 'Ignore proportions', 'postgallery' ),
                 ],
             ],
             'sliderItems' => [
                 'type' => 'number',
-                'label' => __( 'Items', 'post-gallery' ),
+                'label' => __( 'Items', 'postgallery' ),
                 'default' => 3,
             ],
             'sliderLoop' => [
                 'type' => 'checkbox',
-                'label' => __( 'Loop', 'post-gallery' ),
+                'label' => __( 'Loop', 'postgallery' ),
                 'default' => true,
             ],
 
@@ -121,26 +121,26 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderImageWidth' => [
                 'type' => 'text',
-                'label' => __( 'Image-Width', 'post-gallery' ),
+                'label' => __( 'Image-Width', 'postgallery' ),
             ],
             'sliderImageHeight' => [
                 'type' => 'text',
-                'label' => __( 'Image-Height', 'post-gallery' ),
+                'label' => __( 'Image-Height', 'postgallery' ),
             ],
             'sliderAsBg' => [
                 'type' => 'checkbox',
-                'label' => __( 'Images as Background', 'post-gallery' ),
+                'label' => __( 'Images as Background', 'postgallery' ),
             ],
 
             'sliderLoadFrom' => [
                 'type' => 'select',
-                'label' => __( 'Load images from', 'post-gallery' ),
+                'label' => __( 'Load images from', 'postgallery' ),
                 'options' => '',
                 'multiple' => true,
             ],
             'sliderThumbOnly' => [
                 'type' => 'checkbox',
-                'label' => __( 'Show only Post-Thumbs', 'post-gallery' ),
+                'label' => __( 'Show only Post-Thumbs', 'postgallery' ),
             ],
 
             // animation
@@ -158,7 +158,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
             'sliderAutoplay' => [
                 'type' => 'checkbox',
-                'label' => __( 'Autoplay', 'post-gallery' ),
+                'label' => __( 'Autoplay', 'postgallery' ),
             ],
 
             'autoplayTimeout' => [
@@ -195,29 +195,29 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderShuffle' => [
                 'type' => 'checkbox',
-                'label' => __( 'Shuffle images', 'post-gallery' ),
+                'label' => __( 'Shuffle images', 'postgallery' ),
             ],
             'sliderLinkPost' => [
                 'type' => 'checkbox',
-                'label' => __( 'Link images with post', 'post-gallery' ),
+                'label' => __( 'Link images with post', 'postgallery' ),
             ],
             'sliderOwlConfig' => [
                 'type' => 'textarea',
-                'label' => __( 'Owl-Config', 'post-gallery' ),
-                /*'descTop' => '<b>' . __( 'Presets', 'post-gallery' ) . '</b>:'
+                'label' => __( 'Owl-Config', 'postgallery' ),
+                /*'descTop' => '<b>' . __( 'Presets', 'postgallery' ) . '</b>:'
                     . '<select class="owl-slider-presets" data-lang="' . get_locale() . '" data-container="sliderOwlConfig">
-                    <option value="">Slide (' . __( 'Default', 'post-gallery' ) . ')</option>
+                    <option value="">Slide (' . __( 'Default', 'postgallery' ) . ')</option>
                     <option value="fade">Fade</option>
                     <option value="slidevertical">SlideVertical</option>
                     <option value="zoominout">Zoom In/out</option>
                     </select>',*/
 
-                'desc' => '<br />' . __( 'You can use these options', 'post-gallery' ) . ':<br />' .
+                'desc' => '<br />' . __( 'You can use these options', 'postgallery' ) . ':<br />' .
                     '<a href="https://owlcarousel2.github.io/OwlCarousel2/docs/api-options.html" target="_blank">
                                         OwlCarousel Options
                                     </a>
                                     <br />' .
-                    __( 'You can use these animations', 'post-gallery' ) . ':<br />
+                    __( 'You can use these animations', 'postgallery' ) . ':<br />
                                     <a href="http://daneden.github.io/animate.css/" target="_blank">
                                         Animate.css
                                     </a>
@@ -229,7 +229,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ],
             'sliderNoLazy' => [
                 'type' => 'checkbox',
-                'label' => __( 'Disable lazy load', 'post-gallery' ),
+                'label' => __( 'Disable lazy load', 'postgallery' ),
             ],
         ];
 
@@ -290,8 +290,8 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
     public function _createPostTypes() {
         register_post_type( 'postgalleryslider', [
                 'labels' => [
-                    'name' => __( 'Slider', 'post-gallery' ),
-                    'singular_name' => __( 'Slider', 'post-gallery' ),
+                    'name' => __( 'Slider', 'postgallery' ),
+                    'singular_name' => __( 'Slider', 'postgallery' ),
                 ],
                 'menu_icon' => 'dashicons-images-alt',
                 'public' => true,
@@ -313,8 +313,8 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
      * @return bool
      */
     public function _registerPostSettings() {
-        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', 'post-gallery' ), [ $this, '_addSliderShortcodeView' ], 'postgalleryslider' );
-        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', 'post-gallery' ), [ $this, '_addSliderSettings' ], 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-shortcode', __( 'Slider-Shortcode', 'postgallery' ), [ $this, '_addSliderShortcodeView' ], 'postgalleryslider' );
+        add_meta_box( 'post-gallery-slider-settings', __( 'Slider-Settings', 'postgallery' ), [ $this, '_addSliderSettings' ], 'postgalleryslider' );
 
         return false;
     }
@@ -411,16 +411,16 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         break;
 
                     case 'background':
-                        echo '<span class="sublabel">' . __( 'Image', 'post-gallery' ) . '</span>
+                        echo '<span class="sublabel">' . __( 'Image', 'postgallery' ) . '</span>
                                 <input class="field-input ' . $inputClass . ' upload-field" type="hidden" name="' . $key . '-image" id="'
                             . $key . '-image" value=\''
                             . $value . '\' />
                             <input class="field-button ' . $inputClass . ' upload-button" type="button" name="' . $key . '-image-button" id="'
                             . $key . '-image-button" value=\''
-                            . __( 'Select image', 'post-gallery' ) . '\' />
+                            . __( 'Select image', 'postgallery' ) . '\' />
                             <img src="" alt="" id="' . $key . '-image-img" class=" upload-preview-image" />
                             <br />';
-                        echo '<span class="sublabel">' . __( 'Color', 'post-gallery' ) . '</span>
+                        echo '<span class="sublabel">' . __( 'Color', 'postgallery' ) . '</span>
                                 <input class="field-input ' . $inputClass . '" type="text" name="' . $key . '-color" id="'
                             . $key . '-color" value=\''
                             . $value . '\' /><br />';

@@ -25,7 +25,7 @@ use Inc\PostGalleryDeactivator;
  * Author URI:        https://www.rto.de
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       post-gallery
+ * Text Domain:       postgallery
  * Domain Path:       /languages
  */
 

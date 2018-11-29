@@ -67,8 +67,6 @@ class PostGallery {
 
     protected $options;
 
-    protected $textdomain;
-
 
     /**
      * Define the core functionality of the plugin.
@@ -81,8 +79,7 @@ class PostGallery {
      */
     public function __construct() {
 
-        $this->pluginName = 'post-gallery';
-        $this->textdomain = 'post-gallery';
+        $this->pluginName = 'postgallery';
         $this->version = '1.0.0';
         $this->options = PostGallery::getOptions();
 
@@ -970,8 +967,8 @@ class PostGallery {
     public function addPostTypeGallery() {
         register_post_type( 'gallery', [
             'labels' => [
-                'name' => __( 'Galleries', $this->textdomain ),
-                'singular_name' => __( 'Gallery', $this->textdomain ),
+                'name' => __( 'Galleries', 'postgallery' ),
+                'singular_name' => __( 'Gallery', 'postgallery' ),
             ],
             'taxonomies' => [ 'category' ],
             'menu_icon' => 'dashicons-format-gallery',

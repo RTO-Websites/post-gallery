@@ -125,7 +125,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'suppress_filters' => false,
         ] );
 
-        $selectPosts = [ 0 => __( 'Dynamic', 'post-gallery' ) ];
+        $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
 
         foreach ( $allPosts as $post ) {
             if ( in_array( $post->post_type, $filerPostTypes ) ) {
@@ -137,14 +137,14 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->start_controls_section(
             'section_content',
             [
-                'label' => __( 'Images', 'post-gallery' ),
+                'label' => __( 'Images', 'postgallery' ),
             ]
         );
 
         $this->add_control(
             'template',
             [
-                'label' => __( 'Template', 'post-gallery' ),
+                'label' => __( 'Template', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'thumbs',
                 'selectors' => [],
@@ -159,7 +159,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'columns',
             [
-                'label' => __( 'Columns', 'post-gallery' ),
+                'label' => __( 'Columns', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'auto',
                 'selectors' => [],
@@ -182,7 +182,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgsource',
             [
-                'label' => __( 'Image-Source', 'post-gallery' ),
+                'label' => __( 'Image-Source', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 0,
                 'options' => $selectPosts,
@@ -203,7 +203,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'imageSize',
             [
-                'label' => __( 'Image-Size', 'post-gallery' ),
+                'label' => __( 'Image-Size', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 0,
                 'options' => $imageSizes,
@@ -214,7 +214,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgthumbwidth',
             [
-                'label' => __( 'Thumb width', 'post-gallery' ),
+                'label' => __( 'Thumb width', 'postgallery' ),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -224,7 +224,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgthumbheight',
             [
-                'label' => __( 'Thumb height', 'post-gallery' ),
+                'label' => __( 'Thumb height', 'postgallery' ),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -234,15 +234,15 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgthumbscale',
             [
-                'label' => __( 'Thumb scale', 'post-gallery' ),
+                'label' => __( 'Thumb scale', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => '',
                 'selectors' => [],
                 'options' => [
-                    '0' => __( 'crop', 'post-gallery' ),
-                    '1' => __( 'long edge', 'post-gallery' ),
-                    '2' => __( 'short edge', 'post-gallery' ),
-                    '3' => __( 'ignore proportions', 'post-gallery' ),
+                    '0' => __( 'crop', 'postgallery' ),
+                    '1' => __( 'long edge', 'postgallery' ),
+                    '2' => __( 'short edge', 'postgallery' ),
+                    '3' => __( 'ignore proportions', 'postgallery' ),
                 ],
             ]
         );
@@ -250,7 +250,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgmaxthumbs',
             [
-                'label' => __( 'Thumb amount', 'post-gallery' ),
+                'label' => __( 'Thumb amount', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
                 'default' => '',
                 /*'selectors' => [
@@ -262,7 +262,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgelementorlitebox',
             [
-                'label' => __( 'Use Elementor-Litebox', 'post-gallery' ),
+                'label' => __( 'Use Elementor-Litebox', 'postgallery' ),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
@@ -272,7 +272,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'masonry',
             [
-                'label' => __( 'Masonry', 'post-gallery' ),
+                'label' => __( 'Masonry', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
                 'default' => 0,
                 'options' => [
@@ -288,7 +288,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'equal_height',
             [
-                'label' => __( 'Equal height', 'post-gallery' ),
+                'label' => __( 'Equal height', 'postgallery' ),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
@@ -324,7 +324,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgsort',
             [
-                'label' => __( 'PostGallery Sort', 'post-gallery' ),
+                'label' => __( 'PostGallery Sort', 'postgallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -333,7 +333,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgdescs',
             [
-                'label' => __( 'PostGallery Descs', 'post-gallery' ),
+                'label' => __( 'PostGallery Descs', 'postgallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -342,7 +342,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgtitles',
             [
-                'label' => __( 'PostGallery Titles', 'post-gallery' ),
+                'label' => __( 'PostGallery Titles', 'postgallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -351,7 +351,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgalts',
             [
-                'label' => __( 'PostGallery Alts', 'post-gallery' ),
+                'label' => __( 'PostGallery Alts', 'postgallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -360,7 +360,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimgoptions',
             [
-                'label' => __( 'PostGallery Options', 'post-gallery' ),
+                'label' => __( 'PostGallery Options', 'postgallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -369,7 +369,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimages',
             [
-                'label' => __( 'PostGallery Images', 'post-gallery' ),
+                'label' => __( 'PostGallery Images', 'postgallery' ),
                 'type' => 'postgallerycontrol',
             ]
         );
@@ -447,7 +447,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->start_controls_section(
             'section_gallery_animation',
             [
-                'label' => __( 'Image animation', 'post-gallery' ),
+                'label' => __( 'Image animation', 'postgallery' ),
                 'tab' => Controls_Manager::TAB_ADVANCED,
             ]
         );
@@ -455,7 +455,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'image_animation',
             [
-                'label' => __( 'Image Animation', 'post-gallery' ),
+                'label' => __( 'Image Animation', 'postgallery' ),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
@@ -465,7 +465,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'image_animation_duration',
             [
-                'label' => __( 'Animation Duration', 'post-gallery' ),
+                'label' => __( 'Animation Duration', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 300,
                 'condition' => [
@@ -477,7 +477,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'image_animation_time_between',
             [
-                'label' => __( 'Time between images', 'post-gallery' ),
+                'label' => __( 'Time between images', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 200,
                 'condition' => [
@@ -489,7 +489,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'image_animation_css',
             [
-                'label' => __( 'Custom-CSS for Image', 'post-gallery' ),
+                'label' => __( 'Custom-CSS for Image', 'postgallery' ),
                 'type' => Controls_Manager::CODE,
                 'default' => '',
                 'condition' => [
@@ -501,7 +501,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'image_animation_css_animated',
             [
-                'label' => __( 'Custom-CSS for animated Image', 'post-gallery' ),
+                'label' => __( 'Custom-CSS for animated Image', 'postgallery' ),
                 'type' => Controls_Manager::CODE,
                 'default' => '',
                 'condition' => [

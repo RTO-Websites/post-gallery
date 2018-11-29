@@ -8,6 +8,9 @@
     window.litebox = new LiteboxGallery(window.pgConfig.liteboxArgs);
     // init masonry
     window.pgInitMasonry();
+    window.pgImageAnimationTimeout = setTimeout(function () {
+      window.startPgImageAnimation();
+    }, 200);
   });
 
   $(window).on('resize', function () {
@@ -183,7 +186,7 @@
     }, 200);
   });
 
-  window.startPgImageAnimation();
+  //window.startPgImageAnimation();
 })(jQuery);
 
 function stopOwlPropagation(element) {
