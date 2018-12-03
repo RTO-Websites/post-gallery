@@ -90,6 +90,11 @@ window.hookMediaGrid = function () {
   if (window.groupMediaGridProgress) {
     return;
   }
+
+  if (window.disallowHookMediaGrid) {
+    return;
+  }
+
   var containers = jQuery('.attachments-browser .attachments');
 
   if (!containers.length) {

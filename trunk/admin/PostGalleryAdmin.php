@@ -169,6 +169,11 @@ class PostGalleryAdmin {
         wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
 
+    public function enqueueInlineScripts() {
+        if ( !empty( PostGallery::getOptions()['disableGroupedMedia'] ) ) {
+            echo '<script>window.disallowHookMediaGrid = true;</script>';
+        }
+    }
 
     /**
      * Admin-ajax for image upload

@@ -142,7 +142,7 @@ class PostGallery {
 
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueScripts' );
-
+        $this->loader->addAction( 'admin_print_scripts', $pluginAdmin, 'enqueueInlineScripts' );
 
         // add options to customizer
         $this->loader->addAction( 'customize_register', new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' );
