@@ -208,3 +208,9 @@
 .media-group-by-parent .attachment .media-group-label.is-post-thumbnail::before {
   content: "\f128 ";
 }
+
+#customize-control-postgallery_sliderOwlConfig-control,
+#customize-control-postgallery_image_animation-control,
+#customize-control-postgallery_masonry-control {
+  margin-top: 3em;
+}

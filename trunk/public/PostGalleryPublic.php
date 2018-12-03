@@ -345,10 +345,10 @@ class PostGalleryPublic {
         $id = 'postgallery-' . self::$count;
 
         $templateDirs = [
+            POSTGALLERY_DIR . '/templates',
             get_stylesheet_directory() . '/post-gallery',
             get_stylesheet_directory() . '/plugins/post-gallery',
             get_stylesheet_directory() . '/postgallery',
-            POSTGALLERY_DIR . '/templates',
         ];
 
         $tmpOptions = $this->options;
@@ -369,9 +369,19 @@ class PostGalleryPublic {
         $this->options = array_change_key_case( (array)$this->options, CASE_LOWER );
         $this->options = array_merge( $this->options, $args );
 
+        // set wrapper class
+        $wrapperClass = $this->option( 'wrapperClass' );
+        if ( !empty( $this->option( 'equalHeight' ) ) ) {
+            $wrapperClass .= ' items-equal';
+        }
+
+        if ( !empty( $this->option( 'imageAnimation' ) ) ) {
+            $wrapperClass .= ' with-animation';
+        }
+
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
-        echo '<div class="postgallery-wrapper ' . $this->option( 'wrapperClass' ) . '"  id="' . $id . '">';
+        echo '<div class="postgallery-wrapper ' . $wrapperClass . '"  id="' . $id . '">';
         foreach ( $templateDirs as $tplDir ) {
             if ( file_exists( $tplDir . '/' . $template . '.php' ) ) {
                 require( $tplDir . '/' . $template . '.php' );
@@ -379,6 +389,15 @@ class PostGalleryPublic {
             }
         }
         echo '</div>';
+
+        // echo extra style
+        $extraStyle = $this->createExtraCss( $this->options, $id );
+        if ( !empty( $extraStyle ) ) {
+            echo '<style>';
+            echo $extraStyle;
+            echo '</style>';
+        }
+
         echo '<!--end postgallery-->';
 
         $content = ob_get_contents();
@@ -388,6 +407,59 @@ class PostGalleryPublic {
 
         return $content;
     }
+
+    /**
+     * Create style for widget
+     *
+     * @param $settings
+     * @param $id
+     *
+     * @return string
+     */
+    private function createExtraCss( $settings, $id ) {
+        $extraStyle = '';
+
+        // hide thumbs
+        if ( !empty( $settings['pgmaxthumbs'] ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item:nth-child(n+' . ( $settings['pgmaxthumbs'] + 1 ) . ') { ';
+            $extraStyle .= 'display: none;';
+            $extraStyle .= '}';
+        }
+
+        // image animation
+        if ( !empty( $settings['image_animation_duration'] ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= 'transition-duration: ' . $settings['image_animation_duration'] . 'ms;';
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css'] ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= $settings['image_animation_css'];
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css_animated'] ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item.show { ';
+            $extraStyle .= $settings['image_animation_css_animated'];
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $settings['equalHeight'] ) && !empty( $settings['itemRatio'] ) && is_string( $settings['itemRatio'] ) ) {
+            // item ratio for non-elementor
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item .bg-image { ';
+            $extraStyle .= 'padding-bottom: calc( ' . $settings['itemRatio'] . ' * 100% );';
+            $extraStyle .= '}';
+        }
+
+        return $extraStyle;
+    }
+
 
     /**
      * Add html to footer
@@ -439,7 +511,6 @@ class PostGalleryPublic {
 
         return $this->returnGalleryHtml( $template, $postid, $args );
     }
-
 
     /**
      * Gives a url from cache

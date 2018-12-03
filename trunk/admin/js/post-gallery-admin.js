@@ -32,7 +32,7 @@
 jQuery(function () {
   initPostGallery();
 
-  if (typeof(elementor) !== 'undefined') {
+  if (typeof (elementor) !== 'undefined') {
     // init postgallery on elementor widget open
     elementor.hooks.addAction('panel/open_editor/widget/postgallery', function (panel, model, view) {
       initPostGallery();
@@ -41,12 +41,36 @@ jQuery(function () {
       checkThumbsize();
     });
   }
+
+
+  // add dependencies for customizer
+  /*wp.customize( 'postgallery_image_animation', function( setting ) {
+    console.info('cus 1');
+    var setupControl = function( control ) {
+      console.info('cus 2');
+      var setActiveState, isDisplayed;
+      isDisplayed = function() {
+        return 'blank' !== setting.get();
+      };
+      setActiveState = function() {
+        control.active.set( isDisplayed() );
+      };
+      setActiveState();
+      setting.bind( setActiveState );
+    };
+    wp.customize.control( 'postgallery_image_animation_duration', setupControl );
+    wp.customize.control( 'postgallery_image_animation_time_between', setupControl );
+    wp.customize.control( 'postgallery_image_animation_css', setupControl );
+    wp.customize.control( 'postgallery_image_animation_css_animated', setupControl );
+  } );*/
+
+
 });
 
 jQuery(window).on('load', function () {
   wp.media.model.Query.defaultArgs.posts_per_page = -1;
   setTimeout(hookMediaGrid, 400);
-  if (typeof(wp.media) !== 'undefined' && typeof(wp.media.frame) !== 'undefined') {
+  if (typeof (wp.media) !== 'undefined' && typeof (wp.media.frame) !== 'undefined') {
     wp.media.frame.on('open', hookMediaGrid);
   }
 
@@ -55,6 +79,8 @@ jQuery(window).on('load', function () {
       hookMediaGrid();
     }
   }, 500);
+
+  initCustomizer();
 });
 
 /**
@@ -198,7 +224,7 @@ window.addLabelsToMediaItem = function (element, parent, path) {
   }
 
   // add post-gallery-class
-  if (typeof(path) === 'string' && path.indexOf('/gallery/') !== -1 && !element.hasClass('cloned')) {
+  if (typeof (path) === 'string' && path.indexOf('/gallery/') !== -1 && !element.hasClass('cloned')) {
     element.addClass('is-postgallery-image');
     element.append(jQuery('<span class="media-group-label is-postgallery-image">PostGallery</span>'));
   }
@@ -212,11 +238,11 @@ window.addPathToMediaItem = function (element, path) {
   }
 
   var pathSplit = path.split('wp-content/uploads/');
-  if (typeof(pathSplit[1]) !== 'undefined') {
+  if (typeof (pathSplit[1]) !== 'undefined') {
     path = pathSplit[1].replace('gallery/', '');
   } else {
     pathSplit = path.split('wp-includes/images/');
-    if (typeof(pathSplit[1]) !== 'undefined') {
+    if (typeof (pathSplit[1]) !== 'undefined') {
       path = pathSplit[1];
     }
   }
@@ -274,6 +300,57 @@ window.initPostGallery = function () {
   initElementorAddButton();
 };
 
+window.initCustomizer = function () {
+  // show/hide children of equal-height
+  $('#customize-control-postgallery_equalHeight-control').on('change', function (e) {
+    var target = $(this),
+      childs = [
+        '#customize-control-postgallery_itemRatio-control'
+      ];
+
+    if (target.find('input').is(':checked')) {
+      $(childs.join(',')).css({display: 'list-item'});
+    } else {
+      $(childs.join(',')).css({display: 'none'});
+    }
+  });
+  $('#customize-control-postgallery_equalHeight-control').trigger('change');
+
+
+  // show/hide children of image-animation
+  $('#customize-control-postgallery_image_animation-control').on('change', function (e) {
+    var target = $(this),
+      childs = [
+        '#customize-control-postgallery_image_animation_duration-control',
+        '#customize-control-postgallery_image_animation_time_between-control',
+        '#customize-control-postgallery_image_animation_css-control',
+        '#customize-control-postgallery_image_animation_css_animated-control'
+      ];
+
+    if (target.find('input').is(':checked')) {
+      $(childs.join(',')).css({display: 'list-item'});
+    } else {
+      $(childs.join(',')).css({display: 'none'});
+    }
+  });
+  $('#customize-control-postgallery_image_animation-control').trigger('change');
+
+
+  // add element to show range-input value
+  $('#customize-control-postgallery_itemRatio-control').on('input', function (e) {
+    var target = $(this),
+      input = target.find('input'),
+      rangeValueElement = target.find('.range-value');
+
+    if (!rangeValueElement.length) {
+      rangeValueElement = $('<div class="range-value" />');
+      target.append(rangeValueElement);
+    }
+
+    rangeValueElement.html(input.val());
+  });
+  $('#customize-control-postgallery_itemRatio-control').trigger('input');
+};
 
 function initSortable() {
   if (!$) {

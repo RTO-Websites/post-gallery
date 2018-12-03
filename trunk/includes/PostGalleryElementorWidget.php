@@ -550,56 +550,6 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         // echo gallery
         echo $gallery;
-
-        // echo extra style
-        $extraStyle = $this->createExtraCss( $settings );
-        if ( !empty( $extraStyle ) ) {
-            echo '<style>';
-            echo $extraStyle;
-            echo '</style>';
-        }
-    }
-
-    /**
-     * Create style for widget
-     *
-     * @param $settings
-     * @return string
-     */
-    private function createExtraCss( $settings ) {
-        $extraStyle = '';
-
-        // hide thumbs
-        if ( !empty( $settings['pgmaxthumbs'] ) ) {
-            $extraStyle .= '.elementor-element-' . $this->get_id()
-                . ' .gallery .gallery-item:nth-child(n+' . ( $settings['pgmaxthumbs'] + 1 ) . ') { ';
-            $extraStyle .= 'display: none;';
-            $extraStyle .= '}';
-        }
-
-        // image animation
-        if ( !empty( $settings['image_animation_duration'] ) ) {
-            $extraStyle .= '.elementor-element-' . $this->get_id()
-                . ' .gallery .gallery-item { ';
-            $extraStyle .= 'transition-duration: ' . $settings['image_animation_duration'] . 'ms;';
-            $extraStyle .= '}';
-        }
-
-        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css'] ) ) {
-            $extraStyle .= '.elementor-element-' . $this->get_id()
-                . ' .gallery .gallery-item { ';
-            $extraStyle .= $settings['image_animation_css'];
-            $extraStyle .= '}';
-        }
-
-        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css_animated'] ) ) {
-            $extraStyle .= '.elementor-element-' . $this->get_id()
-                . ' .gallery .gallery-item.show { ';
-            $extraStyle .= $settings['image_animation_css_animated'];
-            $extraStyle .= '}';
-        }
-
-        return $extraStyle;
     }
 
     /**
@@ -636,45 +586,36 @@ class PostGalleryElementorWidget extends Widget_Base {
         if ( isset( $settings['template'] ) ) {
             $args['globalTemplate'] = $settings['template'];
         } else {
-            $settings['template'] = '';
+            $args['template'] = '';
         }
 
-        if ( !empty( $settings['masonry'] ) ) {
+        if ( isset( $settings['masonry'] ) ) {
             $args['masonry'] = $settings['masonry'];
         }
 
+        if ( isset( $settings['equal_height'] ) ) {
+            $args['equalHeight'] = $settings['equal_height'];
+        }
 
-        if ( !empty( $settings['image_animation'] ) ) {
+        if ( isset( $settings['item_ratio'] ) ) {
+            $args['itemRatio'] = $settings['item_ratio'];
+        }
+
+        if ( isset( $settings['image_animation'] ) ) {
             $args['imageAnimation'] = $settings['image_animation'];
             $args['imageAnimationTimeBetween'] = $settings['image_animation_time_between'];
         }
 
-        $args['wrapperClass'] = ' elementor-image-gallery';
-        if ( !empty( $settings['equal_height'] ) ) {
-            $args['wrapperClass']  .= ' items-equal';
+        if ( !empty( $settings['image_animation_css'] ) ) {
+            $args['image_animation_css'] = $settings['image_animation_css'];
         }
 
-        if ( !empty( $settings['image_animation'] ) ) {
-            $args['wrapperClass'] .= ' with-animation';
+        if ( !empty( $settings['image_animation_css_animated'] ) ) {
+            $args['image_animation_css_animated'] = $settings['image_animation_css_animated'];
         }
+
+        $args['wrapperClass'] = ' elementor-image-gallery';
 
         return $args;
     }
-
-    /**
-     * Render the widget output in the editor.
-     *
-     * Written as a Backbone JavaScript template and used to generate the live preview.
-     *
-     * @since 1.0.0
-     *
-     * @access protected
-     */
-    /*protected function _content_template() {
-        ?>
-        <div class="title">
-            {{{ settings.title }}}
-        </div>
-        <?php
-    }*/
 }

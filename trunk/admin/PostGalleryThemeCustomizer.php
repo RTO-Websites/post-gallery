@@ -110,7 +110,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'label' => __( 'Columns', 'postgallery' ),
                         'type' => 'select',
                         'choices' => [
-                            'auto' => 'Auto',
+                            'none' => __( 'None' ),
                             '1' => '1',
                             '2' => '2',
                             '3' => '3',
@@ -150,12 +150,75 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         ],
                     ],
 
+                    // design
+                    'masonry' => [
+                        'label' => __( 'Masonry', 'postgallery' ),
+                        'type' => 'select',
+                        'default' => 0,
+                        'choices' => [
+                            0 => __( 'off' ),
+                            'vertical' => 'vertical',
+                            'horizontal' => 'horizontal',
+                        ],
+                    ],
+
+                    'equalHeight' => [
+                        'label' => __( 'Equal height', 'postgallery' ),
+                        'type' => 'checkbox',
+                        'default' => false,
+                        'return_value' => 'on',
+                    ],
+
+                    'itemRatio' => [
+                        'label' => __( 'Item Ratio', 'elementor-pro' ),
+                        'type' => 'range',
+                        'default' => [
+                            'size' => 0.66,
+                        ],
+
+                        'input_attrs' => [
+                            'min' => 0.1,
+                            'max' => 2,
+                            'step' => 0.01,
+                        ],
+                    ],
+
+
+                    // image animation
+                    'image_animation' => [
+                        'type' => 'checkbox',
+                        'label' => __( 'Image Animation', 'postgallery' ),
+                        'default' => false,
+                    ],
+                    'image_animation_duration' => [
+                        'type' => 'number',
+                        'label' => __( 'Animation Duration', 'postgallery' ),
+                        'default' => 300,
+                    ],
+                    'image_animation_time_between' => [
+                        'type' => 'number',
+                        'label' => __( 'Time between images', 'postgallery' ),
+                        'default' => 200,
+                    ],
+                    'image_animation_css' => [
+                        'type' => 'textarea',
+                        'label' => __( 'Custom-CSS for Image', 'postgallery' ),
+                        'default' => '',
+                    ],
+                    'image_animation_css_animated' => [
+                        'type' => 'textarea',
+                        'label' => __( 'Custom-CSS for animated Image', 'postgallery' ),
+                        'default' => '',
+                        'class' => 'show-if-animation'
+                    ],
+
+
+                    // extended options
                     'sliderOwlConfig' => [
                         'type' => 'textarea',
                         'label' => __( 'Owl-Slider-Config (for Slider-Template)', 'postgallery' ),
                         'default' => "items: 1,\nnav: 1,\ndots: 1,\nloop: 1,",
                     ],
-
 
                     'stretchImages' => [
                         'label' => __( 'Stretch small images (for watermark)', 'postgallery' ),
@@ -341,7 +404,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 ] );
 
                 $wp_customize->add_control( $controlId, [
-                    'label' =>  $field['label'],
+                    'label' => $field['label'],
                     'section' => $sectionId,
                     'type' => !empty( $field['type'] ) ? $field['type'] : 'text',
                     'settings' => $settingId,

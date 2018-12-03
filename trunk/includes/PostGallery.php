@@ -980,7 +980,14 @@ class PostGallery {
             'mainColor' => get_theme_mod( 'postgallery_mainColor', '#fff' ),
             'secondColor' => get_theme_mod( 'postgallery_secondColor', '#333' ),
 
-            'masonry' => '',
+            'masonry' => get_theme_mod( 'postgallery_masonry', false ),
+            'equalHeight' => get_theme_mod( 'postgallery_equalHeight', false ),
+            'itemRatio' => get_theme_mod( 'postgallery_itemRatio', 0.66 ),
+            'image_animation' => get_theme_mod( 'postgallery_image_animation', false ),
+            'image_animation_duration' => get_theme_mod( 'postgallery_image_animation_duration', 300 ),
+            'image_animation_time_between' => get_theme_mod( 'postgallery_image_animation_time_between', 200 ),
+            'image_animation_css' => get_theme_mod( 'postgallery_image_animation_css', '' ),
+            'image_animation_css_animated' => get_theme_mod( 'postgallery_image_animation_css_animated', '' ),
         ];
     }
 

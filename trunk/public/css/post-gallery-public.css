@@ -284,6 +284,7 @@ body.liteboxgallery-open {
   position: absolute;
   top: 50%;
   font-size: 32px;
+  font-family: Arial, sans-serif;
   color: #fff;
   padding-left: 15px;
   padding-right: 15px;
