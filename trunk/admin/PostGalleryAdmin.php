@@ -12,7 +12,8 @@
 
 include_once( 'PostGalleryThemeCustomizer.php' );
 
-use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
+use Inc\PostGalleryWidget\Control\PostGalleryElementorControl;
+use Inc\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Inc\PostGallery;
 use Thumb\Thumb;
 
@@ -166,13 +167,12 @@ class PostGalleryAdmin {
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery' ], $this->version, false );
 
-        wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
-    }
 
-    public function enqueueInlineScripts() {
-        if ( !empty( PostGallery::getOptions()['disableGroupedMedia'] ) ) {
-            echo '<script>window.disallowHookMediaGrid = true;</script>';
+        if ( empty( PostGallery::getOptions()['disableGroupedMedia'] ) ) {
+            wp_enqueue_script( $this->pluginName . '-mediagrid', $pgUrl . 'js/media-grid.js', [ 'jquery' ], $this->version, false );
         }
+
+        wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
 
     /**
@@ -484,7 +484,7 @@ class PostGalleryAdmin {
         echo '
 			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '" data-postid="' . $currentLangPost->ID . '"></div>
 			<div class="postgallery-upload-error"></div>
-		';;
+		';
 
         $images = [];
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
@@ -780,7 +780,10 @@ class PostGalleryAdmin {
      */
     public function registerElementorControls() {
         \Elementor\Plugin::instance()->controls_manager->get_controls();
-        \Elementor\Plugin::instance()->controls_manager->register_control( 'postgallerycontrol', new \PostGalleryElementorControl() );
+        \Elementor\Plugin::instance()->controls_manager->register_control(
+            'postgallerycontrol',
+            new \Inc\PostGalleryWidget\Control\PostGalleryElementorControl()
+        );
     }
 
     /**

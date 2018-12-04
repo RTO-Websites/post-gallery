@@ -1,6 +1,6 @@
 <?php
 
-namespace PostGalleryWidget\Widgets;
+namespace Inc\PostGalleryWidget\Widgets;
 
 use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
