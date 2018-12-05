@@ -136,6 +136,27 @@ window.initCustomizer = function () {
   });
   $('#customize-control-postgallery_image_animation-control').trigger('change');
 
+  // show/hide children of useSrcset
+  $('#customize-control-postgallery_useSrcset-control').on('change', function (e) {
+    var target = $(this);
+
+    if (target.find('input').is(':checked')) {
+      $('#customize-control-postgallery_thumbWidth-control').css({display: 'none'});
+      $('#customize-control-postgallery_thumbHeight-control').css({display: 'none'});
+      $('#customize-control-postgallery_thumbScale-control').css({display: 'none'});
+      $('#customize-control-postgallery_equalHeight-control').css({display: 'none'});
+      $('#customize-control-postgallery_itemRatio-control').css({display: 'none'});
+      $('#customize-control-postgallery_imageViewportWidth-control').css({display: 'list-item'});
+    } else {
+      $('#customize-control-postgallery_thumbWidth-control').css({display: 'list-item'});
+      $('#customize-control-postgallery_thumbHeight-control').css({display: 'list-item'});
+      $('#customize-control-postgallery_thumbScale-control').css({display: 'list-item'});
+      $('#customize-control-postgallery_equalHeight-control').css({display: 'list-item'});
+      $('#customize-control-postgallery_itemRatio-control').css({display: 'list-item'});
+      $('#customize-control-postgallery_imageViewportWidth-control').css({display: 'none'});
+    }
+  });
+  $('#customize-control-postgallery_useSrcset-control').trigger('change');
 
   // add element to show range-input value
   $('#customize-control-postgallery_itemRatio-control').on('input', function (e) {

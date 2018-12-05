@@ -192,6 +192,7 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         $imageSizes = [
             0 => __( 'Custom' ),
+            'srcset' => __( 'Responsive (srcset)' ),
         ];
 
         foreach ( Group_Control_Image_Size::get_all_image_sizes() as $name => $size ) {
@@ -215,7 +216,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgthumbwidth',
             [
                 'label' => __( 'Thumb width', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' => Controls_Manager::NUMBER,
                 'default' => '',
                 'selectors' => [],
                 'placeholder' => PostGalleryPublic::getInstance()->option( 'thumbWidth' ),
@@ -225,12 +226,26 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgthumbheight',
             [
                 'label' => __( 'Thumb height', 'postgallery' ),
-                'type' => Controls_Manager::TEXT,
+                'type' => Controls_Manager::NUMBER,
                 'default' => '',
                 'selectors' => [],
                 'placeholder' => PostGalleryPublic::getInstance()->option( 'thumbHeight' ),
             ]
         );
+
+        $this->add_control(
+            'imageViewportWidth',
+            [
+                'label' => __( 'Viewport width', 'postgallery' ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 800,
+                'selectors' => [],
+                'condition' => [
+                    'imageSize' => 'srcset',
+                ]
+            ]
+        );
+
         $this->add_control(
             'pgthumbscale',
             [
@@ -292,6 +307,14 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
+                'conditions' => [
+                    'terms' =>
+                        [[
+                            'name' => 'imageSize',
+                            'operator' => '!in',
+                            'value' => ['srcset'],
+                        ]],
+                ]
             ]
         );
 
@@ -562,10 +585,15 @@ class PostGalleryElementorWidget extends Widget_Base {
         $args = [];
         // create args
         if ( !empty( $settings['imageSize'] ) ) {
-            $sizes = explode( 'x', $settings['imageSize'] );
-            $args['thumbWidth'] = $sizes[0];
-            $args['thumbHeight'] = $sizes[1];
+            if ( $settings['imageSize'] == 'srcset' ) {
+                $args['useSrcset'] = true;
+            } else {
+                $sizes = explode( 'x', $settings['imageSize'] );
+                $args['thumbWidth'] = $sizes[0];
+                $args['thumbHeight'] = $sizes[1];
+            }
         } else {
+
             if ( !empty( $settings['pgthumbwidth'] ) ) {
                 $args['thumbWidth'] = $settings['pgthumbwidth'];
             }
@@ -577,6 +605,10 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         if ( isset( $settings['pgthumbscale'] ) ) {
             $args['thumbScale'] = $settings['pgthumbscale'];
+        }
+
+        if ( isset( $settings['imageViewportWidth'] ) ) {
+            $args['imageViewportWidth'] = $settings['imageViewportWidth'];
         }
 
         if ( isset( $settings['columns'] ) ) {

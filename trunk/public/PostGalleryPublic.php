@@ -379,6 +379,11 @@ class PostGalleryPublic {
             $wrapperClass .= ' with-animation';
         }
 
+        $srcsetSizes = '';
+        if ( !empty( $this->option( 'imageViewportWidth' ) ) ) {
+            $srcsetSizes .= sprintf( '(max-width: %1$sspx) 100vw, %1$spx', $this->option( 'imageViewportWidth' ) );
+        }
+
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
         echo '<div class="postgallery-wrapper ' . $wrapperClass . '"  id="' . $id . '">';

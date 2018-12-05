@@ -150,6 +150,18 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         ],
                     ],
 
+                    'useSrcset' => [
+                        'type' => 'checkbox',
+                        'label' => __( 'Responsive image size (srcset)', 'postgallery' ),
+                        'default' => false,
+                    ],
+
+                    'imageViewportWidth' => [
+                        'label' => __( 'Image viewport width', 'postgallery' ),
+                        'type' => 'text',
+                        'default' => 150,
+                    ],
+
                     // design
                     'masonry' => [
                         'label' => __( 'Masonry', 'postgallery' ),

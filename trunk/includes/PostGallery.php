@@ -142,7 +142,6 @@ class PostGallery {
 
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueScripts' );
-        $this->loader->addAction( 'admin_print_scripts', $pluginAdmin, 'enqueueInlineScripts' );
 
         // add options to customizer
         $this->loader->addAction( 'customize_register', new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' );
@@ -448,6 +447,8 @@ class PostGallery {
                         'post_title' => get_the_title( $postid ),
                         'imageOptions' => $imageOptions,
                         'attachmentId' => $attachmentId,
+                        'srcset' => wp_get_attachment_image_srcset( $attachmentId, 'full' ),
+                        //'srcsetSizes' => wp_get_attachment_image_sizes($attachmentId, 'full'),
                     ];
                 }
             }
@@ -957,6 +958,9 @@ class PostGallery {
             'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 500 ),
             'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 500 ),
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
+            'useSrcset' => get_theme_mod( 'postgallery_useSrcset', false ),
+            'imageViewportWidth' => get_theme_mod( 'postgallery_imageViewportWidth', 800 ),
+
             'sliderOwlConfig' => get_theme_mod( 'postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1," ),
             'stretchImages' => get_theme_mod( 'postgallery_stretchImages', false ),
 
@@ -991,6 +995,15 @@ class PostGallery {
         ];
     }
 
+    /**
+     * Return an single option value
+     *
+     * @param $key
+     * @return mixed|null
+     */
+    public function option( $key ) {
+        return isset( $this->options[$key] ) ? $this->options[$key] : null;
+    }
 
     /**
      * DEPRECATED

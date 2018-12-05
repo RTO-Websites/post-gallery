@@ -21,12 +21,24 @@
             ?>
             <div class="gallery-item">
                 <a href="<?php echo $image['url'] ?>">
-                    <img class="post-gallery_thumb"
-                            src="<?php echo $thumbUrl ?>"
-                            data-title="<?php echo $image['title'] ?>"
-                            data-desc="<?php echo $image['desc'] ?>"
-                            alt="<?php echo $image['alt'] ?>"
-                            data-scale="<?php echo $this->option( 'thumbScale' ); ?>"/>
+                    <?php if ( $this->option( 'useSrcset' ) ) { ?>
+                        <img class="post-gallery_thumb"
+                                src="<?php echo $image['url'] ?>"
+                                data-title="<?php echo $image['title'] ?>"
+                                data-desc="<?php echo $image['desc'] ?>"
+                                alt="<?php echo $image['alt'] ?>"
+                                srcset="<?php echo $image['srcset']; ?>"
+                                sizes="<?php echo $srcsetSizes; ?>"
+                        />
+                    <?php } else { ?>
+                        <img class="post-gallery_thumb"
+                                src="<?php echo $thumbUrl ?>"
+                                data-title="<?php echo $image['title'] ?>"
+                                data-desc="<?php echo $image['desc'] ?>"
+                                alt="<?php echo $image['alt'] ?>"
+                                data-scale="<?php echo $this->option( 'thumbScale' ); ?>"/>
+                    <?php } ?>
+
                 </a>
                 <div class="bg-image" style="background-image: url('<?php echo $thumbUrl; ?>');"></div>
             </div>

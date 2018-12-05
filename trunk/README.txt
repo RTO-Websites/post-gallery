@@ -39,6 +39,7 @@ https://github.com/RTO-Websites/post-gallery
 * Fix issue with grouped mediathek
 * Script loading can now be disabled
 * Update owl.carousel to 2.3.4
+* Add option for responsive images with srcset
 
 = 1.6.1
 * Refactoring

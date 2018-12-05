@@ -187,10 +187,12 @@ function checkThumbsize() {
     // custom size
     $('.elementor-control-pgthumbwidth').show();
     $('.elementor-control-pgthumbheight').show();
+    $('.elementor-control-pgthumbscale').show();
   } else {
     //$('.elementor-control-pgthumbwidth input').val(sizes[0]);
     //$('.elementor-control-pgthumbheight input').val(sizes[1]);
     $('.elementor-control-pgthumbwidth').hide();
     $('.elementor-control-pgthumbheight').hide();
+    $('.elementor-control-pgthumbscale').hide();
   }
 }
