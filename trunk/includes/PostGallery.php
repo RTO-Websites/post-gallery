@@ -179,7 +179,7 @@ class PostGallery {
 
 
         $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent' );
-        add_shortcode( 'postgallery', $pluginPublic, 'postgalleryShortcode' );
+        add_shortcode( 'postgallery', [ $pluginPublic, 'postgalleryShortcode' ] );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'postgalleryThumb' );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'getThumbList' );
 
@@ -474,14 +474,7 @@ class PostGallery {
 
         $attachmentId = self::getAttachmentIdByUrl( $fullUrl );
 
-        /*if ( strpos( $path, ABSPATH ) === false ) {
-            $path = ABSPATH . '/' . $path;
-        }*/
-
         if ( !empty( $attachmentId ) ) {
-            /* require_once( ABSPATH . 'wp-admin/includes/image.php' );
-            $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
-            wp_update_attachment_metadata( $attachmentId, $attachData ); */
             return $attachmentId;
         }
 
@@ -503,7 +496,7 @@ class PostGallery {
 
         $imageTitle = !empty( $legacyData['titles'][$filename] )
             ? $legacyData['titles'][$filename]
-            : ''; //preg_replace( '/\.[^.]+$/', '', basename( $path ) );
+            : '';
 
         $imageDesc = !empty( $legacyData['descs'][$filename] ) ? $legacyData['descs'][$filename] : '';
 
@@ -960,6 +953,8 @@ class PostGallery {
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
             'useSrcset' => get_theme_mod( 'postgallery_useSrcset', false ),
             'imageViewportWidth' => get_theme_mod( 'postgallery_imageViewportWidth', 800 ),
+            'columnGap' => get_theme_mod( 'postgallery_columnGap', 0 ),
+            'rowGap' => get_theme_mod( 'postgallery_rowGap', 0 ),
 
             'sliderOwlConfig' => get_theme_mod( 'postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1," ),
             'stretchImages' => get_theme_mod( 'postgallery_stretchImages', false ),
@@ -987,11 +982,11 @@ class PostGallery {
             'masonry' => get_theme_mod( 'postgallery_masonry', false ),
             'equalHeight' => get_theme_mod( 'postgallery_equalHeight', false ),
             'itemRatio' => get_theme_mod( 'postgallery_itemRatio', 0.66 ),
-            'image_animation' => get_theme_mod( 'postgallery_image_animation', false ),
-            'image_animation_duration' => get_theme_mod( 'postgallery_image_animation_duration', 300 ),
-            'image_animation_time_between' => get_theme_mod( 'postgallery_image_animation_time_between', 200 ),
-            'image_animation_css' => get_theme_mod( 'postgallery_image_animation_css', '' ),
-            'image_animation_css_animated' => get_theme_mod( 'postgallery_image_animation_css_animated', '' ),
+            'imageAnimation' => get_theme_mod( 'postgallery_imageAnimation', false ),
+            'imageAnimationDuration' => get_theme_mod( 'postgallery_imageAnimationDuration', 300 ),
+            'imageAnimationTimeBetween' => get_theme_mod( 'postgallery_imageAnimationTimeBetween', 200 ),
+            'imageAnimationCss' => get_theme_mod( 'postgallery_imageAnimationCss', '' ),
+            'imageAnimationCssAnimated' => get_theme_mod( 'postgallery_imageAnimationCssAnimated', '' ),
         ];
     }
 
@@ -1002,7 +997,9 @@ class PostGallery {
      * @return mixed|null
      */
     public function option( $key ) {
-        return isset( $this->options[$key] ) ? $this->options[$key] : null;
+        $options = array_change_key_case( (array)$this->options, CASE_LOWER );
+        $key = strtolower($key);
+        return isset( $options[$key] ) ? $options[$key] : null;
     }
 
     /**

@@ -83,7 +83,7 @@ class PostGalleryPublic {
 
         $this->options = PostGallery::getOptions();
 
-        $sliderType = !empty( $this->options['sliderType'] ) ? $this->options['sliderType'] : 'owl';
+        $sliderType = !empty( $this->option( 'sliderType' ) ) ? $this->option( 'sliderType' ) : 'owl';
 
 
         switch ( $sliderType ) {
@@ -95,7 +95,7 @@ class PostGalleryPublic {
                 break;
         }
 
-        if ( $this->options['arrows'] ) {
+        if ( $this->option( 'arrows' ) ) {
             $this->liteboxClass .= ' show-arrows';
         }
 
@@ -123,13 +123,14 @@ class PostGalleryPublic {
          */
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
-        if ( !empty( $this->options['disableScripts'] ) ) {
+        if ( !empty( $this->option( 'disableScripts' ) ) ) {
             wp_enqueue_style( $this->pluginName, plugin_dir_url( __FILE__ ) . 'css/post-gallery-public.css', [], $this->version, 'all' );
             return;
         }
 
-        switch ( $this->options['sliderType'] ) {
-            case 'owl1':
+        switch ( $this->option( 'sliderType' ) ) {
+            case
+            'owl1':
                 // owl 1
                 wp_enqueue_style( 'owl.carousel', $buildPath . '/css/owl.carousel-v1.css' );
                 wp_enqueue_style( 'owl.carousel.theme', $buildPath . '/css/owl.theme-v1.css' );
@@ -173,12 +174,13 @@ class PostGalleryPublic {
          */
 
         $buildPath = plugin_dir_url( __FILE__ ) . '../build';
-        if ( !empty( $this->options['disableScripts'] ) ) {
+        if ( !empty( $this->option( 'disableScripts' ) ) ) {
             return;
         }
 
-        switch ( $this->options['sliderType'] ) {
-            case 'owl1':
+        switch ( $this->option( 'sliderType' ) ) {
+            case
+            'owl1':
                 wp_enqueue_script( 'owl.carousel', $buildPath . '/js/owl.carousel-v1.min.js', [ 'jquery' ] );
                 break;
 
@@ -193,7 +195,7 @@ class PostGalleryPublic {
                 break;
         }
 
-        if ( !empty( $this->options['debugmode'] ) ) {
+        if ( !empty( $this->option( 'debugmode' ) ) ) {
             wp_enqueue_script( $this->pluginName, plugin_dir_url( __FILE__ ) . 'js/post-gallery-public.js', null, $this->version, true );
             wp_enqueue_script( $this->pluginName . '-litebox', plugin_dir_url( __FILE__ ) . 'js/litebox-gallery.class.js', null, $this->version, true );
 
@@ -342,7 +344,7 @@ class PostGalleryPublic {
      */
     public function returnGalleryHtml( $template = '', $postid = 0, $args = [] ) {
         self::$count += 1;
-        $id = 'postgallery-' . self::$count;
+        $id = 'postgallery-' . ( !empty( $args['id'] ) ? $args['id'] : self::$count );
 
         $templateDirs = [
             POSTGALLERY_DIR . '/templates',
@@ -359,14 +361,16 @@ class PostGalleryPublic {
         }
 
         if ( empty( $template ) || $template == 'global' ) {
-            $template = $this->options['globalTemplate'];
+            $template = $this->option( 'globalTemplate' );
         }
 
         if ( empty( $template ) ) {
             $template = 'thumbs';
         }
 
+        // merge args from elementor with global options
         $this->options = array_change_key_case( (array)$this->options, CASE_LOWER );
+        $args = array_change_key_case( (array)$args, CASE_LOWER );
         $this->options = array_merge( $this->options, $args );
 
         // set wrapper class
@@ -396,7 +400,7 @@ class PostGalleryPublic {
         echo '</div>';
 
         // echo extra style
-        $extraStyle = $this->createExtraCss( $this->options, $id );
+        $extraStyle = $this->createExtraCss( $id );
         if ( !empty( $extraStyle ) ) {
             echo '<style>';
             echo $extraStyle;
@@ -416,55 +420,97 @@ class PostGalleryPublic {
     /**
      * Create style for widget
      *
-     * @param $settings
      * @param $id
      *
      * @return string
      */
-    private function createExtraCss( $settings, $id ) {
+    private function createExtraCss( $id ) {
         $extraStyle = '';
 
         // hide thumbs
-        if ( !empty( $settings['pgmaxthumbs'] ) ) {
+        if ( !empty( $this->option( 'pgmaxthumbs' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item:nth-child(n+' . ( $settings['pgmaxthumbs'] + 1 ) . ') { ';
+                . ' .gallery .gallery-item:nth-child(n+' . ( $this->option( 'pgmaxthumbs' ) + 1 ) . ') { ';
             $extraStyle .= 'display: none;';
             $extraStyle .= '}';
         }
 
         // image animation
-        if ( !empty( $settings['image_animation_duration'] ) ) {
-            $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { ';
-            $extraStyle .= 'transition-duration: ' . $settings['image_animation_duration'] . 'ms;';
-            $extraStyle .= '}';
+        if ( !empty( $this->option( 'imageAnimation' ) ) ) {
+            if ( !empty( $this->option( 'imageAnimationDuration' ) ) ) {
+                $extraStyle .= '#' . $id
+                    . ' .gallery .gallery-item { ';
+                $extraStyle .= 'transition-duration: ' . $this->option( 'imageAnimationDuration' ) . 'ms;';
+                $extraStyle .= '}';
+            }
+
+            if ( !empty( $this->option( 'imageAnimationCss' ) ) ) {
+                $extraStyle .= '#' . $id
+                    . ' .gallery .gallery-item { ';
+                $extraStyle .= $this->option( 'imageAnimationCss' );
+                $extraStyle .= '}';
+            }
+
+            if ( !empty( $this->option( 'imageAnimationCssAnimated' ) ) ) {
+                $extraStyle .= '#' . $id
+                    . ' .gallery .gallery-item.show { ';
+                $extraStyle .= $this->option( 'imageAnimationCssAnimated' );
+                $extraStyle .= '}';
+            }
         }
 
-        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css'] ) ) {
-            $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { ';
-            $extraStyle .= $settings['image_animation_css'];
-            $extraStyle .= '}';
-        }
-
-        if ( !empty( $settings['image_animation'] ) && !empty( $settings['image_animation_css_animated'] ) ) {
-            $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item.show { ';
-            $extraStyle .= $settings['image_animation_css_animated'];
-            $extraStyle .= '}';
-        }
-
-        if ( !empty( $settings['equalHeight'] ) && !empty( $settings['itemRatio'] ) && is_string( $settings['itemRatio'] ) ) {
-            // item ratio for non-elementor
-            $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item .bg-image { ';
-            $extraStyle .= 'padding-bottom: calc( ' . $settings['itemRatio'] . ' * 100% );';
-            $extraStyle .= '}';
-        }
+        $extraStyle .= $this->createNonElementorExtraCss( $id );
 
         return $extraStyle;
     }
 
+    /**
+     * Create extra styles for non elementor embed
+     *
+     * @param $id
+     * @return string
+     */
+    private function createNonElementorExtraCss( $id ) {
+        if ( defined( 'ELEMENTOR_VERSION' ) ) {
+            return '';
+        }
+        $extraStyle = '';
+
+        // item ratio for non-elementor
+        if ( !empty( $this->option( 'equalheight' ) ) && !empty( $this->option( 'itemratio' ) ) && is_string( $this->option( 'itemratio' ) )
+        ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item .bg-image { ';
+            $extraStyle .= 'padding-bottom: calc( ' . $this->option( 'itemratio' ) . ' * 100% );';
+            $extraStyle .= '}';
+        }
+
+        // column gap
+        if ( !empty( $this->option( 'columngap' ) ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= 'padding-left: ' . ( $this->option( 'columngap' ) / 2 ) . 'px;';
+            $extraStyle .= 'padding-right: ' . ( $this->option( 'columngap' ) / 2 ) . 'px;';
+            $extraStyle .= '}';
+
+            $extraStyle .= '#' . $id
+                . ' .gallery { ';
+            $extraStyle .= 'margin-left: -' . ( $this->option( 'columngap' ) / 2 ) . 'px;';
+            $extraStyle .= 'margin-right: -' . ( $this->option( 'columngap' ) / 2 ) . 'px;';
+            $extraStyle .= '}';
+        }
+
+        // row gap
+        if ( !empty( $this->option( 'rowgap' ) ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= 'padding-bottom: ' . ( $this->option( 'rowgap' ) ) . 'px;';
+            $extraStyle .= '}';
+
+        }
+
+        return $extraStyle;
+    }
 
     /**
      * Add html to footer
@@ -472,11 +518,10 @@ class PostGalleryPublic {
      * @param string $footer
      */
     public function insertFooterHtml( $footer ) {
-        $options = $this->options;
-        if ( empty( $options['enableLitebox'] ) || !empty( $options['disableScripts'] ) ) {
+        if ( empty( $this->option( 'enableLitebox' ) ) || !empty( $this->option( 'disableScripts' ) ) ) {
             return;
         }
-        $template = $options['liteboxTemplate'];
+        $template = $this->option( 'liteboxTemplate' );
 
         $customTemplateDir = get_stylesheet_directory() . '/litebox';
         $defaultTemplateDir = POSTGALLERY_DIR . '/litebox-templates';
@@ -496,21 +541,21 @@ class PostGalleryPublic {
      * @return string
      */
     public function postgalleryShortcode( $args, $content = '' ) {
-        if ( empty( $args['template'] ) ) {
+        if ( empty( $this->option( 'template' ) ) ) {
             $template = get_post_meta( $GLOBALS['post']->ID, 'postgalleryTemplate', true );
         } else {
-            $template = $args['template'];
+            $template = $this->option( 'template' );
         }
         $postid = 0;
-        if ( !empty( $args['post'] ) ) {
-            if ( is_numeric( $args['post'] ) ) {
-                $postid = $args['post'];
+        if ( !empty( $this->option( 'post' ) ) ) {
+            if ( is_numeric( $this->option( 'post' ) ) ) {
+                $postid = $this->option( 'post' );
             } else {
-                $postid = url_to_postid( $args['post'] );
+                $postid = url_to_postid( $this->option( 'post' ) );
             }
         }
 
-        if ( empty( $postid ) && empty( $args['post'] ) ) {
+        if ( empty( $postid ) && empty( $this->option( 'post' ) ) ) {
             $postid = $GLOBALS['post']->ID;
         }
 
@@ -552,33 +597,32 @@ class PostGalleryPublic {
      * @param $header
      */
     public function insertHeaderscript( $header ) {
-        $args = $this->options;
 
-        if ( empty( $args['enableLitebox'] ) || !empty( $args['disableScripts'] ) ) {
+        if ( empty( $this->option( 'enableLitebox' ) ) || !empty( $this->option( 'disableScripts' ) ) ) {
             echo $header;
             return;
         }
 
-        $sliderType = $this->options['sliderType'];
-        $oldOwl = $this->options['sliderType'] == 'owl1' ? 'owlVersion: 1,' : '';
-        $asBg = !empty( $this->options['asBg'] ) ? 'asBg: 1,' : '';
-        $clickEvents = !empty( $this->options['clickEvents'] ) ? 'clickEvents: 1,' : '';
-        $keyEvents = !empty( $this->options['keyEvents'] ) ? 'keyEvents: 1,' : '';
-        $customSliderConfig = $this->options['owlConfig'];
-        $owlThumbConfig = $this->options['owlThumbConfig'];
-        $debug = !empty( $this->options['debugmode'] );
+        $sliderType = $this->option( 'sliderType' );
+        $oldOwl = $this->option( 'sliderType' ) == 'owl1' ? 'owlVersion: 1,' : '';
+        $asBg = !empty( $this->option( 'asBg' ) ) ? 'asBg: 1,' : '';
+        $clickEvents = !empty( $this->option( 'clickEvents' ) ) ? 'clickEvents: 1,' : '';
+        $keyEvents = !empty( $this->option( 'keyEvents' ) ) ? 'keyEvents: 1,' : '';
+        $customSliderConfig = $this->option( 'owlConfig' );
+        $owlThumbConfig = $this->option( 'owlThumbConfig' );
+        $debug = !empty( $this->option( 'debugmode' ) );
         $sliderConfig = '';
 
         // minify
         $customSliderConfig = preg_replace( "/^\s{2,}?([^,]+?),?$/m", ',', $customSliderConfig );
         $customSliderConfig = preg_replace( "/(\r?\n?)*/", '', $customSliderConfig );
 
-        $sliderConfig .= ( !empty( $args['autoplay'] ) || in_array( 'autoplay', $args, true ) ? 'autoplay: true,' : '' );
-        $sliderConfig .= ( !empty( $args['loop'] ) || in_array( 'loop', $args, true ) ? 'loop: true,' : '' );
-        $sliderConfig .= ( !empty( $args['animateOut'] ) ? 'animateOut: "' . $args['animateOut'] . '",' : '' );
-        $sliderConfig .= ( !empty( $args['animateIn'] ) ? 'animateIn: "' . $args['animateIn'] . '",' : '' );
-        $sliderConfig .= ( !empty( $args['autoplayTimeout'] ) ? 'autoplayTimeout: ' . $args['autoplayTimeout'] . ',' : '' );
-        $sliderConfig .= ( !empty( $args['items'] ) ? 'items: ' . $args['items'] . ',' : 'items: 1,' );
+        $sliderConfig .= ( !empty( $this->option( 'autoplay' ) ) || in_array( 'autoplay', $this->option(), true ) ? 'autoplay: true,' : '' );
+        $sliderConfig .= ( !empty( $this->option( 'loop' ) ) || in_array( 'loop', $this->option(), true ) ? 'loop: true,' : '' );
+        $sliderConfig .= ( !empty( $this->option( 'animateOut' ) ) ? 'animateOut: "' . $this->option( 'animateOut' ) . '",' : '' );
+        $sliderConfig .= ( !empty( $this->option( 'animateIn' ) ) ? 'animateIn: "' . $this->option( 'animateIn' ) . '",' : '' );
+        $sliderConfig .= ( !empty( $this->option( 'autoplayTimeout' ) ) ? 'autoplayTimeout: ' . $this->option( 'autoplayTimeout' ) . ',' : '' );
+        $sliderConfig .= ( !empty( $this->option( 'items' ) ) ? 'items: ' . $this->option( 'items' ) . ',' : 'items: 1,' );
 
         $sliderConfig .= $customSliderConfig;
 
@@ -609,34 +653,29 @@ class PostGalleryPublic {
      * @param $header
      */
     public function insertHeaderstyle( $header ) {
-        $args = $this->options;
         $style = '<style class="postgallery-style">';
-
-        /* if ( $args['arrows'] ) {
-
-        } */
 
         // arrows und close-button color
         $style .= '.litebox-gallery.show-arrows::after,
             .litebox-gallery.show-arrows::before,
             .litebox-gallery .close-button {
-                color: ' . $args['mainColor'] . ';
+                color: ' . $this->option( 'mainColor' ) . ';
             }';
 
         // highlight color on active thumb
         $style .= '.litebox-gallery .thumb-container .current-img img {
-                box-shadow: 0 0 0px 2px ' . $args['mainColor'] . ';
+                box-shadow: 0 0 0px 2px ' . $this->option( 'mainColor' ) . ';
             }';
 
         // gallery background-color
         $style .= '.litebox-gallery {
-                background-color: ' . $args['secondColor'] . ';
+                background-color: ' . $this->option( 'secondColor' ) . ';
             }';
 
         // owl-dots color
         $style .= '.owl-theme .owl-dots .owl-dot.active span, 
             .owl-theme .owl-dots .owl-dot:hover span {
-                background-color: ' . $args['mainColor'] . ';
+                background-color: ' . $this->option( 'mainColor' ) . ';
              }';
 
         $style .= '</style>';
@@ -650,14 +689,14 @@ class PostGalleryPublic {
      * @return array|\array[]|\mixed[]|null
      */
     public function option( $property = null ) {
+        $options = array_change_key_case( (array)$this->options, CASE_LOWER );
         if ( !empty( $property ) ) {
-            $options = array_change_key_case( (array)$this->options, CASE_LOWER );
             $property = strtolower( $property );
 
             return isset( $options[$property] ) ? $options[$property] : null;
         }
 
-        return $this->options;
+        return $options;
     }
 
     /**

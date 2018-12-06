@@ -127,15 +127,26 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'default' => 'auto',
                     ],
 
+                    'columnGap' => [
+                        'label' => __( 'Column gap', 'postgallery' ),
+                        'type' => 'number',
+                        'default' => 0,
+                    ],
+                    'rowGap' => [
+                        'label' => __( 'Row gap', 'postgallery' ),
+                        'type' => 'number',
+                        'default' => 0,
+                    ],
+
                     'thumbWidth' => [
                         'label' => __( 'Thumb width', 'postgallery' ),
-                        'type' => 'text',
+                        'type' => 'number',
                         'default' => 150,
                     ],
 
                     'thumbHeight' => [
                         'label' => __( 'Thumb height', 'postgallery' ),
-                        'type' => 'text',
+                        'type' => 'number',
                         'default' => 150,
                     ],
                     'thumbScale' => [
@@ -197,31 +208,30 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
 
                     // image animation
-                    'image_animation' => [
+                    'imageAnimation' => [
                         'type' => 'checkbox',
                         'label' => __( 'Image Animation', 'postgallery' ),
                         'default' => false,
                     ],
-                    'image_animation_duration' => [
+                    'imageAnimationDuration' => [
                         'type' => 'number',
                         'label' => __( 'Animation Duration', 'postgallery' ),
                         'default' => 300,
                     ],
-                    'image_animation_time_between' => [
+                    'imageAnimationTimeBetween' => [
                         'type' => 'number',
                         'label' => __( 'Time between images', 'postgallery' ),
                         'default' => 200,
                     ],
-                    'image_animation_css' => [
+                    'imageAnimationCss' => [
                         'type' => 'textarea',
                         'label' => __( 'Custom-CSS for Image', 'postgallery' ),
                         'default' => '',
                     ],
-                    'image_animation_css_animated' => [
+                    'imageAnimationCssAnimated' => [
                         'type' => 'textarea',
                         'label' => __( 'Custom-CSS for animated Image', 'postgallery' ),
                         'default' => '',
-                        'class' => 'show-if-animation'
                     ],
 
 

@@ -119,13 +119,13 @@ window.initCustomizer = function () {
 
 
   // show/hide children of image-animation
-  $('#customize-control-postgallery_image_animation-control').on('change', function (e) {
+  $('#customize-control-postgallery_imageAnimation-control').on('change', function (e) {
     var target = $(this),
       childs = [
-        '#customize-control-postgallery_image_animation_duration-control',
-        '#customize-control-postgallery_image_animation_time_between-control',
-        '#customize-control-postgallery_image_animation_css-control',
-        '#customize-control-postgallery_image_animation_css_animated-control'
+        '#customize-control-postgallery_imageAnimationDuration-control',
+        '#customize-control-postgallery_imageAnimationTimeBetween-control',
+        '#customize-control-postgallery_imageAnimationCss-control',
+        '#customize-control-postgallery_imageAnimationCssAnimated-control'
       ];
 
     if (target.find('input').is(':checked')) {
@@ -134,7 +134,7 @@ window.initCustomizer = function () {
       $(childs.join(',')).css({display: 'none'});
     }
   });
-  $('#customize-control-postgallery_image_animation-control').trigger('change');
+  $('#customize-control-postgallery_imageAnimation-control').trigger('change');
 
   // show/hide children of useSrcset
   $('#customize-control-postgallery_useSrcset-control').on('change', function (e) {

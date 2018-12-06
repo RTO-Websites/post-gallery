@@ -476,7 +476,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
-            'image_animation',
+            'imageAnimation',
             [
                 'label' => __( 'Image Animation', 'postgallery' ),
                 'type' => Controls_Manager::SWITCHER,
@@ -486,7 +486,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
-            'image_animation_duration',
+            'imageAnimationDuration',
             [
                 'label' => __( 'Animation Duration', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
@@ -498,7 +498,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
-            'image_animation_time_between',
+            'imageAnimationTimeBetween',
             [
                 'label' => __( 'Time between images', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
@@ -510,7 +510,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
-            'image_animation_css',
+            'imageAnimationCss',
             [
                 'label' => __( 'Custom-CSS for Image', 'postgallery' ),
                 'type' => Controls_Manager::CODE,
@@ -522,7 +522,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
-            'image_animation_css_animated',
+            'imageAnimationCssAnimated',
             [
                 'label' => __( 'Custom-CSS for animated Image', 'postgallery' ),
                 'type' => Controls_Manager::CODE,
@@ -554,6 +554,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         }
 
         $args = $this->createArgs( $settings );
+        $args['id'] = $this->get_id();
 
         // get gallery
         $loadFrom = $settings['pgimgsource'];
@@ -633,17 +634,17 @@ class PostGalleryElementorWidget extends Widget_Base {
             $args['itemRatio'] = $settings['item_ratio'];
         }
 
-        if ( isset( $settings['image_animation'] ) ) {
-            $args['imageAnimation'] = $settings['image_animation'];
-            $args['imageAnimationTimeBetween'] = $settings['image_animation_time_between'];
+        if ( isset( $settings['imageAnimation'] ) ) {
+            $args['imageAnimation'] = $settings['imageAnimation'];
+            $args['imageAnimationTimeBetween'] = $settings['imageAnimationTimeBetween'];
         }
 
-        if ( !empty( $settings['image_animation_css'] ) ) {
-            $args['image_animation_css'] = $settings['image_animation_css'];
+        if ( !empty( $settings['imageAnimationCss'] ) ) {
+            $args['imageAnimationCss'] = $settings['imageAnimationCss'];
         }
 
-        if ( !empty( $settings['image_animation_css_animated'] ) ) {
-            $args['image_animation_css_animated'] = $settings['image_animation_css_animated'];
+        if ( !empty( $settings['imageAnimationCssAnimated'] ) ) {
+            $args['imageAnimationCssAnimated'] = $settings['imageAnimationCssAnimated'];
         }
 
         $args['wrapperClass'] = ' elementor-image-gallery';

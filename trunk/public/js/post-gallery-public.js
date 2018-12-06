@@ -23,7 +23,7 @@
   });
 
   window.pgInitMasonry = function () {
-    if (!jQuery.fn.masonry) {
+    if (!$.fn.masonry) {
       return;
     }
     $('.pg-theme-thumbs[data-pgmasonry]').each(function (index, element) {
@@ -53,12 +53,12 @@
   window.getFullsizeThumbs = function (pics, owlSliderId, callback) {
     var sizes = pgCheckImageSize();
 
-    jQuery.ajax({
+    $.ajax({
       'type': 'get',
       'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
       'success': function (data, textStatus) {
-        window.litebox.picsData = jQuery.parseJSON(data);
+        window.litebox.picsData = $.parseJSON(data);
         if (typeof(callback) === 'function') {
           callback();
         }
@@ -76,12 +76,12 @@
     if (typeof(scale) === 'undefined') {
       scale = 0;
     }
-    jQuery.ajax({
+    $.ajax({
       'type': 'get',
       'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
       'success': function (data, textStatus) {
-        window.litebox.picsData = jQuery.parseJSON(data);
+        window.litebox.picsData = $.parseJSON(data);
         if (typeof(callback) === 'function') {
           callback();
         }
@@ -90,8 +90,8 @@
   };
 
   window.pgCheckImageSize = function () {
-    var gWidth = jQuery(window).width(),
-      gHeight = jQuery(window).height(),
+    var gWidth = $(window).width(),
+      gHeight = $(window).height(),
       sizes = [
         [1920, 1600],
         [1600, 1280],
@@ -156,17 +156,16 @@
     if (typeof(window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
       return;
     }
-
     // loop all container
     for (var id in window.pgImageAnimations) {
-      if (jQuery('#' + id).isVisible()) {
-        var items = jQuery('#' + id + ' .gallery-item'),
+      if ($('#' + id).isVisible()) {
+        var items = $('#' + id + ' .gallery-item'),
           timeBetween = window.pgImageAnimations[id];
 
         items.each(function (index, element) {
           // loop items
           setTimeout(function () {
-            jQuery(element).addClass('show');
+            $(element).addClass('show');
           }, timeBetween * index);
         });
 
@@ -178,7 +177,7 @@
   /**
    * Set pg image animation on scroll and load event
    */
-  jQuery(document).on('scroll', function () {
+  $(document).on('scroll', function () {
     clearTimeout(window.pgImageAnimationTimeout);
 
     window.pgImageAnimationTimeout = setTimeout(function () {
