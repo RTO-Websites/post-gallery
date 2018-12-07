@@ -51,7 +51,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
         $this->fields['postgallery-base'] =
             [
-                'title' => 'Main-Settings',
+                'title' => __( 'Main-Settings', 'postgallery' ),
                 'fields' => [
                     'postgalleryDebugmode' => [
                         'type' => 'checkbox',
@@ -95,7 +95,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
         $this->fields['postgallery-templateSettings'] =
             [
-                'title' => 'Template-Settings',
+                'title' => __( 'Template-Settings', 'postgallery' ),
                 'fields' => [
                     'globalTemplate' => [
                         'label' => __( 'Global template', 'postgallery' ),
@@ -110,7 +110,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'label' => __( 'Columns', 'postgallery' ),
                         'type' => 'select',
                         'choices' => [
-                            'none' => __( 'None' ),
+                            'none' => __( 'None', 'postgallery' ),
                             '1' => '1',
                             '2' => '2',
                             '3' => '3',
@@ -128,12 +128,12 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'columnGap' => [
-                        'label' => __( 'Column gap', 'postgallery' ),
+                        'label' => __( 'Columns Gap', 'postgallery' ),
                         'type' => 'number',
                         'default' => 0,
                     ],
                     'rowGap' => [
-                        'label' => __( 'Row gap', 'postgallery' ),
+                        'label' => __( 'Rows Gap', 'postgallery' ),
                         'type' => 'number',
                         'default' => 0,
                     ],
@@ -168,7 +168,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'imageViewportWidth' => [
-                        'label' => __( 'Image viewport width', 'postgallery' ),
+                        'label' => __( 'Image width in viewport', 'postgallery' ),
                         'type' => 'text',
                         'default' => 150,
                     ],
@@ -193,7 +193,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     ],
 
                     'itemRatio' => [
-                        'label' => __( 'Item Ratio', 'elementor-pro' ),
+                        'label' => __( 'Item Ratio', 'postgallery' ),
                         'type' => 'range',
                         'default' => [
                             'size' => 0.66,
@@ -205,35 +205,6 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                             'step' => 0.01,
                         ],
                     ],
-
-
-                    // image animation
-                    'imageAnimation' => [
-                        'type' => 'checkbox',
-                        'label' => __( 'Image Animation', 'postgallery' ),
-                        'default' => false,
-                    ],
-                    'imageAnimationDuration' => [
-                        'type' => 'number',
-                        'label' => __( 'Animation Duration', 'postgallery' ),
-                        'default' => 300,
-                    ],
-                    'imageAnimationTimeBetween' => [
-                        'type' => 'number',
-                        'label' => __( 'Time between images', 'postgallery' ),
-                        'default' => 200,
-                    ],
-                    'imageAnimationCss' => [
-                        'type' => 'textarea',
-                        'label' => __( 'Custom-CSS for Image', 'postgallery' ),
-                        'default' => '',
-                    ],
-                    'imageAnimationCssAnimated' => [
-                        'type' => 'textarea',
-                        'label' => __( 'Custom-CSS for animated Image', 'postgallery' ),
-                        'default' => '',
-                    ],
-
 
                     // extended options
                     'sliderOwlConfig' => [
@@ -250,12 +221,39 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
             ];
 
         $this->fields['postgallery-liteboxAnimation'] = [
-            'title' => 'Animation',
+            'title' => __( 'Animation', 'postgallery' ),
 
             'fields' => [
+                // image animation
+                'imageAnimation' => [
+                    'type' => 'checkbox',
+                    'label' => __( 'Image Animation', 'postgallery' ),
+                    'default' => false,
+                ],
+                'imageAnimationDuration' => [
+                    'type' => 'number',
+                    'label' => __( 'Animation Duration', 'postgallery' ),
+                    'default' => 300,
+                ],
+                'imageAnimationTimeBetween' => [
+                    'type' => 'number',
+                    'label' => __( 'Time between images', 'postgallery' ),
+                    'default' => 200,
+                ],
+                'imageAnimationCss' => [
+                    'type' => 'textarea',
+                    'label' => __( 'Custom-CSS for Image', 'postgallery' ),
+                    'default' => '',
+                ],
+                'imageAnimationCssAnimated' => [
+                    'type' => 'textarea',
+                    'label' => __( 'Custom-CSS for animated Image', 'postgallery' ),
+                    'default' => '',
+                ],
+
                 'slideSpeed' => [
                     'id' => 'slideSpeed',
-                    'label' => 'Speed (ms)',
+                    'label' => __( 'Speed (ms)', 'postgallery' ),
                     'type' => 'number',
                     'datasrc' => 'moduldata',
                     //'tooltip' => 'Gibt an wie lange die Animation eines Slides dauert.'
@@ -270,7 +268,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 ],
                 'autoplayTimeout' => [
                     'id' => 'autoplayTimeout',
-                    'label' => 'Autoplay timeout (ms)',
+                    'label' => __( 'Autoplay timeout (ms)', 'postgallery' ),
                     'type' => 'number',
                     'placeholder' => 5000,
                     'datasrc' => 'moduldata',
@@ -278,7 +276,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                 ],
                 'animateOut' => [
                     'id' => 'animateOut',
-                    'label' => 'Animate out',
+                    'label' => __( 'Animate out', 'postgallery' ),
                     'type' => 'select',
                     'choices' => $sliderAnimations,
                     'datasrc' => 'moduldata',
@@ -287,7 +285,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
                 'animateIn' => [
                     'id' => 'animateIn',
-                    'label' => 'Einblend-Animation (animateIn)',
+                    'label' => __( 'Animate in', 'postgallery' ),
                     'type' => 'select',
                     'choices' => $sliderAnimations,
                     'datasrc' => 'moduldata',
@@ -299,7 +297,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
         $this->fields['postgallery-liteboxSettings'] =
             [
-                'title' => 'Litebox-Settings',
+                'title' => __( 'Litebox-Settings', 'postgallery' ),
                 'fields' => [
                     'enableLitebox' => [
                         'type' => 'checkbox',
@@ -362,13 +360,6 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                     'owlConfig' => [
                         'type' => 'textarea',
                         'label' => __( 'Owl-Litebox-Config', 'postgallery' ),
-                        /*'description' => '<b>' . __( 'Presets', 'postgallery' ) . '</b>:'
-                            . '<select class="owl-slider-presets">
-                                <option value="">Slide (' . __( 'Default', 'postgallery' ) . ')</option>
-                                <option value="fade">Fade</option>
-                                <option value="slidevertical">SlideVertical</option>
-                                <option value="zoominout">Zoom In/out</option>
-                                </select>',*/
                         'default' => '',
                     ],
 

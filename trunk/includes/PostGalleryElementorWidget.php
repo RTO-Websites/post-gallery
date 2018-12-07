@@ -192,7 +192,7 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         $imageSizes = [
             0 => __( 'Custom' ),
-            'srcset' => __( 'Responsive (srcset)' ),
+            'srcset' => __( 'Responsive (srcset)', 'postgallery' ),
         ];
 
         foreach ( Group_Control_Image_Size::get_all_image_sizes() as $name => $size ) {
@@ -236,7 +236,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'imageViewportWidth',
             [
-                'label' => __( 'Viewport width', 'postgallery' ),
+                'label' => __( 'Image width in viewport', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 800,
                 'selectors' => [],
@@ -410,7 +410,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'column_gap',
             [
-                'label' => __( 'Columns Gap', 'elementor-pro' ),
+                'label' => __( 'Columns Gap', 'postgallery' ),
                 'type' => Controls_Manager::SLIDER,
                 'range' => [
                     'px' => [
@@ -428,7 +428,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'row_gap',
             [
-                'label' => __( 'Rows Gap', 'elementor-pro' ),
+                'label' => __( 'Rows Gap', 'postgallery' ),
                 'type' => Controls_Manager::SLIDER,
                 'range' => [
                     'px' => [
