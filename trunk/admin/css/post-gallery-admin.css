@@ -238,3 +238,8 @@
   top: auto;
   bottom: -1.5em;
 }
+
+.elementor-control-content .pg-image-container .sortable-pics input,
+.elementor-control-content .pg-image-container .sortable-pics textarea {
+  pointer-events: none;
+}

@@ -733,12 +733,8 @@ class PostGalleryAdmin {
         PostGallery::getAllWidgets( $widgets, $meta, 'postgallery' );
 
         foreach ( $widgets as $widget ) {
-            $pgSort = self::arraySearch( $widget, 'pgsort' );
-            $pgTitles = self::arraySearch( $widget, 'pgimgtitles' );
-            $pgDescs = self::arraySearch( $widget, 'pgimgdescs' );
-            $pgAlts = self::arraySearch( $widget, 'pgimgalts' );
-            $pgOptions = self::arraySearch( $widget, 'pgimgoptions' );
-            $pgPostId = self::arraySearch( $widget, 'pgimgsource' );
+            $pgSort = PostGallery::arraySearch( $widget, 'pgsort' );
+            $pgPostId = PostGallery::arraySearch( $widget, 'pgimgsource' );
 
             if ( empty( $pgPostId ) ) {
                 $pgPostId = $post_id;
@@ -749,18 +745,6 @@ class PostGalleryAdmin {
 
             if ( !empty( $pgSort ) ) {
                 update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
-            }
-            if ( !empty( $pgTitles ) ) {
-                update_post_meta( $pgPostId, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
-            }
-            if ( !empty( $pgDescs ) ) {
-                update_post_meta( $pgPostId, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
-            }
-            if ( !empty( $pgAlts ) ) {
-                update_post_meta( $pgPostId, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
-            }
-            if ( !empty( $pgOptions ) ) {
-                update_post_meta( $pgPostId, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
             }
         }
     }
