@@ -242,7 +242,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'selectors' => [],
                 'condition' => [
                     'imageSize' => 'srcset',
-                ]
+                ],
             ]
         );
 
@@ -292,8 +292,8 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'default' => 0,
                 'options' => [
                     0 => __( 'off' ),
-                    'vertical' => 'vertical',
-                    'horizontal' => 'horizontal',
+                    'on' => __( 'on' ),
+                    'horizontal' => 'horizontal order',
                 ],
                 'selectors' => [],
             ]
@@ -309,12 +309,12 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'return_value' => 'on',
                 'conditions' => [
                     'terms' =>
-                        [[
+                        [ [
                             'name' => 'imageSize',
                             'operator' => '!in',
-                            'value' => ['srcset'],
-                        ]],
-                ]
+                            'value' => [ 'srcset' ],
+                        ] ],
+                ],
             ]
         );
 
@@ -348,42 +348,6 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgsort',
             [
                 'label' => __( 'PostGallery Sort', 'postgallery' ),
-                'type' => 'hidden',//Controls_Manager::TEXT,
-                'default' => '',
-                'selectors' => [],
-            ]
-        );
-        $this->add_control(
-            'pgimgdescs',
-            [
-                'label' => __( 'PostGallery Descs', 'postgallery' ),
-                'type' => 'hidden',//Controls_Manager::TEXT,
-                'default' => '',
-                'selectors' => [],
-            ]
-        );
-        $this->add_control(
-            'pgimgtitles',
-            [
-                'label' => __( 'PostGallery Titles', 'postgallery' ),
-                'type' => 'hidden',//Controls_Manager::TEXT,
-                'default' => '',
-                'selectors' => [],
-            ]
-        );
-        $this->add_control(
-            'pgimgalts',
-            [
-                'label' => __( 'PostGallery Alts', 'postgallery' ),
-                'type' => 'hidden',//Controls_Manager::TEXT,
-                'default' => '',
-                'selectors' => [],
-            ]
-        );
-        $this->add_control(
-            'pgimgoptions',
-            [
-                'label' => __( 'PostGallery Options', 'postgallery' ),
                 'type' => 'hidden',//Controls_Manager::TEXT,
                 'default' => '',
                 'selectors' => [],
@@ -624,6 +588,10 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         if ( isset( $settings['masonry'] ) ) {
             $args['masonry'] = $settings['masonry'];
+        }
+
+        if ( isset( $settings['pgmaxthumbs'] ) ) {
+            $args['pgmaxthumbs'] = $settings['pgmaxthumbs'];
         }
 
         if ( isset( $settings['equal_height'] ) ) {

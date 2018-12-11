@@ -180,8 +180,8 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'default' => 0,
                         'choices' => [
                             0 => __( 'off' ),
-                            'vertical' => 'vertical',
-                            'horizontal' => 'horizontal',
+                            'on' => __('on' ),
+                            'horizontal' => 'horizontal order',
                         ],
                     ],
 

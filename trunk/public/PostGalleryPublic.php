@@ -436,30 +436,49 @@ class PostGalleryPublic {
         }
 
         // image animation
-        if ( !empty( $this->option( 'imageAnimation' ) ) ) {
-            if ( !empty( $this->option( 'imageAnimationDuration' ) ) ) {
-                $extraStyle .= '#' . $id
-                    . ' .gallery .gallery-item { ';
-                $extraStyle .= 'transition-duration: ' . $this->option( 'imageAnimationDuration' ) . 'ms;';
-                $extraStyle .= '}';
-            }
 
-            if ( !empty( $this->option( 'imageAnimationCss' ) ) ) {
-                $extraStyle .= '#' . $id
-                    . ' .gallery .gallery-item { ';
-                $extraStyle .= $this->option( 'imageAnimationCss' );
-                $extraStyle .= '}';
-            }
+        // image animation
+        $extraStyle .= $this->createImageAnimationCss( $id );
 
-            if ( !empty( $this->option( 'imageAnimationCssAnimated' ) ) ) {
-                $extraStyle .= '#' . $id
-                    . ' .gallery .gallery-item.show { ';
-                $extraStyle .= $this->option( 'imageAnimationCssAnimated' );
-                $extraStyle .= '}';
-            }
+        // css for non elementor websites
+        $extraStyle .= $this->createNonElementorExtraCss( $id );
+
+        return $extraStyle;
+    }
+
+    /**
+     * Creates css for image animations
+     *
+     * @param $id
+     * @return string
+     */
+    private function createImageAnimationCss( $id ) {
+        if ( empty( $this->option( 'imageAnimation' ) ) ) {
+            return '';
         }
 
-        $extraStyle .= $this->createNonElementorExtraCss( $id );
+        $extraStyle = '';
+
+        if ( !empty( $this->option( 'imageAnimationDuration' ) ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= 'transition-duration: ' . $this->option( 'imageAnimationDuration' ) . 'ms;';
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $this->option( 'imageAnimationCss' ) ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { ';
+            $extraStyle .= $this->option( 'imageAnimationCss' );
+            $extraStyle .= '}';
+        }
+
+        if ( !empty( $this->option( 'imageAnimationCssAnimated' ) ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item.show { ';
+            $extraStyle .= $this->option( 'imageAnimationCssAnimated' );
+            $extraStyle .= '}';
+        }
 
         return $extraStyle;
     }
