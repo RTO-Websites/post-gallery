@@ -265,7 +265,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgmaxthumbs',
             [
-                'label' => __( 'Thumb amount', 'postgallery' ),
+                'label' => __( 'Max. images amount', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
                 'default' => '',
                 /*'selectors' => [
