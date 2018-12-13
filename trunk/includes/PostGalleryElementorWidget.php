@@ -156,13 +156,16 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'columns',
             [
                 'label' => __( 'Columns', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
-                'default' => 'auto',
-                'selectors' => [],
+                'default' => 'none',
+
+                'selectors' => [
+                    '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
+                ],
                 'options' => [
                     'none' => __( 'None' ),
                     '1' => '1',
@@ -175,6 +178,8 @@ class PostGalleryElementorWidget extends Widget_Base {
                     '8' => '8',
                     '9' => '9',
                     '10' => '10',
+                    '11' => '11',
+                    '12' => '12',
                 ],
             ]
         );
@@ -371,7 +376,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'column_gap',
             [
                 'label' => __( 'Columns Gap', 'postgallery' ),
@@ -382,14 +387,14 @@ class PostGalleryElementorWidget extends Widget_Base {
                         'max' => 100,
                     ],
                 ],
-                'selectors' => [
+                'selectors' => [ // cant use column-gap here, cause of masonry
                     '{{WRAPPER}} .elementor-image-gallery' => 'margin-left: calc(-{{SIZE}}{{UNIT}} / 2);margin-right: calc(-{{SIZE}}{{UNIT}} / 2);',
                     '{{WRAPPER}} .elementor-image-gallery .gallery-item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2);padding-right: calc({{SIZE}}{{UNIT}} / 2);',
                 ],
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'row_gap',
             [
                 'label' => __( 'Rows Gap', 'postgallery' ),
@@ -401,7 +406,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                     ],
                 ],
                 'frontend_available' => true,
-                'selectors' => [
+                'selectors' => [ // cant use row-gap here, cause of masonry
                     '{{WRAPPER}} .elementor-image-gallery .gallery-item' => 'padding-bottom: {{SIZE}}{{UNIT}}',
                 ],
             ]

@@ -39,6 +39,7 @@ https://github.com/RTO-Websites/post-gallery
 * Fix issue with grouped mediathek
 * Script loading can now be disabled
 * Add option for responsive images with srcset
+* Image-columns in elementor now responsive
 
 = 1.6.1
 * Refactoring
