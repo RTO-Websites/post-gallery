@@ -22,17 +22,23 @@
     }, 100);
   });
 
+
+  // restart image animation on widget change
+  $(window).on( 'elementor/frontend/init', function() {
+    elementorFrontend.hooks.addAction( 'frontend/element_ready/postgallery.default', function(){
+      window.startPgImageAnimation();
+      window.pgInitMasonry();
+    } );
+  });
+
+  // init js masonry
   window.pgInitMasonry = function () {
     if (!$.fn.masonry) {
       return;
     }
-    $('.pg-theme-thumbs[data-pgmasonry]').each(function (index, element) {
+    $('.with-js-masonry .gallery').each(function (index, element) {
       if (element.postgalleryMasonry) {
         $(element).masonry('destroy');
-      }
-
-      if (!$(element).data('pgmasonry')) {
-        return;
       }
 
       element.postgalleryMasonry = $(element).masonry({
@@ -41,7 +47,7 @@
         // use element for option
         columnWidth: '.gallery-item',
         percentPosition: true,
-        horizontalOrder: $(element).data('pgmasonry') == 'horizontal',
+        horizontalOrder: $(element).parent().hasClass('js-masonry-horizontal'),
       });
 
       element.postgalleryMasonry.imagesLoaded().progress(function () {

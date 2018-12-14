@@ -8,8 +8,7 @@
  */
 ?>
     <figure
-            class="gallery pg-theme-thumbs pg-theme-list <?php echo $this->option( 'containerClass' ); ?>"
-        <?php echo !empty( $this->option( 'masonry' ) ) ? ' data-pgmasonry="' . $this->option( 'masonry' ) . '" ' : ''; ?>>
+            class="gallery pg-theme-thumbs pg-theme-list <?php echo $this->option( 'containerClass' ); ?>">
         <?php foreach ( $images as $image ) { ?>
             <?php
             $thumbUrl = \Inc\PostGallery::getThumbUrl( $image['path'],
@@ -44,14 +43,6 @@
             </div>
         <?php } ?>
     </figure>
-<?php if ( $this->option( 'masonry' ) ) { ?>
-    <script>
-      jQuery(function () {
-        window.pgInitMasonry();
-      });
-    </script>
-<?php } ?>
-
 <?php if ( $this->option( 'imageAnimation' ) ) { ?>
     <script>
       jQuery(function () {

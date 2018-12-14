@@ -374,14 +374,7 @@ class PostGalleryPublic {
         $this->options = array_merge( $this->options, $args );
 
         // set wrapper class
-        $wrapperClass = $this->option( 'wrapperClass' );
-        if ( !empty( $this->option( 'equalHeight' ) ) ) {
-            $wrapperClass .= ' items-equal';
-        }
-
-        if ( !empty( $this->option( 'imageAnimation' ) ) ) {
-            $wrapperClass .= ' with-animation';
-        }
+        $wrapperClass = $this->getWrapperClass();
 
         $srcsetSizes = '';
         if ( !empty( $this->option( 'imageViewportWidth' ) ) ) {
@@ -540,6 +533,41 @@ class PostGalleryPublic {
         }
 
         return $extraStyle;
+    }
+
+    /**
+     * Set css-classes for wrapper
+     *
+     * @return string
+     */
+    private function getWrapperClass() {
+        $wrapperClass = $this->option( 'wrapperClass' );
+
+        // equal height
+        if ( !empty( $this->option( 'equalHeight' ) ) ) {
+            $wrapperClass .= ' items-equal';
+        }
+
+        // image animation
+        if ( !empty( $this->option( 'imageAnimation' ) ) ) {
+            $wrapperClass .= ' with-animation';
+        }
+
+        // masonry
+        $masonry = $this->option( 'masonry' );
+        switch ($masonry) {
+            case 'css':
+                $wrapperClass .= ' with-css-masonry';
+                break;
+            case 'on':
+                $wrapperClass .= ' with-js-masonry';
+                break;
+            case 'horizontal':
+                $wrapperClass .= ' with-js-masonry js-masonry-horizontal';
+                break;
+        }
+
+        return $wrapperClass;
     }
 
     /**

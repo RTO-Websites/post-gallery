@@ -165,7 +165,10 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'min' => 1,
                 'max' => 24,
                 'selectors' => [
-                    '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
+                    '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, 1fr);',
+                    '{{WRAPPER}} .with-css-masonry .gallery' => 'display: block; column-count: {{VALUE}};',
+                    '{{WRAPPER}} .with-js-masonry .gallery' => 'display: block;',
+                    '{{WRAPPER}} .with-js-masonry .gallery .gallery-item' => 'width: calc(100% / {{VALUE}});',
                 ],
                 'conditions' => [
                     'terms' =>
@@ -316,6 +319,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                     0 => __( 'off' ),
                     'on' => __( 'on' ),
                     'horizontal' => 'horizontal order',
+                    'css' => 'CSS only',
                 ],
                 'selectors' => [],
             ]
