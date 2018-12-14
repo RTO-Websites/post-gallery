@@ -8,7 +8,7 @@
  */
 ?>
     <figure
-            class="gallery pg-theme-thumbs pg-theme-list gallery-columns-<?php echo $this->option( 'columns' ); ?> <?php echo $this->option( 'containerClass' ); ?>"
+            class="gallery pg-theme-thumbs pg-theme-list <?php echo $this->option( 'containerClass' ); ?>"
         <?php echo !empty( $this->option( 'masonry' ) ) ? ' data-pgmasonry="' . $this->option( 'masonry' ) . '" ' : ''; ?>>
         <?php foreach ( $images as $image ) { ?>
             <?php

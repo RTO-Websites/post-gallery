@@ -117,6 +117,20 @@ window.initCustomizer = function () {
   });
   $('#customize-control-postgallery_equalHeight-control').trigger('change');
 
+  // show/hide children of no grid
+  $('#customize-control-postgallery_noGrid-control').on('change', function (e) {
+    var target = $(this),
+      children = [
+        '#customize-control-postgallery_columns-control'
+      ];
+
+    if (target.find('input').is(':checked')) {
+      $(children.join(',')).css({display: 'none'});
+    } else {
+      $(children.join(',')).css({display: 'list-item'});
+    }
+  });
+  $('#customize-control-postgallery_noGrid-control').trigger('change');
 
   // show/hide children of image-animation
   $('#customize-control-postgallery_imageAnimation-control').on('change', function (e) {

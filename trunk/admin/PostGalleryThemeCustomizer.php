@@ -108,23 +108,16 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
                     'columns' => [
                         'label' => __( 'Columns', 'postgallery' ),
-                        'type' => 'select',
-                        'choices' => [
-                            'none' => __( 'None', 'postgallery' ),
-                            '1' => '1',
-                            '2' => '2',
-                            '3' => '3',
-                            '4' => '4',
-                            '5' => '5',
-                            '6' => '6',
-                            '7' => '7',
-                            '8' => '8',
-                            '9' => '9',
-                            '10' => '10',
-                            '11' => '11',
-                            '12' => '12',
-                        ],
-                        'default' => 'auto',
+                        'type' => 'number',
+                        'min' => 1,
+                        'max' => 0,
+                        'default' => 6,
+                    ],
+
+                    'noGrid' => [
+                        'type' => 'checkbox',
+                        'label' => __( 'No Grid', 'postgallery' ),
+                        'default' => false,
                     ],
 
                     'columnGap' => [
@@ -132,6 +125,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'type' => 'number',
                         'default' => 0,
                     ],
+
                     'rowGap' => [
                         'label' => __( 'Rows Gap', 'postgallery' ),
                         'type' => 'number',

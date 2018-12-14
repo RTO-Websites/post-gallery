@@ -490,7 +490,7 @@ class PostGalleryPublic {
      * @return string
      */
     private function createNonElementorExtraCss( $id ) {
-        if ( defined( 'ELEMENTOR_VERSION' ) ) {
+        if ( !empty( $GLOBALS['PgIsElementorWidget'] ) ) {
             return '';
         }
         $extraStyle = '';
@@ -504,6 +504,17 @@ class PostGalleryPublic {
             $extraStyle .= '}';
         }
 
+        if ( !empty( $this->option( 'nogrid' ) ) ) {
+            $extraStyle .= '#' . $id
+                . ' .gallery { display: block; }';
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item { display: inline-block; width: auto; }';
+            $extraStyle .= '#' . $id
+                . ' .gallery .gallery-item img { width: auto; }';
+        } else {
+            $extraStyle .= '#' . $id
+                . ' .gallery { grid-template-columns: repeat(' . $this->option( 'columns' ) . ', minmax(0, 1fr));}';
+        }
         // column gap
         if ( !empty( $this->option( 'columngap' ) ) ) {
             $extraStyle .= '#' . $id

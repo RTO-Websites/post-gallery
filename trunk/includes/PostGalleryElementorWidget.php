@@ -160,26 +160,43 @@ class PostGalleryElementorWidget extends Widget_Base {
             'columns',
             [
                 'label' => __( 'Columns', 'postgallery' ),
-                'type' => Controls_Manager::SELECT,
-                'default' => 'none',
-
+                'type' => Controls_Manager::NUMBER,
+                'default' => 1,
+                'min' => 1,
+                'max' => 24,
                 'selectors' => [
                     '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
                 ],
-                'options' => [
-                    'none' => __( 'None' ),
-                    '1' => '1',
-                    '2' => '2',
-                    '3' => '3',
-                    '4' => '4',
-                    '5' => '5',
-                    '6' => '6',
-                    '7' => '7',
-                    '8' => '8',
-                    '9' => '9',
-                    '10' => '10',
-                    '11' => '11',
-                    '12' => '12',
+                'conditions' => [
+                    'terms' =>
+                        [ [
+                            'name' => 'no_grid',
+                            'operator' => '!in',
+                            'value' => [ 'on' ],
+                        ] ],
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'no_grid',
+            [
+                'label' => __( 'No Grid', 'postgallery' ),
+                'type' => Controls_Manager::SWITCHER,
+                'selectors' => [
+                    '{{WRAPPER}} .gallery' => 'display: block;',
+                    '{{WRAPPER}} .gallery .gallery-item' => 'display: inline-block; width: auto;',
+                    '{{WRAPPER}} .gallery .gallery-item img' => 'width: auto;',
+
+                ],
+                'return_value' => 'on',
+                'conditions' => [
+                    'terms' =>
+                        [ [
+                            'name' => 'equal_height',
+                            'operator' => '!in',
+                            'value' => [ 'on' ],
+                        ] ],
                 ],
             ]
         );
@@ -531,6 +548,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             $loadFrom = get_the_ID();
         }
 
+        $GLOBALS['PgIsElementorWidget'] = true;
         $gallery = $pgInstance->returnGalleryHtml( $settings['template'], $loadFrom, $args );
 
         if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
@@ -540,6 +558,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             // use postgallery litebox
             $gallery = str_replace( '<a ', '<a data-elementor-open-lightbox="no" ', $gallery );
         }
+        $GLOBALS['PgIsElementorWidget'] = false;
 
         // echo gallery
         echo $gallery;

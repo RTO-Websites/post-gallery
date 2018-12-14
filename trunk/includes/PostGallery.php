@@ -948,6 +948,7 @@ class PostGallery {
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
             'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),
+            'noGrid' => get_theme_mod( 'postgallery_noGrid', 0 ),
             'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 500 ),
             'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 500 ),
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
