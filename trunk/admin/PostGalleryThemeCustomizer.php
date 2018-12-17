@@ -176,6 +176,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                             0 => __( 'off' ),
                             'on' => __('on' ),
                             'horizontal' => 'horizontal order',
+                            'css' => 'CSS only',
                         ],
                     ],
 
