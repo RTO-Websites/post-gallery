@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Post-Gallery v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-26 15:54+0100\n"
-"PO-Revision-Date: 2018-12-14 09:07+0100\n"
+"PO-Revision-Date: 2018-12-17 14:27+0100\n"
 "Language-Team: \n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -244,6 +244,9 @@ msgstr "Verwende Elementor-Litebox"
 msgid "Image-Source"
 msgstr "Bilder-Quelle"
 
+msgid "Source"
+msgstr "Quelle"
+
 msgid "Thumb amount"
 msgstr "Anzahl Thumbs"
 
@@ -315,3 +318,9 @@ msgstr "Bild-Größe"
 
 msgid "No Grid"
 msgstr "Kein Grid"
+
+msgid "Appearance"
+msgstr "Darstellung"
+
+msgid "Margin & Borders"
+msgstr "Abstände & Ränder"

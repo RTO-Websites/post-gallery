@@ -137,7 +137,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->start_controls_section(
             'section_content',
             [
-                'label' => __( 'Images', 'postgallery' ),
+                'label' => __( 'Content', 'elementor' ),
             ]
         );
 
@@ -153,54 +153,6 @@ class PostGalleryElementorWidget extends Widget_Base {
                     $this->postgalleryAdmin->getCustomTemplates(),
                     $this->postgalleryAdmin->defaultTemplates
                 ),
-            ]
-        );
-
-        $this->add_responsive_control(
-            'columns',
-            [
-                'label' => __( 'Columns', 'postgallery' ),
-                'type' => Controls_Manager::NUMBER,
-                'default' => 1,
-                'min' => 1,
-                'max' => 24,
-                'selectors' => [
-                    // for future: '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, 1fr);-ms-grid-columns: (1fr)[{{VALUE}}];',
-                    '{{WRAPPER}} .gallery .gallery-item' => 'width: calc(100% / {{VALUE}});',
-                    '{{WRAPPER}} .with-css-masonry .gallery' => 'column-count: {{VALUE}};',
-                    '{{WRAPPER}} .with-css-masonry .gallery .gallery-item' => 'width: 100%;',
-                ],
-                'conditions' => [
-                    'terms' =>
-                        [ [
-                            'name' => 'no_grid',
-                            'operator' => '!in',
-                            'value' => [ 'on' ],
-                        ] ],
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'no_grid',
-            [
-                'label' => __( 'No Grid', 'postgallery' ),
-                'type' => Controls_Manager::SWITCHER,
-                'selectors' => [
-                    '{{WRAPPER}} .gallery' => 'display: block;',
-                    '{{WRAPPER}} .gallery .gallery-item' => 'display: inline-block; width: auto;',
-                    '{{WRAPPER}} .gallery .gallery-item img' => 'width: auto;',
-
-                ],
-                'return_value' => 'on',
-                'conditions' => [
-                    'terms' =>
-                        [ [
-                            'name' => 'equal_height',
-                            'operator' => '!in',
-                            'value' => [ 'on' ],
-                        ] ],
-                ],
             ]
         );
 
@@ -300,6 +252,80 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
+            'pgsort',
+            [
+                'label' => __( 'PostGallery Sort', 'postgallery' ),
+                'type' => 'hidden',//Controls_Manager::TEXT,
+                'default' => '',
+                'selectors' => [],
+            ]
+        );
+        $this->add_control(
+            'pgimages',
+            [
+                'label' => __( 'PostGallery Images', 'postgallery' ),
+                'type' => 'postgallerycontrol',
+            ]
+        );
+        $this->end_controls_section();
+
+
+        $this->start_controls_section(
+            'section_postgallery_style',
+            [
+                'label' => __( 'Appearance', 'postgallery' ),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'columns',
+            [
+                'label' => __( 'Columns', 'postgallery' ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 1,
+                'min' => 1,
+                'max' => 24,
+                'selectors' => [
+                    // for future: '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, 1fr);-ms-grid-columns: (1fr)[{{VALUE}}];',
+                    '{{WRAPPER}} .gallery .item' => 'width: calc(100% / {{VALUE}});',
+                    '{{WRAPPER}} .with-css-masonry .gallery' => 'column-count: {{VALUE}};',
+                    '{{WRAPPER}} .with-css-masonry .gallery .item' => 'width: 100%;',
+                ],
+                'conditions' => [
+                    'terms' =>
+                        [ [
+                            'name' => 'no_grid',
+                            'operator' => '!in',
+                            'value' => [ 'on' ],
+                        ] ],
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'no_grid',
+            [
+                'label' => __( 'No Grid', 'postgallery' ),
+                'type' => Controls_Manager::SWITCHER,
+                'selectors' => [
+                    '{{WRAPPER}} .gallery' => 'display: block;',
+                    '{{WRAPPER}} .gallery .item' => 'display: inline-block; width: auto;',
+                    '{{WRAPPER}} .gallery .item img' => 'width: auto;',
+
+                ],
+                'return_value' => 'on',
+                'conditions' => [
+                    'terms' =>
+                        [ [
+                            'name' => 'equal_height',
+                            'operator' => '!in',
+                            'value' => [ 'on' ],
+                        ] ],
+                ],
+            ]
+        );
+        $this->add_control(
             'pgelementorlitebox',
             [
                 'label' => __( 'Use Elementor-Litebox', 'postgallery' ),
@@ -360,7 +386,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                     ],
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .gallery-item .bg-image' => 'padding-bottom: calc( {{SIZE}} * 100% )',
+                    '{{WRAPPER}} .item .bg-image' => 'padding-bottom: calc( {{SIZE}} * 100% )',
                     '{{WRAPPER}}:after' => 'content: "{{SIZE}}"; position: absolute; color: transparent;',
                 ],
                 'condition' => [
@@ -370,29 +396,13 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
-            'pgsort',
-            [
-                'label' => __( 'PostGallery Sort', 'postgallery' ),
-                'type' => 'hidden',//Controls_Manager::TEXT,
-                'default' => '',
-                'selectors' => [],
-            ]
-        );
-        $this->add_control(
-            'pgimages',
-            [
-                'label' => __( 'PostGallery Images', 'postgallery' ),
-                'type' => 'postgallerycontrol',
-            ]
-        );
         $this->end_controls_section();
 
 
         $this->start_controls_section(
-            'section_gallery_images',
+            'section_postgallery_style_borders',
             [
-                'label' => __( 'Images', 'elementor' ),
+                'label' => __( 'Margin & Borders', 'postgallery' ),
                 'tab' => Controls_Manager::TAB_STYLE,
             ]
         );
@@ -410,7 +420,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 ],
                 'selectors' => [ // cant use column-gap here, cause of masonry
                     '{{WRAPPER}} .elementor-image-gallery' => 'margin-left: calc(-{{SIZE}}{{UNIT}} / 2);margin-right: calc(-{{SIZE}}{{UNIT}} / 2);',
-                    '{{WRAPPER}} .elementor-image-gallery .gallery-item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2);padding-right: calc({{SIZE}}{{UNIT}} / 2);',
+                    '{{WRAPPER}} .elementor-image-gallery .item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2);padding-right: calc({{SIZE}}{{UNIT}} / 2);',
                 ],
             ]
         );
@@ -428,16 +438,17 @@ class PostGalleryElementorWidget extends Widget_Base {
                 ],
                 'frontend_available' => true,
                 'selectors' => [ // cant use row-gap here, cause of masonry
-                    '{{WRAPPER}} .elementor-image-gallery .gallery-item' => 'padding-bottom: {{SIZE}}{{UNIT}}',
+                    '{{WRAPPER}} .elementor-image-gallery .item' => 'padding-bottom: {{SIZE}}{{UNIT}}',
                 ],
             ]
         );
+
 
         $this->add_group_control(
             Group_Control_Border::get_type(),
             [
                 'name' => 'image_border',
-                'selector' => '{{WRAPPER}} .gallery-item img, {{WRAPPER}} .gallery-item .bg-image',
+                'selector' => '{{WRAPPER}} .item img, {{WRAPPER}} .item .bg-image',
                 'separator' => 'before',
             ]
         );
@@ -449,7 +460,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::DIMENSIONS,
                 'size_units' => [ 'px', '%' ],
                 'selectors' => [
-                    '{{WRAPPER}} .gallery-item img, {{WRAPPER}} .gallery-item .bg-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .item img, {{WRAPPER}} .item .bg-image' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
@@ -458,9 +469,9 @@ class PostGalleryElementorWidget extends Widget_Base {
 
 
         $this->start_controls_section(
-            'section_gallery_animation',
+            'section_postgallery_animation',
             [
-                'label' => __( 'Image animation', 'postgallery' ),
+                'label' => __( 'Image Animation', 'postgallery' ),
                 'tab' => Controls_Manager::TAB_ADVANCED,
             ]
         );

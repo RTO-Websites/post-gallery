@@ -18,7 +18,7 @@
                     'scale' => $this->option( 'thumbScale' ),
                 ] );
             ?>
-            <div class="gallery-item">
+            <div class="item">
                 <a href="<?php echo $image['url'] ?>">
                     <?php if ( $this->option( 'useSrcset' ) ) { ?>
                         <img class="post-gallery_thumb"
