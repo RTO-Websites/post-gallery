@@ -482,7 +482,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::NUMBER,
                 'default' => 300,
                 'condition' => [
-                    'image_animation' => 'on',
+                    'imageAnimation' => 'on',
                 ],
             ]
         );
@@ -494,7 +494,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::NUMBER,
                 'default' => 200,
                 'condition' => [
-                    'image_animation' => 'on',
+                    'imageAnimation' => 'on',
                 ],
             ]
         );
@@ -506,7 +506,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::CODE,
                 'default' => '',
                 'condition' => [
-                    'image_animation' => 'on',
+                    'imageAnimation' => 'on',
                 ],
             ]
         );
@@ -518,7 +518,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::CODE,
                 'default' => '',
                 'condition' => [
-                    'image_animation' => 'on',
+                    'imageAnimation' => 'on',
                 ],
             ]
         );
