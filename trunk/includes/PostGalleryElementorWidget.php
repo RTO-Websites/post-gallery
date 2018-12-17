@@ -165,10 +165,10 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'min' => 1,
                 'max' => 24,
                 'selectors' => [
-                    '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, 1fr);',
-                    '{{WRAPPER}} .with-css-masonry .gallery' => 'display: block; column-count: {{VALUE}};',
-                    '{{WRAPPER}} .with-js-masonry .gallery' => 'display: block;',
-                    '{{WRAPPER}} .with-js-masonry .gallery .gallery-item' => 'width: calc(100% / {{VALUE}});',
+                    // for future: '{{WRAPPER}} .gallery' => 'grid-template-columns: repeat({{VALUE}}, 1fr);-ms-grid-columns: (1fr)[{{VALUE}}];',
+                    '{{WRAPPER}} .gallery .gallery-item' => 'width: calc(100% / {{VALUE}});',
+                    '{{WRAPPER}} .with-css-masonry .gallery' => 'column-count: {{VALUE}};',
+                    '{{WRAPPER}} .with-css-masonry .gallery .gallery-item' => 'width: 100%;',
                 ],
                 'conditions' => [
                     'terms' =>

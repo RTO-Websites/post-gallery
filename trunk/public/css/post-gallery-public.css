@@ -185,7 +185,7 @@ body.liteboxgallery-open {
 }
 
 .postgallery-wrapper .gallery {
-  display: grid;
+  display: block;
 }
 
 .postgallery-wrapper .gallery-item {
