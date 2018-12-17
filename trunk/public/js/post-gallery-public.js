@@ -43,9 +43,9 @@
 
       element.postgalleryMasonry = $(element).masonry({
         // set itemSelector so .grid-sizer is not used in layout
-        itemSelector: '.gallery-item',
+        itemSelector: '.item',
         // use element for option
-        columnWidth: '.gallery-item',
+        columnWidth: '.item',
         percentPosition: true,
         horizontalOrder: $(element).parent().hasClass('js-masonry-horizontal'),
       });
@@ -165,7 +165,7 @@
     // loop all container
     for (var id in window.pgImageAnimations) {
       if ($('#' + id).isVisible()) {
-        var items = $('#' + id + ' .gallery-item'),
+        var items = $('#' + id + ' .item'),
           timeBetween = window.pgImageAnimations[id];
 
         items.each(function (index, element) {

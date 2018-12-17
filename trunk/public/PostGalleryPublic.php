@@ -423,7 +423,7 @@ class PostGalleryPublic {
         // hide thumbs
         if ( !empty( $this->option( 'pgmaxthumbs' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item:nth-child(n+' . ( $this->option( 'pgmaxthumbs' ) + 1 ) . ') { ';
+                . ' .gallery .item:nth-child(n+' . ( $this->option( 'pgmaxthumbs' ) + 1 ) . ') { ';
             $extraStyle .= 'display: none;';
             $extraStyle .= '}';
         }
@@ -454,21 +454,21 @@ class PostGalleryPublic {
 
         if ( !empty( $this->option( 'imageAnimationDuration' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { ';
+                . ' .gallery .item { ';
             $extraStyle .= 'transition-duration: ' . $this->option( 'imageAnimationDuration' ) . 'ms;';
             $extraStyle .= '}';
         }
 
         if ( !empty( $this->option( 'imageAnimationCss' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { ';
+                . ' .gallery .item { ';
             $extraStyle .= $this->option( 'imageAnimationCss' );
             $extraStyle .= '}';
         }
 
         if ( !empty( $this->option( 'imageAnimationCssAnimated' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item.show { ';
+                . ' .gallery .item.show { ';
             $extraStyle .= $this->option( 'imageAnimationCssAnimated' );
             $extraStyle .= '}';
         }
@@ -492,7 +492,7 @@ class PostGalleryPublic {
         if ( !empty( $this->option( 'equalheight' ) ) && !empty( $this->option( 'itemratio' ) ) && is_string( $this->option( 'itemratio' ) )
         ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item .bg-image { ';
+                . ' .gallery .item .bg-image { ';
             $extraStyle .= 'padding-bottom: calc( ' . $this->option( 'itemratio' ) . ' * 100% );';
             $extraStyle .= '}';
         }
@@ -501,9 +501,9 @@ class PostGalleryPublic {
             $extraStyle .= '#' . $id
                 . ' .gallery { display: block; }';
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { display: inline-block; width: auto; }';
+                . ' .gallery .item { display: inline-block; width: auto; }';
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item img { width: auto; }';
+                . ' .gallery .item img { width: auto; }';
         } else {
             $extraStyle .= '#' . $id
                 . ' .gallery { grid-template-columns: repeat(' . $this->option( 'columns' ) . ', minmax(0, 1fr));}';
@@ -511,7 +511,7 @@ class PostGalleryPublic {
         // column gap
         if ( !empty( $this->option( 'columngap' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { ';
+                . ' .gallery .item { ';
             $extraStyle .= 'padding-left: ' . ( $this->option( 'columngap' ) / 2 ) . 'px;';
             $extraStyle .= 'padding-right: ' . ( $this->option( 'columngap' ) / 2 ) . 'px;';
             $extraStyle .= '}';
@@ -526,7 +526,7 @@ class PostGalleryPublic {
         // row gap
         if ( !empty( $this->option( 'rowgap' ) ) ) {
             $extraStyle .= '#' . $id
-                . ' .gallery .gallery-item { ';
+                . ' .gallery .item { ';
             $extraStyle .= 'padding-bottom: ' . ( $this->option( 'rowgap' ) ) . 'px;';
             $extraStyle .= '}';
 
