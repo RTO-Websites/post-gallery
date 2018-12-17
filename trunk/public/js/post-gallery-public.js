@@ -36,7 +36,7 @@
     if (!$.fn.masonry) {
       return;
     }
-    $('.with-js-masonry .gallery').each(function (index, element) {
+    $('.postgallery-wrapper.with-js-masonry .gallery').each(function (index, element) {
       if (element.postgalleryMasonry) {
         $(element).masonry('destroy');
       }
