@@ -169,10 +169,11 @@
           timeBetween = window.pgImageAnimations[id];
 
         items.each(function (index, element) {
+          element = $(element);
           // loop items
           setTimeout(function () {
-            $(element).addClass('show');
-          }, timeBetween * index);
+            element.addClass('show');
+          }, timeBetween * element.index());
         });
 
         delete(window.pgImageAnimations[id]);
