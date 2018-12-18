@@ -435,6 +435,8 @@ class PostGallery {
                         }
                     }
 
+                    $imageOptionsParsed = self::parseImageOptions($imageOptions);
+
                     $images[$file] = [
                         'filename' => $file,
                         'path' => $path,
@@ -446,6 +448,7 @@ class PostGallery {
                         'post_id' => $postid,
                         'post_title' => get_the_title( $postid ),
                         'imageOptions' => $imageOptions,
+                        'imageOptionsParsed' => $imageOptionsParsed,
                         'attachmentId' => $attachmentId,
                         'srcset' => wp_get_attachment_image_srcset( $attachmentId, 'full' ),
                         //'srcsetSizes' => wp_get_attachment_image_sizes($attachmentId, 'full'),
@@ -460,10 +463,30 @@ class PostGallery {
     }
 
     /**
+     * Parse an string of image options to a string for html-attributes
+     *  Input string has a key|value pair in every line.
+     *
+     * @param $imageOptions
+     * @return string
+     */
+    private static function parseImageOptions( $imageOptions ) {
+        $imageOptionsParsed = '';
+        foreach ( explode( "\n", $imageOptions ) as $imageOption ) {
+            $imageOption = explode( '|', $imageOption );
+            $imageOptionsParsed .= ' ' . $imageOption[0];
+
+            if ( !empty( $imageOption[1] ) ) {
+                $imageOptionsParsed .= '="' . str_replace( [ '\"', '"' ], '\"', $imageOption[1] ) . '"';
+            }
+        }
+
+        return $imageOptionsParsed;
+    }
+
+    /**
      * Creates an attachment-post if not exists
      *
      * @param $fullUrl
-     * @param $path
      * @param $parentId
      * @return int|null|string|\WP_Error
      */
@@ -999,7 +1022,7 @@ class PostGallery {
      */
     public function option( $key ) {
         $options = array_change_key_case( (array)$this->options, CASE_LOWER );
-        $key = strtolower($key);
+        $key = strtolower( $key );
         return isset( $options[$key] ) ? $options[$key] : null;
     }
 
