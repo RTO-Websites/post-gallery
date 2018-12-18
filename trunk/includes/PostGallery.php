@@ -435,7 +435,7 @@ class PostGallery {
                         }
                     }
 
-                    $imageOptionsParsed = self::parseImageOptions($imageOptions);
+                    $imageOptionsParsed = self::parseImageOptions( $imageOptions );
 
                     $images[$file] = [
                         'filename' => $file,
@@ -471,12 +471,15 @@ class PostGallery {
      */
     private static function parseImageOptions( $imageOptions ) {
         $imageOptionsParsed = '';
+        if ( empty( $imageOptions ) ) {
+            return '';
+        }
         foreach ( explode( "\n", $imageOptions ) as $imageOption ) {
             $imageOption = explode( '|', $imageOption );
             $imageOptionsParsed .= ' ' . $imageOption[0];
 
             if ( !empty( $imageOption[1] ) ) {
-                $imageOptionsParsed .= '="' . str_replace( [ '\"', '"' ], '\"', $imageOption[1] ) . '"';
+                $imageOptionsParsed .= '="' . htmlspecialchars( $imageOption[1] ) . '"';
             }
         }
 

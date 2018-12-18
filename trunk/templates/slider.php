@@ -22,7 +22,9 @@ array_unshift( $images, $first_image );
                             'scale' => $this->option( 'thumbScale' ),
                         ] );
                     ?>"
-                    alt="<?php echo $image['filename'] ?>"/>
+                    alt="<?php echo $image['filename'] ?>"
+                <?php echo $image['imageOptionsParsed']; ?>
+            />
         <?php } ?>
     </div>
 
