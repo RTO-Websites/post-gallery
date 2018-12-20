@@ -412,12 +412,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Columns Gap', 'postgallery' ),
                 'type' => Controls_Manager::SLIDER,
-                'range' => [
-                    'px' => [
-                        'min' => 0,
-                        'max' => 100,
-                    ],
-                ],
+                'size_units' => [ 'px', '%', 'rem' ],
                 'selectors' => [ // cant use column-gap here, cause of masonry
                     '{{WRAPPER}} .elementor-image-gallery' => 'margin-left: calc(-{{SIZE}}{{UNIT}} / 2);margin-right: calc(-{{SIZE}}{{UNIT}} / 2);',
                     '{{WRAPPER}} .elementor-image-gallery .item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2);padding-right: calc({{SIZE}}{{UNIT}} / 2);',
@@ -430,13 +425,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Rows Gap', 'postgallery' ),
                 'type' => Controls_Manager::SLIDER,
-                'range' => [
-                    'px' => [
-                        'min' => 0,
-                        'max' => 100,
-                    ],
-                ],
-                'frontend_available' => true,
+                'size_units' => [ 'px', '%', 'rem' ],
                 'selectors' => [ // cant use row-gap here, cause of masonry
                     '{{WRAPPER}} .elementor-image-gallery .item' => 'padding-bottom: {{SIZE}}{{UNIT}}',
                 ],
