@@ -190,7 +190,7 @@ body.liteboxgallery-open {
 
 .postgallery-wrapper .gallery::after {
   content: '';
-  display: inline-block;
+  display: block;
   clear: left;
 }
 
