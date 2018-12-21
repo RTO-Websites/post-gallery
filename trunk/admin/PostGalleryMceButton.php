@@ -19,11 +19,9 @@ namespace Admin;
  */
 class PostGalleryMceButton {
     private $pluginName;
-    private $textdomain;
 
     public function __construct( $pluginName ) {
         $this->pluginName = $pluginName;
-        $this->textdomain = $pluginName;
 
         add_action( 'init', [ $this, 'addSliderButton' ] );
         add_filter( 'tiny_mce_version', [ $this, 'refreshMce' ] );

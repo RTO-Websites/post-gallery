@@ -201,10 +201,45 @@
   top: 1px;
   position: absolute;
 }
+
 .media-group-by-parent .attachment .media-group-label.is-postgallery-image::before {
   content: "\f233 ";
 }
 
 .media-group-by-parent .attachment .media-group-label.is-post-thumbnail::before {
   content: "\f128 ";
+}
+
+#customize-control-postgallery_sliderOwlConfig-control,
+#customize-control-postgallery_masonry-control {
+  margin-top: 3em;
+  position: relative;
+}
+
+#customize-control-postgallery_imageAnimationCssAnimated-control {
+  margin-bottom: 3em;
+  position: relative;
+}
+
+#customize-control-postgallery_imageAnimationCssAnimated-control::before,
+#customize-control-postgallery_sliderOwlConfig-control::before,
+#customize-control-postgallery_masonry-control::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -1.5em;
+  width: 100%;
+  height: 1px;
+  background-color: #bbb;
+  left: 0;
+}
+
+#customize-control-postgallery_imageAnimationCssAnimated-control::before {
+  top: auto;
+  bottom: -1.5em;
+}
+
+.elementor-control-content .pg-image-container .sortable-pics input,
+.elementor-control-content .pg-image-container .sortable-pics textarea {
+  pointer-events: none;
 }
