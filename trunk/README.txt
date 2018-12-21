@@ -34,7 +34,7 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
-= 1.8.0
+= 1.8.0 =
 * Add image animation to elementor-widget
 * Fix issue with grouped mediathek
 * Script loading can now be disabled
@@ -42,15 +42,15 @@ https://github.com/RTO-Websites/post-gallery
 * Image-columns in elementor now responsive
 * Add css-masonry
 
-= 1.6.1
+= 1.6.1 =
 * Refactoring
 * Litebox can now handle iframes
 
-= 1.6.0
+= 1.6.0 =
 * Add grid options to elementor-widget
 * Add masonry option
 
-= 1.5.4
+= 1.5.4 =
 * Fix js-error
 * Improve sanitizing of filenames
 
