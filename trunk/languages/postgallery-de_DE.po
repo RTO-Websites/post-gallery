@@ -3,17 +3,16 @@ msgstr ""
 "Project-Id-Version: Post-Gallery v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-26 15:54+0100\n"
-"PO-Revision-Date: 2018-09-03 10:46+0200\n"
+"PO-Revision-Date: 2018-12-17 14:27+0100\n"
 "Language-Team: \n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
-"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
 "X-Textdomain-Support: yes\n"
 "X-Poedit-Basepath: .\n"
 "Last-Translator: \n"
@@ -58,9 +57,6 @@ msgstr "oberhalb"
 
 msgid "custom"
 msgstr "eigene"
-
-msgid "Thumbs (150x150)"
-msgstr ""
 
 msgid "List"
 msgstr "Liste"
@@ -110,14 +106,20 @@ msgstr "Globales Template"
 msgid "Main-Settings"
 msgstr "Grundeinstellungen"
 
+msgid "Template-Settings"
+msgstr "Template-Einstellungen"
+
+msgid "Litebox-Settings"
+msgstr "Litebox-Einstellungen"
+
+msgid "Columns"
+msgstr "Spalten"
+
 msgid "Use old owl-carousel (v1.3)"
 msgstr "Verwende altes Owl-Carousel (v1.3)"
 
 msgid "Stretch small images (for watermark)"
 msgstr "Strecke kleine Bilder (für Wasserzeichen)"
-
-msgid "Litebox-Settings"
-msgstr "Litebox-Einstellungen"
 
 msgid "Litebox-Template"
 msgstr ""
@@ -206,9 +208,6 @@ msgstr "Vorlagen"
 msgid "Slider-Settings"
 msgstr "Slider-Einstellungen"
 
-msgid "Template-Settings"
-msgstr "Template-Einstellungen"
-
 msgid "Owl-Config"
 msgstr "Owl-Konfiguration"
 
@@ -245,6 +244,9 @@ msgstr "Verwende Elementor-Litebox"
 msgid "Image-Source"
 msgstr "Bilder-Quelle"
 
+msgid "Source"
+msgstr "Quelle"
+
 msgid "Thumb amount"
 msgstr "Anzahl Thumbs"
 
@@ -253,3 +255,72 @@ msgstr "Dynamisch"
 
 msgid "Current Post"
 msgstr "Aktueller Post"
+
+msgid "Delete all"
+msgstr "Alle löschen"
+
+msgid "Image Animation"
+msgstr "Bild-Animation"
+
+msgid "Animation Duration"
+msgstr "Animationsdauer"
+
+msgid "Time between images"
+msgstr "Zeit zwischen den Bildern"
+
+msgid "Custom-CSS for Image"
+msgstr "Eigenes CSS für Bild"
+
+msgid "Custom-CSS for animated Image"
+msgstr "Eigenes CSS für animiertes Bild"
+
+msgid "Image width in viewport"
+msgstr "Bild-Breite im Viewport"
+
+msgid "Responsive (srcset)"
+msgstr "Responsive (srcset)"
+
+msgid "Responsive image size (srcset)"
+msgstr "Responsive Bild-Größe (srcset)"
+
+msgid "Columns Gap"
+msgstr "Spaltenabstand"
+
+msgid "Rows Gap"
+msgstr "Zeilenabstand"
+
+msgid "Animate out"
+msgstr "Ausblend-Animation (animateOut)"
+
+msgid "Animate in"
+msgstr "Einblend-Animation (animateIn)"
+
+msgid "Autoplay timeout (ms)"
+msgstr "Autoplay timeout (ms)"
+
+msgid "Speed (ms)"
+msgstr "Geschwindigkeit (ms)"
+
+msgid "Equal height"
+msgstr "Gleiche Höhe"
+
+msgid "Item Ratio"
+msgstr "Elementproportion"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Max. images amount"
+msgstr "Max. Anzahl Bilder"
+
+msgid "Image-Size"
+msgstr "Bild-Größe"
+
+msgid "No Grid"
+msgstr "Kein Grid"
+
+msgid "Appearance"
+msgstr "Darstellung"
+
+msgid "Margin & Borders"
+msgstr "Abstände & Ränder"

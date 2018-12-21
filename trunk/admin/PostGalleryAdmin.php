@@ -12,8 +12,8 @@
 
 include_once( 'PostGalleryThemeCustomizer.php' );
 
-use Admin\SliderShortcodeAdmin;
-use Admin\PostGalleryMceButton;
+use Inc\PostGalleryWidget\Control\PostGalleryElementorControl;
+use Inc\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Inc\PostGallery;
 use Thumb\Thumb;
 
@@ -48,15 +48,6 @@ class PostGalleryAdmin {
     private $version;
 
 
-    /**
-     * Textdomain of the plugin
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string $version The current version of this plugin.
-     */
-    private $textdomain;
-
     public $defaultTemplates;
 
     private $optionFields = null;
@@ -72,25 +63,24 @@ class PostGalleryAdmin {
      */
     public function __construct( $pluginName, $version ) {
         load_plugin_textdomain( $pluginName, false, '/postgallery/languages' );
-        $this->textdomain = $pluginName;
         $this->pluginName = $pluginName;
         $this->version = $version;
         self::$instance = $this;
 
         $this->optionFields = [ 'postgalleryPosition' => [
-            'label' => __( 'Position', 'post-gallery' ),
+            'label' => __( 'Position', 'postgallery' ),
             'type' => 'select',
             'value' => [
-                'global' => __( 'From global setting', $this->textdomain ),
-                'bottom' => __( 'bottom', $this->textdomain ),
-                'top' => __( 'top', $this->textdomain ),
-                'custom' => __( 'custom', $this->textdomain ),
+                'global' => __( 'From global setting', 'postgallery' ),
+                'bottom' => __( 'bottom', 'postgallery' ),
+                'top' => __( 'top', 'postgallery' ),
+                'custom' => __( 'custom', 'postgallery' ),
             ],
         ] ];
 
         $this->defaultTemplates = [
-            'thumbs' => __( 'Thumb-List', $this->textdomain ),
-            'slider' => __( 'Slider (with Owl-Carousel)', $this->textdomain ),
+            'thumbs' => __( 'Thumb-List', 'postgallery' ),
+            'slider' => __( 'Slider (with Owl-Carousel)', 'postgallery' ),
         ];
 
         new SliderShortcodeAdmin( $pluginName, $version );
@@ -104,8 +94,8 @@ class PostGalleryAdmin {
      */
     public function getLiteboxTemplates() {
         $templateList = [
-            'default-with-thumbs' => __( 'Default with thumbs', $this->textdomain ),
-            'default' => __( 'Default', $this->textdomain ),
+            'default-with-thumbs' => __( 'Default with thumbs', 'postgallery' ),
+            'default' => __( 'Default', 'postgallery' ),
         ];
 
         $customTemplates = [];
@@ -117,9 +107,9 @@ class PostGalleryAdmin {
             foreach ( $customTplFiles as $file ) {
                 if ( !is_dir( $customTplPath . '/' . $file ) ) {
                     $optionKey = str_replace( '.php', '', $file );
-                    $option_title = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', $this->textdomain );
+                    $optionTitle = ucfirst( str_replace( '_', ' ', $optionKey ) ) . __( ' (from Theme)', 'postgallery' );
 
-                    $customTemplates[$optionKey] = $option_title;
+                    $customTemplates[$optionKey] = $optionTitle;
                 }
             }
         }
@@ -177,9 +167,13 @@ class PostGalleryAdmin {
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery' ], $this->version, false );
 
+
+        if ( empty( PostGallery::getOptions()['disableGroupedMedia'] ) ) {
+            wp_enqueue_script( $this->pluginName . '-mediagrid', $pgUrl . 'js/media-grid.js', [ 'jquery' ], $this->version, false );
+        }
+
         wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
-
 
     /**
      * Admin-ajax for image upload
@@ -304,11 +298,15 @@ class PostGalleryAdmin {
      * @return boolean
      */
     public function registerPostSettings() {
+        $blacklist = [ 'acf-field-group' ];
         $postTypes = get_post_types();
         foreach ( $postTypes as $postType ) {
-            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', $this->textdomain ), [ $this, 'addGalleryPictures' ], $postType, 'normal', 'high' );
+            if ( in_array( $postType, $blacklist, true ) ) {
+                continue;
+            }
+            add_meta_box( 'post-gallery-pictures', __( 'Gallery-Pictures', 'post-gallery' ), [ $this, 'addGalleryPictures' ], $postType, 'normal', 'high' );
             if ( $postType !== 'postgalleryslider' ) {
-                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', $this->textdomain ), [ $this, 'addGallerySettings' ], $postType, 'normal', 'high' );
+                add_meta_box( 'post-gallery-settings', __( 'Gallery-Settings', 'post-gallery' ), [ $this, 'addGallerySettings' ], $postType, 'normal', 'high' );
             }
         }
         return false;
@@ -360,11 +358,11 @@ class PostGalleryAdmin {
         // Template list
         echo '<tr valign="top">';
         $key = 'postgalleryTemplate';
-        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', $this->textdomain ) . '</label></th>';
+        echo '<th scope="row"><label class="field-label" for="' . $key . '">' . __( 'Template', 'postgallery' ) . '</label></th>';
         echo '<td>';
         echo '<select class="field-input" name="' . $key . '" id="' . $key . '">';
 
-        echo '<option value="global">' . __( 'From global setting', $this->textdomain ) . '</option>';
+        echo '<option value="global">' . __( 'From global setting', 'postgallery' ) . '</option>';
         // get templates from tpl-dir
         $this->getCustomTemplateDirOptions( get_post_meta( $curLangPost->ID, $key, true ) );
 
@@ -411,7 +409,7 @@ class PostGalleryAdmin {
                 foreach ( $dir as $file ) {
                     if ( !is_dir( $customTemplateDir . '/' . $file ) ) {
                         $file = str_replace( '.php', '', $file );
-                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', $this->textdomain );
+                        $title = ucfirst( str_replace( '_', ' ', $file ) ) . __( ' (from Theme)', 'postgallery' );
                         $output[$file] = $title;
                     }
                 }
@@ -479,21 +477,21 @@ class PostGalleryAdmin {
         $imageOptions = [];
 
         if ( empty( $imageDir ) ) {
-            echo __( 'You have to save the post to upload images.', $this->textdomain );
+            echo __( 'You have to save the post to upload images.', 'postgallery' );
             return;
         }
 
         echo '
 			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '" data-postid="' . $currentLangPost->ID . '"></div>
 			<div class="postgallery-upload-error"></div>
-		';;
+		';
 
         $images = [];
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
             $thumbInstance = Thumb::getInstance();
             $dir = scandir( $uploadDir );
 
-            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $imageDir . '\');">Alle löschen</div>';
+            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $imageDir . '\');">' . __( 'Delete all', 'postgallery' ) . '</div>';
 
             echo '<ul class="sortable-pics">';
 
@@ -531,7 +529,7 @@ class PostGalleryAdmin {
                     $images[$file] .= '<div class="details">';
                     $images[$file] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[$file] ) ? $titles[$file] : '' ) . '" /></div>';
                     $images[$file] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[$file] ) ? $descs[$file] : '' ) . '</textarea></div>';
-                    $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'Options' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
+                    $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'key|value' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
                     $images[$file] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ) . '" /></div>';
                     $images[$file] .= '</div>';
                     $images[$file] .= '</li>';
@@ -559,8 +557,8 @@ class PostGalleryAdmin {
      */
     public function getPostGalleryLang() {
         $scriptLanguage = [
-            'moveHere' => __( 'Move files here.', $this->textdomain ),
-            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', $this->textdomain ),
+            'moveHere' => __( 'Move files here.', 'postgallery' ),
+            'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', 'postgallery' ),
         ];
 
         // Javascript for language
@@ -706,8 +704,70 @@ class PostGalleryAdmin {
                 update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alts[$filename] );
                 update_post_meta( $attachmentId, '_postgallery-image-options', $imgOptions[$filename] );
             }
-            //update_post_meta( $postId, 'postgalleryTitles', filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY ) );
         }
+    }
+
+    public function addAdminPage() {
+        $returnUrl = urlencode( $_SERVER['REQUEST_URI'] );
+        \add_menu_page(
+            'PostGallery',
+            'PostGallery',
+            'edit_theme_options',
+            'customize.php?return=' . $returnUrl . '&autofocus[panel]=postgallery-panel',
+            null,
+            'dashicons-format-gallery'
+        );
+    }
+
+    /**
+     * Hook 'elementor/editor/after_save'
+     *
+     * @param $post_id
+     * @param null $editor_data
+     */
+    public function elementorAfterSave( $post_id, $editor_data = null ) {
+        $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
+
+        // fetch elements
+        $widgets = [];
+        PostGallery::getAllWidgets( $widgets, $meta, 'postgallery' );
+
+        foreach ( $widgets as $widget ) {
+            $pgSort = PostGallery::arraySearch( $widget, 'pgsort' );
+            $pgPostId = PostGallery::arraySearch( $widget, 'pgimgsource' );
+
+            if ( empty( $pgPostId ) ) {
+                $pgPostId = $post_id;
+            } else {
+                $pgPostId = $pgPostId[0];
+            }
+
+
+            if ( !empty( $pgSort ) ) {
+                update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
+            }
+        }
+    }
+
+    /**
+     * Hook 'elementor/widgets/widgets_registered'
+     *
+     * @throws \Exception
+     */
+    public function registerElementorWidget() {
+        require_once( POSTGALLERY_DIR . '/includes/PostGalleryElementorWidget.php' );
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
+    }
+
+    /**
+     * Hook 'elementor/controls/controls_registered'
+     */
+    public function registerElementorControls() {
+        \Elementor\Plugin::instance()->controls_manager->get_controls();
+        \Elementor\Plugin::instance()->controls_manager->register_control(
+            'postgallerycontrol',
+            new \Inc\PostGalleryWidget\Control\PostGalleryElementorControl()
+        );
     }
 
     /**

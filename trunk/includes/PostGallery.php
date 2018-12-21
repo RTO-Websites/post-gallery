@@ -1,7 +1,6 @@
 <?php namespace Inc;
 
 use Admin\PostGalleryAdmin;
-use PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Pub\PostGalleryPublic;
 use Thumb\Thumb;
 
@@ -67,8 +66,6 @@ class PostGallery {
 
     protected $options;
 
-    protected $textdomain;
-
 
     /**
      * Define the core functionality of the plugin.
@@ -81,8 +78,7 @@ class PostGallery {
      */
     public function __construct() {
 
-        $this->pluginName = 'post-gallery';
-        $this->textdomain = 'post-gallery';
+        $this->pluginName = 'postgallery';
         $this->version = '1.0.0';
         $this->options = PostGallery::getOptions();
 
@@ -90,129 +86,7 @@ class PostGallery {
         $this->setLocale();
         $this->defineAdminHooks();
         $this->definePublicHooks();
-
-        $this->initElementor();
-
-        add_action( 'init', [ $this, 'addPostTypeGallery' ] );
-
-        add_action( 'cronPostGalleryDeleteCachedImages', [ $this, 'postGalleryDeleteCachedImages' ] );
-    }
-
-    /**
-     * Init elementor widget
-     */
-    public function initElementor() {
-        if ( !class_exists( '\Elementor\Plugin' ) ) {
-            return;
-        }
-
-        add_action( 'elementor/editor/before_enqueue_styles', [ PostGalleryAdmin::getInstance(), 'enqueueStyles' ] );
-        add_action( 'elementor/editor/before_enqueue_scripts', [ PostGalleryAdmin::getInstance(), 'enqueueScripts' ], 99999 );
-
-        require_once( 'PostGalleryElementorControl.php' );
-
-        add_action( 'elementor/widgets/widgets_registered', function () {
-            require_once( 'PostGalleryElementorWidget.php' );
-
-            \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
-        } );
-
-        add_action( 'elementor/editor/after_save', function ( $post_id, $editor_data = null ) {
-            $meta = json_decode( get_post_meta( $post_id, '_elementor_data' )[0], true );
-
-            // fetch elements
-            $widgets = [];
-            self::getAllWidgets( $widgets, $meta, 'postgallery' );
-
-            foreach ( $widgets as $widget ) {
-                $pgSort = self::arraySearch( $widget, 'pgsort' );
-                $pgTitles = self::arraySearch( $widget, 'pgimgtitles' );
-                $pgDescs = self::arraySearch( $widget, 'pgimgdescs' );
-                $pgAlts = self::arraySearch( $widget, 'pgimgalts' );
-                $pgOptions = self::arraySearch( $widget, 'pgimgoptions' );
-                $pgPostId = self::arraySearch( $widget, 'pgimgsource' );
-
-                if ( empty( $pgPostId ) ) {
-                    $pgPostId = $post_id;
-                } else {
-                    $pgPostId = $pgPostId[0];
-                }
-
-
-                if ( !empty( $pgSort ) ) {
-                    update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
-                }
-                if ( !empty( $pgTitles ) ) {
-                    update_post_meta( $pgPostId, 'postgalleryTitles', json_decode( $pgTitles[0], true ) );
-                }
-                if ( !empty( $pgDescs ) ) {
-                    update_post_meta( $pgPostId, 'postgalleryDescs', json_decode( $pgDescs[0], true ) );
-                }
-                if ( !empty( $pgAlts ) ) {
-                    update_post_meta( $pgPostId, 'postgalleryAltAttributes', json_decode( $pgAlts[0], true ) );
-                }
-                if ( !empty( $pgOptions ) ) {
-                    update_post_meta( $pgPostId, 'postgalleryImageOptions', json_decode( $pgOptions[0], true ) );
-                }
-            }
-        } );
-    }
-
-    public static function getAllWidgets( &$widgets = [], $meta, $widgetType = '' ) {
-        // fetch elements
-        foreach ( $meta as $data ) {
-            if ( $data['elType'] == 'widget' && ( !empty( $widgetType ) && $widgetType == $data['widgetType'] ) ) {
-                $widgets[] = $data;
-            }
-            if ( !empty( $data['elements'] ) ) {
-                self::getAllWidgets( $widgets, $data['elements'], $widgetType );
-            }
-        }
-    }
-
-    /**
-     * Helper function, find value in mutlidimensonal array
-     *
-     * @param $array
-     * @param $key
-     * @return array
-     */
-    public static function arraySearch( $array, $key ) {
-        $results = [];
-
-        if ( is_array( $array ) ) {
-            if ( isset( $array[$key] ) ) {
-                $results[] = $array[$key];
-            }
-
-            foreach ( $array as $subarray ) {
-                $results = array_merge( $results, self::arraySearch( $subarray, $key ) );
-            }
-        }
-
-        return $results;
-    }
-
-
-    /**
-     * Cron-Task: Delete cache images with no access for a month
-     */
-    public function postGalleryDeleteCachedImages() {
-        $uploadDir = wp_upload_dir();
-        file_put_contents( $uploadDir['basedir'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
-
-        $cacheFolder = $uploadDir['basedir'] . '/cache';
-        if ( file_exists( $cacheFolder ) ) {
-            foreach ( scandir( $cacheFolder ) as $file ) {
-                if ( !is_dir( $cacheFolder . '/' . $file ) ) {
-                    $lastAccess = fileatime( $cacheFolder . '/' . $file );
-
-                    if ( $lastAccess < strtotime( '-1 month' ) ) { // older than 1 month
-                        unlink( $cacheFolder . '/' . $file );
-                    }
-                }
-            }
-        }
+        $this->defineElementorHooks();
     }
 
     /**
@@ -269,35 +143,24 @@ class PostGallery {
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueScripts' );
 
-
         // add options to customizer
-        add_action( 'customize_register', [ new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' ] );
+        $this->loader->addAction( 'customize_register', new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' );
 
         // add menu page to link to customizer
-        add_action( 'admin_menu', function () {
-            $returnUrl = urlencode( $_SERVER['REQUEST_URI'] );
-            \add_menu_page(
-                'PostGallery',
-                'PostGallery',
-                'edit_theme_options',
-                'customize.php?return=' . $returnUrl . '&autofocus[panel]=postgallery-panel',
-                null,
-                'dashicons-format-gallery'
-            );
-        } );
+        $this->loader->addAction( 'admin_menu', $pluginAdmin, 'addAdminPage' );
 
 
-        add_action( 'add_meta_boxes', [ $pluginAdmin, 'registerPostSettings' ] );
-        add_action( 'save_post', [ $pluginAdmin, 'savePostMeta' ], 10, 2 );
+        $this->loader->addAction( 'add_meta_boxes', $pluginAdmin, 'registerPostSettings' );
+        $this->loader->addAction( 'save_post', $pluginAdmin, 'savePostMeta', 10, 2 );
 
         // Register ajax
-        add_action( 'wp_ajax_postgalleryUpload', [ $pluginAdmin, 'ajaxUpload' ] );
-        add_action( 'wp_ajax_postgalleryDeleteimage', [ $pluginAdmin, 'ajaxDelete' ] );
-        add_action( 'wp_ajax_postgalleryGetImageUpload', [ $pluginAdmin, 'ajaxGetImageUpload' ] );
-        add_action( 'wp_ajax_postgalleryNewGallery', [ $pluginAdmin, 'ajaxCreateGallery' ] );
-        add_action( 'wp_ajax_postgalleryGetGroupedMedia', [ $pluginAdmin, 'getGroupedMedia' ] );
+        $this->loader->addAction( 'wp_ajax_postgalleryUpload', $pluginAdmin, 'ajaxUpload' );
+        $this->loader->addAction( 'wp_ajax_postgalleryDeleteimage', $pluginAdmin, 'ajaxDelete' );
+        $this->loader->addAction( 'wp_ajax_postgalleryGetImageUpload', $pluginAdmin, 'ajaxGetImageUpload' );
+        $this->loader->addAction( 'wp_ajax_postgalleryNewGallery', $pluginAdmin, 'ajaxCreateGallery' );
+        $this->loader->addAction( 'wp_ajax_postgalleryGetGroupedMedia', $pluginAdmin, 'getGroupedMedia' );
 
-        add_filter( 'sanitize_file_name', [ $pluginAdmin, 'sanitizeFilename' ] );
+        $this->loader->addFilter( 'sanitize_file_name', $pluginAdmin, 'sanitizeFilename' );
     }
 
     /**
@@ -315,22 +178,43 @@ class PostGallery {
         $this->loader->addAction( 'wp_enqueue_scripts', $pluginPublic, 'enqueueScripts' );
 
 
-        add_filter( 'the_content', [ $pluginPublic, 'addGalleryToContent' ] );
+        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent' );
         add_shortcode( 'postgallery', [ $pluginPublic, 'postgalleryShortcode' ] );
-        add_action( 'plugins_loaded', [ $pluginPublic, 'postgalleryThumb' ] );
-        add_action( 'plugins_loaded', [ $pluginPublic, 'getThumbList' ] );
+        $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'postgalleryThumb' );
+        $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'getThumbList' );
 
         // Embed headerscript
-        add_action( 'wp_head', [ $pluginPublic, 'insertHeaderscript' ] );
+        $this->loader->addAction( 'wp_head', $pluginPublic, 'insertHeaderscript' );
         // Embed headerstyle
-        add_action( 'wp_head', [ $pluginPublic, 'insertHeaderstyle' ] );
+        $this->loader->addAction( 'wp_head', $pluginPublic, 'insertHeaderstyle' );
 
         // Embed footer-html
-        add_action( 'wp_footer', [ $pluginPublic, 'insertFooterHtml' ] );
+        $this->loader->addAction( 'wp_footer', $pluginPublic, 'insertFooterHtml' );
 
-        add_filter( 'post_thumbnail_html', [ $pluginPublic, 'postgalleryThumbnail' ], 10, 5 );
-        add_filter( 'get_post_metadata', [ $pluginPublic, 'postgalleryHasPostThumbnail' ], 10, 5 );
-        //add_filter( 'script_loader_tag', [ $this, 'addAsyncAttribute' ], 10, 2 );
+        $this->loader->addFilter( 'post_thumbnail_html', $pluginPublic, 'postgalleryThumbnail', 10, 5 );
+        $this->loader->addFilter( 'get_post_metadata', $pluginPublic, 'postgalleryHasPostThumbnail', 10, 5 );
+
+        $this->loader->addAction( 'init', $this, 'addPostTypeGallery' );
+        $this->loader->addAction( 'cronPostGalleryDeleteCachedImages', $this, 'postGalleryDeleteCachedImages' );
+    }
+
+    /**
+     * Init elementor widget
+     */
+    public function defineElementorHooks() {
+        if ( !class_exists( '\Elementor\Plugin' ) ) {
+            return;
+        }
+        $pluginAdmin = PostGalleryAdmin::getInstance();
+
+        $this->loader->addAction( 'elementor/editor/before_enqueue_styles', $pluginAdmin, 'enqueueStyles' );
+        $this->loader->addAction( 'elementor/editor/before_enqueue_scripts', $pluginAdmin, 'enqueueScripts', 99999 );
+
+        require_once( 'PostGalleryElementorControl.php' );
+
+        $this->loader->addAction( 'elementor/widgets/widgets_registered', $pluginAdmin, 'registerElementorWidget' );
+        $this->loader->addAction( 'elementor/editor/after_save', $pluginAdmin, 'elementorAfterSave' );
+        $this->loader->addAction( 'elementor/controls/controls_registered', $pluginAdmin, 'registerElementorControls' );
     }
 
     /**
@@ -373,6 +257,69 @@ class PostGallery {
         return $this->version;
     }
 
+    /**
+     *
+     *
+     * @param array $widgets
+     * @param $meta
+     * @param string $widgetType
+     */
+    public static function getAllWidgets( &$widgets = [], $meta, $widgetType = '' ) {
+        // fetch elements
+        foreach ( $meta as $data ) {
+            if ( $data['elType'] == 'widget' && ( !empty( $widgetType ) && $widgetType == $data['widgetType'] ) ) {
+                $widgets[] = $data;
+            }
+            if ( !empty( $data['elements'] ) ) {
+                self::getAllWidgets( $widgets, $data['elements'], $widgetType );
+            }
+        }
+    }
+
+    /**
+     * Helper function, find value in mutlidimensonal array
+     *
+     * @param $array
+     * @param $key
+     * @return array
+     */
+    public static function arraySearch( $array, $key ) {
+        $results = [];
+
+        if ( is_array( $array ) ) {
+            if ( isset( $array[$key] ) ) {
+                $results[] = $array[$key];
+            }
+
+            foreach ( $array as $subarray ) {
+                $results = array_merge( $results, self::arraySearch( $subarray, $key ) );
+            }
+        }
+
+        return $results;
+    }
+
+
+    /**
+     * Cron-Task: Delete cache images with no access for a month
+     */
+    public function postGalleryDeleteCachedImages() {
+        $uploadDir = wp_upload_dir();
+        file_put_contents( $uploadDir['basedir'] . '/_deleteCache.txt', date( 'd.M.Y H:i:s' ) . "\r\n", FILE_APPEND );
+
+        $cacheFolder = $uploadDir['basedir'] . '/cache';
+        if ( file_exists( $cacheFolder ) ) {
+            foreach ( scandir( $cacheFolder ) as $file ) {
+                if ( !is_dir( $cacheFolder . '/' . $file ) ) {
+                    $lastAccess = fileatime( $cacheFolder . '/' . $file );
+
+                    if ( $lastAccess < strtotime( '-1 month' ) ) { // older than 1 month
+                        unlink( $cacheFolder . '/' . $file );
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Sorting an image-array
@@ -488,6 +435,8 @@ class PostGallery {
                         }
                     }
 
+                    $imageOptionsParsed = self::parseImageOptions( $imageOptions );
+
                     $images[$file] = [
                         'filename' => $file,
                         'path' => $path,
@@ -499,7 +448,10 @@ class PostGallery {
                         'post_id' => $postid,
                         'post_title' => get_the_title( $postid ),
                         'imageOptions' => $imageOptions,
+                        'imageOptionsParsed' => $imageOptionsParsed,
                         'attachmentId' => $attachmentId,
+                        'srcset' => wp_get_attachment_image_srcset( $attachmentId, 'full' ),
+                        //'srcsetSizes' => wp_get_attachment_image_sizes($attachmentId, 'full'),
                     ];
                 }
             }
@@ -511,10 +463,33 @@ class PostGallery {
     }
 
     /**
+     * Parse an string of image options to a string for html-attributes
+     *  Input string has a key|value pair in every line.
+     *
+     * @param $imageOptions
+     * @return string
+     */
+    private static function parseImageOptions( $imageOptions ) {
+        $imageOptionsParsed = '';
+        if ( empty( $imageOptions ) ) {
+            return '';
+        }
+        foreach ( explode( "\n", $imageOptions ) as $imageOption ) {
+            $imageOption = explode( '|', $imageOption );
+            $imageOptionsParsed .= ' ' . $imageOption[0];
+
+            if ( !empty( $imageOption[1] ) ) {
+                $imageOptionsParsed .= '="' . htmlspecialchars( $imageOption[1] ) . '"';
+            }
+        }
+
+        return $imageOptionsParsed;
+    }
+
+    /**
      * Creates an attachment-post if not exists
      *
      * @param $fullUrl
-     * @param $path
      * @param $parentId
      * @return int|null|string|\WP_Error
      */
@@ -525,14 +500,7 @@ class PostGallery {
 
         $attachmentId = self::getAttachmentIdByUrl( $fullUrl );
 
-        /*if ( strpos( $path, ABSPATH ) === false ) {
-            $path = ABSPATH . '/' . $path;
-        }*/
-
         if ( !empty( $attachmentId ) ) {
-            /* require_once( ABSPATH . 'wp-admin/includes/image.php' );
-            $attachData = wp_generate_attachment_metadata( $attachmentId, $path );
-            wp_update_attachment_metadata( $attachmentId, $attachData ); */
             return $attachmentId;
         }
 
@@ -554,7 +522,7 @@ class PostGallery {
 
         $imageTitle = !empty( $legacyData['titles'][$filename] )
             ? $legacyData['titles'][$filename]
-            : ''; //preg_replace( '/\.[^.]+$/', '', basename( $path ) );
+            : '';
 
         $imageDesc = !empty( $legacyData['descs'][$filename] ) ? $legacyData['descs'][$filename] : '';
 
@@ -970,8 +938,8 @@ class PostGallery {
     public function addPostTypeGallery() {
         register_post_type( 'gallery', [
             'labels' => [
-                'name' => __( 'Galleries', $this->textdomain ),
-                'singular_name' => __( 'Gallery', $this->textdomain ),
+                'name' => __( 'Galleries', 'postgallery' ),
+                'singular_name' => __( 'Gallery', 'postgallery' ),
             ],
             'taxonomies' => [ 'category' ],
             'menu_icon' => 'dashicons-format-gallery',
@@ -1000,16 +968,23 @@ class PostGallery {
         return [
             'debugmode' => get_theme_mod( 'postgallery_postgalleryDebugmode', false ),
             'sliderType' => get_theme_mod( 'postgallery_sliderType', 'owl' ),
-            'globalPosition' => get_theme_mod( 'postgallery_globalPosition', 'bottom' ),
+            'globalPosition' => get_theme_mod( 'postgallery_globalPosition', defined( 'ELEMENTOR_VERSION' ) ? 'custom' : 'bottom' ),
+            'disableScripts' => get_theme_mod( 'postgallery_disableScripts', false ),
+            'disableGroupedMedia' => get_theme_mod( 'postgallery_disableGroupedMedia', false ),
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
             'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),
+            'noGrid' => get_theme_mod( 'postgallery_noGrid', 0 ),
             'thumbWidth' => get_theme_mod( 'postgallery_thumbWidth', 500 ),
             'thumbHeight' => get_theme_mod( 'postgallery_thumbHeight', 500 ),
             'thumbScale' => get_theme_mod( 'postgallery_thumbScale', '1' ),
+            'useSrcset' => get_theme_mod( 'postgallery_useSrcset', false ),
+            'imageViewportWidth' => get_theme_mod( 'postgallery_imageViewportWidth', 800 ),
+            'columnGap' => get_theme_mod( 'postgallery_columnGap', 0 ),
+            'rowGap' => get_theme_mod( 'postgallery_rowGap', 0 ),
+
             'sliderOwlConfig' => get_theme_mod( 'postgallery_thumbScale', "items: 1,\nnav: 1,\ndots: 1,\nloop: 1," ),
             'stretchImages' => get_theme_mod( 'postgallery_stretchImages', false ),
-            'hookWpGallery' => get_theme_mod( 'postgallery_hookWpGallery', false ),
 
             'enableLitebox' => get_theme_mod( 'postgallery_enableLitebox', true ),
             'liteboxTemplate' => get_theme_mod( 'postgallery_liteboxTemplate', 'default' ),
@@ -1031,10 +1006,28 @@ class PostGallery {
             'mainColor' => get_theme_mod( 'postgallery_mainColor', '#fff' ),
             'secondColor' => get_theme_mod( 'postgallery_secondColor', '#333' ),
 
-            'masonry' => '',
+            'masonry' => get_theme_mod( 'postgallery_masonry', false ),
+            'equalHeight' => get_theme_mod( 'postgallery_equalHeight', false ),
+            'itemRatio' => get_theme_mod( 'postgallery_itemRatio', 0.66 ),
+            'imageAnimation' => get_theme_mod( 'postgallery_imageAnimation', false ),
+            'imageAnimationDuration' => get_theme_mod( 'postgallery_imageAnimationDuration', 300 ),
+            'imageAnimationTimeBetween' => get_theme_mod( 'postgallery_imageAnimationTimeBetween', 200 ),
+            'imageAnimationCss' => get_theme_mod( 'postgallery_imageAnimationCss', '' ),
+            'imageAnimationCssAnimated' => get_theme_mod( 'postgallery_imageAnimationCssAnimated', '' ),
         ];
     }
 
+    /**
+     * Return an single option value
+     *
+     * @param $key
+     * @return mixed|null
+     */
+    public function option( $key ) {
+        $options = array_change_key_case( (array)$this->options, CASE_LOWER );
+        $key = strtolower( $key );
+        return isset( $options[$key] ) ? $options[$key] : null;
+    }
 
     /**
      * DEPRECATED
