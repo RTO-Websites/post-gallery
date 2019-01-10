@@ -156,6 +156,7 @@ class PostGallery {
         // Register ajax
         $this->loader->addAction( 'wp_ajax_postgalleryUpload', $pluginAdmin, 'ajaxUpload' );
         $this->loader->addAction( 'wp_ajax_postgalleryDeleteimage', $pluginAdmin, 'ajaxDelete' );
+        $this->loader->addAction( 'wp_ajax_postgalleryRenameimage', $pluginAdmin, 'ajaxRename' );
         $this->loader->addAction( 'wp_ajax_postgalleryGetImageUpload', $pluginAdmin, 'ajaxGetImageUpload' );
         $this->loader->addAction( 'wp_ajax_postgalleryNewGallery', $pluginAdmin, 'ajaxCreateGallery' );
         $this->loader->addAction( 'wp_ajax_postgalleryGetGroupedMedia', $pluginAdmin, 'getGroupedMedia' );
@@ -509,6 +510,7 @@ class PostGallery {
         $uploadDir = $uploads['basedir'];
         $uploadUrl = $uploads['baseurl'];
         $path = str_replace( $uploadUrl, '', $fullUrl );
+        $path = str_replace( $uploadDir, '', $fullUrl );
 
 
         // no attachment exists, create new
@@ -1060,8 +1062,22 @@ class PostGallery {
         $uploadDir = $uploads['basedir'];
         $uploadUrl = $uploads['baseurl'];
         $path = str_replace( $uploadUrl, '', $url );
+        $path = str_replace( $uploadDir, '', $path );
+        $path = str_replace( '/gallery/', 'gallery/', $path );
 
-        $attachment_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path ) );
+        $statement = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path );
+        $attachment_id = $wpdb->get_var( $statement );
+
+        /* $allResults = $wpdb->get_results( $statement );
+        if ( count( $allResults ) > 1 ) {
+            foreach ( $allResults as $row ) {
+                if ( $row->post_id == $attachment_id ) {
+                    continue;
+                }
+
+                $wpdb->query( "DELETE FROM $wpdb->posts WHERE `ID` = '$row->post_id'" );
+            }
+        } */
 
         if ( !empty( $attachment_id ) ) {
             return $attachment_id;

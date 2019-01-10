@@ -191,7 +191,7 @@ window.initCustomizer = function () {
 /**
  * Init sortable images
  */
-window.initSortable = function() {
+window.initSortable = function () {
   if (!$) {
     var $ = jQuery;
   }
@@ -200,6 +200,7 @@ window.initSortable = function() {
       cursor: "move"
     });
     $(".sortable-pics").on("sortupdate", function (event, ui) {
+      console.info('sortupdate');
       pgCloseDetails();
       var input = jQuery("#postgalleryImagesort"),
         elementorInput = jQuery('input[data-setting="pgsort"]'),
@@ -207,6 +208,7 @@ window.initSortable = function() {
         count = 0;
 
       $(".sortable-pics > li > img").each(function (index, element) {
+        console.info('sortupdate img', jQuery(element).data("src"));
         value[count] = jQuery(element).data("src");
         count += 1;
       });
@@ -227,7 +229,7 @@ window.initSortable = function() {
  *
  * @param path
  */
-window.deleteImages = function(path) {
+window.deleteImages = function (path) {
   var answer = confirm(postgalleryLang.askDeleteAll);
   pgCloseDetails();
 
@@ -247,7 +249,7 @@ window.deleteImages = function(path) {
  * @param element
  * @param path
  */
-window.deleteImage = function(element, path) {
+window.deleteImage = function (element, path) {
   pgCloseDetails();
   jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&path=" + path,
     function (data, textStatus) {
@@ -263,7 +265,7 @@ window.deleteImage = function(element, path) {
  * @param status
  * @param element
  */
-window.deleteImageComplete = function(result, status, element) {
+window.deleteImageComplete = function (result, status, element) {
   if (result == 1) {
     jQuery(element.remove());
   }
@@ -274,7 +276,7 @@ window.deleteImageComplete = function(result, status, element) {
  *
  * @param buttonElement
  */
-window.pgToggleDetails = function(buttonElement) {
+window.pgToggleDetails = function (buttonElement) {
   var detailElement = jQuery(buttonElement).parent().find('.details'),
     allDetailElements = jQuery('.sortable-pics .details');
 
@@ -289,7 +291,73 @@ window.pgToggleDetails = function(buttonElement) {
 /**
  * Close detail-modal
  */
-window.pgCloseDetails = function() {
+window.pgCloseDetails = function () {
   var allDetailElements = jQuery('.sortable-pics .details');
   allDetailElements.removeClass('active');
+};
+
+window.triggerFilenameChange = function (inputElement) {
+  inputElement = $(inputElement);
+  var item = inputElement.closest('li'),
+    img = item.find('img'),
+    titleDiv = item.find('.img-title'),
+    attachmentId = img.data('attachmentid');
+
+  titleDiv.addClass('changed');
+};
+
+window.renameImage = function (buttonElement) {
+  buttonElement = $(buttonElement);
+  var item = buttonElement.closest('li'),
+    img = item.find('img'),
+    titleDiv = item.find('.img-title'),
+    input = titleDiv.find('input'),
+    attachmentId = img.data('attachmentid');
+
+  jQuery.ajax({
+    type: "POST",
+    url: ajaxurl,
+    data: {
+      action: 'postgalleryRenameimage',
+      attachmentId: attachmentId,
+      newfilename: input.val()
+    },
+    success: function (data, textStatus) {
+      renameImageComplete(data, textStatus, item);
+    },
+    dataType: 'json'
+  });
+
+  titleDiv.addClass('changed');
+};
+
+window.renameImageComplete = function (result, status, item) {
+  var img = item.find('img'),
+    titleDiv = item.find('.img-title'),
+    input = titleDiv.find('input'),
+    attachmentId = img.data('attachmentid');
+
+  if (result.success) {
+    titleDiv.removeClass('changed');
+    input.val(result.newFilename);
+    input.data('filename', result.newFilename);
+    img.data('src', result.newFullFilename);
+    $(".sortable-pics").trigger("sortupdate");
+  } else {
+    titleDiv.removeClass('changed');
+    input.val(input.data('filename'));
+  }
+};
+
+window.multiRename = function () {
+  var items = $('.sortable-pics li'),
+    prefix = $('.postgallery-multireplace-prefix').val();
+
+  items.each(function (index, element) {
+    element = $(element);
+    var input = element.find('.img-title input'),
+      button = element.find('.img-title .save-rename-button');
+    input.val(prefix + (index + 1));
+    button.trigger('click');
+  });
 };
