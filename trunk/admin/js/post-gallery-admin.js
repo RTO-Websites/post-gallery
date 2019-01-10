@@ -200,7 +200,6 @@ window.initSortable = function () {
       cursor: "move"
     });
     $(".sortable-pics").on("sortupdate", function (event, ui) {
-      console.info('sortupdate');
       pgCloseDetails();
       var input = jQuery("#postgalleryImagesort"),
         elementorInput = jQuery('input[data-setting="pgsort"]'),
@@ -208,7 +207,6 @@ window.initSortable = function () {
         count = 0;
 
       $(".sortable-pics > li > img").each(function (index, element) {
-        console.info('sortupdate img', jQuery(element).data("src"));
         value[count] = jQuery(element).data("src");
         count += 1;
       });
