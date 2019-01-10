@@ -544,8 +544,7 @@ class PostGallery {
         require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
         // Generate the metadata for the attachment, and update the database record.
-        $attachData = wp_generate_attachment_metadata( $attachmentId, $fullUrl );
-        wp_update_attachment_metadata( $attachmentId, $attachData );
+        PostGalleryAdmin::fixAttachmentPath( $attachmentId, $fullUrl );
 
         if ( !empty( $legacyData['alts'][$filename] ) ) {
             update_post_meta( $attachmentId, '_wp_attachment_image_alt', $legacyData['alts'][$filename] );

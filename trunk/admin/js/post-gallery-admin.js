@@ -227,15 +227,15 @@ window.initSortable = function () {
  *
  * @param path
  */
-window.deleteImages = function (path) {
+window.deleteImages = function (postid) {
   var answer = confirm(postgalleryLang.askDeleteAll);
   pgCloseDetails();
 
   // Check if user confirmed the deletion of all images
   if (answer) {
-    jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&path=" + path,
+    jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&postid=" + postid,
       function (data) {
-        jQuery(".sortable-pics").remove();
+        jQuery(".sortable-pics").empty();
       }
     );
   }
@@ -247,9 +247,9 @@ window.deleteImages = function (path) {
  * @param element
  * @param path
  */
-window.deleteImage = function (element, path) {
+window.deleteImage = function (element, attachmentId) {
   pgCloseDetails();
-  jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&path=" + path,
+  jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&attachmentid=" + attachmentId,
     function (data, textStatus) {
       deleteImageComplete(data, textStatus, element);
     }
@@ -337,6 +337,7 @@ window.renameImageComplete = function (result, status, item) {
 
   if (result.success) {
     titleDiv.removeClass('changed');
+    input.blur();
     input.val(result.newFilename);
     input.data('filename', result.newFilename);
     img.data('src', result.newFullFilename);
