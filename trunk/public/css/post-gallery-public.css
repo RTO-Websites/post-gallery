@@ -217,7 +217,7 @@ body.liteboxgallery-open {
 .postgallery-wrapper .pg-theme-thumbs .post-gallery_thumb {
   position: relative;
   margin: 0 auto;
-  width: auto;
+  width: 100%;
   text-align: center;
   max-width: 100%;
 }
