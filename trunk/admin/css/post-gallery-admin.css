@@ -18,6 +18,11 @@
   position: relative;
   margin-right: 10px;
   vertical-align: top;
+  text-align: center;
+}
+
+.sortable-pics li img {
+  max-height: 100%;
 }
 
 .sortable-pics .img-title {
