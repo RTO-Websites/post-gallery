@@ -191,6 +191,26 @@ class PostGalleryAdmin {
         exit();
     }
 
+    /**
+     * Admin-ajax for image rename
+     */
+    public function ajaxRename() {
+        $attachmentId = filter_input( INPUT_POST, 'attachmentId' );
+        $newFilename = filter_input( INPUT_POST, 'newfilename' );
+        $newFilename = $this->sanitizeFilename( $newFilename );
+
+        $success = $this->renameMedia( $attachmentId, $newFilename );
+        $filePath = get_attached_file( $attachmentId );
+
+        echo json_encode( [
+            'success' => $success,
+            'newFilename' => $newFilename,
+            'newFullFilename' => basename( $filePath ),
+            'attachmentId' => $attachmentId,
+        ] );
+
+        exit();
+    }
 
     public function ajaxGetImageUpload() {
         $postid = filter_input( INPUT_GET, 'post' );
@@ -364,11 +384,11 @@ class PostGalleryAdmin {
 
         echo '<option value="global">' . __( 'From global setting', 'postgallery' ) . '</option>';
         // get templates from tpl-dir
-        $this->getCustomTemplateDirOptions( get_post_meta( $curLangPost->ID, $key, true ) );
+        $this->renderCustomTemplateDirOptions( get_post_meta( $curLangPost->ID, $key, true ) );
 
         // get templates from plugin
         $currentValue = get_post_meta( $curLangPost->ID, $key, true );
-        $this->getPluginDirOptions( $currentValue );
+        $this->renderPluginDirOptions( $currentValue );
 
         echo '</select></td></tr>';
 
@@ -379,7 +399,7 @@ class PostGalleryAdmin {
     /**
      * Print the template-options from template_dir
      */
-    public function getCustomTemplateDirOptions( $currentValue = '' ) {
+    public function renderCustomTemplateDirOptions( $currentValue = '' ) {
         $templates = $this->getCustomTemplates();
         foreach ( $templates as $key => $title ) {
             $selected = '';
@@ -424,7 +444,7 @@ class PostGalleryAdmin {
      *
      * @param type $cur_lang_post
      */
-    public function getPluginDirOptions( $currentValue = '' ) {
+    public function renderPluginDirOptions( $currentValue = '' ) {
         // list default-gallery-templates
         foreach ( $this->defaultTemplates as $optionKey => $optionTitle ) {
             $selected = '';
@@ -491,7 +511,7 @@ class PostGalleryAdmin {
             $thumbInstance = Thumb::getInstance();
             $dir = scandir( $uploadDir );
 
-            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $imageDir . '\');">' . __( 'Delete all', 'postgallery' ) . '</div>';
+            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $currentLangPost->ID . '\');">' . __( 'Delete all', 'postgallery' ) . '</div>';
 
             echo '<ul class="sortable-pics">';
 
@@ -512,6 +532,7 @@ class PostGalleryAdmin {
                         'scale' => 0,
                     ] );
 
+
                     $attachmentId = PostGallery::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
                     if ( !empty( $attachmentId ) ) {
                         $imgMeta = wp_prepare_attachment_for_js( $attachmentId );
@@ -521,24 +542,26 @@ class PostGalleryAdmin {
                         $imageOptions[$file] = get_post_meta( $attachmentId, '_postgallery-image-options', true );
                     }
 
-                    $images[$file] = '<li>';
-                    $images[$file] .= '<img style="" data-attachmentid="' . $attachmentId . '" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
-                    $images[$file] .= '<div class="img-title">' . $file . '</div>';
-                    $images[$file] .= '<div class="del" onclick="deleteImage(this.parentNode, \'' . $imageDir . '/' . $file . '\');">x</div>';
-                    $images[$file] .= '<div class="edit-details" onclick="pgToggleDetails(this);"></div>';
-                    $images[$file] .= '<div class="details">';
-                    $images[$file] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[$file] ) ? $titles[$file] : '' ) . '" /></div>';
-                    $images[$file] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[$file] ) ? $descs[$file] : '' ) . '</textarea></div>';
-                    $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'key|value' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
-                    $images[$file] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ) . '" /></div>';
-                    $images[$file] .= '</div>';
-                    $images[$file] .= '</li>';
+                    $fileSplit = explode( '.', $file );
+                    $extension = array_pop( $fileSplit );
+                    $filename = implode( '.', $fileSplit );
+
+                    $shortPath = 'gallery/' . $imageDir . '/' . $file;
+
+                    $attachedFile = get_post_meta( $attachmentId, '_wp_attached_file', true );
+                    if ( strcmp( $shortPath, $attachedFile ) !== 0 ) {
+                        self::fixAttachmentPath( $attachmentId, $shortPath );
+                    }
+
+                    include( 'partials/uploaded-image-item.php' );
                 }
                 $sortimages = PostGallery::sortImages( $images, $post->ID );
                 echo implode( '', $sortimages );
             }
 
             echo '</ul>';
+
+            $this->renderMultiRename();
         }
 
         // hidden-input contains the image-order
@@ -551,6 +574,38 @@ class PostGalleryAdmin {
         echo '<input type="hidden" name="postgalleryMainlangId" id="postgalleryMainlangId" value="' . $post->ID . '" />';
     }
 
+    /**
+     * Fix wrong attachment paths in post_meta and generate thumbs
+     *  _wp_attachment_metadata
+     *  _wp_attached_file
+     *
+     * @param $attachmentId
+     * @param $path
+     */
+    public static function fixAttachmentPath( $attachmentId, $path ) {
+        $uploads = wp_upload_dir();
+        $shortPath = str_replace( [
+            trailingslashit( $uploads['basedir'] ),
+            trailingslashit( $uploads['baseurl'] ),
+        ], '', $path );
+
+        update_attached_file( $attachmentId, $shortPath );
+        $meta = get_post_meta( $attachmentId, '_wp_attachment_metadata' );
+        $meta[0]['file'] = $shortPath;
+        update_post_meta( $attachmentId, '_wp_attachment_metadata', $meta[0] );
+        update_post_meta( $attachmentId, '_wp_attached_file', $shortPath );
+
+        // (Re)Generate the metadata for the attachment, and update the database record.
+        $attachData = wp_generate_attachment_metadata( $attachmentId, $uploads['basedir'] . '/' . $shortPath );
+        wp_update_attachment_metadata( $attachmentId, $attachData );
+    }
+
+    /**
+     * Output input to rename all images
+     */
+    private function renderMultiRename() {
+        include( 'partials/multi-rename.php' );
+    }
 
     /**
      * @return array
@@ -563,7 +618,55 @@ class PostGalleryAdmin {
 
         // Javascript for language
         return $scriptLanguage;
-        //return '<script type="text/javascript">window.postgalleryLang = ' . json_encode( $scriptLanguage ) . ';</script>';
+    }
+
+    /**
+     * Renames a single file
+     *
+     * @param $attachmentId
+     * @param $newFileName
+     * @return bool
+     */
+    public function renameMedia( $attachmentId, $newFileName ) {
+        $file = get_attached_file( $attachmentId );
+        $path = pathinfo( $file );
+        $newfilePath = $path['dirname'] . '/' . $newFileName . '.' . $path['extension'];
+        $renameSuccess = rename( $file, $newfilePath );
+
+        $meta = get_post_meta( $attachmentId, '_wp_attachment_metadata' );
+
+        if ( !empty( $meta[0][0]['sizes'] ) ) {
+            $meta[0]['sizes'] = $meta[0][0][0]['sizes'];
+        }
+        if ( !empty( $meta[0][0][0]['sizes'] ) ) {
+            $meta[0]['sizes'] = $meta[0][0][0]['sizes'];
+        }
+
+
+        if ( !empty( $meta[0]['sizes'] ) ) {
+            foreach ( $meta[0]['sizes'] as $key => $size ) {
+                $thumbFilename = $newFileName . '-' . $size['width'] . 'x' . $size['height'] . '.' . $path['extension'];
+                $thumbRename = rename(
+                    $path['dirname'] . '/' . $size['file'],
+                    $path['dirname'] . '/' . $thumbFilename );
+
+                if ( $thumbRename ) {
+                    $meta[0]['sizes'][$key]['file'] = $thumbFilename;
+                }
+            }
+
+        }
+
+        if ( !$renameSuccess ) {
+            return false;
+        }
+
+        $shortPath = explode( '/gallery/', $newfilePath );
+        $meta[0]['file'] = 'gallery/' . $shortPath[1];
+        update_post_meta( $attachmentId, '_wp_attachment_metadata', $meta[0] );
+
+        $updateSucess = update_attached_file( $attachmentId, 'gallery/' . $shortPath[1] );
+        return $updateSucess;
     }
 
     /**
@@ -786,6 +889,23 @@ class PostGalleryAdmin {
         return $filename;
     }
 
+    public static function deleteAttachment( $attachmentId ) {
+        $filePath = get_attached_file( $attachmentId );
+        $filename = basename( $filePath );
+        $pathinfo = pathinfo( $filePath );
+
+        unlink( $filePath );
+        $meta = get_post_meta( $attachmentId, '_wp_attachment_metadata' );
+        if ( !empty( $meta[0]['sizes'] ) ) {
+            foreach ( $meta[0]['sizes'] as $key => $size ) {
+                echo $pathinfo['dirname'] . '/' . $size['file'] . PHP_EOL;
+                unlink( $pathinfo['dirname'] . '/' . $size['file'] );
+            }
+        }
+        wp_delete_attachment( $attachmentId );
+
+        return $filename;
+    }
 
     static function getInstance() {
         // If the single instance hasn't been set, set it now.

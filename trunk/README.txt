@@ -34,6 +34,9 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.9.0 =
+* Add function to rename and multi-rename images
+
 = 1.8.0 =
 * Add image animation to elementor-widget
 * Fix issue with grouped mediathek

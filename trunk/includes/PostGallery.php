@@ -156,6 +156,7 @@ class PostGallery {
         // Register ajax
         $this->loader->addAction( 'wp_ajax_postgalleryUpload', $pluginAdmin, 'ajaxUpload' );
         $this->loader->addAction( 'wp_ajax_postgalleryDeleteimage', $pluginAdmin, 'ajaxDelete' );
+        $this->loader->addAction( 'wp_ajax_postgalleryRenameimage', $pluginAdmin, 'ajaxRename' );
         $this->loader->addAction( 'wp_ajax_postgalleryGetImageUpload', $pluginAdmin, 'ajaxGetImageUpload' );
         $this->loader->addAction( 'wp_ajax_postgalleryNewGallery', $pluginAdmin, 'ajaxCreateGallery' );
         $this->loader->addAction( 'wp_ajax_postgalleryGetGroupedMedia', $pluginAdmin, 'getGroupedMedia' );
@@ -508,7 +509,10 @@ class PostGallery {
         $uploads = wp_upload_dir();
         $uploadDir = $uploads['basedir'];
         $uploadUrl = $uploads['baseurl'];
-        $path = str_replace( $uploadUrl, '', $fullUrl );
+        $path = str_replace( [
+            $uploadUrl,
+            $uploadDir,
+        ], '', $fullUrl );
 
 
         // no attachment exists, create new
@@ -542,8 +546,7 @@ class PostGallery {
         require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
         // Generate the metadata for the attachment, and update the database record.
-        $attachData = wp_generate_attachment_metadata( $attachmentId, $fullUrl );
-        wp_update_attachment_metadata( $attachmentId, $attachData );
+        PostGalleryAdmin::fixAttachmentPath( $attachmentId, $fullUrl );
 
         if ( !empty( $legacyData['alts'][$filename] ) ) {
             update_post_meta( $attachmentId, '_wp_attachment_image_alt', $legacyData['alts'][$filename] );
@@ -1040,7 +1043,6 @@ class PostGallery {
      * @return null|string
      */
     public static function getPostIdFromGuid( $guid ) {
-        //return self::getAttachmentIdByUrl( $guid );
         global $wpdb;
         return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid=%s", $guid ) );
     }
@@ -1059,9 +1061,18 @@ class PostGallery {
         $uploads = wp_upload_dir();
         $uploadDir = $uploads['basedir'];
         $uploadUrl = $uploads['baseurl'];
-        $path = str_replace( $uploadUrl, '', $url );
+        $path = str_replace( [
+            $uploadUrl,
+            $uploadDir,
+            '/gallery/',
+        ], [
+            '',
+            '',
+            'gallery/',
+        ], $url );
 
-        $attachment_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path ) );
+        $statement = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path );
+        $attachment_id = $wpdb->get_var( $statement );
 
         if ( !empty( $attachment_id ) ) {
             return $attachment_id;
@@ -1072,7 +1083,6 @@ class PostGallery {
         $attachment_id = 0;
         $dir = wp_upload_dir();
         if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) { // Is URL in uploads directory?
-            //$file = str_replace( $dir['baseurl'] . '/', '', $url );
             $query_args = array(
                 'post_type' => 'attachment',
                 'post_status' => 'inherit',
@@ -1096,10 +1106,6 @@ class PostGallery {
     }
 
     public static function urlIsThumbnail( $attachmentUrl = '' ) {
-
-        global $wpdb;
-        //$attachmentId = false;
-
         // If there is no url, return.
         if ( '' == $attachmentUrl )
             return true;
@@ -1115,13 +1121,6 @@ class PostGallery {
             if ( strcmp( $attachmentUrlNew, $attachmentUrl ) === 0 ) {
                 return false;
             }
-
-            // Remove the upload path base directory from the attachment URL
-            //$attachmentUrl = str_replace( $upload_dir_paths['baseurl'] . '/', '', $attachmentUrl );
-
-            // Finally, run a custom database query to get the attachment ID from the modified attachment URL
-            //$attachmentId = $wpdb->get_var( $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $attachmentUrl ) );
-
         }
 
         return true;

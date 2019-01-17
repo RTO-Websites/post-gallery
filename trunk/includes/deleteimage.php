@@ -5,63 +5,36 @@ if ( !is_user_logged_in() ) {
     die( 'Login required!' );
 }
 
-$path = filter_input( INPUT_GET, 'path' );
-if ( empty( $path ) ) {
-    $path = filter_input( INPUT_POST, 'path' );
-}
-if ( empty( $path ) ) {
-    die( 'no path given' );
-}
-
+$success = false;
 $uploads = wp_upload_dir();
 $uploadDir = $uploads['basedir'];
 $uploadUrl = $uploads['baseurl'];
 
-if ( !file_exists( $uploadDir . '/gallery/' . $path ) ) {
-    die( 'file not exists or is folder. ' . $uploadDir . '/gallery/' . $path );
+$postid = filter_input( INPUT_GET, 'postid' );
+if ( empty( $postid ) ) {
+    $postid = filter_input( INPUT_POST, 'postid' );
+}
+
+$attachmentId = filter_input( INPUT_GET, 'attachmentid' );
+if ( empty( $attachmentId ) ) {
+    $attachmentId = filter_input( INPUT_POST, 'attachmentid' );
 }
 
 $deletedFiles = [];
 
-// If "path" is dir iterate through this dir and delete all files
-if ( is_dir( $uploadDir . '/gallery/' . $path ) ) {
-    $dirname = $uploadDir . '/gallery/' . $path;
-    $dirHandle = opendir( $dirname );
-
-    if ( !$dirHandle )
-        return false;
-
-    // Iterate through the directory and delete every single file in it.
-    // Afterwards delete the directory itself.
-    while ( $file = readdir( $dirHandle ) ) {
-        if ( $file != "." && $file != ".." && !is_dir( $dirname . "/" . $file ) ) {
-            $success = unlink( $dirname . "/" . $file );
-
-            $attachmentId = \Inc\PostGallery::getAttachmentIdByUrl( $uploadUrl . '/gallery/' . $path . '/' . $file );
-            if ( $attachmentId ) {
-                wp_delete_attachment( $attachmentId );
-            }
-
-            $deletedFiles[] = $file;
-        }
+if ( empty( $attachmentId ) && !empty( $postid ) ) {
+    // Delete all images from a post
+    $images = \Inc\PostGallery::getImages( $postid );
+    foreach ( $images as $image ) {
+        $deletedFiles[] = \Admin\PostGalleryAdmin::deleteAttachment( $image['attachmentId'] );
     }
-
-    closedir( $dirHandle );
-    rmdir( $dirname );
-    return true;
-} else {
+    $success = true;
+} else if ( !empty( $attachmentId ) ) {
     // Deletes a single file
-    $success = unlink( $uploadDir . '/gallery/' . $path );
-    $file = explode( '/', $path );
-    $file = array_pop( $file );
-
-    // delete attachment and thumbnails
-    $attachmentId = \Inc\PostGallery::getAttachmentIdByUrl( $uploadUrl . '/gallery/' . $path );
-    if ( $attachmentId ) {
-        wp_delete_attachment( $attachmentId );
-    }
-
-    $deletedFiles[] = $file;
+    $deletedFiles[] = \Admin\PostGalleryAdmin::deleteAttachment( $attachmentId );
+    $success = true;
+} else {
+    die( 'No postid or attachmentid' );
 }
 
 
