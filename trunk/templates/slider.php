@@ -23,7 +23,7 @@ array_unshift( $images, $first_image );
                         ] );
                     ?>"
                     alt="<?php echo $image['filename'] ?>"
-                <?php echo $image['imageOptionsParsed']; ?>
+                    <?php echo $image['imageOptionsParsed']; ?>
             />
         <?php } ?>
     </div>

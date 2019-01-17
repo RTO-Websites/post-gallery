@@ -18,6 +18,11 @@
   position: relative;
   margin-right: 10px;
   vertical-align: top;
+  text-align: center;
+}
+
+.sortable-pics li img {
+  max-height: 100%;
 }
 
 .sortable-pics .img-title {
@@ -27,7 +32,7 @@
   right: 0px;
   font-size: 11px;
   text-align: center;
-  padding: 3px 5px;
+  padding: 1px;
   background-color: #fff;
   background-color: rgba(255, 255, 255, 0.7);
   overflow: hidden;
@@ -242,4 +247,39 @@
 .elementor-control-content .pg-image-container .sortable-pics input,
 .elementor-control-content .pg-image-container .sortable-pics textarea {
   pointer-events: none;
+}
+
+.img-title .img-filename {
+  background-color: transparent;
+  position: relative;
+  display: inline-block;
+  font-size: inherit;
+  border: 0;
+  padding: 0;
+  overflow: visible;
+  width: calc(100% - 2px);
+  padding: 2px 4px;
+}
+
+.img-title .img-filename:focus {
+  background-color: #fff;
+}
+
+.img-title.changed {
+  padding-right: 20px;
+}
+
+.save-rename-button {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 23px;
+  cursor: pointer;
+  color: green;
+  padding-right: 3px;
+}
+
+.img-title.changed .save-rename-button {
+  display: block;
 }

@@ -16,6 +16,12 @@ jQuery(window).on('load', function () {
   }, 500);
 });
 
+jQuery(function() {
+  if (typeof (wp.media) !== 'undefined' && typeof (wp.media.model) !== 'undefined') {
+    wp.media.model.Query.defaultArgs.posts_per_page = -1;
+  }
+});
+
 
 /**
  * Hooks in wordpress media and group images by parent-post
