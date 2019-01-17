@@ -553,21 +553,7 @@ class PostGalleryAdmin {
                         self::fixAttachmentPath( $attachmentId, $shortPath );
                     }
 
-                    $images[$file] = '<li>';
-                    $images[$file] .= '<img style="" data-attachmentid="' . $attachmentId . '" data-src="' . $file . '" src="' . $thumb['url'] . '" alt="" />';
-                    $images[$file] .= '<div class="img-title">';
-                    $images[$file] .= '<input onkeypress="triggerFilenameChange(this);" data-filename="' . $filename . '" type="text" class="img-filename" value="' . $filename . '"  autocomplete="off"/>';
-                    $images[$file] .= '<div class="save-rename-button dashicons dashicons-yes" onclick="renameImage(this);"></div>';
-                    $images[$file] .= '</div>';
-                    $images[$file] .= '<div class="del" onclick="deleteImage(this.parentNode, ' . $attachmentId . ');">x</div>';
-                    $images[$file] .= '<div class="edit-details" onclick="pgToggleDetails(this);"></div>';
-                    $images[$file] .= '<div class="details">';
-                    $images[$file] .= '<div class="title"><input type="text" placeholder="' . __( 'Title' ) . '" name="postgalleryTitles[' . $file . ']" value="' . ( !empty( $titles[$file] ) ? $titles[$file] : '' ) . '" /></div>';
-                    $images[$file] .= '<div class="desc"><textarea placeholder="' . __( 'Description' ) . '" name="postgalleryDescs[' . $file . ']">' . ( !empty( $descs[$file] ) ? $descs[$file] : '' ) . '</textarea></div>';
-                    $images[$file] .= '<div class="image-options"><textarea placeholder="' . __( 'key|value' ) . '" name="postgalleryImageOptions[' . $file . ']">' . ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ) . '</textarea></div>';
-                    $images[$file] .= '<div class="alt-attribute"><input type="text" placeholder="' . __( 'Alt-Attribut' ) . '" name="postgalleryAltAttributes[' . $file . ']" value="' . ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ) . '" /></div>';
-                    $images[$file] .= '</div>';
-                    $images[$file] .= '</li>';
+                    include( 'partials/uploaded-image-item.php' );
                 }
                 $sortimages = PostGallery::sortImages( $images, $post->ID );
                 echo implode( '', $sortimages );
@@ -575,7 +561,7 @@ class PostGalleryAdmin {
 
             echo '</ul>';
 
-            $this->renderMultiRename( $currentLangPost->ID );
+            $this->renderMultiRename();
         }
 
         // hidden-input contains the image-order
@@ -598,8 +584,11 @@ class PostGalleryAdmin {
      */
     public static function fixAttachmentPath( $attachmentId, $path ) {
         $uploads = wp_upload_dir();
-        $shortPath = str_replace( $uploads['basedir'] . '/', '', $path );
-        $shortPath = str_replace( $uploads['baseurl'] . '/', '', $shortPath );
+        $shortPath = str_replace( [
+            trailingslashit( $uploads['basedir'] ),
+            trailingslashit( $uploads['baseurl'] ),
+        ], '', $path );
+
         update_attached_file( $attachmentId, $shortPath );
         $meta = get_post_meta( $attachmentId, '_wp_attachment_metadata' );
         $meta[0]['file'] = $shortPath;
@@ -613,23 +602,9 @@ class PostGalleryAdmin {
 
     /**
      * Output input to rename all images
-     *
-     * @param $postid
      */
-    private function renderMultiRename( $postid ) {
-        echo '<div class="multi-rename">';
-        echo '<table class="form-table">';
-        echo '<tr valign="top">';
-        // Generate Label
-        echo '<th scope="row"><label class="theme_options_label">' . __( 'Multi-Rename', 'post-gallery' ) . '</label></th>';
-        echo '<td>';
-        echo '<input type="text" value="image-" name="postgallery-multireplace-prefix" class="postgallery-multireplace-prefix" />';
-        echo '<input class="button" type="button" onclick="multiRename();" value="' . __( 'Rename', 'post-gallery' ) . '" />';
-        echo '</td>';
-        echo '</tr>';
-
-        echo '</table>';
-        echo '</div>';
+    private function renderMultiRename() {
+        include( 'partials/multi-rename.php' );
     }
 
     /**
@@ -643,7 +618,6 @@ class PostGalleryAdmin {
 
         // Javascript for language
         return $scriptLanguage;
-        //return '<script type="text/javascript">window.postgalleryLang = ' . json_encode( $scriptLanguage ) . ';</script>';
     }
 
     /**
@@ -654,7 +628,6 @@ class PostGalleryAdmin {
      * @return bool
      */
     public function renameMedia( $attachmentId, $newFileName ) {
-        $post = get_post( $attachmentId );
         $file = get_attached_file( $attachmentId );
         $path = pathinfo( $file );
         $newfilePath = $path['dirname'] . '/' . $newFileName . '.' . $path['extension'];
