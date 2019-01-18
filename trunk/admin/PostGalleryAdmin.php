@@ -15,6 +15,7 @@ include_once( 'PostGalleryThemeCustomizer.php' );
 use Inc\PostGalleryWidget\Control\PostGalleryElementorControl;
 use Inc\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Inc\PostGallery;
+use Inc\Template;
 use Thumb\Thumb;
 
 /**
@@ -553,7 +554,22 @@ class PostGalleryAdmin {
                         self::fixAttachmentPath( $attachmentId, $shortPath );
                     }
 
-                    include( 'partials/uploaded-image-item.php' );
+                    $tpl = new Template( POSTGALLERY_DIR . '/admin/partials/uploaded-image-item.php', [
+                        'attachmentId' => $attachmentId,
+                        'fullFilename' => $file,
+                        'filename' => $filename,
+                        'thumbUrl' => $thumb['url'],
+                        'title' => ( !empty( $titles[$file] ) ? $titles[$file] : '' ),
+                        'desc' => ( !empty( $descs[$file] ) ? $descs[$file] : '' ),
+                        'imgOptions' => ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ),
+                        'alt' => ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ),
+                        'placeholderTitle' => __( 'Title' ),
+                        'placeholderDesc' => __( 'Description' ),
+                        'placeholderImgOptions' => __( 'key|value' ),
+                        'placeholderAlt' => __( 'Alt-Attribut' ),
+                    ] );
+
+                    $images[$file] = $tpl->getRendered();
                 }
                 $sortimages = PostGallery::sortImages( $images, $post->ID );
                 echo implode( '', $sortimages );
