@@ -443,7 +443,7 @@ class PostGalleryAdmin {
     /**
      * Print the template-options from plugin_dir
      *
-     * @param type $cur_lang_post
+     * @param string $currentValue
      */
     public function renderPluginDirOptions( $currentValue = '' ) {
         // list default-gallery-templates
@@ -460,7 +460,7 @@ class PostGalleryAdmin {
     /**
      * Adds a metabox with the gallery-pictures and a file-upload
      *
-     * @param type $post
+     * @param object $post
      */
     public function addGalleryPictures( $post ) {
         $orgPost = PostGallery::getOrgPost( $post->ID );
