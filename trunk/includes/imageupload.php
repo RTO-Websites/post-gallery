@@ -43,6 +43,10 @@ if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $uploadFo
     $filename = str_replace( '&', '', $filename );
     $filename = sanitize_file_name( $filename );
 
+    $filenameSplit = explode( '.', $filename );
+    $extension = array_pop( $filenameSplit );
+    $filenameOnly = implode( '.', $filenameSplit );
+
     $imageTypes = [ IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ];
     $allowTypes = array_map( 'image_type_to_mime_type', $imageTypes );
     array_push( $allowTypes, 'image/x-png', 'image/jpeg', 'application/octet-stream' );
@@ -58,6 +62,21 @@ if ( !empty( $fileResult ) && empty( $fileResult['error'] ) && !empty( $uploadFo
     }
 
     $imagepath = $uploadDir . '/gallery/' . $uploadFolder . '/' . $filename;
+    $newFilename = $filename;
+    $newFilenameOnly = $filenameOnly;
+    $checkPath = $imagepath;
+    $count = 1;
+
+    // rename if already exists
+    while ( file_exists( $checkPath ) ) {
+        $newFilename = $filenameOnly . '-' . $count . '.' . $extension;
+        $newFilenameOnly =  $filenameOnly . '-' . $count;
+        $checkPath = $uploadDir . '/gallery/' . $uploadFolder . '/' . $newFilename;
+        $count += 1;
+    }
+    $imagepath = $checkPath;
+    $filename = $newFilename;
+    $filenameOnly = $newFilenameOnly;
 
     $success = copy( $uploadFile, $imagepath );
     // delete tempfile
@@ -88,6 +107,23 @@ if ( $success ) {
             'height' => 150,
             'scale' => 0,
         ] );
+
+        $tpl = new \Inc\Template( POSTGALLERY_DIR . '/admin/partials/uploaded-image-item.php', [
+            'attachmentId' => $attachmentId,
+            'fullFilename' => $filename,
+            'filename' => $filenameOnly,
+            'thumbUrl' => $thumb['url'],
+            'title' =>  '',
+            'desc' => '',
+            'imgOptions' => '',
+            'alt' => '',
+            'placeholderTitle' => __( 'Title' ),
+            'placeholderDesc' => __( 'Description' ),
+            'placeholderImgOptions' => __( 'key|value' ),
+            'placeholderAlt' => __( 'Alt-Attribut' ),
+        ] );
+        $itemHtml = $tpl->getRendered();
+
         $imageSize = getimagesize( $imagepath );
         $returnValue['path'] = $imagepath;
         $returnValue['filename'] = $filename;
@@ -95,6 +131,7 @@ if ( $success ) {
         $returnValue['height'] = $imageSize[1];
         $returnValue['success'] = true;
         $returnValue['thumb_url'] = $thumb['url'];
+        $returnValue['itemHtml'] = $itemHtml;
     } else {
         $returnValue['success'] = false;
         $returnValue['errorMsg'] = "Imageupload failed! " . $errorMsg;

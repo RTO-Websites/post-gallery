@@ -13,7 +13,7 @@
                 autocomplete="off"/>
         <div class="save-rename-button dashicons dashicons-yes" onclick="renameImage(this);"></div>
     </div>
-    <div class="del" onclick="deleteImage(this.parentNode, <?php echo $attachmentId; ?> );">x</div>
+    <div class="del" onclick="deleteImage(this.parentNode, <?php echo $attachmentId; ?> );"></div>
     <div class="edit-details" onclick="pgToggleDetails(this);"></div>
     <div class="details">
         <div class="title"><input type="text"

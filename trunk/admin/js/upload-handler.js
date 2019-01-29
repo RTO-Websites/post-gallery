@@ -37,21 +37,20 @@ function checkForUpload() {
 }
 
 function uploadProgress(id, fileName, loaded, total) {
-  jQuery('.imageupload-image').css({'background-image': 'url(' + jQuery('.imageupload-image').data('pluginurl') + '/images/loader.gif)'});
+  jQuery('.imageupload-image').css({'background-image': 'url(' + jQuery('.imageupload-image').data('pluginurl') + '/images/loaderbar.gif)'});
 }
 
 function checkForUploadComplete(id, fileName, result) {
   jQuery('.imageupload-image').css({'background-image': ''});
 
   if (result.success) {
-    var imageURL = result.thumb_url;
-    jQuery('.sortable-pics').append('<li><img data-src="' + result.filename + '" src="' + imageURL + '" /><div class="img-title">' + result.filename + '</div></li>');
+    jQuery('.sortable-pics').append(result.itemHtml);
   } else {
     console.info('upload fail', result);
     var error = '';
-    if (typeof(result.error) !== 'undefined') {
+    if (typeof (result.error) !== 'undefined') {
       error = result.error;
-    } else if (typeof(result.errorMsg) !== 'undefined') {
+    } else if (typeof (result.errorMsg) !== 'undefined') {
       error = result.errorMsg;
     }
     jQuery('.postgallery-upload-error').append('<span>Error: ' + fileName + ':<br />' + error + '</span><br />');
