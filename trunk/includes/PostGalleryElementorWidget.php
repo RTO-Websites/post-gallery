@@ -116,7 +116,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @access protected
      */
     protected function _register_controls() {
-        $filerPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
+        $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
             . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
         $allPosts = get_posts( [
             'post_type' => get_post_types(),
@@ -128,7 +128,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
 
         foreach ( $allPosts as $post ) {
-            if ( in_array( $post->post_type, $filerPostTypes ) ) {
+            if ( in_array( $post->post_type, $filterPostTypes ) ) {
                 continue;
             }
             $selectPosts[$post->ID] = $post->post_title . ' (' . $post->post_type . ')';
