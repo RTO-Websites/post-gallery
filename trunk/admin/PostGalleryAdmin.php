@@ -898,7 +898,6 @@ class PostGalleryAdmin {
         $meta = get_post_meta( $attachmentId, '_wp_attachment_metadata' );
         if ( !empty( $meta[0]['sizes'] ) ) {
             foreach ( $meta[0]['sizes'] as $key => $size ) {
-                echo $pathinfo['dirname'] . '/' . $size['file'] . PHP_EOL;
                 unlink( $pathinfo['dirname'] . '/' . $size['file'] );
             }
         }
