@@ -15,6 +15,7 @@ include_once( 'PostGalleryThemeCustomizer.php' );
 use Inc\PostGalleryWidget\Control\PostGalleryElementorControl;
 use Inc\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Inc\PostGallery;
+use Inc\PostGalleryWidget\Widgets\PostGallerySliderWidget;
 use Inc\Template;
 use Thumb\Thumb;
 
@@ -876,6 +877,8 @@ class PostGalleryAdmin {
     public function registerElementorWidget() {
         require_once( POSTGALLERY_DIR . '/includes/PostGalleryElementorWidget.php' );
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
+        require_once( POSTGALLERY_DIR . '/includes/PostGallerySliderWidget.php' );
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGallerySliderWidget() );
     }
 
     /**
