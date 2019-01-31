@@ -34,6 +34,10 @@ https://github.com/RTO-Websites/post-gallery
 3. This screenshot shows the litebox-gallery
 
 == Changelog ==
+= 1.10.0 =
+* Add new chunk-upload with progress-bar
+* Add slider widget for elementor
+
 = 1.9.0 =
 * Add function to rename and multi-rename images
 

@@ -79,12 +79,26 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         ],
                         'default' => defined( 'ELEMENTOR_VERSION' ) ? 'custom' : 'bottom',
                     ],
+
+                    'maxImageWidth' => [
+                        'label' => __( 'Max image width', 'postgallery' ),
+                        'type' => 'number',
+                        'default' => 2560,
+                    ],
+
+                    'maxImageHeight' => [
+                        'label' => __( 'Max image height', 'postgallery' ),
+                        'type' => 'number',
+                        'default' => 2560,
+                    ],
+
                     'disableScripts' => [
                         'type' => 'checkbox',
                         'label' => __( 'Disable scripts loading', 'postgallery' ),
                         'default' => false,
-                        'description' => 'Will disable litebox and slider',
+                        'description' => 'Will disable litebox, slider and image-animations',
                     ],
+
                     'disableGroupedMedia' => [
                         'type' => 'checkbox',
                         'label' => __( 'Disable grouped media', 'postgallery' ),

@@ -204,7 +204,6 @@ window.initSortable = function () {
       cursor: "move"
     });
     $(".sortable-pics").on("sortupdate", function (event, ui) {
-      pgCloseDetails();
       var input = jQuery("#postgalleryImagesort"),
         elementorInput = jQuery('input[data-setting="pgsort"]'),
         value = [],
@@ -237,7 +236,6 @@ window.deleteImages = function (postid) {
   }
 
   var answer = confirm(postgalleryLang.askDeleteAll);
-  pgCloseDetails();
 
   // Check if user confirmed the deletion of all images
   if (answer) {
@@ -256,7 +254,7 @@ window.deleteImages = function (postid) {
  * @param path
  */
 window.deleteImage = function (element, attachmentId) {
-  pgCloseDetails();
+  jQuery(element).addClass('delete-progress');
   jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&attachmentid=" + attachmentId,
     function (data, textStatus) {
       deleteImageComplete(data, textStatus, element);
@@ -278,28 +276,13 @@ window.deleteImageComplete = function (result, status, element) {
 };
 
 /**
- * Open detail-modal
+ * Open detail window
  *
  * @param buttonElement
  */
-window.pgToggleDetails = function (buttonElement) {
-  var detailElement = jQuery(buttonElement).parent().find('.details'),
-    allDetailElements = jQuery('.sortable-pics .details');
-
-  if (detailElement.hasClass('active')) {
-    allDetailElements.removeClass('active');
-  } else {
-    allDetailElements.removeClass('active');
-    detailElement.addClass('active');
-  }
-};
-
-/**
- * Close detail-modal
- */
-window.pgCloseDetails = function () {
-  var allDetailElements = jQuery('.sortable-pics .details');
-  allDetailElements.removeClass('active');
+window.pgOpenDetailWindow = function (element) {
+  var img = jQuery(element).find('img');
+  window.open('upload.php?item=' + img.data('attachmentid'), '', 'height=600,width=600');
 };
 
 window.triggerFilenameChange = function (inputElement) {

@@ -154,8 +154,7 @@ class PostGallery {
         $this->loader->addAction( 'save_post', $pluginAdmin, 'savePostMeta', 10, 2 );
 
         // Register ajax
-        $this->loader->addAction( 'wp_ajax_postgalleryAjaxUpload', $pluginAdmin, 'ajaxUpload2' );
-        $this->loader->addAction( 'wp_ajax_postgalleryUpload', $pluginAdmin, 'ajaxUpload' );
+        $this->loader->addAction( 'wp_ajax_postgalleryAjaxUpload', $pluginAdmin, 'ajaxUpload' );
         $this->loader->addAction( 'wp_ajax_postgalleryDeleteimage', $pluginAdmin, 'ajaxDelete' );
         $this->loader->addAction( 'wp_ajax_postgalleryRenameimage', $pluginAdmin, 'ajaxRename' );
         $this->loader->addAction( 'wp_ajax_postgalleryGetImageUpload', $pluginAdmin, 'ajaxGetImageUpload' );
@@ -163,6 +162,9 @@ class PostGallery {
         $this->loader->addAction( 'wp_ajax_postgalleryGetGroupedMedia', $pluginAdmin, 'getGroupedMedia' );
 
         $this->loader->addFilter( 'sanitize_file_name', $pluginAdmin, 'sanitizeFilename' );
+
+        $this->loader->addFilter( 'attachment_fields_to_edit', $pluginAdmin, 'addMediaFields', 11, 2 );
+        $this->loader->addFilter( 'attachment_fields_to_save', $pluginAdmin, 'saveMediaFields', 10, 2 );
     }
 
     /**
@@ -430,7 +432,7 @@ class PostGallery {
                     if ( !empty( $attachmentId ) ) {
                         $attachment = get_post( $attachmentId );
                         $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
-                        $imageOptions = get_post_meta( $attachmentId, '_postgallery-image-options', true );
+                        $imageOptions = get_post_meta( $attachmentId, 'postgallery-image-options', true );
                         if ( !empty( $attachment ) ) {
                             $imageTitle = $attachment->post_title;
                             $imageDesc = $attachment->post_content;
@@ -523,20 +525,12 @@ class PostGallery {
         $pathSplit = explode( '/', $path );
         $filename = array_pop( $pathSplit );
 
-        $legacyData = self::getLegacyData( $parentId );
-
-        $imageTitle = !empty( $legacyData['titles'][$filename] )
-            ? $legacyData['titles'][$filename]
-            : '';
-
-        $imageDesc = !empty( $legacyData['descs'][$filename] ) ? $legacyData['descs'][$filename] : '';
-
         // Prepare an array of post data for the attachment.
         $attachment = array(
             'guid' => $fullUrl,
             'post_mime_type' => $filetype['type'],
-            'post_title' => $imageTitle,
-            'post_content' => $imageDesc,
+            'post_title' => '',
+            'post_content' => '',
             'post_status' => 'inherit',
         );
 
@@ -549,48 +543,7 @@ class PostGallery {
         // Generate the metadata for the attachment, and update the database record.
         PostGalleryAdmin::fixAttachmentPath( $attachmentId, $fullUrl );
 
-        if ( !empty( $legacyData['alts'][$filename] ) ) {
-            update_post_meta( $attachmentId, '_wp_attachment_image_alt', $legacyData['alts'][$filename] );
-        }
-        if ( !empty( $legacyData['imageOptions'][$filename] ) ) {
-            update_post_meta( $attachmentId, '_postgallery-image-options', $legacyData['imageOptions'][$filename] );
-        }
-
         return $attachmentId;
-    }
-
-    /**
-     * Return legacy data from post-meta of parent-post
-     *
-     * @param $postid
-     * @return array
-     */
-    public static function getLegacyData( $postid ) {
-        // get legacy data
-        $titles = get_post_meta( $postid, 'postgalleryTitles', true );
-        $descs = get_post_meta( $postid, 'postgalleryDescs', true );
-        $alts = get_post_meta( $postid, 'postgalleryAltAttributes', true );
-        $imageOptions = get_post_meta( $postid, 'postgalleryImageOptions', true );
-
-        if ( !is_array( $titles ) ) {
-            $titles = json_decode( json_encode( $titles ), true );
-        }
-        if ( !is_array( $descs ) ) {
-            $descs = json_decode( json_encode( $descs ), true );
-        }
-        if ( !is_array( $alts ) ) {
-            $alts = json_decode( json_encode( $alts ), true );
-        }
-        if ( !is_array( $imageOptions ) ) {
-            $imageOptions = json_decode( json_encode( $imageOptions ), true );
-        }
-
-        return [
-            'titles' => $titles,
-            'descs' => $descs,
-            'alts' => $alts,
-            'imageOptions' => $imageOptions,
-        ];
     }
 
     /**
@@ -973,6 +926,10 @@ class PostGallery {
             'debugmode' => get_theme_mod( 'postgallery_postgalleryDebugmode', false ),
             'sliderType' => get_theme_mod( 'postgallery_sliderType', 'owl' ),
             'globalPosition' => get_theme_mod( 'postgallery_globalPosition', defined( 'ELEMENTOR_VERSION' ) ? 'custom' : 'bottom' ),
+
+            'maxImageWidth' => get_theme_mod( 'postgallery_maxImageWidth', 2560 ),
+            'maxImageHeight' => get_theme_mod( 'postgallery_maxImageHeight', 2560 ),
+
             'disableScripts' => get_theme_mod( 'postgallery_disableScripts', false ),
             'disableGroupedMedia' => get_theme_mod( 'postgallery_disableGroupedMedia', false ),
 
