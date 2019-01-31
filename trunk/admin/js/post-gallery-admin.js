@@ -102,6 +102,10 @@ window.initPostGallery = function () {
  * Add actions to customizer fields
  */
 window.initCustomizer = function () {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   // show/hide children of equal-height
   $('#customize-control-postgallery_equalHeight-control').on('change', function (e) {
     var target = $(this),
@@ -228,14 +232,18 @@ window.initSortable = function () {
  * @param path
  */
 window.deleteImages = function (postid) {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   var answer = confirm(postgalleryLang.askDeleteAll);
   pgCloseDetails();
 
   // Check if user confirmed the deletion of all images
   if (answer) {
-    jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&postid=" + postid,
+    $.post(ajaxurl + "?action=postgalleryDeleteimage&postid=" + postid,
       function (data) {
-        jQuery(".sortable-pics").empty();
+        $(".sortable-pics").empty();
       }
     );
   }
@@ -330,6 +338,10 @@ window.renameImage = function (buttonElement) {
 };
 
 window.renameImageComplete = function (result, status, item) {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   var img = item.find('img'),
     titleDiv = item.find('.img-title'),
     input = titleDiv.find('input'),
@@ -349,6 +361,10 @@ window.renameImageComplete = function (result, status, item) {
 };
 
 window.multiRename = function () {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   var items = $('.sortable-pics li'),
     prefix = $('.postgallery-multireplace-prefix').val();
 

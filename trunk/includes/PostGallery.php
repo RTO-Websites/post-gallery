@@ -154,6 +154,7 @@ class PostGallery {
         $this->loader->addAction( 'save_post', $pluginAdmin, 'savePostMeta', 10, 2 );
 
         // Register ajax
+        $this->loader->addAction( 'wp_ajax_postgalleryAjaxUpload', $pluginAdmin, 'ajaxUpload2' );
         $this->loader->addAction( 'wp_ajax_postgalleryUpload', $pluginAdmin, 'ajaxUpload' );
         $this->loader->addAction( 'wp_ajax_postgalleryDeleteimage', $pluginAdmin, 'ajaxDelete' );
         $this->loader->addAction( 'wp_ajax_postgalleryRenameimage', $pluginAdmin, 'ajaxRename' );

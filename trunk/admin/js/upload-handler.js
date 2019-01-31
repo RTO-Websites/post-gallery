@@ -1,58 +1,80 @@
-function checkForUpload() {
-  jQuery('.imageupload-image').each(function (index, element) {
-    var uploaderConfig = {},
-      uploaderElement = null;
-    //uploaderConfig.debug = true;
+function pgInitUpload() {
+  if (!$) {
+    var $ = jQuery;
+  }
+  if (!$('.postgallery-uploader').length) {
+    return;
+  }
 
-    uploaderConfig.dragText = '';
-    uploaderConfig.uploadButtonText = 'Upload';
-    uploaderConfig.cancelButtonText = 'Abort';
-    uploaderConfig.failUploadText = '';
+  var options,
+    uploader,
+    container = jQuery('.postgallery-uploader');
 
-    uploaderConfig.areText = "are";
-    uploaderConfig.isText = "is";
-    uploaderConfig.messages = {
-      typeError: "Das Format der Datei '{file}' ist unzulässig. Erlaubte Dateitypen {isAre} {extensions}.",
-      sizeError: "Die Datei '{file}' ist zu groß. Es ist maximal {sizeLimit} erlaubt.",
-      noFilesError: "Es sind keine Dateien ausgewählt.",
-      onLeave: "Es werden noch Dateien hochgeladen. Verlassen sie die Seite wird der Vorgang abgebrochen."
-    };
 
-    uploaderConfig.element = element;
-    uploaderConfig.allowedExtensions = ['JPG', 'PNG', 'GIF', 'JPEG'];
-    uploaderConfig.sizeLimit = 8048576;
-    uploaderConfig.multiple = true;
+  options = {
+    multipart_params: {
+      _ajax_nonce: container.find('.ajaxnonce').attr('id'),
+      action: 'postgalleryAjaxUpload',
+      uploadFolder: container.data('uploadfolder'),
+      postid: container.data('postid'),
+    },
+    browse_button: container.find('.postgallery-uploader-button')[0],
+    url: ajaxurl,
+    debug: true,
+    multi_selection: container.hasClass('multiple'),
+    drop_element: container.find('.drop-zone')[0],
+    //chunk_size: '1kb',
+  };
 
-    uploaderConfig.action = ajaxurl + '?action=postgalleryUpload&postid=' + jQuery(element).data('postid') + '&uploadfolder=' + jQuery(element).data('uploadfolder');
 
-    //uploaderConfig.extraDropzones = jQuery('#imageupload_bild');
+  uploader = new plupload.Uploader(options);
+  uploader.init();
+  console.info('init upload', uploader);
 
-    uploaderConfig.onComplete = checkForUploadComplete;
-    uploaderConfig.onProgress = uploadProgress;
+  // EVENTS
+  // init
+  uploader.bind('Init', function (up) {
 
-    uploader = new qq.FileUploader(uploaderConfig);
+  });
 
-    return true;
+  // file added
+  uploader.bind('FilesAdded', function (up, files) {
+    $.each(files, function (i, file) {
+      console.log('File Added', i, file);
+    });
+
+    container.addClass('progress');
+
+    up.refresh();
+    up.start();
+  });
+
+  // upload progress
+  uploader.bind('UploadProgress', function (up, file) {
+    console.log('Progress', up, file)
+  });
+
+  // file uploaded
+  uploader.bind('FileUploaded', function (up, file, response) {
+    response = $.parseJSON(response.response);
+
+    if (response['success']) {
+      console.log('Success', up, file, response);
+      $('.sortable-pics').append(response.itemHtml);
+    } else {
+      console.log('Error', up, file, response);
+      $('.postgallery-upload-error').append('<span>Error: ' + response.filename + ':<br />' + response.msg + '</span><br />');
+    }
+
+  });
+
+  // all files uploaded
+  uploader.bind('UploadComplete', function () {
+    console.info('all complete');
+    container.removeClass('progress');
   });
 }
 
-function uploadProgress(id, fileName, loaded, total) {
-  jQuery('.imageupload-image').css({'background-image': 'url(' + jQuery('.imageupload-image').data('pluginurl') + '/images/loaderbar.gif)'});
-}
-
-function checkForUploadComplete(id, fileName, result) {
-  jQuery('.imageupload-image').css({'background-image': ''});
-
-  if (result.success) {
-    jQuery('.sortable-pics').append(result.itemHtml);
-  } else {
-    console.info('upload fail', result);
-    var error = '';
-    if (typeof (result.error) !== 'undefined') {
-      error = result.error;
-    } else if (typeof (result.errorMsg) !== 'undefined') {
-      error = result.errorMsg;
-    }
-    jQuery('.postgallery-upload-error').append('<span>Error: ' + fileName + ':<br />' + error + '</span><br />');
-  }
-}
+jQuery(document).ready(function () {
+  pgInitUpload();
+});

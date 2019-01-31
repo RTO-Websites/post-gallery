@@ -167,7 +167,7 @@ class PostGalleryAdmin {
         wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', [ 'jquery' ], $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery' ], $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery', 'plupload-all' ], $this->version, false );
 
 
         if ( empty( PostGallery::getOptions()['disableGroupedMedia'] ) ) {
@@ -186,10 +186,19 @@ class PostGalleryAdmin {
     }
 
     /**
+     *
+     * Admin-ajax for image upload
+     */
+    public function ajaxUpload2() {
+        include( POSTGALLERY_DIR . '/includes/ajax-actions/imageUpload.php' );
+        exit();
+    }
+
+    /**
      * Admin-ajax for image delete
      */
     public function ajaxDelete() {
-        include( POSTGALLERY_DIR . '/includes/deleteimage.php' );
+        include( POSTGALLERY_DIR . '/includes/ajax-actions/deleteImage.php' );
         exit();
     }
 
@@ -503,10 +512,12 @@ class PostGalleryAdmin {
             return;
         }
 
-        echo '
-			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '" data-postid="' . $currentLangPost->ID . '"></div>
-			<div class="postgallery-upload-error"></div>
-		';
+        // add upload
+        $tpl = new Template( POSTGALLERY_DIR . '/admin/partials/uploader-ui.php', [
+            'imageDir' => $imageDir,
+            'currentLangPost' => $currentLangPost,
+        ] );
+        echo $tpl->getRendered();
 
         $images = [];
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {

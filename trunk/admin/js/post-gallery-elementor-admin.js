@@ -135,9 +135,7 @@ function loadUpload() {
 function initUpload() {
   if (typeof(postgalleryLang) !== 'undefined') {
     // add upload
-    checkForUpload();
-    jQuery(".qq-upload-drop-area span").html(postgalleryLang.moveHere);
-    jQuery(".qq-upload-button").addClass("button");
+    pgInitUpload();
   }
 }
 
