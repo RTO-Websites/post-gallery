@@ -24,16 +24,22 @@ function pgInitUpload() {
     },
     browse_button: container.find('.postgallery-uploader-button')[0],
     url: ajaxurl,
-    //debug: true,
     multi_selection: container.hasClass('multiple'),
     drop_element: container.find('.drop-zone')[0],
     chunk_size: '1536kb',
+    filters: {
+      mime_types: [
+        {
+          title: "Image files",
+          extensions: "jpg,jpeg,gif,png"
+        }
+      ]
+    }
   };
 
 
   uploader = new plupload.Uploader(options);
   uploader.init();
-  console.info('init upload', uploader);
   container.addClass('is-initialized');
 
   // EVENTS
@@ -46,8 +52,6 @@ function pgInitUpload() {
   uploader.bind('FilesAdded', function (up, files) {
     queue.html('');
     $.each(files, function (i, file) {
-      console.log('File Added', i, file);
-
       queue.append('<div class="postgallery-queue-item" id="queue-item-'
         + file.id + '"><div class="filename">' + file.name
         + '</div><div class="progress-bar"></div><div class="percent"></div></div>');
@@ -61,7 +65,6 @@ function pgInitUpload() {
 
   // upload progress
   uploader.bind('UploadProgress', function (up, file) {
-    console.log('Progress', up, file)
     var item = $('#queue-item-' + file.id);
     item.find('.progress-bar').css({width: file.percent + '%'});
     item.find('.percent').html(file.percent);
@@ -75,19 +78,18 @@ function pgInitUpload() {
       $('.sortable-pics').append(response.itemHtml);
       var queueItem = $('#queue-item-' + file.id);
       // remove element from queue
-      setTimeout(function() {
+      setTimeout(function () {
         queueItem.animate({
           opacity: 0,
           height: 0,
-        },function() {
+        }, function () {
           queueItem.remove();
         });
-      }, 800);
+      }, 600);
     } else {
       $('#queue-item-' + file.id).after('<span>Error: ' + response.msg + '</span>');
       $('#queue-item-' + file.id).addClass('error');
     }
-
   });
 
   // all files uploaded

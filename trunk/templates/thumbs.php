@@ -11,7 +11,7 @@
             class="gallery pg-theme-thumbs pg-theme-list <?php echo $this->option( 'containerClass' ); ?>">
         <?php foreach ( $images as $image ) { ?>
             <?php
-            $thumbUrl = \Inc\PostGallery::getThumbUrl( $image['path'],
+            $thumbUrl = \Lib\PostGallery::getThumbUrl( $image['path'],
                 [
                     'width' => $this->option( 'thumbWidth' ),
                     'height' => $this->option( 'thumbHeight' ),

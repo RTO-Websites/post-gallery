@@ -12,12 +12,12 @@
 
 include_once( 'PostGalleryThemeCustomizer.php' );
 
-use Inc\PostGalleryWidget\Control\PostGalleryElementorControl;
-use Inc\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
-use Inc\PostGallery;
-use Inc\PostGalleryWidget\Widgets\PostGallerySliderWidget;
-use Inc\Template;
-use Thumb\Thumb;
+use Lib\PostGalleryWidget\Control\PostGalleryElementorControl;
+use Lib\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
+use Lib\PostGallery;
+use Lib\PostGalleryWidget\Widgets\PostGallerySliderWidget;
+use Lib\Template;
+use Lib\Thumb;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -181,7 +181,7 @@ class PostGalleryAdmin {
      * Admin-ajax for image upload
      */
     public function ajaxUpload() {
-        include( POSTGALLERY_DIR . '/includes/ajax-actions/imageUpload.php' );
+        include( POSTGALLERY_DIR . '/lib/ajax-actions/imageUpload.php' );
         exit();
     }
 
@@ -189,7 +189,7 @@ class PostGalleryAdmin {
      * Admin-ajax for image delete
      */
     public function ajaxDelete() {
-        include( POSTGALLERY_DIR . '/includes/ajax-actions/deleteImage.php' );
+        include( POSTGALLERY_DIR . '/lib/ajax-actions/deleteImage.php' );
         exit();
     }
 
@@ -859,9 +859,9 @@ class PostGalleryAdmin {
      * @throws \Exception
      */
     public function registerElementorWidget() {
-        require_once( POSTGALLERY_DIR . '/includes/PostGalleryElementorWidget.php' );
+        require_once( POSTGALLERY_DIR . '/lib/PostGalleryElementorWidget.php' );
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
-        require_once( POSTGALLERY_DIR . '/includes/PostGallerySliderWidget.php' );
+        require_once( POSTGALLERY_DIR . '/lib/PostGallerySliderWidget.php' );
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGallerySliderWidget() );
     }
 
@@ -872,7 +872,7 @@ class PostGalleryAdmin {
         \Elementor\Plugin::instance()->controls_manager->get_controls();
         \Elementor\Plugin::instance()->controls_manager->register_control(
             'postgallerycontrol',
-            new \Inc\PostGalleryWidget\Control\PostGalleryElementorControl()
+            new \Lib\PostGalleryWidget\Control\PostGalleryElementorControl()
         );
     }
 

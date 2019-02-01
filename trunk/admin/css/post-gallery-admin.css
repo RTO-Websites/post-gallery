@@ -217,6 +217,8 @@
   width: 115px;
   height: 115px;
   margin-bottom: 10px;
+  max-width: calc(50% - 12px);
+  min-width: 100px;
 }
 
 .pg-new-gallery {

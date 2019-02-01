@@ -1,8 +1,8 @@
 <?php
 namespace Admin;
 
-use Inc\PostGallery;
-use Thumb\Thumb;
+use Lib\PostGallery;
+use Lib\Thumb;
 
 
 class SliderShortcodeAdmin {

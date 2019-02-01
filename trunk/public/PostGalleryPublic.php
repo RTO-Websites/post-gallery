@@ -11,8 +11,8 @@
  */
 
 use Elementor\Core\Files\CSS\Post;
-use Inc\PostGallery;
-use Thumb\Thumb;
+use Lib\PostGallery;
+use Lib\Thumb;
 
 /**
  * The public-facing functionality of the plugin.

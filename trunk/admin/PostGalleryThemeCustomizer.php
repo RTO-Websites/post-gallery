@@ -84,12 +84,14 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'label' => __( 'Max image width', 'postgallery' ),
                         'type' => 'number',
                         'default' => 2560,
+                        'description' => 'If uploaded image is bigger, it will be resized'
                     ],
 
                     'maxImageHeight' => [
                         'label' => __( 'Max image height', 'postgallery' ),
                         'type' => 'number',
                         'default' => 2560,
+                        'description' => 'If uploaded image is bigger, it will be resized'
                     ],
 
                     'disableScripts' => [

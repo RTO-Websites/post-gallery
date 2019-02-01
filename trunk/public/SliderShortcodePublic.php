@@ -2,9 +2,9 @@
 
 namespace Pub;
 
-use Inc\PostGallery;
+use Lib\PostGallery;
 use MagicAdminPage\MagicAdminPage;
-use Thumb\Thumb;
+use Lib\Thumb;
 
 
 class SliderShortcodePublic {
@@ -388,7 +388,7 @@ class SliderShortcodePublic {
      * Get images of a post
      *
      * @param $loadId
-     * @return array|\Inc\type
+     * @return array|\Lib\type
      */
     public function getImagesFromPost( $loadId ) {
         if ( $this->thumbOnly ) {
