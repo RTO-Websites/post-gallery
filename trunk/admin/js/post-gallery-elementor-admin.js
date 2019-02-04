@@ -27,7 +27,7 @@ function initPostGalleryElementor() {
     */
   jQuery(document).on('click', '.elementor-tab-control-content a', function (e) {
     var element = jQuery(e.target),
-      container = element.closest('.ps-container'),
+      container = element.closest('.ps'),
       field = container.find('input[data-setting="pgsort"]');
 
     if (field.length) {

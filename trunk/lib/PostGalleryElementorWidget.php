@@ -4,6 +4,7 @@ namespace Lib\PostGalleryWidget\Widgets;
 
 use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -393,6 +394,14 @@ class PostGalleryElementorWidget extends Widget_Base {
                     'equal_height' => 'on',
                 ],
                 'frontend_available' => true,
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Css_Filter::get_type(),
+            [
+                'name' => 'css_filters',
+                'selector' => '{{WRAPPER}} .item .bg-image, {{WRAPPER}} .item img',
             ]
         );
 

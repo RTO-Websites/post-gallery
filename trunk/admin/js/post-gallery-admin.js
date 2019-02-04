@@ -36,9 +36,9 @@ jQuery(function () {
     // init postgallery on elementor widget open
     elementor.hooks.addAction('panel/open_editor/widget/postgallery', function (panel, model, view) {
       initPostGallery();
-      loadUpload();
       checkMasonry();
       checkThumbsize();
+      loadUpload();
     });
   }
 });

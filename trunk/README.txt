@@ -13,11 +13,11 @@ Adds a gallery to every post with customizable templates, drag´n´drop upload u
 == Description ==
 
 Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
-It also provides an elementor-widget.
+It also provides a customizable elementor-widget.
 
 It comes with a fullscreen-litebox-gallery and also an easy to use slider-configurator.
 
-
+It can group media, to better find your images.
 
 You can find the documentation on
 http://post-gallery.rtfd.org
@@ -29,9 +29,11 @@ https://github.com/RTO-Websites/post-gallery
 
 == Screenshots ==
 
-1. This is the Main-settings-section
-1. This is the upload-section under a post
-3. This screenshot shows the litebox-gallery
+1. Upload-section under a post
+2. Elementor-Widget
+3. Style tab of elementor-widget
+4. Grouped media
+5. Litebox-gallery with custom styles
 
 == Changelog ==
 = 1.10.0 =
