@@ -19,7 +19,6 @@ class PostGalleryUploader {
     private $filenameOnly;
     private $extension;
     private $fullPath;
-    private $msg = [];
 
     private $postGalleryPublic;
 
@@ -103,20 +102,6 @@ class PostGalleryUploader {
             ];
         }
 
-        /* if ( !$chunks ) {
-            $move = move_uploaded_file( $this->uploadedFile['tmp_name'], $this->fullPath );
-        } else {
-            $chunkUpload = handleChunkUpload( $chunk, $chunks );
-        } */
-
-        /*if ( !$move ) {
-            $this->msg[] = 'Image could not be moved!';
-            return [
-                'success' => false,
-                'msg' => 'Imageupload failed! ' . implode( '', $this->msg ),
-            ];
-        }*/
-
         $attachmentId = $this->createAttachmentPost();
 
         if ( !$attachmentId ) {
@@ -176,13 +161,13 @@ class PostGalleryUploader {
                 'finished' => true,
                 'partname' => $tmpFilename,
             ];
-        } else {
-            unlink( $this->uploadedFile['tmp_name'] );
-            return [
-                'finished' => false,
-                'partname' => $tmpFilename,
-            ];
         }
+
+        unlink( $this->uploadedFile['tmp_name'] );
+        return [
+            'finished' => false,
+            'partname' => $tmpFilename,
+        ];
     }
 
     /**

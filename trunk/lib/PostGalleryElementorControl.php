@@ -1,5 +1,5 @@
 <?php
-namespace Lib\PostGalleryWidget\Control;
+namespace Lib;
 
 use \Elementor\Base_Control;
 class PostGalleryElementorControl extends Base_Control

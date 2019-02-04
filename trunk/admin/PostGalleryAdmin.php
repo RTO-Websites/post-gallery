@@ -10,12 +10,10 @@
  * @subpackage PostGallery/admin
  */
 
-include_once( 'PostGalleryThemeCustomizer.php' );
-
-use Lib\PostGalleryWidget\Control\PostGalleryElementorControl;
-use Lib\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
 use Lib\PostGallery;
-use Lib\PostGalleryWidget\Widgets\PostGallerySliderWidget;
+use Lib\PostGalleryElementorControl;
+use Lib\PostGalleryElementorWidget;
+use Lib\PostGallerySliderWidget;
 use Lib\Template;
 use Lib\Thumb;
 
@@ -604,7 +602,8 @@ class PostGalleryAdmin {
      * Output input to rename all images
      */
     private function renderMultiRename() {
-        include( 'partials/multi-rename.php' );
+        $tpl = new Template( POSTGALLERY_DIR . '/admin/partials/multi-rename.php', [] );
+        echo $tpl->getRendered();
     }
 
     /**
@@ -859,9 +858,7 @@ class PostGalleryAdmin {
      * @throws \Exception
      */
     public function registerElementorWidget() {
-        require_once( POSTGALLERY_DIR . '/lib/PostGalleryElementorWidget.php' );
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
-        require_once( POSTGALLERY_DIR . '/lib/PostGallerySliderWidget.php' );
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGallerySliderWidget() );
     }
 
@@ -872,7 +869,7 @@ class PostGalleryAdmin {
         \Elementor\Plugin::instance()->controls_manager->get_controls();
         \Elementor\Plugin::instance()->controls_manager->register_control(
             'postgallerycontrol',
-            new \Lib\PostGalleryWidget\Control\PostGalleryElementorControl()
+            new PostGalleryElementorControl()
         );
     }
 

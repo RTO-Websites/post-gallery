@@ -1,5 +1,7 @@
 <?php
 
+namespace Admin;
+
 /**
  * @since 1.0.0
  * @author shennemann
@@ -9,13 +11,12 @@ class PostGalleryThemeCustomizer {
     private $sectionId;
     private $fields;
     private $postgalleryAdmin;
-    private $postgallery;
 
     public function __construct() {
         $id = 'postgallery';
         $this->sectionId = $id;
 
-        $this->postgalleryAdmin = \Admin\PostGalleryAdmin::getInstance();
+        $this->postgalleryAdmin = PostGalleryAdmin::getInstance();
 
         // slide animations from animate.css
         $sliderAnimations = explode( ',', 'bounce,	flash,	pulse,	rubberBand,

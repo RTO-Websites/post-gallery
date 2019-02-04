@@ -2,7 +2,7 @@
 namespace Inc;
 
 /**
- * DEPRECATED
+ * @deprecated
  * Use Lib\PostGallery
  *
  * Class PostGallery

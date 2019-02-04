@@ -1,6 +1,7 @@
 <?php namespace Lib;
 
 use Admin\PostGalleryAdmin;
+use Admin\PostGalleryThemeCustomizer;
 use Pub\PostGalleryPublic;
 use Lib\Thumb;
 
@@ -144,7 +145,7 @@ class PostGallery {
         $this->loader->addAction( 'admin_enqueue_scripts', $pluginAdmin, 'enqueueScripts' );
 
         // add options to customizer
-        $this->loader->addAction( 'customize_register', new \PostGalleryThemeCustomizer(), 'actionCustomizeRegister' );
+        $this->loader->addAction( 'customize_register', new PostGalleryThemeCustomizer(), 'actionCustomizeRegister' );
 
         // add menu page to link to customizer
         $this->loader->addAction( 'admin_menu', $pluginAdmin, 'addAdminPage' );
@@ -213,8 +214,6 @@ class PostGallery {
 
         $this->loader->addAction( 'elementor/editor/before_enqueue_styles', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'elementor/editor/before_enqueue_scripts', $pluginAdmin, 'enqueueScripts', 99999 );
-
-        require_once( 'PostGalleryElementorControl.php' );
 
         $this->loader->addAction( 'elementor/widgets/widgets_registered', $pluginAdmin, 'registerElementorWidget' );
         $this->loader->addAction( 'elementor/editor/after_save', $pluginAdmin, 'elementorAfterSave' );

@@ -7,7 +7,7 @@
         <p class="upload-instructions drop-instructions"><?php _ex( 'or', 'Uploader: Drop files here - or - Select Files' ); ?></p>
         <input type="button" value="<?php _e( 'Select Files' ); ?>" class="postgallery-uploader-button browser button button-hero">
     </div>
-    <span class="ajaxnonce" id="' . wp_create_nonce( __FILE__ ) . '"></span>
+    <span class="ajaxnonce" id="<?php echo wp_create_nonce( __FILE__ ); ?>"></span>
     <div class="drop-zone"
             ondragenter="$(this).addClass('active');"
             ondragleave="$(this).removeClass('active');"
