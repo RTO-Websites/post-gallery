@@ -94,6 +94,7 @@ function pgInitUpload() {
 
   // all files uploaded
   uploader.bind('UploadComplete', function () {
+    $('.sortable-pics').trigger('sortupdate');
     container.removeClass('progress');
   });
 }

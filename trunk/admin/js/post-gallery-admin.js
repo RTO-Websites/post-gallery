@@ -242,6 +242,7 @@ window.deleteImages = function (postid) {
     $.post(ajaxurl + "?action=postgalleryDeleteimage&postid=" + postid,
       function (data) {
         $(".sortable-pics").empty();
+        $('.sortable-pics').trigger('sortupdate');
       }
     );
   }
@@ -272,6 +273,7 @@ window.deleteImage = function (element, attachmentId) {
 window.deleteImageComplete = function (result, status, element) {
   if (result == 1) {
     jQuery(element.remove());
+    $('.sortable-pics').trigger('sortupdate');
   }
 };
 
