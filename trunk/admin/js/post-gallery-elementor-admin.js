@@ -10,6 +10,8 @@ function initPostGalleryElementor() {
   // change gap or item-ratio
   jQuery(document).on('change', 'input[data-setting="size"],' +
     '.elementor-control-column_gap input,' +
+    '.elementor-control-columns input,'  +
+    '.elementor-control-no_grid input,' +
     '.elementor-control-row_gap input', checkItemRatio);
   jQuery(document).on('slide', '.elementor-control-item_ratio .ui-slider,' +
     '.elementor-control-column_gap .ui-slider,' +
@@ -44,7 +46,7 @@ function initPostGalleryElementor() {
  */
 function checkItemRatio() {
   if (checkMasonry()) {
-    var galleries = jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery('.elementor-image-gallery .gallery[data-pgmasonry]');
+    var galleries = jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery('.elementor-image-gallery.with-js-masonry .gallery');
     galleries.masonry('layout');
   }
 }
