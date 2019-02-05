@@ -12,6 +12,7 @@
 
 use Elementor\Core\Files\CSS\Post;
 use Lib\PostGallery;
+use Lib\PostGalleryImages;
 use Lib\Thumb;
 
 /**
@@ -269,7 +270,7 @@ class PostGalleryPublic {
                     return array_map( 'maybe_unserialize', $meta_cache[$meta_key] );
             }
 
-            if ( count( PostGallery::getImages( $object_id ) ) )
+            if ( count( PostGalleryImages::get( $object_id ) ) )
                 return true;
             if ( $single )
                 return '';
@@ -292,7 +293,7 @@ class PostGalleryPublic {
     public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
         if ( '' == $html ) {
 
-            $image = PostGallery::getFirstImage( $size, $post_id );
+            $image = PostGalleryImages::getFirstImage( $size, $post_id );
 
             if ( empty( $image ) || empty( $image['url'] ) ) {
                 return '';
@@ -354,7 +355,7 @@ class PostGalleryPublic {
         ];
 
         $tmpOptions = $this->options;
-        $images = PostGallery::getImages( $postid );
+        $images = PostGalleryImages::get( $postid );
 
         if ( empty( $images ) ) {
             return '<!--postgallery: no images found for ' . $postid . '-->';
@@ -427,8 +428,6 @@ class PostGalleryPublic {
             $extraStyle .= 'display: none;';
             $extraStyle .= '}';
         }
-
-        // image animation
 
         // image animation
         $extraStyle .= $this->createImageAnimationCss( $id );
@@ -637,7 +636,7 @@ class PostGalleryPublic {
             $pics = ( $_REQUEST['pics'] );
 
             if ( !empty( $pics ) ) {
-                $pics = PostGallery::getPicsResized( $pics, [
+                $pics = PostGalleryImages::resize( $pics, [
                     'width' => $_REQUEST['width'],
                     'height' => $_REQUEST['height'],
                     'scale' => ( !isset( $_REQUEST['scale'] ) ? 1 : $_REQUEST['scale'] ),

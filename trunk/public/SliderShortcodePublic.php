@@ -3,6 +3,7 @@
 namespace Pub;
 
 use Lib\PostGallery;
+use Lib\PostGalleryImages;
 use MagicAdminPage\MagicAdminPage;
 use Lib\Thumb;
 
@@ -122,7 +123,7 @@ class SliderShortcodePublic {
 
         $this->thumbOnly = get_post_meta( $sliderid, 'sliderThumbOnly', true );
 
-        $images = PostGallery::getImages( $sliderid );
+        $images = PostGalleryImages::get( $sliderid );
         $class = '';
 
         // get from shortcode-arguments
@@ -218,7 +219,7 @@ class SliderShortcodePublic {
 
         // resize images
         if ( !empty( $imgWidth ) || !empty( $imgHeight ) ) {
-            $images = PostGallery::getPicsResized( $images, [
+            $images = PostGalleryImages::resize( $images, [
                 'width' => !empty( $imgWidth ) ? $imgWidth : '9999',
                 'height' => !empty( $imgHeight ) ? $imgHeight : '9999',
                 'scale' => is_null( $scale ) ? 0 : $scale,
@@ -398,7 +399,7 @@ class SliderShortcodePublic {
 
             if ( empty( $url ) ) {
                 // no post-thumb, get first image
-                $images = PostGallery::getImages( $loadId );
+                $images = PostGalleryImages::get( $loadId );
                 $images = array_splice( $images, 0, 1 );
                 $images = array_shift( $images );
                 return [ $images ];
@@ -416,7 +417,7 @@ class SliderShortcodePublic {
                 ],
             ];
         } else {
-            return PostGallery::getImages( $loadId );
+            return PostGalleryImages::get( $loadId );
         }
     }
 

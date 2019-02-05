@@ -13,6 +13,7 @@
 use Lib\PostGallery;
 use Lib\PostGalleryElementorControl;
 use Lib\PostGalleryElementorWidget;
+use Lib\PostGalleryImages;
 use Lib\PostGallerySliderWidget;
 use Lib\Template;
 use Lib\Thumb;
@@ -468,7 +469,7 @@ class PostGalleryAdmin {
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
         }
-        //$imageDir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
+
         $imageDir = PostGallery::getImageDir( $post );
         $uploads = wp_upload_dir();
         $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
@@ -519,7 +520,7 @@ class PostGalleryAdmin {
                         continue;
                     }
 
-                    if ( PostGallery::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
+                    if ( PostGalleryImages::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
                         continue;
                     }
 
@@ -531,7 +532,7 @@ class PostGalleryAdmin {
                     ] );
 
 
-                    $attachmentId = PostGallery::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
+                    $attachmentId = PostGalleryImages::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
 
                     $fileSplit = explode( '.', $file );
                     $extension = array_pop( $fileSplit );
@@ -553,7 +554,7 @@ class PostGalleryAdmin {
 
                     $images[$file] = $tpl->getRendered();
                 }
-                $sortimages = PostGallery::sortImages( $images, $post->ID );
+                $sortimages = PostGalleryImages::sort( $images, $post->ID );
                 echo implode( '', $sortimages );
             }
 
@@ -762,11 +763,11 @@ class PostGalleryAdmin {
                     copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
                     unlink( $uploadDir . '/' . $file );
 
-                    if ( PostGallery::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
+                    if ( PostGalleryImages::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
                         continue;
                     }
 
-                    $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
+                    $attachmentId = PostGalleryImages::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
                     if ( $attachmentId ) {
                         update_attached_file( $attachmentId, '/gallery/' . $imageDir . '/' . $file );
                         update_metadata( 'post', $attachmentId, '_wp_attached_file', '/gallery/' . $imageDir . '/' . $file );
@@ -883,7 +884,7 @@ class PostGalleryAdmin {
      */
     public function sanitizeFilename( $filename, $filename_raw = '' ) {
         $filename = str_replace( [ '%20', ' ' ], '_', $filename );
-        $filename = str_replace( [ 'ä', 'ö', 'ü' ], [ 'ae', 'oe', 'ue' ], $filename );
+        $filename = str_replace( [ 'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü' ], [ 'ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue' ], $filename );
         $filename = str_replace( [ '(', ')', '$', '&', '%', '<', '>', '[', ']', '{', '}', '?', '!', '*', '=', '+', '~', '€' ], '', $filename );
 
         return $filename;
