@@ -13,6 +13,8 @@
 use Lib\PostGallery;
 use Lib\PostGalleryElementorControl;
 use Lib\PostGalleryElementorWidget;
+use Lib\PostGalleryFilesystem;
+use Lib\PostGalleryHelper;
 use Lib\PostGalleryImages;
 use Lib\PostGallerySliderWidget;
 use Lib\Template;
@@ -339,7 +341,7 @@ class PostGalleryAdmin {
      * @param type $post
      */
     public function addGallerySettings( $post ) {
-        $orgPost = PostGallery::getOrgPost( $post->ID );
+        $orgPost = PostGalleryHelper::getOrgPost( $post->ID );
         $curLangPost = $post;
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
@@ -463,14 +465,14 @@ class PostGalleryAdmin {
      * @param object $post
      */
     public function addGalleryPictures( $post ) {
-        $orgPost = PostGallery::getOrgPost( $post->ID );
+        $orgPost = PostGalleryHelper::getOrgPost( $post->ID );
         $currentLangPost = $post;
 
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
         }
 
-        $imageDir = PostGallery::getImageDir( $post );
+        $imageDir = PostGalleryFilesystem::getImageDir( $post );
         $uploads = wp_upload_dir();
         $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
         $uploadUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
@@ -692,8 +694,7 @@ class PostGalleryAdmin {
 
         $curLangPost = $post;
         $curLangPostId = $postId;
-
-        $imageDir = PostGallery::getImageDir( $post );
+        $imageDir = PostGalleryFilesystem::getImageDir( $post );
         $uploads = wp_upload_dir();
 
         if ( empty( $imageDir ) ) {
@@ -837,8 +838,8 @@ class PostGalleryAdmin {
         PostGallery::getAllWidgets( $widgets, $meta, 'postgallery' );
 
         foreach ( $widgets as $widget ) {
-            $pgSort = PostGallery::arraySearch( $widget, 'pgsort' );
-            $pgPostId = PostGallery::arraySearch( $widget, 'pgimgsource' );
+            $pgSort = PostGalleryHelper::arraySearch( $widget, 'pgsort' );
+            $pgPostId = PostGalleryHelper::arraySearch( $widget, 'pgimgsource' );
 
             if ( empty( $pgPostId ) ) {
                 $pgPostId = $post_id;

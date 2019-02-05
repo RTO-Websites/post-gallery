@@ -33,10 +33,6 @@ use Pub\PostGalleryPublic;
  * @author     RTO GmbH
  */
 class PostGallery {
-    use PostGalleryLegacy;
-
-    static $cachedFolders = [];
-
     /**
      * The loader that's responsible for maintaining and registering all hooks that power
      * the plugin.
@@ -282,30 +278,6 @@ class PostGallery {
     }
 
     /**
-     * Helper function, find value in mutlidimensonal array
-     *
-     * @param $array
-     * @param $key
-     * @return array
-     */
-    public static function arraySearch( $array, $key ) {
-        $results = [];
-
-        if ( is_array( $array ) ) {
-            if ( isset( $array[$key] ) ) {
-                $results[] = $array[$key];
-            }
-
-            foreach ( $array as $subarray ) {
-                $results = array_merge( $results, self::arraySearch( $subarray, $key ) );
-            }
-        }
-
-        return $results;
-    }
-
-
-    /**
      * Cron-Task: Delete cache images with no access for a month
      */
     public function postGalleryDeleteCachedImages() {
@@ -325,116 +297,6 @@ class PostGallery {
             }
         }
     }
-
-
-    /**
-     * Returns a post in default language
-     *
-     * @param {int} $post_id
-     * @return boolean|object
-     */
-    public static function getOrgPost( $currentPostId ) {
-        if ( class_exists( 'SitePress' ) ) {
-            global $locale, $sitepress;
-
-            $orgPostId = icl_object_id( $currentPostId, 'any', true, $sitepress->get_default_language() );
-            //icl_ob
-            if ( $currentPostId !== $orgPostId ) {
-                $mainLangPost = get_post( $orgPostId );
-                return $mainLangPost;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns the foldername for the gallery
-     *
-     * @param object $wpost
-     * @return string
-     */
-    public static function getImageDir( $wpost ) {
-        $postName = empty( $wpost->post_title ) ? 'undefined' : $wpost->post_title;
-        $postId = $wpost->ID;
-
-        $blockedPostTypes = [
-            'revision',
-            'attachment',
-            'mgmlp_media_folder',
-        ];
-
-        if ( in_array( $wpost->post_type, $blockedPostTypes, true ) ) {
-            return;
-        }
-
-        if ( isset( PostGallery::$cachedFolders[$postId] ) ) {
-            return PostGallery::$cachedFolders[$postId];
-        }
-
-        $search = [ 'ä', 'ü', 'ö', 'Ä', 'Ü', 'Ö', '°', '+', '&amp;', '&', '€', 'ß', '–' ];
-        $replace = [ 'ae', 'ue', 'oe', 'ae', 'ue', 'oe', '', '-', '-', '-', 'E', 'ss', '-' ];
-
-        $postName = str_replace( $search, $replace, $postName );
-
-        $uploads = wp_upload_dir();
-        $oldImageDir = strtolower( str_replace( 'http://', '', esc_url( $postName ) ) );
-        $newImageDir = strtolower(
-            sanitize_file_name( str_replace( '&amp;', '-', $postName )
-            )
-        );
-
-        $baseDir = $uploads['basedir'] . '/gallery/';
-
-        if ( empty( $newImageDir ) ) {
-            return false;
-        }
-
-        // for very old postgallery who used wrong dir
-        PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );
-
-        // for old postgallery who dont uses post-id in folder
-        $oldImageDir = $newImageDir;
-        $newImageDir = $newImageDir . '_' . $postId;
-        PostGallery::renameDir( $baseDir . $oldImageDir, $baseDir . $newImageDir );
-
-        PostGallery::$cachedFolders[$postId] = $newImageDir;
-
-        return $newImageDir;
-    }
-
-    /**
-     * Rename a folder
-     *
-     * @param $oldDir
-     * @param $newDir
-     */
-    public static function renameDir( $oldDir, $newDir ) {
-        if ( $newDir == $oldDir ) {
-            return;
-        }
-        if ( is_dir( $oldDir ) && !is_dir( $newDir ) ) {
-            //rename($old_dir, $new_dir);
-            if ( file_exists( $oldDir ) ) {
-                $files = scandir( $oldDir );
-                @mkdir( $newDir );
-                @chmod( $newDir, octdec( '0777' ) );
-
-                foreach ( $files as $file ) {
-                    if ( !is_dir( $oldDir . '/' . $file ) ) {
-                        copy( $oldDir . '/' . $file, $newDir . '/' . $file );
-                        unlink( $oldDir . '/' . $file );
-                    }
-                }
-                @rmdir( $oldDir );
-
-                return $newDir;
-            }
-        }
-
-        // fail
-        return $oldDir;
-    }
-
 
     /**
      * Adds post-type gallery
@@ -535,20 +397,5 @@ class PostGallery {
         $options = array_change_key_case( (array)$this->options, CASE_LOWER );
         $key = strtolower( $key );
         return isset( $options[$key] ) ? $options[$key] : null;
-    }
-
-    /**
-     * @DEPRECATED
-     *
-     * use getAttachmentIdByUrl instead
-     *
-     * Returns post-id for a guid
-     *
-     * @param $guid
-     * @return null|string
-     */
-    public static function getPostIdFromGuid( $guid ) {
-        global $wpdb;
-        return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid=%s", $guid ) );
     }
 }

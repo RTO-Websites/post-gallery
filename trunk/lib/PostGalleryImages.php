@@ -13,7 +13,7 @@ class PostGalleryImages {
      */
     public static function sort( $images, $postid ) {
         // get post in default language
-        $orgPost = PostGallery::getOrgPost( $postid );
+        $orgPost = PostGalleryHelper::getOrgPost( $postid );
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
             $postid = $orgPost->ID;
@@ -72,7 +72,7 @@ class PostGalleryImages {
             $post = get_post( $postid );
         }
         // get post in default language
-        $orgPost = PostGallery::getOrgPost( $postid );
+        $orgPost = PostGalleryHelper::getOrgPost( $postid );
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
             $postid = $orgPost->ID;
@@ -89,7 +89,7 @@ class PostGalleryImages {
         $uploads = wp_upload_dir();
 
         //$imageDir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
-        $imageDir = PostGallery::getImageDir( $post );
+        $imageDir = PostGalleryFilesystem::getImageDir( $post );
         $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
         $uploadFullUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
         $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadFullUrl );
