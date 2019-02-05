@@ -52,4 +52,28 @@ class PostGalleryHelper {
         return false;
     }
 
+    /**
+     * Check if post has a thumb or a postgallery-image
+     *
+     * @param int $postid
+     * @return int
+     */
+    public static function hasPostThumbnail( $postid = 0 ) {
+        if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
+            return;
+        }
+        if ( empty( $postid ) ) {
+            $postid = $GLOBALS['post']->ID;
+        }
+
+        if ( empty( $postid ) ) {
+            return false;
+        }
+
+        if ( has_post_thumbnail( $postid ) || is_admin() ) {
+            return has_post_thumbnail( $postid );
+        } else {
+            return count( self::get( $postid ) );
+        }
+    }
 }

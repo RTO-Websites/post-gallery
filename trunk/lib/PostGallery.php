@@ -107,7 +107,7 @@ class PostGallery {
     private function loadDependencies() {
 
         $this->loader = new PostGalleryLoader();
-        $this->images = new PostGalleryImages();
+        $this->images = new PostGalleryImageList();
     }
 
     /**

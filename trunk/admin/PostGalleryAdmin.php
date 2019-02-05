@@ -15,7 +15,7 @@ use Lib\PostGalleryElementorControl;
 use Lib\PostGalleryElementorWidget;
 use Lib\PostGalleryFilesystem;
 use Lib\PostGalleryHelper;
-use Lib\PostGalleryImages;
+use Lib\PostGalleryImageList;
 use Lib\PostGallerySliderWidget;
 use Lib\Template;
 use Lib\Thumb;
@@ -522,7 +522,7 @@ class PostGalleryAdmin {
                         continue;
                     }
 
-                    if ( PostGalleryImages::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
+                    if ( PostGalleryImageList::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
                         continue;
                     }
 
@@ -534,7 +534,7 @@ class PostGalleryAdmin {
                     ] );
 
 
-                    $attachmentId = PostGalleryImages::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
+                    $attachmentId = PostGalleryImageList::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
 
                     $fileSplit = explode( '.', $file );
                     $extension = array_pop( $fileSplit );
@@ -556,7 +556,7 @@ class PostGalleryAdmin {
 
                     $images[$file] = $tpl->getRendered();
                 }
-                $sortimages = PostGalleryImages::sort( $images, $post->ID );
+                $sortimages = PostGalleryImageList::sort( $images, $post->ID );
                 echo implode( '', $sortimages );
             }
 
@@ -764,11 +764,11 @@ class PostGalleryAdmin {
                     copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
                     unlink( $uploadDir . '/' . $file );
 
-                    if ( PostGalleryImages::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
+                    if ( PostGalleryImageList::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
                         continue;
                     }
 
-                    $attachmentId = PostGalleryImages::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
+                    $attachmentId = PostGalleryImageList::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
                     if ( $attachmentId ) {
                         update_attached_file( $attachmentId, '/gallery/' . $imageDir . '/' . $file );
                         update_metadata( 'post', $attachmentId, '_wp_attached_file', '/gallery/' . $imageDir . '/' . $file );

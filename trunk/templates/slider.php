@@ -15,7 +15,7 @@ array_unshift( $images, $first_image );
     <div class="pg-slider owl-theme ow-carousel">
         <?php foreach ( $images as $image ) { ?>
             <img class="gallery-image"
-                    src="<?php echo \Lib\PostGalleryImages::getThumbUrl( $image['path'],
+                    src="<?php echo \Lib\PostGalleryImage::getThumbUrl( $image['path'],
                         [
                             'width' => $this->option( 'thumbWidth' ),
                             'height' => $this->option( 'thumbHeight' ),
