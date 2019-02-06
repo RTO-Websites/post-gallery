@@ -15,6 +15,7 @@ use Lib\PostGalleryElementorControl;
 use Lib\PostGalleryElementorWidget;
 use Lib\PostGalleryFilesystem;
 use Lib\PostGalleryHelper;
+use Lib\PostGalleryImage;
 use Lib\PostGalleryImageList;
 use Lib\PostGallerySliderWidget;
 use Lib\Template;
@@ -522,7 +523,7 @@ class PostGalleryAdmin {
                         continue;
                     }
 
-                    if ( PostGalleryImageList::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
+                    if ( PostGalleryImage::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
                         continue;
                     }
 
@@ -534,7 +535,7 @@ class PostGalleryAdmin {
                     ] );
 
 
-                    $attachmentId = PostGalleryImageList::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
+                    $attachmentId = PostGalleryImage::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
 
                     $fileSplit = explode( '.', $file );
                     $extension = array_pop( $fileSplit );
@@ -764,11 +765,11 @@ class PostGalleryAdmin {
                     copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
                     unlink( $uploadDir . '/' . $file );
 
-                    if ( PostGalleryImageList::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
+                    if ( PostGalleryImage::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
                         continue;
                     }
 
-                    $attachmentId = PostGalleryImageList::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
+                    $attachmentId = PostGalleryImage::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
                     if ( $attachmentId ) {
                         update_attached_file( $attachmentId, '/gallery/' . $imageDir . '/' . $file );
                         update_metadata( 'post', $attachmentId, '_wp_attached_file', '/gallery/' . $imageDir . '/' . $file );

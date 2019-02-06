@@ -330,6 +330,16 @@ class PostGallery {
         ] );
     }
 
+    /**
+     * @Deprecated
+     *
+     * @param $postid
+     * @return array
+     */
+    public static function getImages( $postid ) {
+        return PostGalleryImageList::get( $postid );
+    }
+
     public static function getOptions() {
         return [
             'debugmode' => get_theme_mod( 'postgallery_postgalleryDebugmode', false ),
