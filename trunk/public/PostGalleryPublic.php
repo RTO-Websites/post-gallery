@@ -336,6 +336,28 @@ class PostGalleryPublic {
     }
 
     /**
+     * Remove the_content filter for excerpt
+     *
+     * @param $content
+     * @return mixed
+     */
+    public function removeContentFilterForExcerpt( $content ) {
+        remove_filter( 'the_content', [ $this, 'addGalleryToContent' ] );
+        return $content;
+    }
+
+    /**
+     * Re-Add the_content filter after excerpt is processed
+     *
+     * @param $content
+     * @return mixed
+     */
+    public function reAddContentFilterForExcerpt( $content ) {
+        add_filter( 'the_content', [ $this, 'addGalleryToContent' ] );
+        return $content;
+    }
+
+    /**
      * Return the gallery-html
      *
      * @param string $template
@@ -554,7 +576,7 @@ class PostGalleryPublic {
 
         // masonry
         $masonry = $this->option( 'masonry' );
-        switch ($masonry) {
+        switch ( $masonry ) {
             case 'css':
                 $wrapperClass .= ' with-css-masonry';
                 break;

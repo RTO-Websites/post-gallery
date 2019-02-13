@@ -181,7 +181,9 @@ class PostGallery {
         $this->loader->addAction( 'wp_enqueue_scripts', $pluginPublic, 'enqueueScripts' );
 
 
-        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent' );
+        $this->loader->addFilter( 'get_the_excerpt', $pluginPublic, 'removeContentFilterForExcerpt', 5, 1 );
+        $this->loader->addFilter( 'get_the_excerpt', $pluginPublic, 'reAddContentFilterForExcerpt', 12, 1 );
+        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent', 10, 1);
         add_shortcode( 'postgallery', [ $pluginPublic, 'postgalleryShortcode' ] );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'postgalleryThumb' );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'getThumbList' );

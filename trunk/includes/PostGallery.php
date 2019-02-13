@@ -5,6 +5,7 @@ namespace Inc;
 use Lib\PostGalleryFilesystem;
 use Lib\PostGalleryHelper;
 use Lib\PostGalleryImageList;
+use Lib\PostGalleryImage;
 
 /**
  * @deprecated
@@ -73,7 +74,7 @@ class PostGallery extends \Lib\PostGallery {
      * @return string
      */
     static function getThumbUrl( $filepath, $args = [] ) {
-        return PostGalleryImageList::getThumbUrl( $filepath, $args );
+        return PostGalleryImage::getThumbUrl( $filepath, $args );
     }
 
     /**
@@ -86,7 +87,7 @@ class PostGallery extends \Lib\PostGallery {
      * @return array
      */
     static function getThumb( $filepath, $args = [] ) {
-        return PostGalleryImageList::getThumb( $filepath, $args );
+        return PostGalleryImage::getThumb( $filepath, $args );
     }
 
     /**
@@ -111,7 +112,7 @@ class PostGallery extends \Lib\PostGallery {
      * @return int
      */
     public static function hasPostThumbnail( $postid = 0 ) {
-        return PostGalleryImageList::hasPostThumbnail( $postid );
+        return PostGalleryHelper::hasPostThumbnail( $postid );
     }
 
     /**
@@ -136,7 +137,7 @@ class PostGallery extends \Lib\PostGallery {
      * @return int Attachment ID on success, 0 on failure
      */
     public static function getAttachmentIdByUrl( $url ) {
-        return PostGalleryImageList::getAttachmentIdByUrl( $url );
+        return PostGalleryImage::getAttachmentIdByUrl( $url );
     }
 
     /**
@@ -146,7 +147,7 @@ class PostGallery extends \Lib\PostGallery {
      * @return bool
      */
     public static function urlIsThumbnail( $attachmentUrl = '' ) {
-        return PostGalleryImageList::urlIsThumbnail( $attachmentUrl );
+        return PostGalleryImage::urlIsThumbnail( $attachmentUrl );
     }
 
 

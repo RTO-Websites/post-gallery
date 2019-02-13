@@ -42,7 +42,6 @@ define( 'POSTGALLERY_URL', str_replace ( str_replace ( '\\', '/', WP_PLUGIN_DIR 
  * The class responsible for auto loading classes.
  */
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
-#require_once plugin_dir_path( __FILE__ ) . 'lib/Thumb.class.php';
 
 /**
  * The code that runs during plugin activation.
