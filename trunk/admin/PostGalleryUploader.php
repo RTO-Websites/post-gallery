@@ -193,7 +193,7 @@ class PostGalleryUploader {
      */
     private function createAttachmentPost() {
         $fullUrl = get_bloginfo( 'wpurl' ) . $this->uploadUrl . '/gallery/' . $this->uploadFolder . '/' . $this->filename;
-        $attachmentId = \Lib\PostGallery::checkForAttachmentData( $fullUrl, $this->postid );
+        $attachmentId = \Lib\PostGalleryImage::checkForAttachmentData( $fullUrl, $this->postid );
 
         return $attachmentId;
     }
