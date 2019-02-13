@@ -24,7 +24,7 @@ $deletedFiles = [];
 
 if ( empty( $attachmentId ) && !empty( $postid ) ) {
     // Delete all images from a post
-    $images = \Inc\PostGallery::getImages( $postid );
+    $images = \Lib\PostGallery::getImages( $postid );
     foreach ( $images as $image ) {
         $deletedFiles[] = \Admin\PostGalleryAdmin::deleteAttachment( $image['attachmentId'] );
     }

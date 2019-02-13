@@ -10,6 +10,8 @@ function initPostGalleryElementor() {
   // change gap or item-ratio
   jQuery(document).on('change', 'input[data-setting="size"],' +
     '.elementor-control-column_gap input,' +
+    '.elementor-control-columns input,'  +
+    '.elementor-control-no_grid input,' +
     '.elementor-control-row_gap input', checkItemRatio);
   jQuery(document).on('slide', '.elementor-control-item_ratio .ui-slider,' +
     '.elementor-control-column_gap .ui-slider,' +
@@ -27,7 +29,7 @@ function initPostGalleryElementor() {
     */
   jQuery(document).on('click', '.elementor-tab-control-content a', function (e) {
     var element = jQuery(e.target),
-      container = element.closest('.ps-container'),
+      container = element.closest('.ps'),
       field = container.find('input[data-setting="pgsort"]');
 
     if (field.length) {
@@ -44,7 +46,7 @@ function initPostGalleryElementor() {
  */
 function checkItemRatio() {
   if (checkMasonry()) {
-    var galleries = jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery('.elementor-image-gallery .gallery[data-pgmasonry]');
+    var galleries = jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery('.elementor-image-gallery.with-js-masonry .gallery');
     galleries.masonry('layout');
   }
 }
@@ -135,9 +137,7 @@ function loadUpload() {
 function initUpload() {
   if (typeof(postgalleryLang) !== 'undefined') {
     // add upload
-    checkForUpload();
-    jQuery(".qq-upload-drop-area span").html(postgalleryLang.moveHere);
-    jQuery(".qq-upload-button").addClass("button");
+    pgInitUpload();
   }
 }
 

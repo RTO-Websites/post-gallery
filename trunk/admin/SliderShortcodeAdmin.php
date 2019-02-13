@@ -1,8 +1,8 @@
 <?php
 namespace Admin;
 
-use Inc\PostGallery;
-use Thumb\Thumb;
+use Lib\PostGallery;
+use Lib\Thumb;
 
 
 class SliderShortcodeAdmin {
@@ -326,7 +326,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
      */
     public function _addSliderShortcodeView( $post ) {
         echo '<input type="text" value="[slider ' . $post->ID . ']" onClick="this.select();" /> &nbsp;';
-        echo '<a href="https://github.com/RTO-Websites/post-gallery/post-gallery/blob/master/trunk/docs/slider.md" target="_blank">Slider Documentation</a><br />';
+        echo '<a href="https://github.com/RTO-Websites/post-gallery/blob/master/docs/slider.md" target="_blank">Slider Documentation</a><br />';
     }
 
     /**

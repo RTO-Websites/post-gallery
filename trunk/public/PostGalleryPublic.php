@@ -11,8 +11,9 @@
  */
 
 use Elementor\Core\Files\CSS\Post;
-use Inc\PostGallery;
-use Thumb\Thumb;
+use Lib\PostGallery;
+use Lib\PostGalleryImageList;
+use Lib\Thumb;
 
 /**
  * The public-facing functionality of the plugin.
@@ -269,7 +270,7 @@ class PostGalleryPublic {
                     return array_map( 'maybe_unserialize', $meta_cache[$meta_key] );
             }
 
-            if ( count( PostGallery::getImages( $object_id ) ) )
+            if ( count( PostGalleryImageList::get( $object_id ) ) )
                 return true;
             if ( $single )
                 return '';
@@ -292,7 +293,7 @@ class PostGalleryPublic {
     public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
         if ( '' == $html ) {
 
-            $image = PostGallery::getFirstImage( $size, $post_id );
+            $image = PostGalleryImageList::getFirstImage( $size, $post_id );
 
             if ( empty( $image ) || empty( $image['url'] ) ) {
                 return '';
@@ -335,6 +336,28 @@ class PostGalleryPublic {
     }
 
     /**
+     * Remove the_content filter for excerpt
+     *
+     * @param $content
+     * @return mixed
+     */
+    public function removeContentFilterForExcerpt( $content ) {
+        remove_filter( 'the_content', [ $this, 'addGalleryToContent' ] );
+        return $content;
+    }
+
+    /**
+     * Re-Add the_content filter after excerpt is processed
+     *
+     * @param $content
+     * @return mixed
+     */
+    public function reAddContentFilterForExcerpt( $content ) {
+        add_filter( 'the_content', [ $this, 'addGalleryToContent' ] );
+        return $content;
+    }
+
+    /**
      * Return the gallery-html
      *
      * @param string $template
@@ -354,7 +377,7 @@ class PostGalleryPublic {
         ];
 
         $tmpOptions = $this->options;
-        $images = PostGallery::getImages( $postid );
+        $images = PostGalleryImageList::get( $postid );
 
         if ( empty( $images ) ) {
             return '<!--postgallery: no images found for ' . $postid . '-->';
@@ -395,9 +418,9 @@ class PostGalleryPublic {
         // echo extra style
         $extraStyle = $this->createExtraCss( $id );
         if ( !empty( $extraStyle ) ) {
-            echo '<style>';
+            echo '<style><!--';
             echo $extraStyle;
-            echo '</style>';
+            echo '--></style>';
         }
 
         echo '<!--end postgallery-->';
@@ -427,8 +450,6 @@ class PostGalleryPublic {
             $extraStyle .= 'display: none;';
             $extraStyle .= '}';
         }
-
-        // image animation
 
         // image animation
         $extraStyle .= $this->createImageAnimationCss( $id );
@@ -555,7 +576,7 @@ class PostGalleryPublic {
 
         // masonry
         $masonry = $this->option( 'masonry' );
-        switch ($masonry) {
+        switch ( $masonry ) {
             case 'css':
                 $wrapperClass .= ' with-css-masonry';
                 break;
@@ -637,7 +658,7 @@ class PostGalleryPublic {
             $pics = ( $_REQUEST['pics'] );
 
             if ( !empty( $pics ) ) {
-                $pics = PostGallery::getPicsResized( $pics, [
+                $pics = PostGalleryImageList::resize( $pics, [
                     'width' => $_REQUEST['width'],
                     'height' => $_REQUEST['height'],
                     'scale' => ( !isset( $_REQUEST['scale'] ) ? 1 : $_REQUEST['scale'] ),

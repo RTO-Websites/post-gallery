@@ -10,13 +10,16 @@
  * @subpackage PostGallery/admin
  */
 
-include_once( 'PostGalleryThemeCustomizer.php' );
-
-use Inc\PostGalleryWidget\Control\PostGalleryElementorControl;
-use Inc\PostGalleryWidget\Widgets\PostGalleryElementorWidget;
-use Inc\PostGallery;
-use Inc\Template;
-use Thumb\Thumb;
+use Lib\PostGallery;
+use Lib\PostGalleryElementorControl;
+use Lib\PostGalleryElementorWidget;
+use Lib\PostGalleryFilesystem;
+use Lib\PostGalleryHelper;
+use Lib\PostGalleryImage;
+use Lib\PostGalleryImageList;
+use Lib\PostGallerySliderWidget;
+use Lib\Template;
+use Lib\Thumb;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -165,8 +168,7 @@ class PostGalleryAdmin {
 
         wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', [ 'jquery' ], $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-fineuploader', $pgUrl . 'js/fileuploader.js', [ 'jquery' ], $this->version, false );
-        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery' ], $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery', 'plupload-all' ], $this->version, false );
 
 
         if ( empty( PostGallery::getOptions()['disableGroupedMedia'] ) ) {
@@ -177,10 +179,11 @@ class PostGalleryAdmin {
     }
 
     /**
+     *
      * Admin-ajax for image upload
      */
     public function ajaxUpload() {
-        include( POSTGALLERY_DIR . '/includes/imageupload.php' );
+        include( POSTGALLERY_DIR . '/lib/ajax-actions/imageUpload.php' );
         exit();
     }
 
@@ -188,7 +191,7 @@ class PostGalleryAdmin {
      * Admin-ajax for image delete
      */
     public function ajaxDelete() {
-        include( POSTGALLERY_DIR . '/includes/deleteimage.php' );
+        include( POSTGALLERY_DIR . '/lib/ajax-actions/deleteImage.php' );
         exit();
     }
 
@@ -319,7 +322,7 @@ class PostGalleryAdmin {
      * @return boolean
      */
     public function registerPostSettings() {
-        $blacklist = [ 'acf-field-group' ];
+        $blacklist = [ 'acf-field-group', 'attachment', 'elementor_library', 'elebee-global-css' ];
         $postTypes = get_post_types();
         foreach ( $postTypes as $postType ) {
             if ( in_array( $postType, $blacklist, true ) ) {
@@ -339,7 +342,7 @@ class PostGalleryAdmin {
      * @param type $post
      */
     public function addGallerySettings( $post ) {
-        $orgPost = PostGallery::getOrgPost( $post->ID );
+        $orgPost = PostGalleryHelper::getOrgPost( $post->ID );
         $curLangPost = $post;
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
@@ -463,14 +466,14 @@ class PostGalleryAdmin {
      * @param object $post
      */
     public function addGalleryPictures( $post ) {
-        $orgPost = PostGallery::getOrgPost( $post->ID );
+        $orgPost = PostGalleryHelper::getOrgPost( $post->ID );
         $currentLangPost = $post;
 
         if ( !empty( $orgPost ) ) {
             $post = $orgPost;
         }
-        //$imageDir = strtolower(str_replace('http://', '', esc_url($post->post_title)));
-        $imageDir = PostGallery::getImageDir( $post );
+
+        $imageDir = PostGalleryFilesystem::getImageDir( $post );
         $uploads = wp_upload_dir();
         $uploadDir = $uploads['basedir'] . '/gallery/' . $imageDir;
         $uploadUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
@@ -492,27 +495,25 @@ class PostGalleryAdmin {
             @chmod( $uploadDir, octdec( '0777' ) );
         }
 
-        $titles = [];
-        $descs = [];
-        $altAttributes = [];
-        $imageOptions = [];
-
         if ( empty( $imageDir ) ) {
             echo __( 'You have to save the post to upload images.', 'postgallery' );
             return;
         }
 
-        echo '
-			<div class="imageupload-image" data-uploadfolder="' . $imageDir . '" data-pluginurl="' . POSTGALLERY_URL . '" data-postid="' . $currentLangPost->ID . '"></div>
-			<div class="postgallery-upload-error"></div>
-		';
+        // add upload
+        $tpl = new Template( POSTGALLERY_DIR . '/admin/partials/uploader-ui.php', [
+            'imageDir' => $imageDir,
+            'currentLangPost' => $currentLangPost,
+        ] );
+        echo $tpl->getRendered();
 
         $images = [];
         if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
             $thumbInstance = Thumb::getInstance();
             $dir = scandir( $uploadDir );
 
-            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $currentLangPost->ID . '\');">' . __( 'Delete all', 'postgallery' ) . '</div>';
+            echo '<div class="postgallery-del-button button" onclick="deleteImages(\'' . $currentLangPost->ID . '\');">'
+                . __( 'Delete all', 'postgallery' ) . '</div>';
 
             echo '<ul class="sortable-pics">';
 
@@ -522,7 +523,7 @@ class PostGalleryAdmin {
                         continue;
                     }
 
-                    if ( PostGallery::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
+                    if ( PostGalleryImage::urlIsThumbnail( $uploadFullUrl . '/' . $file ) ) {
                         continue;
                     }
 
@@ -534,14 +535,7 @@ class PostGalleryAdmin {
                     ] );
 
 
-                    $attachmentId = PostGallery::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
-                    if ( !empty( $attachmentId ) ) {
-                        $imgMeta = wp_prepare_attachment_for_js( $attachmentId );
-                        $titles[$file] = empty( $imgMeta['title'] ) ? '' : $imgMeta['title'];
-                        $altAttributes[$file] = empty( $imgMeta['alt'] ) ? '' : $imgMeta['alt'];
-                        $descs[$file] = empty( $imgMeta['description'] ) ? '' : $imgMeta['description'];
-                        $imageOptions[$file] = get_post_meta( $attachmentId, '_postgallery-image-options', true );
-                    }
+                    $attachmentId = PostGalleryImage::checkForAttachmentData( $uploadFullUrl . '/' . $file, $post->ID );
 
                     $fileSplit = explode( '.', $file );
                     $extension = array_pop( $fileSplit );
@@ -559,19 +553,11 @@ class PostGalleryAdmin {
                         'fullFilename' => $file,
                         'filename' => $filename,
                         'thumbUrl' => $thumb['url'],
-                        'title' => ( !empty( $titles[$file] ) ? $titles[$file] : '' ),
-                        'desc' => ( !empty( $descs[$file] ) ? $descs[$file] : '' ),
-                        'imgOptions' => ( !empty( $imageOptions[$file] ) ? $imageOptions[$file] : '' ),
-                        'alt' => ( !empty( $altAttributes[$file] ) ? $altAttributes[$file] : '' ),
-                        'placeholderTitle' => __( 'Title' ),
-                        'placeholderDesc' => __( 'Description' ),
-                        'placeholderImgOptions' => __( 'key|value' ),
-                        'placeholderAlt' => __( 'Alt-Attribut' ),
                     ] );
 
                     $images[$file] = $tpl->getRendered();
                 }
-                $sortimages = PostGallery::sortImages( $images, $post->ID );
+                $sortimages = PostGalleryImageList::sort( $images, $post->ID );
                 echo implode( '', $sortimages );
             }
 
@@ -620,7 +606,8 @@ class PostGalleryAdmin {
      * Output input to rename all images
      */
     private function renderMultiRename() {
-        include( 'partials/multi-rename.php' );
+        $tpl = new Template( POSTGALLERY_DIR . '/admin/partials/multi-rename.php', [] );
+        echo $tpl->getRendered();
     }
 
     /**
@@ -628,7 +615,6 @@ class PostGalleryAdmin {
      */
     public function getPostGalleryLang() {
         $scriptLanguage = [
-            'moveHere' => __( 'Move files here.', 'postgallery' ),
             'askDeleteAll' => __( 'Are you sure you want to delete all pictures?', 'postgallery' ),
         ];
 
@@ -709,8 +695,7 @@ class PostGalleryAdmin {
 
         $curLangPost = $post;
         $curLangPostId = $postId;
-
-        $imageDir = PostGallery::getImageDir( $post );
+        $imageDir = PostGalleryFilesystem::getImageDir( $post );
         $uploads = wp_upload_dir();
 
         if ( empty( $imageDir ) ) {
@@ -780,48 +765,17 @@ class PostGalleryAdmin {
                     copy( $uploadDir . '/' . $file, $uploadDirNew . '/' . $file );
                     unlink( $uploadDir . '/' . $file );
 
-                    if ( PostGallery::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
+                    if ( PostGalleryImage::urlIsThumbnail( $imageUrlOld . '/' . $file ) ) {
                         continue;
                     }
 
-                    $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
+                    $attachmentId = PostGalleryImage::getAttachmentIdByUrl( $imageUrlOld . '/' . $file );
                     if ( $attachmentId ) {
                         update_attached_file( $attachmentId, '/gallery/' . $imageDir . '/' . $file );
                         update_metadata( 'post', $attachmentId, '_wp_attached_file', '/gallery/' . $imageDir . '/' . $file );
                     }
                 }
                 @rmdir( $uploadDir );
-            }
-        }
-
-        // save image titles
-        if ( filter_has_var( INPUT_POST, 'postgalleryTitles' ) ) {
-            $titles = filter_input( INPUT_POST, 'postgalleryTitles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-            $descs = filter_input( INPUT_POST, 'postgalleryDescs', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-            $alts = filter_input( INPUT_POST, 'postgalleryAltAttributes', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-            $imgOptions = filter_input( INPUT_POST, 'postgalleryImageOptions', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-
-            foreach ( $titles as $filename => $value ) {
-                $imageUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
-                $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrl . '/' . $filename );
-
-                // hotfix
-                if ( empty( $attachmentId ) && !empty( $imageUrlOld ) ) {
-                    $attachmentId = PostGallery::getAttachmentIdByUrl( $imageUrlOld . '/' . $filename );
-                }
-
-                if ( empty( $attachmentId ) ) {
-                    continue;
-                }
-                $attachData = [
-                    'ID' => $attachmentId,
-                    'post_title' => $titles[$filename],
-                    'post_content' => $descs[$filename],
-                ];
-                wp_update_post( $attachData );
-
-                update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alts[$filename] );
-                update_post_meta( $attachmentId, '_postgallery-image-options', $imgOptions[$filename] );
             }
         }
     }
@@ -839,6 +793,39 @@ class PostGalleryAdmin {
     }
 
     /**
+     * Add extra fields to attachments
+     *
+     * @param $formFields
+     * @param $post
+     * @return mixed
+     */
+    public function addMediaFields( $formFields, $post ) {
+        $formFields['postgallery-image-options'] = array(
+            'label' => __( 'Image-Options', 'postgallery' ),
+            'input' => 'textarea',
+            'value' => get_post_meta( $post->ID, 'postgallery-image-options', true ),
+            'placeholder' => 'key|value',
+            'helps' => 'key|value',
+        );
+
+        return $formFields;
+    }
+
+    /**
+     * Save extra attachment fields
+     *
+     * @param $post
+     * @param $attachment
+     * @return mixed
+     */
+    public function saveMediaFields( $post, $attachment ) {
+        if ( isset( $attachment['postgallery-image-options'] ) )
+            update_post_meta( $post['ID'], 'postgallery-image-options', $attachment['postgallery-image-options'] );
+
+        return $post;
+    }
+
+    /**
      * Hook 'elementor/editor/after_save'
      *
      * @param $post_id
@@ -852,8 +839,8 @@ class PostGalleryAdmin {
         PostGallery::getAllWidgets( $widgets, $meta, 'postgallery' );
 
         foreach ( $widgets as $widget ) {
-            $pgSort = PostGallery::arraySearch( $widget, 'pgsort' );
-            $pgPostId = PostGallery::arraySearch( $widget, 'pgimgsource' );
+            $pgSort = PostGalleryHelper::arraySearch( $widget, 'pgsort' );
+            $pgPostId = PostGalleryHelper::arraySearch( $widget, 'pgimgsource' );
 
             if ( empty( $pgPostId ) ) {
                 $pgPostId = $post_id;
@@ -874,8 +861,8 @@ class PostGalleryAdmin {
      * @throws \Exception
      */
     public function registerElementorWidget() {
-        require_once( POSTGALLERY_DIR . '/includes/PostGalleryElementorWidget.php' );
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGallerySliderWidget() );
     }
 
     /**
@@ -885,7 +872,7 @@ class PostGalleryAdmin {
         \Elementor\Plugin::instance()->controls_manager->get_controls();
         \Elementor\Plugin::instance()->controls_manager->register_control(
             'postgallerycontrol',
-            new \Inc\PostGalleryWidget\Control\PostGalleryElementorControl()
+            new PostGalleryElementorControl()
         );
     }
 
@@ -899,7 +886,7 @@ class PostGalleryAdmin {
      */
     public function sanitizeFilename( $filename, $filename_raw = '' ) {
         $filename = str_replace( [ '%20', ' ' ], '_', $filename );
-        $filename = str_replace( [ 'ä', 'ö', 'ü' ], [ 'ae', 'oe', 'ue' ], $filename );
+        $filename = str_replace( [ 'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü' ], [ 'ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue' ], $filename );
         $filename = str_replace( [ '(', ')', '$', '&', '%', '<', '>', '[', ']', '{', '}', '?', '!', '*', '=', '+', '~', '€' ], '', $filename );
 
         return $filename;

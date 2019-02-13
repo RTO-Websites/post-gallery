@@ -1,8 +1,8 @@
 <?php
 
-use Inc\PostGallery;
-use Inc\PostGalleryActivator;
-use Inc\PostGalleryDeactivator;
+use Lib\PostGallery;
+use Lib\PostGalleryActivator;
+use Lib\PostGalleryDeactivator;
 
 /**
  * The plugin bootstrap file
@@ -20,7 +20,7 @@ use Inc\PostGalleryDeactivator;
  * Plugin Name:       PostGallery
  * Plugin URI:        https://github.com/RTO-Websites/post-gallery
  * Description:       Adds a gallery to every post with customizable templates, drag´n´drop upload und simple to use.
- * Version:           1.9.1
+ * Version:           1.10.0
  * Author:            RTO GmbH
  * Author URI:        https://www.rto.de
  * License:           GPL-2.0+
@@ -42,7 +42,6 @@ define( 'POSTGALLERY_URL', str_replace ( str_replace ( '\\', '/', WP_PLUGIN_DIR 
  * The class responsible for auto loading classes.
  */
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/Thumb.class.php';
 
 /**
  * The code that runs during plugin activation.

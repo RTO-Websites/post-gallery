@@ -117,7 +117,7 @@ class PostGalleryMceButton {
         ] );
 
         foreach ( $items as $item ) {
-            $images = \Inc\PostGallery::getImages( $item->ID );
+            $images = \Lib\PostGalleryImageList::get( $item->ID );
             if ( count( $images ) ) {
                 $link = str_replace( get_bloginfo( 'wpurl' ) . '/', '', get_the_permalink( $item ) );
                 $list[] = [ 'text' => $item->post_title . ' (' . $item->ID . ')', 'value' => $link ];
