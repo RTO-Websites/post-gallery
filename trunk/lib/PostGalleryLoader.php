@@ -1,4 +1,4 @@
-<?php namespace Inc;
+<?php namespace Lib;
 
 /**
  * Register all actions and filters for the plugin

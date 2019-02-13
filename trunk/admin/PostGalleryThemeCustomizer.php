@@ -1,5 +1,7 @@
 <?php
 
+namespace Admin;
+
 /**
  * @since 1.0.0
  * @author shennemann
@@ -9,13 +11,12 @@ class PostGalleryThemeCustomizer {
     private $sectionId;
     private $fields;
     private $postgalleryAdmin;
-    private $postgallery;
 
     public function __construct() {
         $id = 'postgallery';
         $this->sectionId = $id;
 
-        $this->postgalleryAdmin = \Admin\PostGalleryAdmin::getInstance();
+        $this->postgalleryAdmin = PostGalleryAdmin::getInstance();
 
         // slide animations from animate.css
         $sliderAnimations = explode( ',', 'bounce,	flash,	pulse,	rubberBand,
@@ -79,12 +80,28 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         ],
                         'default' => defined( 'ELEMENTOR_VERSION' ) ? 'custom' : 'bottom',
                     ],
+
+                    'maxImageWidth' => [
+                        'label' => __( 'Max image width', 'postgallery' ),
+                        'type' => 'number',
+                        'default' => 2560,
+                        'description' => 'If uploaded image is bigger, it will be resized'
+                    ],
+
+                    'maxImageHeight' => [
+                        'label' => __( 'Max image height', 'postgallery' ),
+                        'type' => 'number',
+                        'default' => 2560,
+                        'description' => 'If uploaded image is bigger, it will be resized'
+                    ],
+
                     'disableScripts' => [
                         'type' => 'checkbox',
                         'label' => __( 'Disable scripts loading', 'postgallery' ),
                         'default' => false,
-                        'description' => 'Will disable litebox and slider',
+                        'description' => 'Will disable litebox, slider and image-animations',
                     ],
+
                     'disableGroupedMedia' => [
                         'type' => 'checkbox',
                         'label' => __( 'Disable grouped media', 'postgallery' ),

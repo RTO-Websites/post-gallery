@@ -1,9 +1,10 @@
 <?php
 
-namespace Inc\PostGalleryWidget\Widgets;
+namespace Lib;
 
 use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -116,7 +117,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @access protected
      */
     protected function _register_controls() {
-        $filerPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
+        $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
             . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
         $allPosts = get_posts( [
             'post_type' => get_post_types(),
@@ -128,7 +129,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
 
         foreach ( $allPosts as $post ) {
-            if ( in_array( $post->post_type, $filerPostTypes ) ) {
+            if ( in_array( $post->post_type, $filterPostTypes ) ) {
                 continue;
             }
             $selectPosts[$post->ID] = $post->post_title . ' (' . $post->post_type . ')';
@@ -393,6 +394,14 @@ class PostGalleryElementorWidget extends Widget_Base {
                     'equal_height' => 'on',
                 ],
                 'frontend_available' => true,
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Css_Filter::get_type(),
+            [
+                'name' => 'css_filters',
+                'selector' => '{{WRAPPER}} .item .bg-image, {{WRAPPER}} .item img',
             ]
         );
 

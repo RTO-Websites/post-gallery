@@ -10,7 +10,7 @@
  * @link    https://rto-websites.github.io/elebee-core-api/master/ElebeeCore/Lib/Util/Template.html
  */
 
-namespace Inc;
+namespace Lib;
 
 
 defined( 'ABSPATH' ) || exit;

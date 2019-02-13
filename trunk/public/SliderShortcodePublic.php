@@ -2,9 +2,9 @@
 
 namespace Pub;
 
-use Inc\PostGallery;
-use MagicAdminPage\MagicAdminPage;
-use Thumb\Thumb;
+use Lib\PostGallery;
+use Lib\PostGalleryImageList;
+use Lib\Thumb;
 
 
 class SliderShortcodePublic {
@@ -122,7 +122,7 @@ class SliderShortcodePublic {
 
         $this->thumbOnly = get_post_meta( $sliderid, 'sliderThumbOnly', true );
 
-        $images = PostGallery::getImages( $sliderid );
+        $images = PostGalleryImageList::get( $sliderid );
         $class = '';
 
         // get from shortcode-arguments
@@ -218,7 +218,7 @@ class SliderShortcodePublic {
 
         // resize images
         if ( !empty( $imgWidth ) || !empty( $imgHeight ) ) {
-            $images = PostGallery::getPicsResized( $images, [
+            $images = PostGalleryImageList::resize( $images, [
                 'width' => !empty( $imgWidth ) ? $imgWidth : '9999',
                 'height' => !empty( $imgHeight ) ? $imgHeight : '9999',
                 'scale' => is_null( $scale ) ? 0 : $scale,
@@ -388,7 +388,7 @@ class SliderShortcodePublic {
      * Get images of a post
      *
      * @param $loadId
-     * @return array|\Inc\type
+     * @return array|\Lib\type
      */
     public function getImagesFromPost( $loadId ) {
         if ( $this->thumbOnly ) {
@@ -398,7 +398,7 @@ class SliderShortcodePublic {
 
             if ( empty( $url ) ) {
                 // no post-thumb, get first image
-                $images = PostGallery::getImages( $loadId );
+                $images = PostGalleryImageList::get( $loadId );
                 $images = array_splice( $images, 0, 1 );
                 $images = array_shift( $images );
                 return [ $images ];
@@ -416,7 +416,7 @@ class SliderShortcodePublic {
                 ],
             ];
         } else {
-            return PostGallery::getImages( $loadId );
+            return PostGalleryImageList::get( $loadId );
         }
     }
 

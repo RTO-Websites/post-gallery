@@ -36,9 +36,9 @@ jQuery(function () {
     // init postgallery on elementor widget open
     elementor.hooks.addAction('panel/open_editor/widget/postgallery', function (panel, model, view) {
       initPostGallery();
-      loadUpload();
       checkMasonry();
       checkThumbsize();
+      loadUpload();
     });
   }
 });
@@ -102,6 +102,10 @@ window.initPostGallery = function () {
  * Add actions to customizer fields
  */
 window.initCustomizer = function () {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   // show/hide children of equal-height
   $('#customize-control-postgallery_equalHeight-control').on('change', function (e) {
     var target = $(this),
@@ -200,7 +204,6 @@ window.initSortable = function () {
       cursor: "move"
     });
     $(".sortable-pics").on("sortupdate", function (event, ui) {
-      pgCloseDetails();
       var input = jQuery("#postgalleryImagesort"),
         elementorInput = jQuery('input[data-setting="pgsort"]'),
         value = [],
@@ -228,14 +231,18 @@ window.initSortable = function () {
  * @param path
  */
 window.deleteImages = function (postid) {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   var answer = confirm(postgalleryLang.askDeleteAll);
-  pgCloseDetails();
 
   // Check if user confirmed the deletion of all images
   if (answer) {
-    jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&postid=" + postid,
+    $.post(ajaxurl + "?action=postgalleryDeleteimage&postid=" + postid,
       function (data) {
-        jQuery(".sortable-pics").empty();
+        $(".sortable-pics").empty();
+        $('.sortable-pics').trigger('sortupdate');
       }
     );
   }
@@ -248,7 +255,7 @@ window.deleteImages = function (postid) {
  * @param path
  */
 window.deleteImage = function (element, attachmentId) {
-  pgCloseDetails();
+  jQuery(element).addClass('delete-progress');
   jQuery.post(ajaxurl + "?action=postgalleryDeleteimage&attachmentid=" + attachmentId,
     function (data, textStatus) {
       deleteImageComplete(data, textStatus, element);
@@ -266,32 +273,18 @@ window.deleteImage = function (element, attachmentId) {
 window.deleteImageComplete = function (result, status, element) {
   if (result == 1) {
     jQuery(element.remove());
+    $('.sortable-pics').trigger('sortupdate');
   }
 };
 
 /**
- * Open detail-modal
+ * Open detail window
  *
  * @param buttonElement
  */
-window.pgToggleDetails = function (buttonElement) {
-  var detailElement = jQuery(buttonElement).parent().find('.details'),
-    allDetailElements = jQuery('.sortable-pics .details');
-
-  if (detailElement.hasClass('active')) {
-    allDetailElements.removeClass('active');
-  } else {
-    allDetailElements.removeClass('active');
-    detailElement.addClass('active');
-  }
-};
-
-/**
- * Close detail-modal
- */
-window.pgCloseDetails = function () {
-  var allDetailElements = jQuery('.sortable-pics .details');
-  allDetailElements.removeClass('active');
+window.pgOpenDetailWindow = function (element) {
+  var img = jQuery(element).find('img');
+  window.open('upload.php?item=' + img.data('attachmentid'), '', 'height=600,width=600');
 };
 
 window.triggerFilenameChange = function (inputElement) {
@@ -330,6 +323,10 @@ window.renameImage = function (buttonElement) {
 };
 
 window.renameImageComplete = function (result, status, item) {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   var img = item.find('img'),
     titleDiv = item.find('.img-title'),
     input = titleDiv.find('input'),
@@ -349,6 +346,10 @@ window.renameImageComplete = function (result, status, item) {
 };
 
 window.multiRename = function () {
+  if (!$) {
+    var $ = jQuery;
+  }
+
   var items = $('.sortable-pics li'),
     prefix = $('.postgallery-multireplace-prefix').val();
 

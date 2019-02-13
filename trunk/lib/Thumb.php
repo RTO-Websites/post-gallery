@@ -5,7 +5,7 @@
  * ****************************'***** */
 
 
-namespace Thumb;
+namespace Lib;
 
 @set_time_limit( 0 );
 
@@ -35,7 +35,7 @@ class Thumb {
         $this->srvDir = ABSPATH;
 
         // Load Options from PostGallery
-        $this->pgOptions = \Inc\PostGallery::getOptions();
+        $this->pgOptions = PostGallery::getOptions();
 
         // create cachedir
         $uploadDir = wp_upload_dir();
