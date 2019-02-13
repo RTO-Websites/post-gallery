@@ -396,9 +396,9 @@ class PostGalleryPublic {
         // echo extra style
         $extraStyle = $this->createExtraCss( $id );
         if ( !empty( $extraStyle ) ) {
-            echo '<style>';
+            echo '<style><!--';
             echo $extraStyle;
-            echo '</style>';
+            echo '--></style>';
         }
 
         echo '<!--end postgallery-->';

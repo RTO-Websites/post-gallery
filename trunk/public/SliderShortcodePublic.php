@@ -4,7 +4,6 @@ namespace Pub;
 
 use Lib\PostGallery;
 use Lib\PostGalleryImageList;
-use MagicAdminPage\MagicAdminPage;
 use Lib\Thumb;
 
 
