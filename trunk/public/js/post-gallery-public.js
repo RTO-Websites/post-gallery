@@ -215,6 +215,9 @@ jQuery.fn.isVisible = function() {
   // Height and Width are not explicitly necessary in visibility detection, the bottom, right, top and left are the
   // essential checks. If an image is 0x0, it is technically not visible, so it should not be marked as such.
   // That is why either width or height have to be > 0.
+  if (typeof(this) === 'undefined' || typeof(this[0]) === 'undefined') {
+    return false;
+  }
   var rect = this[0].getBoundingClientRect();
   return (
     (rect.height > 0 || rect.width > 0) &&
