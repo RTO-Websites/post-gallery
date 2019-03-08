@@ -24,11 +24,11 @@
 
 
   // restart image animation on widget change
-  $(window).on( 'elementor/frontend/init', function() {
-    elementorFrontend.hooks.addAction( 'frontend/element_ready/postgallery.default', function(){
+  $(window).on('elementor/frontend/init', function () {
+    elementorFrontend.hooks.addAction('frontend/element_ready/postgallery.default', function () {
       window.startPgImageAnimation();
       window.pgInitMasonry();
-    } );
+    });
   });
 
   // init js masonry
@@ -65,13 +65,13 @@
       'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
       'success': function (data, textStatus) {
         window.litebox.picsData = $.parseJSON(data);
-        if (typeof(callback) === 'function') {
+        if (typeof (callback) === 'function') {
           callback();
         }
       },
       'error': function (jqXHR, textStatus, errorThrown) {
         console.log('pg load fail', jqXHR, textStatus, errorThrown);
-        if (typeof(callback) === 'function') {
+        if (typeof (callback) === 'function') {
           callback();
         }
       }
@@ -79,7 +79,7 @@
   };
 
   window.getThumbs = function (pics, width, height, callback, scale) {
-    if (typeof(scale) === 'undefined') {
+    if (typeof (scale) === 'undefined') {
       scale = 0;
     }
     $.ajax({
@@ -88,7 +88,7 @@
       'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
       'success': function (data, textStatus) {
         window.litebox.picsData = $.parseJSON(data);
-        if (typeof(callback) === 'function') {
+        if (typeof (callback) === 'function') {
           callback();
         }
       }
@@ -148,7 +148,7 @@
    * @param timeBetween
    */
   window.registerPgImageAnimation = function (id, timeBetween) {
-    if (typeof(window.pgImageAnimations) === 'undefined') {
+    if (typeof (window.pgImageAnimations) === 'undefined') {
       window.pgImageAnimations = {};
     }
     window.pgImageAnimations[id] = timeBetween;
@@ -159,7 +159,7 @@
    * Start imageAnimation
    */
   window.startPgImageAnimation = function () {
-    if (typeof(window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
+    if (typeof (window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
       return;
     }
     // loop all container
@@ -176,7 +176,7 @@
           }, timeBetween * element.index());
         });
 
-        delete(window.pgImageAnimations[id]);
+        delete (window.pgImageAnimations[id]);
       }
     }
   };
@@ -210,21 +210,35 @@ function stopOwlPropagation(element) {
   });
 }
 
-jQuery.fn.isVisible = function() {
+jQuery.fn.isVisible = function (offsetTop, offsetLeft, offsetBottom, offsetRight) {
   // Am I visible?
   // Height and Width are not explicitly necessary in visibility detection, the bottom, right, top and left are the
   // essential checks. If an image is 0x0, it is technically not visible, so it should not be marked as such.
   // That is why either width or height have to be > 0.
-  if (typeof(this) === 'undefined' || typeof(this[0]) === 'undefined') {
+  if (typeof (this) === 'undefined' || typeof (this[0]) === 'undefined') {
     return false;
   }
+
+  if (typeof (offsetTop) === 'undefined') {
+    offsetTop = 0;
+  }
+  if (typeof (offsetLeft) === 'undefined') {
+    offsetLeft = 0;
+  }
+  if (typeof (offsetBottom) === 'undefined') {
+    offsetBottom = 0;
+  }
+  if (typeof (offsetRight) === 'undefined') {
+    offsetRight = 0;
+  }
+
   var rect = this[0].getBoundingClientRect();
   return (
     (rect.height > 0 || rect.width > 0) &&
-    rect.bottom >= 0 &&
-    rect.right >= 0 &&
-    rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.left <= (window.innerWidth || document.documentElement.clientWidth)
+    rect.bottom + offsetBottom >= 0 &&
+    rect.right + offsetRight >= 0 &&
+    rect.top + offsetTop <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.left + offsetLeft <= (window.innerWidth || document.documentElement.clientWidth)
   );
 };
 
