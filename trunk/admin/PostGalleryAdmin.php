@@ -20,6 +20,8 @@ use Lib\PostGalleryImageList;
 use Lib\PostGallerySliderWidget;
 use Lib\Template;
 use Lib\Thumb;
+use Lib\PostGalleryMediaCarousel;
+use Lib\Widgets\MediaCarouselWidget;
 
 /**
  * The admin-specific functionality of the plugin.

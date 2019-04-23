@@ -183,7 +183,7 @@ class PostGallery {
 
         $this->loader->addFilter( 'get_the_excerpt', $pluginPublic, 'removeContentFilterForExcerpt', 5, 1 );
         $this->loader->addFilter( 'get_the_excerpt', $pluginPublic, 'reAddContentFilterForExcerpt', 12, 1 );
-        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent', 10, 1);
+        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent', 10, 1 );
         add_shortcode( 'postgallery', [ $pluginPublic, 'postgalleryShortcode' ] );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'postgalleryThumb' );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'getThumbList' );
@@ -340,6 +340,35 @@ class PostGallery {
      */
     public static function getImages( $postid ) {
         return PostGalleryImageList::get( $postid );
+    }
+
+
+    /**
+     * Gets list of all post (for use in select fields)
+     *
+     * @return array
+     */
+    public static function getPostList(): array {
+
+        $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
+            . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
+        $allPosts = get_posts( [
+            'post_type' => get_post_types(),
+            'posts_per_page' => -1,
+            'post_status' => 'any',
+            'suppress_filters' => false,
+        ] );
+
+        $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
+
+        foreach ( $allPosts as $post ) {
+            if ( in_array( $post->post_type, $filterPostTypes ) ) {
+                continue;
+            }
+            $selectPosts[$post->ID] = $post->post_title . ' (' . $post->post_type . ')';
+        }
+
+        return $selectPosts;
     }
 
     public static function getOptions() {

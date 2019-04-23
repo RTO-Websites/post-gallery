@@ -6,6 +6,7 @@ use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Image_Size;
+use Elementor\Plugin;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Pub\PostGalleryPublic;
@@ -108,6 +109,31 @@ class PostGalleryElementorWidget extends Widget_Base {
     }
 
     /**
+     * Returns all widgets of given type
+     *
+     * @param array $data
+     * @param string $type
+     * @return array
+     */
+    public function searchElements( array $data, string $type ) {
+        $output = [];
+        foreach ( $data as $element ) {
+            if ( !empty( $element['widgetType'] ) && $element['widgetType'] === 'media-carousel' ) {
+                $output[] = $element;
+            }
+
+            if ( !empty( $element['elements'] ) ) {
+                $children = $this->searchElements( $element['elements'], $type );
+                if ( !empty( $children ) ) {
+                    $output = array_merge( $output, $children );
+                }
+            }
+        }
+
+        return $output;
+    }
+
+    /**
      * Register the widget controls.
      *
      * Adds different input fields to allow the user to change and customize the widget settings.
@@ -117,23 +143,8 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @access protected
      */
     protected function _register_controls() {
-        $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
-            . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
-        $allPosts = get_posts( [
-            'post_type' => get_post_types(),
-            'posts_per_page' => -1,
-            'post_status' => 'any',
-            'suppress_filters' => false,
-        ] );
 
-        $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
-
-        foreach ( $allPosts as $post ) {
-            if ( in_array( $post->post_type, $filterPostTypes ) ) {
-                continue;
-            }
-            $selectPosts[$post->ID] = $post->post_title . ' (' . $post->post_type . ')';
-        }
+        $selectPosts = PostGallery::getPostList();
 
         $this->start_controls_section(
             'section_content',
@@ -167,6 +178,17 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'selectors' => [],
             ]
         );
+
+        $elementIds = [ 0 => 'none' ];
+        if (filter_has_var( INPUT_GET, 'post' ) ) {
+            $document = Plugin::$instance->documents->get_doc_for_frontend( filter_input( INPUT_GET, 'post' ) );
+            $data = $document->get_elements_data();
+            $filteredElements = $this->searchElements( $data, 'media-carousel' );
+
+            foreach ( $filteredElements as $element ) {
+                $elementIds[$element['id']] = $element['id'];
+            }
+        }
 
         $imageSizes = [
             0 => __( 'Custom' ),
@@ -333,6 +355,17 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'type' => Controls_Manager::SWITCHER,
                 'default' => '',
                 'return_value' => 'on',
+            ]
+        );
+
+        $this->add_control(
+            'connectedWith',
+            [
+                'label' => __( 'Connected with', 'postgallery' ),
+                'type' => Controls_Manager::SELECT,
+                'default' => 0,
+                'options' => $elementIds,
+                'selectors' => [],
             ]
         );
 
@@ -564,7 +597,11 @@ class PostGalleryElementorWidget extends Widget_Base {
         $GLOBALS['PgIsElementorWidget'] = true;
         $gallery = $pgInstance->returnGalleryHtml( $settings['template'], $loadFrom, $args );
 
-        if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
+        if ( !empty( $args['connectedWith'] ) ) {
+            // no litebox, connect with media-carousel
+            $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-open-lightbox="no" ', $gallery );
+
+        } else if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
             $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-lightbox-slideshow="' . $this->get_id() . '" ', $gallery );
         } else {
@@ -651,6 +688,8 @@ class PostGalleryElementorWidget extends Widget_Base {
         if ( !empty( $settings['imageAnimationCssAnimated'] ) ) {
             $args['imageAnimationCssAnimated'] = $settings['imageAnimationCssAnimated'];
         }
+
+        $args['connectedWith'] = !empty( $settings['connectedWith'] ) ? $settings['connectedWith'] : false;
 
         $args['wrapperClass'] = ' elementor-image-gallery';
 
