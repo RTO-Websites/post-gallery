@@ -51,7 +51,6 @@ class PostGalleryImage {
     }
 
 
-
     /**
      * Parse an string of image options to a string for html-attributes
      *  Input string has a key|value pair in every line.
