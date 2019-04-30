@@ -379,6 +379,13 @@ class PostGalleryPublic {
         $tmpOptions = $this->options;
         $images = PostGalleryImageList::get( $postid );
 
+
+        if ( empty($images)
+            && class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->editor->is_edit_mode()
+        ) {
+            $images = PostGalleryImageList::getPseudoImages();
+        }
+
         if ( empty( $images ) ) {
             return '<!--postgallery: no images found for ' . $postid . '-->';
         }
@@ -404,9 +411,14 @@ class PostGalleryPublic {
             $srcsetSizes .= sprintf( '(max-width: %1$sspx) 100vw, %1$spx', $this->option( 'imageViewportWidth' ) );
         }
 
+        $dataAttributes = '';
+        if ( !empty( $this->option('imageAnimationDelay') ) ) {
+            $dataAttributes .= ' data-animationdelay="' . $this->option('imageAnimationDelay') . '" ';
+        }
+
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
-        echo '<div class="postgallery-wrapper ' . $wrapperClass . '"  id="' . $id . '">';
+        echo '<div class="postgallery-wrapper ' . $wrapperClass . '"  id="' . $id . '" ' . $dataAttributes . '>';
         foreach ( $templateDirs as $tplDir ) {
             if ( file_exists( $tplDir . '/' . $template . '.php' ) ) {
                 require( $tplDir . '/' . $template . '.php' );

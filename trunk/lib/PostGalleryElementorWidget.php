@@ -542,6 +542,18 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
+            'imageAnimationDelay',
+            [
+                'label' => __( 'Initial delay', 'postgallery' ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 0,
+                'condition' => [
+                    'imageAnimation' => 'on',
+                ],
+            ]
+        );
+
+        $this->add_control(
             'imageAnimationCss',
             [
                 'label' => __( 'Custom-CSS for Image', 'postgallery' ),
@@ -687,6 +699,10 @@ class PostGalleryElementorWidget extends Widget_Base {
 
         if ( !empty( $settings['imageAnimationCssAnimated'] ) ) {
             $args['imageAnimationCssAnimated'] = $settings['imageAnimationCssAnimated'];
+        }
+
+        if ( !empty( $settings['imageAnimationDelay'] ) ) {
+            $args['imageAnimationDelay'] = $settings['imageAnimationDelay'];
         }
 
         $args['connectedWith'] = !empty( $settings['connectedWith'] ) ? $settings['connectedWith'] : false;
