@@ -318,3 +318,22 @@ body.liteboxgallery-open {
   content: '\2BC8';
   right: 0;
 }
+
+.elementor-autoheight-yes .elementor-main-swiper,
+.elementor-autoheight-yes .swiper-wrapper,
+.elementor-autoheight-yes .swiper-wrapper * {
+  height: auto !important;
+}
+
+.elementor-autoheight-yes .swiper-wrapper {
+  align-items: center;
+}
+
+.elementor-autoheight-yes .media-carousel-img {
+  width: 100%;
+  opacity: 0;
+}
+
+.elementor-swiper .media-carousel-img {
+  opacity: 0;
+}

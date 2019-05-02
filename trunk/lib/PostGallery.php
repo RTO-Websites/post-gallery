@@ -4,6 +4,9 @@ use Admin\PostGalleryAdmin;
 use Admin\PostGalleryThemeCustomizer;
 use Elementor\Core\Files\CSS\Post;
 use Pub\PostGalleryPublic;
+use Lib\Widgets\PostGalleryElementorWidget;
+use Lib\Widgets\PostGallerySliderWidget;
+use Lib\Widgets\PostGalleryMediaCarousel;
 
 /**
  * The file that defines the core plugin class
@@ -215,9 +218,27 @@ class PostGallery {
         $this->loader->addAction( 'elementor/editor/before_enqueue_styles', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'elementor/editor/before_enqueue_scripts', $pluginAdmin, 'enqueueScripts', 99999 );
 
-        $this->loader->addAction( 'elementor/widgets/widgets_registered', $pluginAdmin, 'registerElementorWidget' );
+        $this->loader->addAction( 'elementor/widgets/widgets_registered', $this, 'registerElementorWidgets', 15 );
         $this->loader->addAction( 'elementor/editor/after_save', $pluginAdmin, 'elementorAfterSave' );
         $this->loader->addAction( 'elementor/controls/controls_registered', $pluginAdmin, 'registerElementorControls' );
+    }
+
+
+    /**
+     * Hook 'elementor/widgets/widgets_registered'
+     *
+     * @throws \Exception
+     */
+    public function registerElementorWidgets( $widgetsManager ) {
+        $widgetsManager->register_widget_type( new PostGalleryElementorWidget() );
+        $widgetsManager->register_widget_type( new PostGallerySliderWidget() );
+
+
+        // override media-carousel
+        if ( empty( $GLOBALS['mediaCarouselRegistered'] ) && class_exists( '\ElementorPro\Modules\Carousel\Widgets\Media_Carousel' ) ) {
+            $widgetsManager->unregister_widget_type( 'media-carousel' );
+            $widgetsManager->register_widget_type( new PostGalleryMediaCarousel() );
+        }
     }
 
     /**
