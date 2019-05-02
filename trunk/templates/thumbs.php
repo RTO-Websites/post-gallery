@@ -54,13 +54,27 @@
 
 <?php if ( $this->option( 'connectedWith' ) ): ?>
     <script>
-      jQuery('#<?php echo $id; ?>.postgallery-wrapper a').each(function (index, element) {
-        element = jQuery(element);
-        element.addClass('no-litebox');
-        element.on('click', function (e) {
-          e.preventDefault();
-          document.querySelector('.elementor-element-<?php echo $this->option( 'connectedWith' ); ?> .elementor-main-swiper').swiper.slideTo(element.closest('.item').index() + 1);
+      jQuery(function ($) {
+        $('#<?php echo $id; ?>.postgallery-wrapper a').each(function (index, element) {
+          element = $(element);
+          element.addClass('no-litebox');
+          element.on('click', function (e) {
+            e.preventDefault();
+            $('#<?php echo $id; ?>')[0].connectedSwiper.slideTo(element.closest('.item').index() + 1);
+          });
         });
-      });
+
+
+        $(window).on('load', function () {
+          $('#<?php echo $id; ?>')[0].connectedSwiper = document.querySelector('.elementor-element-<?php echo $this->option( 'connectedWith' ); ?> .elementor-main-swiper').swiper;
+          $('#<?php echo $id; ?>')[0].connectedSwiper.on('slideChange', function () {
+            let items = $('#<?php echo $id; ?> .item'),
+              currentItem = $('#<?php echo $id; ?> .item:nth-child(' + ($('#<?php echo $id; ?>')[0].connectedSwiper.realIndex + 1) + ')');
+
+            items.removeClass('current');
+            currentItem.addClass('current');
+          });
+        });
+      }, jQuery);
     </script>
 <?php endif; ?>
