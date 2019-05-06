@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== PostGallery ===
 Contributors: rtowebsites
 Donate link: https://www.rto.de
 Tags: post gallery, post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
@@ -36,6 +36,9 @@ https://github.com/RTO-Websites/post-gallery
 5. Litebox-gallery with custom styles
 
 == Changelog ==
+= 1.11.0 =
+* Add injections for elementor media-carousel (auto-height, aspect-ratio)
+
 = 1.10.0 =
 * Add new chunk-upload with progress-bar
 * Add slider widget for elementor
