@@ -195,6 +195,19 @@
   };
 
   /**
+   * Set active-class to current image from media-carousel
+   *
+   * @param id
+   */
+  window.setActiveSlide = function(id) {
+    var items = $('#' + id + ' .item'),
+      currentItem = $('#' + id + ' .item:nth-child(' + ($('#' + id)[0].connectedSwiper.realIndex + 1) + ')');
+
+    items.removeClass('current');
+    currentItem.addClass('current');
+  };
+
+  /**
    * Set pg image animation on scroll and load event
    */
   $(document).on('scroll', function () {

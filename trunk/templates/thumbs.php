@@ -68,12 +68,9 @@
         $(window).on('load', function () {
           $('#<?php echo $id; ?>')[0].connectedSwiper = document.querySelector('.elementor-element-<?php echo $this->option( 'connectedWith' ); ?> .elementor-main-swiper').swiper;
           $('#<?php echo $id; ?>')[0].connectedSwiper.on('slideChange', function () {
-            let items = $('#<?php echo $id; ?> .item'),
-              currentItem = $('#<?php echo $id; ?> .item:nth-child(' + ($('#<?php echo $id; ?>')[0].connectedSwiper.realIndex + 1) + ')');
-
-            items.removeClass('current');
-            currentItem.addClass('current');
+            setActiveSlide('<?php echo $id; ?>');
           });
+          setActiveSlide('<?php echo $id; ?>');
         });
       }, jQuery);
     </script>
