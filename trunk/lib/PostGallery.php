@@ -4,6 +4,9 @@ use Admin\PostGalleryAdmin;
 use Admin\PostGalleryThemeCustomizer;
 use Elementor\Core\Files\CSS\Post;
 use Pub\PostGalleryPublic;
+use Lib\Widgets\PostGalleryElementorWidget;
+use Lib\Widgets\PostGallerySliderWidget;
+use Lib\Widgets\PostGalleryMediaCarousel;
 
 /**
  * The file that defines the core plugin class
@@ -183,7 +186,7 @@ class PostGallery {
 
         $this->loader->addFilter( 'get_the_excerpt', $pluginPublic, 'removeContentFilterForExcerpt', 5, 1 );
         $this->loader->addFilter( 'get_the_excerpt', $pluginPublic, 'reAddContentFilterForExcerpt', 12, 1 );
-        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent', 10, 1);
+        $this->loader->addFilter( 'the_content', $pluginPublic, 'addGalleryToContent', 10, 1 );
         add_shortcode( 'postgallery', [ $pluginPublic, 'postgalleryShortcode' ] );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'postgalleryThumb' );
         $this->loader->addAction( 'plugins_loaded', $pluginPublic, 'getThumbList' );
@@ -215,9 +218,27 @@ class PostGallery {
         $this->loader->addAction( 'elementor/editor/before_enqueue_styles', $pluginAdmin, 'enqueueStyles' );
         $this->loader->addAction( 'elementor/editor/before_enqueue_scripts', $pluginAdmin, 'enqueueScripts', 99999 );
 
-        $this->loader->addAction( 'elementor/widgets/widgets_registered', $pluginAdmin, 'registerElementorWidget' );
+        $this->loader->addAction( 'elementor/widgets/widgets_registered', $this, 'registerElementorWidgets', 15 );
         $this->loader->addAction( 'elementor/editor/after_save', $pluginAdmin, 'elementorAfterSave' );
         $this->loader->addAction( 'elementor/controls/controls_registered', $pluginAdmin, 'registerElementorControls' );
+    }
+
+
+    /**
+     * Hook 'elementor/widgets/widgets_registered'
+     *
+     * @throws \Exception
+     */
+    public function registerElementorWidgets( $widgetsManager ) {
+        $widgetsManager->register_widget_type( new PostGalleryElementorWidget() );
+        $widgetsManager->register_widget_type( new PostGallerySliderWidget() );
+
+
+        // override media-carousel
+        if ( empty( $GLOBALS['mediaCarouselRegistered'] ) && class_exists( '\ElementorPro\Modules\Carousel\Widgets\Media_Carousel' ) ) {
+            $widgetsManager->unregister_widget_type( 'media-carousel' );
+            $widgetsManager->register_widget_type( new PostGalleryMediaCarousel() );
+        }
     }
 
     /**
@@ -340,6 +361,35 @@ class PostGallery {
      */
     public static function getImages( $postid ) {
         return PostGalleryImageList::get( $postid );
+    }
+
+
+    /**
+     * Gets list of all post (for use in select fields)
+     *
+     * @return array
+     */
+    public static function getPostList(): array {
+
+        $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
+            . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
+        $allPosts = get_posts( [
+            'post_type' => get_post_types(),
+            'posts_per_page' => -1,
+            'post_status' => 'any',
+            'suppress_filters' => false,
+        ] );
+
+        $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
+
+        foreach ( $allPosts as $post ) {
+            if ( in_array( $post->post_type, $filterPostTypes ) ) {
+                continue;
+            }
+            $selectPosts[$post->ID] = $post->post_title . ' (' . $post->post_type . ')';
+        }
+
+        return $selectPosts;
     }
 
     public static function getOptions() {

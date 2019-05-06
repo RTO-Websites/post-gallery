@@ -1,6 +1,6 @@
 <?php
 
-namespace Lib;
+namespace Lib\Widgets;
 
 use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
@@ -9,6 +9,7 @@ use Elementor\Group_Control_Image_Size;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Lib\PostGallery;
 use Pub\PostGalleryPublic;
 
 if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -143,7 +144,6 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @access protected
      */
     protected function _register_controls() {
-
         $selectPosts = PostGallery::getPostList();
 
         $this->start_controls_section(

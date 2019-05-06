@@ -64,7 +64,11 @@
       'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
       'success': function (data, textStatus) {
-        window.litebox.picsData = $.parseJSON(data);
+        try {
+          window.litebox.picsData = $.parseJSON(data);
+        } catch (e) {
+          window.litebox.picsData = pics;
+        }
         if (typeof (callback) === 'function') {
           callback();
         }
@@ -87,7 +91,11 @@
       'url': window.pgConfig.websiteUrl + '/?getThumbList',
       'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
       'success': function (data, textStatus) {
-        window.litebox.picsData = $.parseJSON(data);
+        try {
+          window.litebox.picsData = $.parseJSON(data);
+        } catch (e) {
+          window.litebox.picsData = pics;
+        }
         if (typeof (callback) === 'function') {
           callback();
         }
@@ -162,8 +170,13 @@
     if (typeof (window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
       return;
     }
+
     // loop all container
     for (var id in window.pgImageAnimations) {
+      var initialDelay = $('#' + id).data('animationdelay');
+      if (isNaN(initialDelay)) {
+        initialDelay = 0;
+      }
       if ($('#' + id).isVisible()) {
         var items = $('#' + id + ' .item'),
           timeBetween = window.pgImageAnimations[id];
@@ -173,12 +186,25 @@
           // loop items
           setTimeout(function () {
             element.addClass('show');
-          }, timeBetween * element.index());
+          }, timeBetween * element.index() + initialDelay);
         });
 
         delete (window.pgImageAnimations[id]);
       }
     }
+  };
+
+  /**
+   * Set active-class to current image from media-carousel
+   *
+   * @param id
+   */
+  window.setActiveSlide = function(id) {
+    var items = $('#' + id + ' .item'),
+      currentItem = $('#' + id + ' .item:nth-child(' + ($('#' + id)[0].connectedSwiper.realIndex + 1) + ')');
+
+    items.removeClass('current');
+    currentItem.addClass('current');
   };
 
   /**

@@ -11,15 +11,13 @@
  */
 
 use Lib\PostGallery;
-use Lib\PostGalleryElementorControl;
-use Lib\PostGalleryElementorWidget;
 use Lib\PostGalleryFilesystem;
 use Lib\PostGalleryHelper;
 use Lib\PostGalleryImage;
 use Lib\PostGalleryImageList;
-use Lib\PostGallerySliderWidget;
 use Lib\Template;
 use Lib\Thumb;
+use Lib\Controls\PostGalleryElementorControl;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -89,6 +87,17 @@ class PostGalleryAdmin {
 
         new SliderShortcodeAdmin( $pluginName, $version );
         new PostGalleryMceButton( $pluginName );
+    }
+
+    /**
+     * Hook 'elementor/controls/controls_registered'
+     */
+    public function registerElementorControls() {
+        \Elementor\Plugin::instance()->controls_manager->get_controls();
+        \Elementor\Plugin::instance()->controls_manager->register_control(
+            'postgallerycontrol',
+            new PostGalleryElementorControl()
+        );
     }
 
     /**
@@ -853,27 +862,6 @@ class PostGalleryAdmin {
                 update_post_meta( $pgPostId, 'postgalleryImagesort', $pgSort[0] );
             }
         }
-    }
-
-    /**
-     * Hook 'elementor/widgets/widgets_registered'
-     *
-     * @throws \Exception
-     */
-    public function registerElementorWidget() {
-        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGalleryElementorWidget() );
-        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new PostGallerySliderWidget() );
-    }
-
-    /**
-     * Hook 'elementor/controls/controls_registered'
-     */
-    public function registerElementorControls() {
-        \Elementor\Plugin::instance()->controls_manager->get_controls();
-        \Elementor\Plugin::instance()->controls_manager->register_control(
-            'postgallerycontrol',
-            new PostGalleryElementorControl()
-        );
     }
 
     /**
