@@ -6,10 +6,11 @@ class PostGalleryImageList {
     /**
      * Sorting an image-array
      *
-     * @param {array} $images
-     * @return {array}
+     * @param array $images
+     * @param int $postid
+     * @return array
      */
-    public static function sort( $images, $postid ) {
+    public static function sort( array $images, int $postid ): array {
         // get post in default language
         $orgPost = PostGalleryHelper::getOrgPost( $postid );
         if ( !empty( $orgPost ) ) {
@@ -52,9 +53,9 @@ class PostGalleryImageList {
      * @param int $postid
      * @return array
      */
-    public static function get( $postid = null ) {
+    public static function get( int $postid = null ): array {
         if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
-            return;
+            return [];
         }
         if ( empty( $postid ) ) {
             $postid = $GLOBALS['post']->ID;
@@ -81,7 +82,7 @@ class PostGalleryImageList {
         }
 
         if ( empty( $post ) || $post->post_type === 'attachment' ) {
-            return;
+            return [];
         }
 
         $uploads = wp_upload_dir();
@@ -147,6 +148,36 @@ class PostGalleryImageList {
         return $images;
     }
 
+    /**
+     * Returns a list of placeholder-images
+     *
+     * @param int $count
+     * @return array
+     */
+    public static function getPseudoImages( int $count = 10 ): array {
+        $images = [];
+
+        for ( $i = 1; $i < $count; $i += 1 ) {
+            $images[$i] = [
+                'filename' => 'image-placeholder.png',
+                'path' => POSTGALLERY_DIR . '/images/image-placeholder.png',
+                'url' => POSTGALLERY_URL . '/images/image-placeholder.png',
+                'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . POSTGALLERY_URL . '/images/image-placeholder',
+                'title' => 'Pseudo-Image ' . $i,
+                'desc' => 'Lorem ipsum dolor med',
+                'alt' => '',
+                'post_id' => 0,
+                'post_title' => 'Pseudo-Title',
+                'imageOptions' => '',
+                'imageOptionsParsed' => '',
+                'attachmentId' => '',
+                'srcset' => '',
+                'isPlaceholder' => true,
+            ];
+        }
+
+        return $images;
+    }
 
     /**
      * Return an image-array with resized images
@@ -155,7 +186,7 @@ class PostGalleryImageList {
      * @param array $args
      * @return array
      */
-    public static function getResized( $postid = 0, $args = [] ) {
+    public static function getResized( int $postid = 0, array $args = [] ): array {
         $images = self::get( $postid );
 
         return self::resize( $images, $args );
@@ -169,7 +200,7 @@ class PostGalleryImageList {
      * @param array $args
      * @return array
      */
-    public static function resize( $pics, $args ) {
+    public static function resize( array $pics, array $args ): array {
         if ( !is_array( $pics ) ) {
             return $pics;
         }
@@ -201,11 +232,11 @@ class PostGalleryImageList {
     /**
      * Returns a comma seperated list with images
      *
-     * @param {int} $postid
-     * @param {array} $args (singlequotes, quotes)
-     * @return {string}
+     * @param int $postid
+     * @param array $args (singlequotes, quotes)
+     * @return string
      */
-    public static function getImageString( $postid = null, $args = [] ) {
+    public static function getImageString( int $postid = null, array $args = [] ):string {
         if ( empty( $postid ) ) {
             global $postid;
         }
