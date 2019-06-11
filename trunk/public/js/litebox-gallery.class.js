@@ -1,9 +1,9 @@
 /************************************
  * Author: RTO GmbH
  *
- * Last change: 12.10.2018 16:45
+ * Last change: 11.06.2019 13:18
  ************************************/
-var LiteboxGallery = function(args) {
+var LiteboxGallery = function (args) {
   var win = window,
     doc = win.document,
     self = this,
@@ -29,7 +29,7 @@ var LiteboxGallery = function(args) {
     init;
 
 
-  init = function() {
+  init = function () {
     self.picsData = [];
 
     win.liteboxOpenProgress = false;
@@ -51,27 +51,27 @@ var LiteboxGallery = function(args) {
     };
 
     // set onload events
-    $(function() {
+    $(function () {
       setEvents();
     });
 
-    $(doc).on('click', '[data-pgimages]', function(e) {
+    $(doc).on('click', '[data-pgimages]', function (e) {
       self.openByData(e.currentTarget);
     });
 
 
-    liteboxContainer.find('.close-button').on('click touchend', function(e) {
+    liteboxContainer.find('.close-button').on('click touchend', function (e) {
       e.stopPropagation();
       e.preventDefault();
       self.closeGallery();
     });
   };
 
-  setEvents = function() {
+  setEvents = function () {
     // Find links with jpg/gif/png
-    $(doc).on('click', linkSelector, function(event) {
+    $(doc).on('click', linkSelector, function (event) {
       $(linkSelector).addClass('no-ajax');
-      if (!$(this).hasClass('no-litebox') && !$(this).data('elementor-lightbox-slideshow')) {
+      if (!$(this).hasClass('no-litebox') && !$(this).data('elementor-lightbox-slideshow') && !$(this).data('elementor-open-lightbox')) {
         event.preventDefault();
         self.openGallery(event.currentTarget);
       }
@@ -91,14 +91,14 @@ var LiteboxGallery = function(args) {
       /**
        * Gallery keypress
        */
-      $(document).on('keyup', function(e) {
+      $(document).on('keyup', function (e) {
         /*
          * up: 38
          * down: 40
          * left: 37
          * right: 39
          */
-        switch(e.keyCode) {
+        switch (e.keyCode) {
           case 37:
             // prev
             LiteboxGallery.sliders[args.sliderType].prev(sliderArgs);
@@ -121,7 +121,7 @@ var LiteboxGallery = function(args) {
    *
    * @param e
    */
-  self.openByData = function(element) {
+  self.openByData = function (element) {
     element = jQuery(element);
     var pics = element.data('pgimages');
     if (!pics.length) {
@@ -137,14 +137,14 @@ var LiteboxGallery = function(args) {
    * @param {array} pics
    * @returns {undefined}
    */
-  self.openGalleryByPics = function(pics, startImage, clickElement) {
-    if (typeof(startImage) == 'undefined') {
+  self.openGalleryByPics = function (pics, startImage, clickElement) {
+    if (typeof (startImage) == 'undefined') {
       startImage = 0;
     }
 
     debug('openByPics', pics);
 
-    if (typeof(pics) == 'string') {
+    if (typeof (pics) == 'string') {
       pics = pics.split(',');
     }
 
@@ -164,13 +164,13 @@ var LiteboxGallery = function(args) {
    * @param {object} picsObject
    * @returns {undefined}
    */
-  getUrlFromPics = function(pics) {
+  getUrlFromPics = function (pics) {
     var newPics = [],
       i = 0;
     self.picsData = [];
 
     for (var index in pics) {
-      if (typeof(pics[index]['url']) !== 'undefined') {
+      if (typeof (pics[index]['url']) !== 'undefined') {
         newPics[i] = pics[index]['url'];
       } else {
         newPics[i] = pics[index];
@@ -193,7 +193,7 @@ var LiteboxGallery = function(args) {
    * @param {type} clickElement
    * @returns {undefined}
    */
-  self.openGallery = function(clickElement) {
+  self.openGallery = function (clickElement) {
     debug('openGallery', clickElement);
 
     if (window.liteboxOpenProgress) {
@@ -226,7 +226,7 @@ var LiteboxGallery = function(args) {
 
     self.picsData = [];
 
-    if (typeof(imageContainer.data('pg-gallery')) !== 'undefined') {
+    if (typeof (imageContainer.data('pg-gallery')) !== 'undefined') {
       // get urls from container-data
       items = imageContainer.data('pg-gallery');
       for (var index in items) {
@@ -238,8 +238,8 @@ var LiteboxGallery = function(args) {
           url: encodeURI(items[index]['url']).replace(window.pgConfig.websiteUrl, ''),
           title: items[index]['title'],
           desc: items[index]['desc'],
-          embed: typeof(items[index]['embed']) !== 'undefined' ? items[index]['embed'] : '',
-          thumb: typeof(items[index]['thumb']) !== 'undefined' ? items[index]['thumb'] : items[index]['url'],
+          embed: typeof (items[index]['embed']) !== 'undefined' ? items[index]['embed'] : '',
+          thumb: typeof (items[index]['thumb']) !== 'undefined' ? items[index]['thumb'] : items[index]['url'],
         };
         //pics[count] = encodeURI(items[index]['url']).replace(window.pgConfig.websiteUrl, '');
         count += 1;
@@ -247,7 +247,7 @@ var LiteboxGallery = function(args) {
     } else {
       // search image-urls in hrefs
       items = imageContainer.find(linkSelector).filter(':not(.no-litebox)');
-      items.each(function(index) {
+      items.each(function (index) {
         var item = $(this);
         if (item.attr('href').indexOf('/uploads/') !== -1
           || item.attr('href').indexOf('/gallery/') !== -1
@@ -285,7 +285,7 @@ var LiteboxGallery = function(args) {
    * @param {type} startPic
    * @returns {undefined}
    */
-  self.initGallery = function(startPic, clickElement) {
+  self.initGallery = function (startPic, clickElement) {
     debug('init-start', self.picsData, startPic);
     // Trigger
     liteboxContainer.trigger('box-init', {
@@ -344,8 +344,8 @@ var LiteboxGallery = function(args) {
    *
    * @param galleryStartPic
    */
-  self.createGallery = function(galleryStartPic) {
-    getFullsizeThumbs(self.picsData, 'gallery-image', function() {
+  self.createGallery = function (galleryStartPic) {
+    getFullsizeThumbs(self.picsData, 'gallery-image', function () {
       debug('images-loaded', self.picsData);
       $('body').removeClass('litebox-gallery-loading');
       $('body').addClass('liteboxgallery-open');
@@ -362,17 +362,17 @@ var LiteboxGallery = function(args) {
 
         if (self.picsData[i]['width'] >= self.picsData[i]['height']) {
           width = self.picsData[i]['width'];
-        } else if (typeof(self.picsData[i]['height']) !== 'undefined') {
+        } else if (typeof (self.picsData[i]['height']) !== 'undefined') {
           height = self.picsData[i]['height'];
           orientation = ' upright';
         }
 
         // add pic title and desc
         picTitleDesc = '';
-        if (typeof(self.picsData[i]['title']) !== 'undefined') {
+        if (typeof (self.picsData[i]['title']) !== 'undefined') {
           picTitleDesc += '<div class="pic-title">' + self.picsData[i]['title'] + '</div>';
         }
-        if (typeof(self.picsData[i]['desc']) !== 'undefined') {
+        if (typeof (self.picsData[i]['desc']) !== 'undefined') {
           picTitleDesc += '<div class="pic-desc">' + self.picsData[i]['desc'] + '</div>';
         }
 
@@ -381,7 +381,7 @@ var LiteboxGallery = function(args) {
           picTitleDesc = '<div class="pic-info">' + picTitleDesc + '</div>';
         }
 
-        switch(self.picsData[i].embed) {
+        switch (self.picsData[i].embed) {
           case 'iframe':
             item = $('<div class="litebox-image litebox-iframe-wrapper">' +
               '<iframe class="litebox-iframe" src="' + self.picsData[i]['url'] + '"></iframe>' +
@@ -426,7 +426,7 @@ var LiteboxGallery = function(args) {
   /**
    * Load and create thumbnails via ajax
    */
-  self.initThumbs = function() {
+  self.initThumbs = function () {
     // Thumbs
     if (liteboxContainer.find('.thumb-container').length &&
       $(window).width() > 720 && $(window).height() > 360 &&
@@ -434,7 +434,7 @@ var LiteboxGallery = function(args) {
     ) {
       debug('load-thumbs');
 
-      getThumbs(self.picsData, 150, 150, function() {
+      getThumbs(self.picsData, 150, 150, function () {
         LiteboxGallery.sliders[args.sliderType].initThumbs(sliderArgs, self.picsData);
       }, 0);
 
@@ -447,11 +447,11 @@ var LiteboxGallery = function(args) {
    *
    * @returns {undefined}
    */
-  self.closeGallery = function() {
+  self.closeGallery = function () {
     debug('close-gallery');
     liteboxContainer.trigger('box-close', {state: 'begin'});
 
-    liteboxContainer.on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', function(e) {
+    liteboxContainer.on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', function (e) {
       debug('close-end');
       //liteboxContainer.css({'display': 'none'});
       liteboxContainer.trigger('box-close', {state: 'afterAnimation'});
@@ -468,7 +468,7 @@ var LiteboxGallery = function(args) {
     $('body').removeClass('liteboxgallery-loading');
 
     // Callback
-    if (typeof(cb_closeGallery) === 'function') {
+    if (typeof (cb_closeGallery) === 'function') {
       cb_closeGallery();
     }
     // Trigger
@@ -476,7 +476,7 @@ var LiteboxGallery = function(args) {
   };
 
 
-  debug = function(message) {
+  debug = function (message) {
     if (args.debug) {
       console.info('litebox', message, new Date().getTime(), arguments);
     }
