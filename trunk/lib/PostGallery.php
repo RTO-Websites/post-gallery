@@ -68,6 +68,8 @@ class PostGallery {
 
     protected $options;
 
+    private static $allPosts = [];
+
 
     /**
      * Define the core functionality of the plugin.
@@ -254,8 +256,8 @@ class PostGallery {
      * The name of the plugin used to uniquely identify it within the context of
      * WordPress and to define internationalization functionality.
      *
-     * @since     1.0.0
      * @return    string    The name of the plugin.
+     * @since     1.0.0
      */
     public function getPostGallery() {
         return $this->pluginName;
@@ -264,8 +266,8 @@ class PostGallery {
     /**
      * The reference to the class that orchestrates the hooks with the plugin.
      *
-     * @since     1.0.0
      * @return    PostGalleryLoader    Orchestrates the hooks of the plugin.
+     * @since     1.0.0
      */
     public function getLoader() {
         return $this->loader;
@@ -274,8 +276,8 @@ class PostGallery {
     /**
      * Retrieve the version number of the plugin.
      *
-     * @since     1.0.0
      * @return    string    The version number of the plugin.
+     * @since     1.0.0
      */
     public function getVersion() {
         return $this->version;
@@ -372,13 +374,30 @@ class PostGallery {
     public static function getPostList(): array {
 
         $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
-            . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
-        $allPosts = get_posts( [
-            'post_type' => get_post_types(),
-            'posts_per_page' => -1,
-            'post_status' => 'any',
-            'suppress_filters' => false,
-        ] );
+            . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style,acf-field,'
+            . 'acf-field-group,elementor_font');
+
+        $allPostTypes = get_post_types();
+        $queryPostTypes = [];
+
+        foreach ( $allPostTypes as $postType ) {
+            if ( in_array( $postType, $filterPostTypes ) ) {
+                continue;
+            }
+            $queryPostTypes[] = $postType;
+        }
+
+        $allPosts = self::$allPosts;
+        if ( empty( $allPosts ) ) {
+            $allPosts = get_posts( [
+                'post_type' => $queryPostTypes,
+                'posts_per_page' => -1,
+                'post_status' => 'any',
+                'suppress_filters' => false,
+            ] );
+
+            self::$allPosts = $allPosts;
+        }
 
         $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
 
