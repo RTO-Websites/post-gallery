@@ -39,11 +39,11 @@ class PostGalleryElementorWidget extends Widget_Base {
     /**
      * Retrieve the widget name.
      *
+     * @return string Widget name.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return string Widget name.
      */
     public function get_name() {
         return 'postgallery';
@@ -52,11 +52,11 @@ class PostGalleryElementorWidget extends Widget_Base {
     /**
      * Retrieve the widget title.
      *
+     * @return string Widget title.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return string Widget title.
      */
     public function get_title() {
         return __( 'PostGallery', 'postgallery' );
@@ -65,11 +65,11 @@ class PostGalleryElementorWidget extends Widget_Base {
     /**
      * Retrieve the widget icon.
      *
+     * @return string Widget icon.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return string Widget icon.
      */
     public function get_icon() {
         return 'fa fa-image';
@@ -83,11 +83,11 @@ class PostGalleryElementorWidget extends Widget_Base {
      * Note that currently Elementor supports only one category.
      * When multiple categories passed, Elementor uses the first one.
      *
+     * @return array Widget categories.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return array Widget categories.
      */
     public function get_categories() {
         return [ 'basic' ];
@@ -98,11 +98,11 @@ class PostGalleryElementorWidget extends Widget_Base {
      *
      * Used to set scripts dependencies required to run the widget.
      *
+     * @return array Widget scripts dependencies.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return array Widget scripts dependencies.
      */
     public function get_script_depends() {
         return [ 'postgallery' ];
@@ -180,7 +180,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $elementIds = [ 0 => 'none' ];
-        if (filter_has_var( INPUT_GET, 'post' ) ) {
+        if ( filter_has_var( INPUT_GET, 'post' ) ) {
             $document = Plugin::$instance->documents->get_doc_for_frontend( filter_input( INPUT_GET, 'post' ) );
             $data = $document->get_elements_data();
             $filteredElements = $this->searchElements( $data, 'media-carousel' );
@@ -338,14 +338,14 @@ class PostGalleryElementorWidget extends Widget_Base {
 
                 ],
                 'return_value' => 'on',
-                'conditions' => [
+                /* 'conditions' => [
                     'terms' =>
                         [ [
                             'name' => 'equal_height',
                             'operator' => '!in',
                             'value' => [ 'on' ],
                         ] ],
-                ],
+                ], */
             ]
         );
         $this->add_control(
