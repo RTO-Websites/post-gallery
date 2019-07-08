@@ -13,9 +13,16 @@ function initPostGalleryElementor() {
     '.elementor-control-columns input,'  +
     '.elementor-control-no_grid input,' +
     '.elementor-control-row_gap input', checkItemRatio);
+
+  // legacy elementor
   jQuery(document).on('slide', '.elementor-control-item_ratio .ui-slider,' +
     '.elementor-control-column_gap .ui-slider,' +
     '.elementor-control-row_gap .ui-slider', checkItemRatio);
+
+  // elementor change slider
+  jQuery(document).on('mousemove', '.elementor-control-item_ratio .noUi-handle,' +
+    '.elementor-control-column_gap .noUi-handle,' +
+    '.elementor-control-row_gap .noUi-handle', checkItemRatio);
 
   /**
    * Write titles, desc, alt to elementor fields
