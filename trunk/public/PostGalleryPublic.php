@@ -70,9 +70,9 @@ class PostGalleryPublic {
     /**
      * Initialize the class and set its properties.
      *
+     * @param string $pluginName The name of the plugin.
+     * @param string $version The version of this plugin.
      * @since    1.0.0
-     * @param      string $pluginName The name of the plugin.
-     * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
         if ( is_admin() && !class_exists( '\Elementor\Plugin' ) ) {
@@ -287,8 +287,8 @@ class PostGalleryPublic {
      * @param $post_thumbnail_id
      * @param $size
      * @param $attr
-     * @throws \ImagickException
      * @return string
+     * @throws \ImagickException
      */
     public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
         if ( '' == $html ) {
@@ -380,8 +380,8 @@ class PostGalleryPublic {
         $images = PostGalleryImageList::get( $postid );
 
 
-        if ( empty($images)
-            && class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->editor->is_edit_mode()
+        if ( empty( $images )
+            && class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode()
         ) {
             $images = PostGalleryImageList::getPseudoImages();
         }
@@ -412,8 +412,8 @@ class PostGalleryPublic {
         }
 
         $dataAttributes = '';
-        if ( !empty( $this->option('imageAnimationDelay') ) ) {
-            $dataAttributes .= ' data-animationdelay="' . $this->option('imageAnimationDelay') . '" ';
+        if ( !empty( $this->option( 'imageAnimationDelay' ) ) ) {
+            $dataAttributes .= ' data-animationdelay="' . $this->option( 'imageAnimationDelay' ) . '" ';
         }
 
         ob_start();
@@ -443,6 +443,26 @@ class PostGalleryPublic {
         $this->options = $tmpOptions;
 
         return $content;
+    }
+
+    public function getCaption( $image ) {
+        switch ( $this->option( 'captionSource' ) ) {
+            case 'title':
+                return $image['title'];
+                break;
+
+            case 'attachment_alt':
+                return $image['alt'];
+                break;
+
+            case 'attachment_caption':
+                return $image['imageCaption'];
+                break;
+
+            case 'content':
+                return $image['desc'];
+                break;
+        }
     }
 
     /**
@@ -597,6 +617,17 @@ class PostGalleryPublic {
                 break;
             case 'horizontal':
                 $wrapperClass .= ' with-js-masonry js-masonry-horizontal';
+                break;
+        }
+
+        $captionAnimation = $this->option( 'pgcaption_animation' );
+        switch ( $captionAnimation ) {
+            case 'show_on_hover':
+                $wrapperClass .= ' caption-animation-show-on-hover has-caption-animation';
+                break;
+
+            case 'hide_on_hover':
+                $wrapperClass .= ' caption-animation-hide-on-hover has-caption-animation';
                 break;
         }
 

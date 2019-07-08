@@ -375,7 +375,7 @@ class PostGallery {
 
         $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
             . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style,acf-field,'
-            . 'acf-field-group,elementor_font');
+            . 'acf-field-group,elementor_font' );
 
         $allPostTypes = get_post_types();
         $queryPostTypes = [];

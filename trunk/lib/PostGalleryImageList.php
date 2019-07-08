@@ -119,11 +119,13 @@ class PostGalleryImageList {
             $imageTitle = '';
             $imageOptions = '';
             $imageDesc = '';
+            $imageCaption = '';
             $attachmentId = PostGalleryImage::checkForAttachmentData( $fullUrl, $postid );
             if ( !empty( $attachmentId ) ) {
                 $attachment = get_post( $attachmentId );
                 $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
                 $imageOptions = get_post_meta( $attachmentId, 'postgallery-image-options', true );
+               # $imageCaption = wp_get_attachment_caption( $attachmentId );
                 if ( !empty( $attachment ) ) {
                     $imageTitle = $attachment->post_title;
                     $imageDesc = $attachment->post_content;
@@ -142,6 +144,7 @@ class PostGalleryImageList {
                 'alt' => $alt,
                 'post_id' => $postid,
                 'post_title' => get_the_title( $postid ),
+                'imageCaption' => $imageCaption,
                 'imageOptions' => $imageOptions,
                 'imageOptionsParsed' => $imageOptionsParsed,
                 'attachmentId' => $attachmentId,

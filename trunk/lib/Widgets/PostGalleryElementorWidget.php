@@ -6,7 +6,9 @@ use Admin\PostGalleryAdmin;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Image_Size;
+use Elementor\Group_Control_Typography;
 use Elementor\Plugin;
+use Elementor\Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Lib\PostGallery;
@@ -40,11 +42,11 @@ class PostGalleryElementorWidget extends Widget_Base {
     /**
      * Retrieve the widget name.
      *
+     * @return string Widget name.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return string Widget name.
      */
     public function get_name() {
         return 'postgallery';
@@ -53,11 +55,11 @@ class PostGalleryElementorWidget extends Widget_Base {
     /**
      * Retrieve the widget title.
      *
+     * @return string Widget title.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return string Widget title.
      */
     public function get_title() {
         return __( 'PostGallery', 'postgallery' );
@@ -66,11 +68,11 @@ class PostGalleryElementorWidget extends Widget_Base {
     /**
      * Retrieve the widget icon.
      *
+     * @return string Widget icon.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return string Widget icon.
      */
     public function get_icon() {
         return 'fa fa-image';
@@ -84,11 +86,11 @@ class PostGalleryElementorWidget extends Widget_Base {
      * Note that currently Elementor supports only one category.
      * When multiple categories passed, Elementor uses the first one.
      *
+     * @return array Widget categories.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return array Widget categories.
      */
     public function get_categories() {
         return [ 'basic' ];
@@ -99,11 +101,11 @@ class PostGalleryElementorWidget extends Widget_Base {
      *
      * Used to set scripts dependencies required to run the widget.
      *
+     * @return array Widget scripts dependencies.
      * @since 1.0.0
      *
      * @access public
      *
-     * @return array Widget scripts dependencies.
      */
     public function get_script_depends() {
         return [ 'postgallery' ];
@@ -154,21 +156,6 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->add_control(
-            'template',
-            [
-                'label' => __( 'Template', 'postgallery' ),
-                'type' => Controls_Manager::SELECT,
-                'default' => 'thumbs',
-                'selectors' => [],
-                'options' => array_merge(
-                    [ 'global' => 'From Global' ],
-                    $this->postgalleryAdmin->getCustomTemplates(),
-                    $this->postgalleryAdmin->defaultTemplates
-                ),
-            ]
-        );
-
-        $this->add_control(
             'pgimgsource',
             [
                 'label' => __( 'Image-Source', 'postgallery' ),
@@ -178,17 +165,6 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'selectors' => [],
             ]
         );
-
-        $elementIds = [ 0 => 'none' ];
-        if (filter_has_var( INPUT_GET, 'post' ) ) {
-            $document = Plugin::$instance->documents->get_doc_for_frontend( filter_input( INPUT_GET, 'post' ) );
-            $data = $document->get_elements_data();
-            $filteredElements = $this->searchElements( $data, 'media-carousel' );
-
-            foreach ( $filteredElements as $element ) {
-                $elementIds[$element['id']] = $element['id'];
-            }
-        }
 
         $imageSizes = [
             0 => __( 'Custom' ),
@@ -293,6 +269,24 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->end_controls_section();
 
 
+        $this->_register_style_controls();
+        $this->_register_border_controls();
+        $this->_register_caption_controls();
+        $this->_register_animation_controls();
+    }
+
+    private function _register_style_controls() {
+        $elementIds = [ 0 => 'none' ];
+        if ( filter_has_var( INPUT_GET, 'post' ) ) {
+            $document = Plugin::$instance->documents->get_doc_for_frontend( filter_input( INPUT_GET, 'post' ) );
+            $data = $document->get_elements_data();
+            $filteredElements = $this->searchElements( $data, 'media-carousel' );
+
+            foreach ( $filteredElements as $element ) {
+                $elementIds[$element['id']] = $element['id'];
+            }
+        }
+
         $this->start_controls_section(
             'section_postgallery_style',
             [
@@ -338,14 +332,6 @@ class PostGalleryElementorWidget extends Widget_Base {
 
                 ],
                 'return_value' => 'on',
-                'conditions' => [
-                    'terms' =>
-                        [ [
-                            'name' => 'equal_height',
-                            'operator' => '!in',
-                            'value' => [ 'on' ],
-                        ] ],
-                ],
             ]
         );
         $this->add_control(
@@ -439,8 +425,9 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->end_controls_section();
+    }
 
-
+    private function _register_border_controls() {
         $this->start_controls_section(
             'section_postgallery_style_borders',
             [
@@ -497,8 +484,185 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
         $this->end_controls_section();
+    }
+
+    private function _register_caption_controls() {
+        $metaSources = [
+            'title' => __( 'Titel' ),
+            'attachment_alt' => __( 'Alternative Text' ),
+            'attachment_caption' => __( 'Caption' ),
+            'content' => __( 'Content' ),
+        ];
 
 
+        $this->start_controls_section(
+            'section_postgallery_caption',
+            [
+                'label' => __( 'Captions', 'elementor' ),
+                'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'showCaptions',
+            [
+                'label' => __( 'Show captions', 'postgallery' ),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'return_value' => 'on',
+            ]
+        );
+
+        $this->add_control(
+            'captionPosition',
+            [
+                'label' => __( 'Position', 'postgallery' ),
+                'type' => Controls_Manager::CHOOSE,
+                'label_block' => false,
+                'toggle' => false,
+                'default' => 'bottom',
+                'options' => [
+                    'top' => [
+                        'title' => __( 'Top', 'elementor' ),
+                        'icon' => 'eicon-v-align-top',
+                    ],
+                    'bottom' => [
+                        'title' => __( 'Bottom', 'elementor' ),
+                        'icon' => 'eicon-v-align-bottom',
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => '{{VALUE}}: 0;',
+                ],
+                'render_type' => 'ui',
+            ]
+        );
+
+        $this->add_control(
+            'captionSource',
+            [
+                'label' => __( 'Source', 'postgallery' ),
+                'type' => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $metaSources,
+            ]
+        );
+
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'pgcaption_typography',
+                'label' => __( 'Typography', 'elementor' ),
+                'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+                'selector' => '{{WRAPPER}} .item .caption-wrapper',
+            ]
+        );
+        $this->add_control(
+            'pgcaption_color',
+            [
+                'type' => Controls_Manager::COLOR,
+                'label' => __( 'Color', 'elementor' ),
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => 'color: {{VALUE}};',
+                ],
+            ]
+        );   $this->add_control(
+            'pgcaption_align',
+            [
+                'type' => Controls_Manager::CHOOSE,
+                'label' => __( 'Align', 'elementor-pro' ),
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => 'text-align: {{VALUE}};',
+                ],
+                'options' => [
+                    'left' => [
+                        'title' => __( 'Left', 'elementor' ),
+                        'icon' => 'fa fa-align-left',
+                    ],
+                    'center' => [
+                        'title' => __( 'Center', 'elementor' ),
+                        'icon' => 'fa fa-align-center',
+                    ],
+                    'right' => [
+                        'title' => __( 'Right', 'elementor' ),
+                        'icon' => 'fa fa-align-right',
+                    ],
+                    'justify' => [
+                        'title' => __( 'Justify', 'elementor' ),
+                        'icon' => 'fa fa-align-justify',
+                    ],
+                ],
+                'default' => 'center',
+            ]
+        );
+
+        $this->add_control(
+            'pgcaption_backgroundcolor',
+            [
+                'type' => Controls_Manager::COLOR,
+                'label' => __( 'Background-Color', 'elementor-pro' ),
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'pgcaption_padding',
+            [
+                'label' => __( 'Padding', 'elementor-pro' ),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'rem' ],
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'pgcaption_margin',
+            [
+                'label' => __( 'Margin', 'elementor-pro' ),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'rem' ],
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+
+        $this->add_control(
+            'pgcaption_animation',
+            [
+                'label' => __( 'Animation', 'elementor-pro' ),
+                'type' => Controls_Manager::SELECT,
+                'options' => [
+                    'none' => __('None', 'elementor'),
+                    'show_on_hover' => __('Show on hover', 'postgallery'),
+                    'hide_on_hover' => __('Hide on hover', 'postgallery')
+                ]
+            ]
+        );
+
+
+        $this->add_control(
+            'pgcaption_animation_duration',
+            [
+                'label' => __( 'Animation-Duration', 'elementor-pro' ) . ' (ms)',
+                'type' => Controls_Manager::NUMBER,
+                'default' => '300',
+                'selectors' => [
+                    '{{WRAPPER}} .has-caption-animation .caption-wrapper' => 'transition-duration: {{VALUE}}ms;',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function _register_animation_controls() {
         $this->start_controls_section(
             'section_postgallery_animation',
             [
@@ -607,13 +771,13 @@ class PostGalleryElementorWidget extends Widget_Base {
         }
 
         $GLOBALS['PgIsElementorWidget'] = true;
-        $gallery = $pgInstance->returnGalleryHtml( $settings['template'], $loadFrom, $args );
+        $gallery = $pgInstance->returnGalleryHtml( $args['template'], $loadFrom, $args );
 
         if ( !empty( $args['connectedWith'] ) ) {
             // no litebox, connect with media-carousel
             $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-open-lightbox="no" ', $gallery );
 
-        } else if ( !empty( $settings['pgelementorlitebox'] ) && $settings['pgelementorlitebox'] == 'on' ) {
+        } else if ( !empty( $args['pgelementorlitebox'] ) && $args['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
             $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-lightbox-slideshow="' . $this->get_id() . '" ', $gallery );
         } else {
@@ -633,7 +797,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @return array
      */
     private function createArgs( $settings ) {
-        $args = [];
+        $args = $settings;
         // create args
         if ( !empty( $settings['imageSize'] ) ) {
             if ( $settings['imageSize'] == 'srcset' ) {
@@ -644,7 +808,6 @@ class PostGalleryElementorWidget extends Widget_Base {
                 $args['thumbHeight'] = $sizes[1];
             }
         } else {
-
             if ( !empty( $settings['pgthumbwidth'] ) ) {
                 $args['thumbWidth'] = $settings['pgthumbwidth'];
             }
@@ -658,26 +821,10 @@ class PostGalleryElementorWidget extends Widget_Base {
             $args['thumbScale'] = $settings['pgthumbscale'];
         }
 
-        if ( isset( $settings['imageViewportWidth'] ) ) {
-            $args['imageViewportWidth'] = $settings['imageViewportWidth'];
-        }
-
-        if ( isset( $settings['columns'] ) ) {
-            $args['columns'] = $settings['columns'];
-        }
-
         if ( isset( $settings['template'] ) ) {
             $args['globalTemplate'] = $settings['template'];
         } else {
             $args['template'] = '';
-        }
-
-        if ( isset( $settings['masonry'] ) ) {
-            $args['masonry'] = $settings['masonry'];
-        }
-
-        if ( isset( $settings['pgmaxthumbs'] ) ) {
-            $args['pgmaxthumbs'] = $settings['pgmaxthumbs'];
         }
 
         if ( isset( $settings['equal_height'] ) ) {
@@ -688,26 +835,8 @@ class PostGalleryElementorWidget extends Widget_Base {
             $args['itemRatio'] = $settings['item_ratio'];
         }
 
-        if ( isset( $settings['imageAnimation'] ) ) {
-            $args['imageAnimation'] = $settings['imageAnimation'];
-            $args['imageAnimationTimeBetween'] = $settings['imageAnimationTimeBetween'];
-        }
-
-        if ( !empty( $settings['imageAnimationCss'] ) ) {
-            $args['imageAnimationCss'] = $settings['imageAnimationCss'];
-        }
-
-        if ( !empty( $settings['imageAnimationCssAnimated'] ) ) {
-            $args['imageAnimationCssAnimated'] = $settings['imageAnimationCssAnimated'];
-        }
-
-        if ( !empty( $settings['imageAnimationDelay'] ) ) {
-            $args['imageAnimationDelay'] = $settings['imageAnimationDelay'];
-        }
-
-        $args['connectedWith'] = !empty( $settings['connectedWith'] ) ? $settings['connectedWith'] : false;
-
         $args['wrapperClass'] = ' elementor-image-gallery';
+        $args['template'] = 'thumbs';
 
         return $args;
     }

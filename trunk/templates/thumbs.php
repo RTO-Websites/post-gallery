@@ -39,6 +39,13 @@
                     <?php endif; ?>
 
                 </a>
+                <?php if ( !empty( $this->option( 'showCaptions' ) ) ): ?>
+                    <?php
+                    $caption = $this->getCaption( $image );
+                    if ( !empty( $caption ) ): ?>
+                        <div class="caption-wrapper"><?php echo $caption; ?></div>
+                    <?php endif; ?>
+                <?php endif; ?>
                 <div class="bg-image" style="background-image: url('<?php echo $thumbUrl; ?>');"></div>
             </div>
         <?php endforeach; ?>

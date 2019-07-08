@@ -164,8 +164,8 @@ class PostGalleryImage {
             return PostGalleryImageList::$allAttachments[$path];
         }
 
-        $statement = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path );
-        $attachment_id = $wpdb->get_var( $statement );
+        $statement = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path. " LIMIT 1" );
+        $attachment_id = $wpdb->get_var( $statement, 0, 0 );
 
         if ( !empty( $attachment_id ) ) {
             return $attachment_id;

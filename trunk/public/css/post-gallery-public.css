@@ -214,6 +214,37 @@ body.liteboxgallery-open {
   opacity: 1;
 }
 
+
+
+.postgallery-wrapper .item .caption-wrapper {
+  position: absolute;
+  font-size: 1rem;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  z-index: 999999;
+}
+
+.has-caption-animation .caption-wrapper {
+  transition: all 0.3s ease;
+}
+
+.caption-animation-show-on-hover .caption-wrapper {
+  opacity: 0;
+}
+
+.caption-animation-show-on-hover .item:hover .caption-wrapper {
+  opacity: 1;
+}
+
+.caption-animation-hide-on-hover .caption-wrapper {
+  opacity: 1;
+}
+
+.caption-animation-hide-on-hover .item:hover .caption-wrapper {
+  opacity: 0;
+}
+
 .postgallery-wrapper .pg-theme-thumbs .post-gallery_thumb {
   position: relative;
   margin: 0 auto;
