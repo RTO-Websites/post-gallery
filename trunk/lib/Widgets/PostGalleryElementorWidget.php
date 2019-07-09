@@ -543,12 +543,26 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Source', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
-                'default' => '',
+                'default' => 'title',
                 'options' => $metaSources,
             ]
         );
 
 
+        $this->add_control(
+            'pg_caption_sperator_style',
+            [
+                'type' => Controls_Manager::DIVIDER,
+            ]
+        );
+
+        $this->add_control(
+            'pg_caption_headline_style',
+            [
+                'type' => Controls_Manager::HEADING,
+                'label' => __('Style', 'elementor'),
+            ]
+        );
         $this->add_group_control(
             Group_Control_Typography::get_type(),
             [
@@ -566,8 +580,10 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'selectors' => [
                     '{{WRAPPER}} .item .caption-wrapper' => 'color: {{VALUE}};',
                 ],
+                'default' => '#ffffff',
             ]
-        );   $this->add_control(
+        );
+        $this->add_control(
             'pgcaption_align',
             [
                 'type' => Controls_Manager::CHOOSE,
@@ -605,9 +621,24 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'selectors' => [
                     '{{WRAPPER}} .item .caption-wrapper' => 'background-color: {{VALUE}};',
                 ],
+                'default' => 'rgba(0, 0, 0, 0.7)',
             ]
         );
 
+        $this->add_control(
+            'pg_caption_sperator_margin',
+            [
+                'type' => Controls_Manager::DIVIDER,
+            ]
+        );
+
+        $this->add_control(
+            'pg_caption_headline_margin',
+            [
+                'type' => Controls_Manager::HEADING,
+                'label' => __('Margin', 'elementor'),
+            ]
+        );
         $this->add_control(
             'pgcaption_padding',
             [
@@ -632,6 +663,20 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'pg_caption_sperator_animation',
+            [
+                'type' => Controls_Manager::DIVIDER,
+            ]
+        );
+
+        $this->add_control(
+            'pg_caption_headline_animation',
+            [
+                'type' => Controls_Manager::HEADING,
+                'label' => __('Animation', 'elementor'),
+            ]
+        );
 
         $this->add_control(
             'pgcaption_animation',
@@ -639,9 +684,9 @@ class PostGalleryElementorWidget extends Widget_Base {
                 'label' => __( 'Animation', 'elementor-pro' ),
                 'type' => Controls_Manager::SELECT,
                 'options' => [
-                    'none' => __('None', 'elementor'),
-                    'show_on_hover' => __('Show on hover', 'postgallery'),
-                    'hide_on_hover' => __('Hide on hover', 'postgallery')
+                    'none' => __( 'None', 'elementor' ),
+                    'show_on_hover' => __( 'Show on hover', 'postgallery' ),
+                    'hide_on_hover' => __( 'Hide on hover', 'postgallery' )
                 ]
             ]
         );

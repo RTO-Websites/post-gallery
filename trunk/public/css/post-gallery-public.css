@@ -214,15 +214,13 @@ body.liteboxgallery-open {
   opacity: 1;
 }
 
-
-
 .postgallery-wrapper .item .caption-wrapper {
   position: absolute;
   font-size: 1rem;
   pointer-events: none;
   left: 0;
   right: 0;
-  z-index: 999999;
+  z-index: 100;
 }
 
 .has-caption-animation .caption-wrapper {
