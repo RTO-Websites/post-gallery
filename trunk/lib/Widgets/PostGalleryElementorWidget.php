@@ -715,7 +715,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgcaption_animation_nonhover',
             [
-                'label' => __( 'Custom-CSS for not hovered', 'postgallery' ),
+                'label' => __( 'Custom-CSS for non hover', 'postgallery' ),
                 'type' => Controls_Manager::CODE,
                 'default' => '',
                 'condition' => [
@@ -730,7 +730,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgcaption_animation_hover',
             [
-                'label' => __( 'Custom-CSS for hovered', 'postgallery' ),
+                'label' => __( 'Custom-CSS for hover', 'postgallery' ),
                 'type' => Controls_Manager::CODE,
                 'default' => '',
                 'condition' => [
