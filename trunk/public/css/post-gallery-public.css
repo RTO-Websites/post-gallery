@@ -224,9 +224,11 @@ body.liteboxgallery-open {
   pointer-events: none;
   left: 0;
   right: 0;
+  width: auto;
+  transition: all 0.3s ease;
   z-index: 100;
 }
-
+/*
 .has-caption-animation .caption-wrapper {
   transition: all 0.3s ease;
 }
@@ -245,7 +247,7 @@ body.liteboxgallery-open {
 
 .caption-animation-hide-on-hover .item:hover .caption-wrapper {
   opacity: 0;
-}
+}*/
 
 .postgallery-wrapper .pg-theme-thumbs .post-gallery_thumb {
   position: relative;

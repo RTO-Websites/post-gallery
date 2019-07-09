@@ -300,7 +300,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Columns', 'postgallery' ),
                 'type' => Controls_Manager::NUMBER,
-                'default' => 1,
+                'default' => 3,
                 'min' => 1,
                 'max' => 24,
                 'selectors' => [
@@ -339,7 +339,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Use Elementor-Litebox', 'postgallery' ),
                 'type' => Controls_Manager::SWITCHER,
-                'default' => '',
+                'default' => 'on',
                 'return_value' => 'on',
             ]
         );
@@ -360,7 +360,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'label' => __( 'Masonry', 'postgallery' ),
                 'type' => Controls_Manager::SELECT,
-                'default' => 0,
+                'default' => 'on',
                 'options' => [
                     0 => __( 'off' ),
                     'on' => __( 'on' ),
@@ -636,7 +636,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pg_caption_headline_margin',
             [
                 'type' => Controls_Manager::HEADING,
-                'label' => __('Margin', 'elementor'),
+                'label' => __('Margin & Borders', 'postgallery'),
             ]
         );
         $this->add_control(
@@ -663,6 +663,30 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
+
+        $this->add_group_control(
+            Group_Control_Border::get_type(),
+            [
+                'name' => 'pgcaption_border',
+                'selector' => '{{WRAPPER}} .item .caption-wrapper',
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'pgcaption_border_radius',
+            [
+                'label' => __( 'Border Radius', 'elementor' ),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%' ],
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+
+
         $this->add_control(
             'pg_caption_sperator_animation',
             [
@@ -682,24 +706,66 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pgcaption_animation',
             [
                 'label' => __( 'Animation', 'elementor-pro' ),
-                'type' => Controls_Manager::SELECT,
-                'options' => [
-                    'none' => __( 'None', 'elementor' ),
-                    'show_on_hover' => __( 'Show on hover', 'postgallery' ),
-                    'hide_on_hover' => __( 'Hide on hover', 'postgallery' )
-                ]
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'return_value' => 'on',
             ]
         );
 
+        $this->add_control(
+            'pgcaption_animation_nonhover',
+            [
+                'label' => __( 'Custom-CSS for not hovered', 'postgallery' ),
+                'type' => Controls_Manager::CODE,
+                'default' => '',
+                'condition' => [
+                    'pgcaption_animation' => 'on',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .item .caption-wrapper' => '{{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'pgcaption_animation_hover',
+            [
+                'label' => __( 'Custom-CSS for hovered', 'postgallery' ),
+                'type' => Controls_Manager::CODE,
+                'default' => '',
+                'condition' => [
+                    'pgcaption_animation' => 'on',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .item:hover .caption-wrapper' => '{{VALUE}}',
+                ],
+            ]
+        );
 
         $this->add_control(
             'pgcaption_animation_duration',
             [
-                'label' => __( 'Animation-Duration', 'elementor-pro' ) . ' (ms)',
+                'label' => __( 'Animation Duration', 'postgallery' ) . ' (ms)',
                 'type' => Controls_Manager::NUMBER,
                 'default' => '300',
                 'selectors' => [
-                    '{{WRAPPER}} .has-caption-animation .caption-wrapper' => 'transition-duration: {{VALUE}}ms;',
+                    '{{WRAPPER}} .item .caption-wrapper' => 'transition-duration: {{VALUE}}ms;',
+                ],
+                'condition' => [
+                    'pgcaption_animation' => 'on',
+                ]
+            ]
+        );
+
+        $this->add_control(
+            'pgcaption_overflow_hidden',
+            [
+                'label' => __( 'Overflow hidden', 'postgallery' ),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'return_value' => 'hidden',
+                'selectors' => [
+                    '{{WRAPPER}} .item .inner' => 'overflow: {{VALUE}};',
                 ],
             ]
         );
