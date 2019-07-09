@@ -205,6 +205,10 @@ body.liteboxgallery-open {
   box-sizing: border-box;
 }
 
+.postgallery-wrapper .item .inner {
+  position: relative;
+}
+
 .with-animation .item {
   transition: all 0.3s linear;
   opacity: 0;
