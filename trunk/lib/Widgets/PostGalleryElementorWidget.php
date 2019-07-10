@@ -121,7 +121,7 @@ class PostGalleryElementorWidget extends Widget_Base {
     public function searchElements( array $data, string $type ) {
         $output = [];
         foreach ( $data as $element ) {
-            if ( !empty( $element['widgetType'] ) && $element['widgetType'] === 'media-carousel' ) {
+            if ( !empty( $element['widgetType'] ) && $element['widgetType'] === $type ) {
                 $output[] = $element;
             }
 

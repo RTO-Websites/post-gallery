@@ -10,7 +10,7 @@ function initPostGalleryElementor() {
   // change gap or item-ratio
   jQuery(document).on('change', 'input[data-setting="size"],' +
     '.elementor-control-column_gap input,' +
-    '.elementor-control-columns input,'  +
+    '.elementor-control-columns input,' +
     '.elementor-control-no_grid input,' +
     '.elementor-control-row_gap input', checkItemRatio);
 
@@ -64,12 +64,12 @@ function checkItemRatio() {
  * @returns {boolean}
  */
 function checkMasonry() {
-  if (typeof(jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery.fn.masonry) !== 'undefined') {
+  if (typeof (jQuery('#elementor-preview-iframe')[0].contentWindow.jQuery.fn.masonry) !== 'undefined') {
     return true;
   }
 
   // hide options for js-masonry in widget
-  jQuery('.elementor-control-masonry select option').each(function(index, element) {
+  jQuery('.elementor-control-masonry select option').each(function (index, element) {
     if (element.value == 'on' || element.value == 'horizontal') {
       jQuery(element).hide();
     }
@@ -133,7 +133,7 @@ function initElementorAddButton() {
 function loadUpload() {
   let postid = jQuery('select[data-setting="pgimgsource"]').val();
   if (postid == 0) {
-    postid = ElementorConfig.post_id;
+    postid = ElementorConfig.document.id;
   }
   jQuery.post(ajaxurl + "?action=postgalleryGetImageUpload&post=" + postid,
     function (data, textStatus) {
@@ -149,7 +149,7 @@ function loadUpload() {
  * Init drag&drop upload
  */
 function initUpload() {
-  if (typeof(postgalleryLang) !== 'undefined') {
+  if (typeof (postgalleryLang) !== 'undefined') {
     // add upload
     pgInitUpload();
   }
@@ -161,7 +161,7 @@ function initUpload() {
  */
 function updateElementorFields() {
 
-  if (typeof(elementor) == 'undefined') {
+  if (typeof (elementor) == 'undefined') {
     return;
   }
   let data = [],
@@ -181,8 +181,13 @@ function updateElementorFields() {
  */
 function checkThumbsize() {
   let select = jQuery('.elementor-control-imageSize select'),
-    selectedVal = select.val(),
-    sizes = selectedVal.split('x');
+    selectedVal = select.val();
+
+  if (!select.length || typeof (selectedVal) === 'undefined') {
+    return;
+  }
+
+  let sizes = selectedVal.split('x');
 
   if (selectedVal == 0) {
     // custom size
