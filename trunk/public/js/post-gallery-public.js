@@ -1,225 +1,224 @@
 (function ($) {
-  'use strict';
+    'use strict';
 
-  /**
-   * DOM-Ready
-   */
-  $(function () {
-    window.litebox = new LiteboxGallery(window.pgConfig.liteboxArgs);
-    // init masonry
-    window.pgInitMasonry();
-    window.pgImageAnimationTimeout = setTimeout(function () {
-      window.startPgImageAnimation();
-    }, 200);
-  });
-
-  $(window).on('resize', function () {
-    clearTimeout(window.pgRefreshTimeout);
-    window.pgRefreshTimeout = setTimeout(function () {
-      $('.postgallery-slider').each(function (index, element) {
-        $(element).trigger('refresh.owl.carousel');
-      });
-    }, 100);
-  });
-
-
-  // restart image animation on widget change
-  $(window).on('elementor/frontend/init', function () {
-    elementorFrontend.hooks.addAction('frontend/element_ready/postgallery.default', function () {
-      window.startPgImageAnimation();
+    /**
+     * DOM-Ready
+     */
+    $(function () {
+      window.litebox = new LiteboxGallery(window.pgConfig.liteboxArgs);
+      // init masonry
       window.pgInitMasonry();
+      window.pgImageAnimationTimeout = setTimeout(function () {
+        window.startPgImageAnimation();
+      }, 200);
     });
-  });
 
-  // init js masonry
-  window.pgInitMasonry = function () {
-    if (!$.fn.masonry) {
-      return;
-    }
-    $('.postgallery-wrapper.with-js-masonry .gallery').each(function (index, element) {
-      if (element.postgalleryMasonry) {
-        $(element).masonry('destroy');
-      }
-
-      element.postgalleryMasonry = $(element).masonry({
-        // set itemSelector so .grid-sizer is not used in layout
-        itemSelector: '.item',
-        // use element for option
-        columnWidth: '.item',
-        percentPosition: true,
-        horizontalOrder: $(element).parent().hasClass('js-masonry-horizontal'),
-      });
-
-      element.postgalleryMasonry.imagesLoaded().progress(function () {
-        element.postgalleryMasonry.masonry('layout');
-      });
-    });
-  };
-
-  window.getFullsizeThumbs = function (pics, owlSliderId, callback) {
-    var sizes = pgCheckImageSize();
-
-    $.ajax({
-      'type': 'get',
-      'url': window.pgConfig.websiteUrl + '/?getThumbList',
-      'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
-      'success': function (data, textStatus) {
-        try {
-          window.litebox.picsData = $.parseJSON(data);
-        } catch (e) {
-          window.litebox.picsData = pics;
-        }
-        if (typeof (callback) === 'function') {
-          callback();
-        }
-      },
-      'error': function (jqXHR, textStatus, errorThrown) {
-        console.log('pg load fail', jqXHR, textStatus, errorThrown);
-        if (typeof (callback) === 'function') {
-          callback();
-        }
-      }
-    });
-  };
-
-  window.getThumbs = function (pics, width, height, callback, scale) {
-    if (typeof (scale) === 'undefined') {
-      scale = 0;
-    }
-    $.ajax({
-      'type': 'get',
-      'url': window.pgConfig.websiteUrl + '/?getThumbList',
-      'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
-      'success': function (data, textStatus) {
-        try {
-          window.litebox.picsData = $.parseJSON(data);
-        } catch (e) {
-          window.litebox.picsData = pics;
-        }
-        if (typeof (callback) === 'function') {
-          callback();
-        }
-      }
-    });
-  };
-
-  window.pgCheckImageSize = function () {
-    var gWidth = $(window).width(),
-      gHeight = $(window).height(),
-      sizes = [
-        [1920, 1600],
-        [1600, 1280],
-        [1280, 1080],
-        [1080, 800],
-        [800, 600],
-        [600, 480],
-        [480, 320]
-      ];
-
-    if (gHeight == 0) {
-      gHeight = 1080;
-      gWidth = 1920;
-    }
-
-    if (gWidth > 1920) {
-      gWidth = 2560;
-    }
-    if (gHeight > 1920) {
-      gHeight = 2560;
-    }
-
-    for (var i in sizes) {
-      if (gHeight <= sizes[i][0] && gHeight > sizes[i][1]) {
-        gHeight = sizes[i][0];
-      }
-      if (gWidth <= sizes[i][0] && gWidth > sizes[i][1]) {
-        gWidth = sizes[i][0];
-      }
-    }
-
-    if (gHeight <= 320) {
-      gHeight = 320;
-    }
-
-    if (gWidth <= 320) {
-      gWidth = 320;
-    }
-
-    return [gWidth, gHeight];
-  };
-
-
-  /**
-   * Register an new imageAnimation
-   *
-   * @param id
-   * @param timeBetween
-   */
-  window.registerPgImageAnimation = function (id, timeBetween) {
-    if (typeof (window.pgImageAnimations) === 'undefined') {
-      window.pgImageAnimations = {};
-    }
-    window.pgImageAnimations[id] = timeBetween;
-  };
-
-
-  /**
-   * Start imageAnimation
-   */
-  window.startPgImageAnimation = function () {
-    if (typeof (window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
-      return;
-    }
-
-    // loop all container
-    for (var id in window.pgImageAnimations) {
-      var initialDelay = $('#' + id).data('animationdelay');
-      if (isNaN(initialDelay)) {
-        initialDelay = 0;
-      }
-      if ($('#' + id).isVisible()) {
-        var items = $('#' + id + ' .item'),
-          timeBetween = window.pgImageAnimations[id];
-
-        items.each(function (index, element) {
-          element = $(element);
-          // loop items
-          setTimeout(function () {
-            element.addClass('show');
-          }, timeBetween * element.index() + initialDelay);
+    $(window).on('resize', function () {
+      clearTimeout(window.pgRefreshTimeout);
+      window.pgRefreshTimeout = setTimeout(function () {
+        $('.postgallery-slider').each(function (index, element) {
+          $(element).trigger('refresh.owl.carousel');
         });
+      }, 100);
+    });
 
-        delete (window.pgImageAnimations[id]);
+
+    // restart image animation on widget change
+    $(window).on('elementor/frontend/init', function () {
+      elementorFrontend.hooks.addAction('frontend/element_ready/postgallery.default', function () {
+        window.startPgImageAnimation();
+        window.pgInitMasonry();
+      });
+    });
+
+    // init js masonry
+    window.pgInitMasonry = function () {
+      if (!$.fn.masonry) {
+        return;
       }
-    }
-  };
+      $('.postgallery-wrapper.with-js-masonry .gallery').each(function (index, element) {
+        if (element.postgalleryMasonry) {
+          $(element).masonry('destroy');
+        }
 
-  /**
-   * Set active-class to current image from media-carousel
-   *
-   * @param id
-   */
-  window.setActiveSlide = function(id) {
-    var items = $('#' + id + ' .item'),
-      currentItem = $('#' + id + ' .item:nth-child(' + ($('#' + id)[0].connectedSwiper.realIndex + 1) + ')');
+        element.postgalleryMasonry = $(element).masonry({
+          // set itemSelector so .grid-sizer is not used in layout
+          itemSelector: '.item',
+          // use element for option
+          columnWidth: '.item',
+          percentPosition: true,
+          horizontalOrder: $(element).parent().hasClass('js-masonry-horizontal'),
+        }).imagesLoaded().progress(function () {
+          element.postgalleryMasonry.masonry('layout');
+        });
+      });
+    };
 
-    items.removeClass('current');
-    currentItem.addClass('current');
-  };
+    window.getFullsizeThumbs = function (pics, owlSliderId, callback) {
+      let sizes = pgCheckImageSize();
 
-  /**
-   * Set pg image animation on scroll and load event
-   */
-  $(document).on('scroll', function () {
-    clearTimeout(window.pgImageAnimationTimeout);
+      $.ajax({
+        'type': 'get',
+        'url': window.pgConfig.websiteUrl + '/?getThumbList',
+        'data': {'pics': pics, 'width': sizes[0], 'height': sizes[1]},
+        'success': function (data, textStatus) {
+          try {
+            window.litebox.picsData = $.parseJSON(data);
+          } catch (e) {
+            window.litebox.picsData = pics;
+          }
+          if (typeof (callback) === 'function') {
+            callback();
+          }
+        },
+        'error': function (jqXHR, textStatus, errorThrown) {
+          console.log('pg load fail', jqXHR, textStatus, errorThrown);
+          if (typeof (callback) === 'function') {
+            callback();
+          }
+        }
+      });
+    };
 
-    window.pgImageAnimationTimeout = setTimeout(function () {
-      window.startPgImageAnimation();
-    }, 200);
-  });
+    window.getThumbs = function (pics, width, height, callback, scale) {
+      if (typeof (scale) === 'undefined') {
+        scale = 0;
+      }
+      $.ajax({
+        'type': 'get',
+        'url': window.pgConfig.websiteUrl + '/?getThumbList',
+        'data': {'pics': pics, 'width': width, 'height': height, scale: scale},
+        'success': function (data, textStatus) {
+          try {
+            window.litebox.picsData = $.parseJSON(data);
+          } catch (e) {
+            window.litebox.picsData = pics;
+          }
+          if (typeof (callback) === 'function') {
+            callback();
+          }
+        }
+      });
+    };
 
-  //window.startPgImageAnimation();
-})(jQuery);
+    window.pgCheckImageSize = function () {
+      let gWidth = $(window).width(),
+        gHeight = $(window).height(),
+        sizes = [
+          [1920, 1600],
+          [1600, 1280],
+          [1280, 1080],
+          [1080, 800],
+          [800, 600],
+          [600, 480],
+          [480, 320]
+        ];
+
+      if (gHeight == 0) {
+        gHeight = 1080;
+        gWidth = 1920;
+      }
+
+      if (gWidth > 1920) {
+        gWidth = 2560;
+      }
+      if (gHeight > 1920) {
+        gHeight = 2560;
+      }
+
+      for (let i in sizes) {
+        if (gHeight <= sizes[i][0] && gHeight > sizes[i][1]) {
+          gHeight = sizes[i][0];
+        }
+        if (gWidth <= sizes[i][0] && gWidth > sizes[i][1]) {
+          gWidth = sizes[i][0];
+        }
+      }
+
+      if (gHeight <= 320) {
+        gHeight = 320;
+      }
+
+      if (gWidth <= 320) {
+        gWidth = 320;
+      }
+
+      return [gWidth, gHeight];
+    };
+
+
+    /**
+     * Register an new imageAnimation
+     *
+     * @param id
+     * @param timeBetween
+     */
+    window.registerPgImageAnimation = function (id, timeBetween) {
+      if (typeof (window.pgImageAnimations) === 'undefined') {
+        window.pgImageAnimations = {};
+      }
+      window.pgImageAnimations[id] = timeBetween;
+    };
+
+
+    /**
+     * Start imageAnimation
+     */
+    window.startPgImageAnimation = function () {
+      if (typeof (window.pgImageAnimations) === 'undefined' || !Object.keys(window.pgImageAnimations).length) {
+        return;
+      }
+
+      // loop all container
+      for (let id in window.pgImageAnimations) {
+        let initialDelay = $('#' + id).data('animationdelay');
+        if (isNaN(initialDelay)) {
+          initialDelay = 0;
+        }
+        if ($('#' + id).isVisible()) {
+          let items = $('#' + id + ' .item'),
+            timeBetween = window.pgImageAnimations[id];
+
+          items.each(function (index, element) {
+            element = $(element);
+            // loop items
+            setTimeout(function () {
+              element.addClass('show');
+            }, timeBetween * element.index() + initialDelay);
+          });
+
+          delete (window.pgImageAnimations[id]);
+        }
+      }
+    };
+
+    /**
+     * Set active-class to current image from media-carousel
+     *
+     * @param id
+     */
+    window.setActiveSlide = function (id) {
+      let items = $('#' + id + ' .item'),
+        currentItem = $('#' + id + ' .item:nth-child(' + ($('#' + id)[0].connectedSwiper.realIndex + 1) + ')');
+
+      items.removeClass('current');
+      currentItem.addClass('current');
+    };
+
+    /**
+     * Set pg image animation on scroll and load event
+     */
+    $(document).on('scroll', function () {
+      clearTimeout(window.pgImageAnimationTimeout);
+
+      window.pgImageAnimationTimeout = setTimeout(function () {
+        window.startPgImageAnimation();
+      }, 200);
+    });
+
+    //window.startPgImageAnimation();
+  }
+)(jQuery);
 
 function stopOwlPropagation(element) {
   jQuery(element).on('to.owl.carousel', function (e) {
@@ -258,7 +257,7 @@ jQuery.fn.isVisible = function (offsetTop, offsetLeft, offsetBottom, offsetRight
     offsetRight = 0;
   }
 
-  var rect = this[0].getBoundingClientRect();
+  let rect = this[0].getBoundingClientRect();
   return (
     (rect.height > 0 || rect.width > 0) &&
     rect.bottom + offsetBottom >= 0 &&

@@ -11,6 +11,17 @@
             class="gallery pg-theme-thumbs pg-theme-list <?php echo $this->option( 'containerClass' ); ?>">
         <?php foreach ( $images as $image ): ?>
             <?php
+            $count += 1;
+
+            if ( !empty( $appendList[$count] ) ) {
+                foreach ( $appendList[$count] as $appendTemplate ) {
+                    echo '<div class="item">';
+                    echo do_shortcode( '[elementor-template id=' . $appendTemplate . ']' );
+                    echo '</div>';
+                }
+            }
+
+
             $thumbUrl = \Lib\PostGalleryImage::getThumbUrl( $image['path'],
                 [
                     'width' => $this->option( 'thumbWidth' ),

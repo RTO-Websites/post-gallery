@@ -7,7 +7,9 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
+use Elementor\Modules\DynamicTags\Module;
 use Elementor\Plugin;
+use Elementor\Repeater;
 use Elementor\Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -166,6 +168,21 @@ class PostGalleryElementorWidget extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'pgimagesource_dynamic',
+            [
+                'label' => __( 'Foreign Image-Source', 'postgallery' ),
+                'type' => Controls_Manager::MEDIA,
+                'dynamic' => [
+                    'active' => true,
+                    'categories' => [
+                        Module::GALLERY_CATEGORY,
+                        Module::MEDIA_CATEGORY,
+                    ],
+                ],
+            ]
+        );
+
         $imageSizes = [
             0 => __( 'Custom' ),
             'srcset' => __( 'Responsive (srcset)', 'postgallery' ),
@@ -273,6 +290,7 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->_register_border_controls();
         $this->_register_caption_controls();
         $this->_register_animation_controls();
+        $this->_register_append_controls();
     }
 
     private function _register_style_controls() {
@@ -486,6 +504,9 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->end_controls_section();
     }
 
+    /**
+     * Register controls for captions
+     */
     private function _register_caption_controls() {
         $metaSources = [
             'title' => __( 'Titel' ),
@@ -560,7 +581,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pg_caption_headline_style',
             [
                 'type' => Controls_Manager::HEADING,
-                'label' => __('Style', 'elementor'),
+                'label' => __( 'Style', 'elementor' ),
             ]
         );
         $this->add_group_control(
@@ -636,7 +657,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pg_caption_headline_margin',
             [
                 'type' => Controls_Manager::HEADING,
-                'label' => __('Margin & Borders', 'postgallery'),
+                'label' => __( 'Margin & Borders', 'postgallery' ),
             ]
         );
         $this->add_control(
@@ -686,7 +707,6 @@ class PostGalleryElementorWidget extends Widget_Base {
         );
 
 
-
         $this->add_control(
             'pg_caption_sperator_animation',
             [
@@ -698,7 +718,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             'pg_caption_headline_animation',
             [
                 'type' => Controls_Manager::HEADING,
-                'label' => __('Animation', 'elementor'),
+                'label' => __( 'Animation', 'elementor' ),
             ]
         );
 
@@ -753,7 +773,7 @@ class PostGalleryElementorWidget extends Widget_Base {
                 ],
                 'condition' => [
                     'pgcaption_animation' => 'on',
-                ]
+                ],
             ]
         );
 
@@ -856,6 +876,74 @@ class PostGalleryElementorWidget extends Widget_Base {
     }
 
     /**
+     * Register controls to append templates
+     */
+    private function _register_append_controls() {
+        $this->start_controls_section(
+            'section_postgallery_append',
+            [
+                'label' => __( 'PostGallery Append', 'postgallery' ),
+                'tab' => Controls_Manager::TAB_ADVANCED,
+            ]
+        );
+
+        $repeater = new Repeater();
+
+        $repeater->add_control(
+            'template_to_append',
+            [
+                'label' => __( 'Template to append', 'elegesamt' ),
+                'type' => Controls_Manager::SELECT,
+                'default' => 0,
+                'options' => $this->getTemplateList(),
+            ]
+        );
+
+        $repeater->add_control(
+            'position_to_append',
+            [
+                'label' => __( 'At position', 'elegesamt' ),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 1,
+                'min' => 1,
+            ]
+        );
+
+
+        $this->add_control(
+            'append_templates',
+            [
+                'label' => __( 'Append Templates', 'postgallery' ),
+                'type' => Controls_Manager::REPEATER,
+                'fields' => $repeater->get_controls(),
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+
+    /**
+     * Returns template lists for elementor-templates
+     *
+     * @return array
+     */
+    private function getTemplateList(): array {
+        $templateList = [];
+
+        $templatePosts = get_posts( [
+            'post_type' => 'elementor_library',
+            'numberposts' => -1,
+        ] );
+
+        foreach ( $templatePosts as $templatePost ) {
+            $templateList[$templatePost->ID] = $templatePost->post_title;
+        }
+
+        return $templateList;
+    }
+
+    /**
      * Render the widget output on the frontend.
      *
      * Written in PHP and used to generate the final HTML.
@@ -865,7 +953,9 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @access protected
      */
     protected function render() {
+        $srcDynamic = $this->get_settings_for_display( 'pgimagesource_dynamic' );
         $settings = $GLOBALS['elementorWidgetSettings'] = $this->get_settings();
+        $settings['pgimagesource_dynamic'] = $srcDynamic;
         $pgInstance = PostGalleryPublic::getInstance();
 
         if ( !empty( $pgInstance->option( 'disableScripts' ) ) || empty( $pgInstance->option( 'enableLitebox' ) ) ) {
@@ -882,23 +972,37 @@ class PostGalleryElementorWidget extends Widget_Base {
         }
 
         $GLOBALS['PgIsElementorWidget'] = true;
-        $gallery = $pgInstance->returnGalleryHtml( $args['template'], $loadFrom, $args );
+        $html = $pgInstance->returnGalleryHtml( $args['template'], $loadFrom, $args );
+        $html = $this->setLitebox( $html, $args );
 
+        $GLOBALS['PgIsElementorWidget'] = false;
+
+        // echo gallery html
+        echo $html;
+    }
+
+    /**
+     * Choose which litebox will be used
+     *
+     * @param string $html
+     * @param array $args
+     *
+     * @return string
+     */
+    private function setLitebox( $html, $args ) {
         if ( !empty( $args['connectedWith'] ) ) {
             // no litebox, connect with media-carousel
-            $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-open-lightbox="no" ', $gallery );
+            $html = str_replace( '<a ', '<a class="no-litebox" data-elementor-open-lightbox="no" ', $html );
 
         } else if ( !empty( $args['pgelementorlitebox'] ) && $args['pgelementorlitebox'] == 'on' ) {
             // use elementor litebox
-            $gallery = str_replace( '<a ', '<a class="no-litebox" data-elementor-lightbox-slideshow="' . $this->get_id() . '" ', $gallery );
+            $html = str_replace( '<a ', '<a class="no-litebox" data-elementor-lightbox-slideshow="' . $this->get_id() . '" ', $html );
         } else {
             // use postgallery litebox
-            $gallery = str_replace( '<a ', '<a data-elementor-open-lightbox="no" ', $gallery );
+            $html = str_replace( '<a ', '<a data-elementor-open-lightbox="no" ', $html );
         }
-        $GLOBALS['PgIsElementorWidget'] = false;
 
-        // echo gallery
-        echo $gallery;
+        return $html;
     }
 
     /**
@@ -938,8 +1042,9 @@ class PostGalleryElementorWidget extends Widget_Base {
             $args['template'] = '';
         }
 
-        if ( isset( $settings['equal_height'] ) ) {
-            $args['equalHeight'] = $settings['equal_height'];
+        $args['equalHeight'] = false;
+        if ( !empty( $settings['equal_height'] ) ) {
+            $args['equalHeight'] = true;
         }
 
         if ( isset( $settings['item_ratio'] ) ) {

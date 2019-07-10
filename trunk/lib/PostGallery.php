@@ -399,7 +399,9 @@ class PostGallery {
             self::$allPosts = $allPosts;
         }
 
-        $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
+        $selectPosts = [
+            0 => __( 'Self', 'postgallery' )
+        ];
 
         foreach ( $allPosts as $post ) {
             if ( in_array( $post->post_type, $filterPostTypes ) ) {

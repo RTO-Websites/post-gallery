@@ -379,6 +379,9 @@ class PostGalleryPublic {
         $tmpOptions = $this->options;
         $images = PostGalleryImageList::get( $postid );
 
+        if ( !empty( $args['pgimagesource_dynamic'] ) ) {
+            $images = $images + PostGalleryImageList::getByDynamic( $args['pgimagesource_dynamic'] );
+        }
 
         if ( empty( $images )
             && class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode()
@@ -416,6 +419,11 @@ class PostGalleryPublic {
             $dataAttributes .= ' data-animationdelay="' . $this->option( 'imageAnimationDelay' ) . '" ';
         }
 
+
+        $count = 0;
+
+        $appendList = $this->getAppendedTemplateList();
+
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
         echo '<div class="postgallery-wrapper ' . $wrapperClass . '"  id="' . $id . '" ' . $dataAttributes . '>';
@@ -443,6 +451,27 @@ class PostGalleryPublic {
         $this->options = $tmpOptions;
 
         return $content;
+    }
+
+    /**
+     * Returns list of appended templates, ordered by position to append
+     *
+     * @return array
+     */
+    private function getAppendedTemplateList() {
+        if ( empty( $this->option( 'append_templates' ) ) ) {
+            return [];
+        }
+        $appendList = [];
+        foreach ( $this->option( 'append_templates' ) as $item ) {
+            if ( empty( $appendList[$item['position_to_append']] ) ) {
+                $appendList[$item['position_to_append']] = [];
+            }
+
+            $appendList[$item['position_to_append']][] = $item['template_to_append'];
+        }
+
+        return $appendList;
     }
 
     public function getCaption( $image ) {
