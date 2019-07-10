@@ -421,7 +421,6 @@ class PostGallery {
             'maxImageHeight' => get_theme_mod( 'postgallery_maxImageHeight', 2560 ),
 
             'disableScripts' => get_theme_mod( 'postgallery_disableScripts', false ),
-            'disableGroupedMedia' => get_theme_mod( 'postgallery_disableGroupedMedia', false ),
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
             'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),

@@ -1,27 +1,27 @@
-
 /**
  * Onload
  */
 jQuery(window).on('load', function () {
-  wp.media.model.Query.defaultArgs.posts_per_page = -1;
-  setTimeout(hookMediaGrid, 400);
-  if (typeof (wp.media) !== 'undefined' && typeof (wp.media.frame) !== 'undefined') {
-    wp.media.frame.on('open', hookMediaGrid);
+  if (typeof (wp.media) === 'undefined' || typeof (wp.media.model) === 'undefined' || typeof (wp.media.frame) === 'undefined') {
+    return;
   }
 
-  setInterval(function () {
-    if (jQuery('.attachments > .attachment:not([data-id="true"])').length) {
-      hookMediaGrid();
-    }
-  }, 500);
-});
+  let groupButton = jQuery('<div class="button media-button button-primary button-large media-button-select">Group</div>');
+  groupButton.css({marginLeft: '12px'});
+  groupButton.on('click', function() {
+    setInterval(function () {
+      if (jQuery('.attachments > .attachment:not([data-id="true"])').length) {
+        hookMediaGrid();
+      }
+    },400 );
+  });
+  jQuery('.media-toolbar-secondary').append(groupButton);
 
-jQuery(function() {
-  if (typeof (wp.media) !== 'undefined' && typeof (wp.media.model) !== 'undefined') {
-    wp.media.model.Query.defaultArgs.posts_per_page = -1;
-  }
-});
+  wp.media.frame.on('open', function() {
+    jQuery('.media-toolbar-secondary').append(groupButton);
+  });
 
+});
 
 /**
  * Hooks in wordpress media and group images by parent-post
@@ -31,7 +31,7 @@ window.hookMediaGrid = function () {
     return;
   }
 
-  var containers = jQuery('.attachments-browser .attachments');
+  let containers = jQuery('.attachments-browser .attachments');
 
   if (!containers.length) {
     return;
@@ -39,7 +39,7 @@ window.hookMediaGrid = function () {
 
   containers.each(function (index, container) {
     container = jQuery(container);
-    var children = container.find('.attachment'),
+    let children = container.find('.attachment'),
       directChildren = container.find('> .attachment'),
       attachmentIds = [];
 
@@ -75,8 +75,8 @@ window.hookMediaGrid = function () {
         }
 
         // loop groups
-        for (var index in data) {
-          var parent = data[index],
+        for (let index in data) {
+          let parent = data[index],
             groupContainer = jQuery('<li class="media-group-by-parent" data-parent="' + index + '">'),
             groupContainerUl = jQuery('<ul class="media-group-ul" />'),
             headline = jQuery('<h2 class="media-group-headline" />');
@@ -88,8 +88,8 @@ window.hookMediaGrid = function () {
           groupContainer.append(groupContainerUl);
 
           // loop attachments
-          for (var attachmentIndex in data[index].posts) {
-            var posts = data[index].posts,
+          for (let attachmentIndex in data[index].posts) {
+            let posts = data[index].posts,
               attachmentId = posts[attachmentIndex]['id'],
               element = container.find('.attachment[data-id="' + attachmentId + '"]:not(.cloned)'),
               url = posts[attachmentIndex]['url'];
@@ -127,13 +127,13 @@ window.hookMediaGrid = function () {
  */
 window.addMediaGroupPostThumbnail = function (parent, groupContainerUl, container) {
   if (parent.thumbnail && !groupContainerUl.find('.attachment[data-id="' + parent.thumbnail + '"]').length) {
-    var thumbnail = container.find('.attachment[data-id="' + parent.thumbnail + '"]:not(.cloned)').clone(false);
+    let thumbnail = container.find('.attachment[data-id="' + parent.thumbnail + '"]:not(.cloned)').clone(false);
     thumbnail.addClass('cloned is-post-thumbnail');
     thumbnail.removeClass('selected details');
     window.addLabelsToMediaItem(thumbnail, parent, '');
 
     thumbnail.on('click', function () {
-      var original = container.find('.attachment[data-id="' + jQuery(this).data('id') + '"]:not(.cloned)');
+      let original = container.find('.attachment[data-id="' + jQuery(this).data('id') + '"]:not(.cloned)');
       original.click();
 
       if (original.hasClass('selected')) {
@@ -184,7 +184,7 @@ window.addPathToMediaItem = function (element, path) {
     return;
   }
 
-  var pathSplit = path.split('wp-content/uploads/');
+  let pathSplit = path.split('wp-content/uploads/');
   if (typeof (pathSplit[1]) !== 'undefined') {
     path = pathSplit[1].replace('gallery/', '');
   } else {
@@ -195,9 +195,9 @@ window.addPathToMediaItem = function (element, path) {
   }
   element.attr('data-path', path);
 
-  var pathElement = jQuery('<span class="media-group-path" />');
+  let pathElement = jQuery('<span class="media-group-path" />');
   pathSplit = path.split('/');
-  var filename = pathSplit.pop(),
+  let filename = pathSplit.pop(),
     pathOnly = pathSplit.join('/');
   pathElement.append('<span class="media-path">' + pathOnly + '/</span>');
   pathElement.append('<span class="media-filename">' + filename + '</span>');

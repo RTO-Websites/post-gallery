@@ -101,12 +101,6 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'default' => false,
                         'description' => 'Will disable litebox, slider and image-animations',
                     ],
-
-                    'disableGroupedMedia' => [
-                        'type' => 'checkbox',
-                        'label' => __( 'Disable grouped media', 'postgallery' ),
-                        'default' => false,
-                    ],
                 ],
             ];
 
