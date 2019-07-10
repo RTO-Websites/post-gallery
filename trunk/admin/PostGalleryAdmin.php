@@ -178,6 +178,7 @@ class PostGalleryAdmin {
         wp_enqueue_script( $this->pluginName, $pgUrl . 'js/post-gallery-admin.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-elementor', $pgUrl . 'js/post-gallery-elementor-admin.js', [ 'jquery' ], $this->version, false );
         wp_enqueue_script( $this->pluginName . '-uploadhandler', $pgUrl . 'js/upload-handler.js', [ 'jquery', 'plupload-all' ], $this->version, false );
+        wp_enqueue_script( $this->pluginName . '-mediagrid', $pgUrl . 'js/media-grid.js', [ 'jquery' ], $this->version, false );
 
         wp_localize_script( $this->pluginName, 'postgalleryLang', $this->getPostGalleryLang() );
     }
