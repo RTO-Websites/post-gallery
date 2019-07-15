@@ -929,6 +929,10 @@ class PostGalleryElementorWidget extends Widget_Base {
      * @return array
      */
     private function getTemplateList(): array {
+        if ( !filter_has_var( INPUT_GET, 'post' ) ) {
+            // prevents calling query in frontend
+            return [];
+        }
         $templateList = [];
 
         $templatePosts = get_posts( [
