@@ -106,7 +106,7 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
 
         $this->fields['postgallery-templateSettings'] =
             [
-                'title' => __( 'Template-Settings', 'postgallery' ),
+                'title' => __( 'Shortcode-Defaults', 'postgallery' ),
                 'fields' => [
                     'globalTemplate' => [
                         'label' => __( 'Global template', 'postgallery' ),

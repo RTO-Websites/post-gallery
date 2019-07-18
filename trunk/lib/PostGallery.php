@@ -83,7 +83,7 @@ class PostGallery {
     public function __construct() {
 
         $this->pluginName = 'postgallery';
-        $this->version = '1.0.0';
+        $this->version = '1.11.2';
         $this->options = PostGallery::getOptions();
 
         $this->loadDependencies();

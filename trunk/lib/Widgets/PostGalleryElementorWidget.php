@@ -77,7 +77,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      *
      */
     public function get_icon() {
-        return 'fa fa-image';
+        return 'eicons eicon-gallery-masonry';
     }
 
     /**
@@ -171,13 +171,12 @@ class PostGalleryElementorWidget extends Widget_Base {
         $this->add_control(
             'pgimagesource_dynamic',
             [
-                'label' => __( 'Foreign Image-Source', 'postgallery' ),
-                'type' => Controls_Manager::MEDIA,
+                'label' => __( 'Extra-Image-Source', 'postgallery' ),
+                'type' => Controls_Manager::GALLERY,
                 'dynamic' => [
                     'active' => true,
                     'categories' => [
                         Module::GALLERY_CATEGORY,
-                        Module::MEDIA_CATEGORY,
                     ],
                 ],
             ]
