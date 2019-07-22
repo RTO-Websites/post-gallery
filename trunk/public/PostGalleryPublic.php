@@ -315,6 +315,9 @@ class PostGalleryPublic {
      * @return string
      */
     public function addGalleryToContent( $content ) {
+        if ( empty( $GLOBALS['post'] ) ) {
+            return '';
+        }
         $position = get_post_meta( $GLOBALS['post']->ID, 'postgalleryPosition', true );
         $template = get_post_meta( $GLOBALS['post']->ID, 'postgalleryTemplate', true );
         if ( empty( $position ) || $position == 'global' ) {
