@@ -13,13 +13,13 @@
             <?php
             $count += 1;
 
-            if ( !empty( $appendList[$count] ) ) {
-                foreach ( $appendList[$count] as $appendTemplate ) {
+            if ( !empty( $appendList[$count] ) ):
+                foreach ( $appendList[$count] as $appendTemplate ):
                     echo '<div class="item">';
                     echo do_shortcode( '[elementor-template id=' . $appendTemplate . ']' );
                     echo '</div>';
-                }
-            }
+                endforeach;
+            endif;
 
 
             $thumbUrl = \Lib\PostGalleryImage::getThumbUrl( $image['path'],

@@ -5,7 +5,7 @@ class PostGalleryImageList {
     public static $allAttachments = [];
 
     public function __construct() {
-        self::getAllAttachmentIds();
+        self::loadAllAttachmentIds();
     }
 
     /**
@@ -415,7 +415,7 @@ class PostGalleryImageList {
     }
 
 
-    public static function getAllAttachmentIds() {
+    public static function loadAllAttachmentIds() {
         global $wpdb;
         $sql = "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' 
             AND meta_value LIKE '%gallery/%'";

@@ -477,6 +477,12 @@ class PostGalleryPublic {
         return $appendList;
     }
 
+    /**
+     * Returns image-caption based on setting
+     *
+     * @param array $image
+     * @return string
+     */
     public function getCaption( $image ) {
         switch ( $this->option( 'captionSource' ) ) {
             case 'title':
@@ -495,6 +501,8 @@ class PostGalleryPublic {
                 return $image['desc'];
                 break;
         }
+
+        return '';
     }
 
     /**
