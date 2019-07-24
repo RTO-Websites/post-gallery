@@ -128,15 +128,15 @@ class PostGalleryImageList {
     }
 
     /**
-     * Get list with attachments-data from an attachment-list
+     * Get list with attachments-data from an list of attachment-ids
      *
-     * @param array $imageIdList
+     * @param array $attachmentIds
      * @return array
      */
-    public static function getByDynamic( $imageIdList ): array {
+    public static function getByAttachmentIds( $attachmentIds ): array {
         $images = [];
-        foreach ( $imageIdList as $item ) {
-            if ( empty( $item) || empty( $item['id']) ) {
+        foreach ( $attachmentIds as $item ) {
+            if ( empty( $item ) || empty( $item['id'] ) ) {
                 continue;
             }
             $attachmentId = $item['id'];

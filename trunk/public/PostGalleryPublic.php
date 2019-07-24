@@ -383,7 +383,7 @@ class PostGalleryPublic {
         $images = PostGalleryImageList::get( $postid );
 
         if ( !empty( $args['pgimagesource_dynamic'] ) ) {
-            $images = $images + PostGalleryImageList::getByDynamic( $args['pgimagesource_dynamic'] );
+            $images = $images + PostGalleryImageList::getByAttachmentIds( $args['pgimagesource_dynamic'] );
         }
 
         if ( empty( $images )
