@@ -1,7 +1,7 @@
 /************************************
  * Author: RTO GmbH
  *
- * Last change: 11.06.2019 13:18
+ * Last change: 08.07.2019 09:35
  ************************************/
 var LiteboxGallery = function (args) {
   var win = window,
@@ -26,6 +26,7 @@ var LiteboxGallery = function (args) {
     debug,
     setEvents,
     getUrlFromPics,
+    isLiteboxOpenAllowed,
     init;
 
 
@@ -71,7 +72,7 @@ var LiteboxGallery = function (args) {
     // Find links with jpg/gif/png
     $(doc).on('click', linkSelector, function (event) {
       $(linkSelector).addClass('no-ajax');
-      if (!$(this).hasClass('no-litebox') && !$(this).data('elementor-lightbox-slideshow') && !$(this).data('elementor-open-lightbox')) {
+      if (isLiteboxOpenAllowed(this)) {
         event.preventDefault();
         self.openGallery(event.currentTarget);
       }
@@ -114,6 +115,28 @@ var LiteboxGallery = function (args) {
         }
       });
     }
+  };
+
+  /**
+   * Checks if litebox is allowed on clicked element
+   *
+   * @param element
+   * @returns {boolean}
+   */
+  isLiteboxOpenAllowed = function (element) {
+    if ($(element).hasClass('no-litebox')) {
+      return false;
+    }
+
+    if ($(element).data('elementor-lightbox-slideshow')) {
+      return false;
+    }
+
+    if ($(element).data('elementor-open-lightbox') && $(element).data('elementor-open-lightbox') !== 'no') {
+      return false;
+    }
+
+    return true;
   };
 
   /**

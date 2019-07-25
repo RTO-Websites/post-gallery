@@ -205,6 +205,10 @@ body.liteboxgallery-open {
   box-sizing: border-box;
 }
 
+.postgallery-wrapper .item .inner {
+  position: relative;
+}
+
 .with-animation .item {
   transition: all 0.3s linear;
   opacity: 0;
@@ -212,6 +216,17 @@ body.liteboxgallery-open {
 
 .with-animation .item.show {
   opacity: 1;
+}
+
+.postgallery-wrapper .item .caption-wrapper {
+  position: absolute;
+  font-size: 1rem;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  width: auto;
+  transition: all 0.3s ease;
+  z-index: 100;
 }
 
 .postgallery-wrapper .pg-theme-thumbs .post-gallery_thumb {

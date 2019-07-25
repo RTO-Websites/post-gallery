@@ -2,6 +2,11 @@
 
 class PostGalleryImageList {
     static $cachedImages = [];
+    public static $allAttachments = [];
+
+    public function __construct() {
+        self::loadAllAttachmentIds();
+    }
 
     /**
      * Sorting an image-array
@@ -53,7 +58,7 @@ class PostGalleryImageList {
      * @param int $postid
      * @return array
      */
-    public static function get( int $postid = null ): array {
+    public static function get( $postid = null ): array {
         if ( empty( $postid ) && empty( $GLOBALS['post'] ) ) {
             return [];
         }
@@ -61,6 +66,7 @@ class PostGalleryImageList {
             $postid = $GLOBALS['post']->ID;
             $post = $GLOBALS['post'];
         }
+
 
         // check if image list is in cache
         if ( isset( self::$cachedImages[$postid] ) ) {
@@ -94,58 +100,110 @@ class PostGalleryImageList {
         $uploadUrl = str_replace( get_bloginfo( 'wpurl' ), '', $uploadFullUrl );
         $images = [];
 
-        if ( file_exists( $uploadDir ) && is_dir( $uploadDir ) ) {
-            $dir = scandir( $uploadDir );
+        if ( !file_exists( $uploadDir ) || !is_dir( $uploadDir ) ) {
+            return [];
+        }
+        $dir = scandir( $uploadDir );
 
-            foreach ( $dir as $file ) {
-                if ( !is_dir( $uploadDir . '/' . $file ) ) {
-                    $fullUrl = $uploadFullUrl . '/' . $file;
-                    $path = $uploadUrl . '/' . $file;
-
-                    if ( PostGalleryImage::urlIsThumbnail( $fullUrl ) ) {
-                        continue;
-                    }
-
-                    $alt = '';
-                    $imageTitle = '';
-                    $imageOptions = '';
-                    $imageDesc = '';
-                    $attachmentId = PostGalleryImage::checkForAttachmentData( $fullUrl, $postid );
-                    if ( !empty( $attachmentId ) ) {
-                        $attachment = get_post( $attachmentId );
-                        $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
-                        $imageOptions = get_post_meta( $attachmentId, 'postgallery-image-options', true );
-                        if ( !empty( $attachment ) ) {
-                            $imageTitle = $attachment->post_title;
-                            $imageDesc = $attachment->post_content;
-                        }
-                    }
-
-                    $imageOptionsParsed = PostGalleryImage::parseImageOptions( $imageOptions );
-
-                    $images[$file] = [
-                        'filename' => $file,
-                        'path' => $path,
-                        'url' => $fullUrl,
-                        'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $uploadUrl . '/' . $file,
-                        'title' => $imageTitle,
-                        'desc' => $imageDesc,
-                        'alt' => $alt,
-                        'post_id' => $postid,
-                        'post_title' => get_the_title( $postid ),
-                        'imageOptions' => $imageOptions,
-                        'imageOptionsParsed' => $imageOptionsParsed,
-                        'attachmentId' => $attachmentId,
-                        'srcset' => wp_get_attachment_image_srcset( $attachmentId, 'full' ),
-                        //'srcsetSizes' => wp_get_attachment_image_sizes($attachmentId, 'full'),
-                    ];
-                }
+        foreach ( $dir as $file ) {
+            if ( is_dir( $uploadDir . '/' . $file ) ) {
+                continue;
             }
+            $fullUrl = $uploadFullUrl . '/' . $file;
+            $path = $uploadUrl . '/' . $file;
+
+            if ( PostGalleryImage::urlIsThumbnail( $fullUrl ) ) {
+                continue;
+            }
+            $attachmentId = PostGalleryImage::checkForAttachmentData( $fullUrl, $postid );
+
+            $info = self::getAttachmentInfo( $attachmentId, $postid );
+            $file = $info['filename'];
+            $images[$file] = $info;
         }
 
         $images = self::sort( $images, $postid );
         self::$cachedImages[$postid] = $images;
         return $images;
+    }
+
+    /**
+     * Get list with attachments-data from an list of attachment-ids
+     *
+     * @param array $attachmentIds
+     * @return array
+     */
+    public static function getByAttachmentIds( $attachmentIds ): array {
+        $images = [];
+        foreach ( $attachmentIds as $item ) {
+            if ( empty( $item ) || empty( $item['id'] ) ) {
+                continue;
+            }
+            $attachmentId = $item['id'];
+            $attachment = get_post( $attachmentId );
+            $info = self::getAttachmentInfo( $attachmentId, $attachment->post_parent );
+
+            $file = $info['filename'];
+
+            $images[$file] = $info;
+        }
+
+        return $images;
+    }
+
+    /**
+     * Get info for attachment
+     *
+     * @param int $attachmentId
+     * @param int $parentId
+     * @return array
+     */
+    public static function getAttachmentInfo( $attachmentId, $parentId ): array {
+        $alt = '';
+        $imageTitle = '';
+        $imageOptions = '';
+        $imageDesc = '';
+        $imageCaption = '';
+
+        if ( !empty( $attachmentId ) ) {
+            $attachment = get_post( $attachmentId );
+            $alt = get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
+            $imageOptions = get_post_meta( $attachmentId, 'postgallery-image-options', true );
+            $imageCaption = wp_get_attachment_caption( $attachmentId );
+            $imageTitle = '';
+            $imageDesc = '';
+            if ( !empty( $attachment ) ) {
+                $imageTitle = $attachment->post_title;
+                $imageDesc = $attachment->post_content;
+            }
+        }
+
+        $imageOptionsParsed = PostGalleryImage::parseImageOptions( $imageOptions );
+
+        $path = get_attached_file( $attachmentId );
+        $file = basename( $path );
+        $fullUrl = wp_get_attachment_url( $attachmentId );
+        $shortPath = str_replace( get_bloginfo( 'wpurl' ), '', $fullUrl );
+
+
+        $info = [
+            'post_id' => $parentId,
+            'post_title' => get_the_title( $parentId ),
+            'attachmentId' => $attachmentId,
+            'filename' => $file,
+            'path' => $path,
+            'url' => $fullUrl,
+            'thumbURL' => get_bloginfo( 'wpurl' ) . '/?loadThumb&amp;path=' . $shortPath,
+            'title' => $imageTitle,
+            'desc' => $imageDesc,
+            'alt' => $alt,
+            'imageCaption' => $imageCaption,
+            'imageOptions' => $imageOptions,
+            'imageOptionsParsed' => $imageOptionsParsed,
+            'srcset' => wp_get_attachment_image_srcset( $attachmentId, 'full' ),
+        ];
+
+        return $info;
     }
 
     /**
@@ -236,7 +294,7 @@ class PostGalleryImageList {
      * @param array $args (singlequotes, quotes)
      * @return string
      */
-    public static function getImageString( int $postid = null, array $args = [] ):string {
+    public static function getImageString( int $postid = null, array $args = [] ): string {
         if ( empty( $postid ) ) {
             global $postid;
         }
@@ -354,5 +412,28 @@ class PostGalleryImageList {
             'orgPath' => $path,
             'size' => $size,
         ];
+    }
+
+
+    public static function loadAllAttachmentIds() {
+        global $wpdb;
+        $sql = "SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' 
+            AND meta_value LIKE '%gallery/%'";
+
+
+        $result = $wpdb->get_results( $sql );
+
+        $list = [];
+        foreach ( $result as $data ) {
+            $value = explode( '/uploads/', $data->meta_value );
+            if ( count( $value ) > 1 ) {
+                $value = $value[1];
+            } else {
+                $value = $value[0];
+            }
+            $list[$value] = $data->post_id;
+        }
+
+        self::$allAttachments = $list;
     }
 }

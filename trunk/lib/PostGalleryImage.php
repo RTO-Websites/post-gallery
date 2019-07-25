@@ -10,6 +10,7 @@ namespace Lib;
 use Admin\PostGalleryAdmin;
 
 class PostGalleryImage {
+
     /**
      * Get path to thumb.php
      *
@@ -157,8 +158,14 @@ class PostGalleryImage {
             'gallery/',
         ], $url );
 
-        $statement = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path );
-        $attachment_id = $wpdb->get_var( $statement );
+
+        if ( !empty( PostGalleryImageList::$allAttachments[$path] ) ) {
+            // get from list
+            return PostGalleryImageList::$allAttachments[$path];
+        }
+
+        $statement = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s", '%' . $path. " LIMIT 1" );
+        $attachment_id = $wpdb->get_var( $statement, 0, 0 );
 
         if ( !empty( $attachment_id ) ) {
             return $attachment_id;

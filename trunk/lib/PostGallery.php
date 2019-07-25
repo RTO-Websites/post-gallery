@@ -83,7 +83,7 @@ class PostGallery {
     public function __construct() {
 
         $this->pluginName = 'postgallery';
-        $this->version = '1.0.0';
+        $this->version = '1.11.2';
         $this->options = PostGallery::getOptions();
 
         $this->loadDependencies();
@@ -375,7 +375,7 @@ class PostGallery {
 
         $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
             . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style,acf-field,'
-            . 'acf-field-group,elementor_font');
+            . 'acf-field-group,elementor_font' );
 
         $allPostTypes = get_post_types();
         $queryPostTypes = [];
@@ -399,7 +399,9 @@ class PostGallery {
             self::$allPosts = $allPosts;
         }
 
-        $selectPosts = [ 0 => __( 'Dynamic', 'postgallery' ) ];
+        $selectPosts = [
+            0 => __( 'Self', 'postgallery' )
+        ];
 
         foreach ( $allPosts as $post ) {
             if ( in_array( $post->post_type, $filterPostTypes ) ) {
@@ -421,7 +423,6 @@ class PostGallery {
             'maxImageHeight' => get_theme_mod( 'postgallery_maxImageHeight', 2560 ),
 
             'disableScripts' => get_theme_mod( 'postgallery_disableScripts', false ),
-            'disableGroupedMedia' => get_theme_mod( 'postgallery_disableGroupedMedia', false ),
 
             'globalTemplate' => get_theme_mod( 'postgallery_globalTemplate' ),
             'columns' => get_theme_mod( 'postgallery_columns', 'auto' ),

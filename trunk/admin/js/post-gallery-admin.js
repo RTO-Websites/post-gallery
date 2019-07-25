@@ -284,7 +284,7 @@ window.deleteImageComplete = function (result, status, element) {
  */
 window.pgOpenDetailWindow = function (element) {
   var img = jQuery(element).find('img');
-  window.open('upload.php?item=' + img.data('attachmentid'), '', 'height=600,width=600');
+  window.open('post.php?action=edit&post=' + img.data('attachmentid'), '', 'height=600,width=600');
 };
 
 window.triggerFilenameChange = function (inputElement) {
