@@ -35,7 +35,14 @@ https://github.com/RTO-Websites/post-gallery
 4. Grouped media
 5. Litebox-gallery with custom styles
 
+
 == Changelog ==
+= 1.12.0 =
+* Add captions
+* Add append templates
+* Add dynamic image-sources
+* Optimize performance
+
 = 1.11.0 =
 * Add injections for elementor media-carousel (auto-height, aspect-ratio)
 
