@@ -4,7 +4,7 @@ Donate link: https://www.rto.de
 Tags: post gallery, post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
 Requires at least: 3.4
 Tested up to: 5.2
-Stable tag: 4.3
+Stable tag: 1.11.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,7 +35,14 @@ https://github.com/RTO-Websites/post-gallery
 4. Grouped media
 5. Litebox-gallery with custom styles
 
+
 == Changelog ==
+= 1.12.0 =
+* Add captions
+* Add append templates
+* Add dynamic image-sources
+* Optimize performance
+
 = 1.11.0 =
 * Add injections for elementor media-carousel (auto-height, aspect-ratio)
 

@@ -39,7 +39,7 @@
     getInfo: function () {
       return {
         longname: 'PostGallery',
-        author: 'Crazypsycho',
+        author: 'RTO GmbH',
         authorurl: 'https://github.com/RTO-Websites/post-gallery',
         infourl: 'https://github.com/RTO-Websites/post-gallery/post-gallery',
         version: '1.0'

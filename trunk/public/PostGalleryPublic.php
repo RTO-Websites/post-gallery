@@ -70,9 +70,9 @@ class PostGalleryPublic {
     /**
      * Initialize the class and set its properties.
      *
+     * @param string $pluginName The name of the plugin.
+     * @param string $version The version of this plugin.
      * @since    1.0.0
-     * @param      string $pluginName The name of the plugin.
-     * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
         if ( is_admin() && !class_exists( '\Elementor\Plugin' ) ) {
@@ -287,8 +287,8 @@ class PostGalleryPublic {
      * @param $post_thumbnail_id
      * @param $size
      * @param $attr
-     * @throws \ImagickException
      * @return string
+     * @throws \ImagickException
      */
     public function postgalleryThumbnail( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
         if ( '' == $html ) {
@@ -315,6 +315,9 @@ class PostGalleryPublic {
      * @return string
      */
     public function addGalleryToContent( $content ) {
+        if ( empty( $GLOBALS['post'] ) ) {
+            return '';
+        }
         $position = get_post_meta( $GLOBALS['post']->ID, 'postgalleryPosition', true );
         $template = get_post_meta( $GLOBALS['post']->ID, 'postgalleryTemplate', true );
         if ( empty( $position ) || $position == 'global' ) {
@@ -379,9 +382,12 @@ class PostGalleryPublic {
         $tmpOptions = $this->options;
         $images = PostGalleryImageList::get( $postid );
 
+        if ( !empty( $args['pgimagesource_dynamic'] ) ) {
+            $images = $images + PostGalleryImageList::getByAttachmentIds( $args['pgimagesource_dynamic'] );
+        }
 
-        if ( empty($images)
-            && class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->editor->is_edit_mode()
+        if ( empty( $images )
+            && class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode()
         ) {
             $images = PostGalleryImageList::getPseudoImages();
         }
@@ -412,9 +418,14 @@ class PostGalleryPublic {
         }
 
         $dataAttributes = '';
-        if ( !empty( $this->option('imageAnimationDelay') ) ) {
-            $dataAttributes .= ' data-animationdelay="' . $this->option('imageAnimationDelay') . '" ';
+        if ( !empty( $this->option( 'imageAnimationDelay' ) ) ) {
+            $dataAttributes .= ' data-animationdelay="' . $this->option( 'imageAnimationDelay' ) . '" ';
         }
+
+
+        $count = 0;
+
+        $appendList = $this->getAppendedTemplateList();
 
         ob_start();
         echo '<!--postgallery: template: ' . $template . ';postid:' . $postid . '-->';
@@ -443,6 +454,55 @@ class PostGalleryPublic {
         $this->options = $tmpOptions;
 
         return $content;
+    }
+
+    /**
+     * Returns list of appended templates, ordered by position to append
+     *
+     * @return array
+     */
+    private function getAppendedTemplateList() {
+        if ( empty( $this->option( 'append_templates' ) ) ) {
+            return [];
+        }
+        $appendList = [];
+        foreach ( $this->option( 'append_templates' ) as $item ) {
+            if ( empty( $appendList[$item['position_to_append']] ) ) {
+                $appendList[$item['position_to_append']] = [];
+            }
+
+            $appendList[$item['position_to_append']][] = $item['template_to_append'];
+        }
+
+        return $appendList;
+    }
+
+    /**
+     * Returns image-caption based on setting
+     *
+     * @param array $image
+     * @return string
+     */
+    public function getCaption( $image ) {
+        switch ( $this->option( 'captionSource' ) ) {
+            case 'title':
+                return $image['title'];
+                break;
+
+            case 'attachment_alt':
+                return $image['alt'];
+                break;
+
+            case 'attachment_caption':
+                return $image['imageCaption'];
+                break;
+
+            case 'content':
+                return $image['desc'];
+                break;
+        }
+
+        return '';
     }
 
     /**
@@ -597,6 +657,17 @@ class PostGalleryPublic {
                 break;
             case 'horizontal':
                 $wrapperClass .= ' with-js-masonry js-masonry-horizontal';
+                break;
+        }
+
+        $captionAnimation = $this->option( 'pgcaption_animation' );
+        switch ( $captionAnimation ) {
+            case 'show_on_hover':
+                $wrapperClass .= ' caption-animation-show-on-hover has-caption-animation';
+                break;
+
+            case 'hide_on_hover':
+                $wrapperClass .= ' caption-animation-hide-on-hover has-caption-animation';
                 break;
         }
 

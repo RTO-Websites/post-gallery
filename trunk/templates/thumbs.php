@@ -7,10 +7,21 @@
  *            -> filename, path, thumbURL
  */
 ?>
-    <figure
+    <figure role="group"
             class="gallery pg-theme-thumbs pg-theme-list <?php echo $this->option( 'containerClass' ); ?>">
         <?php foreach ( $images as $image ): ?>
             <?php
+            $count += 1;
+
+            if ( !empty( $appendList[$count] ) ):
+                foreach ( $appendList[$count] as $appendTemplate ):
+                    echo '<div class="item">';
+                    echo do_shortcode( '[elementor-template id=' . $appendTemplate . ']' );
+                    echo '</div>';
+                endforeach;
+            endif;
+
+
             $thumbUrl = \Lib\PostGalleryImage::getThumbUrl( $image['path'],
                 [
                     'width' => $this->option( 'thumbWidth' ),
@@ -19,27 +30,37 @@
                 ] );
             ?>
             <div class="item" <?php echo $image['imageOptionsParsed']; ?>>
-                <a href="<?php echo $image['url'] ?>">
-                    <?php if ( $this->option( 'useSrcset' ) ): ?>
-                        <img class="post-gallery_thumb"
-                                src="<?php echo $image['url'] ?>"
-                                data-title="<?php echo $image['title'] ?>"
-                                data-desc="<?php echo $image['desc'] ?>"
-                                alt="<?php echo $image['alt'] ?>"
-                                srcset="<?php echo $image['srcset']; ?>"
-                                sizes="<?php echo $srcsetSizes; ?>"
-                        />
-                    <?php else: ?>
-                        <img class="post-gallery_thumb"
-                                src="<?php echo $thumbUrl ?>"
-                                data-title="<?php echo $image['title'] ?>"
-                                data-desc="<?php echo $image['desc'] ?>"
-                                alt="<?php echo $image['alt'] ?>"
-                                data-scale="<?php echo $this->option( 'thumbScale' ); ?>"/>
-                    <?php endif; ?>
+                <figure class="inner">
+                    <a href="<?php echo $image['url'] ?>">
+                        <?php if ( $this->option( 'useSrcset' ) ): ?>
+                            <img class="post-gallery_thumb"
+                                    src="<?php echo $image['url'] ?>"
+                                    data-title="<?php echo $image['title'] ?>"
+                                    data-desc="<?php echo $image['desc'] ?>"
+                                    alt="<?php echo $image['alt'] ?>"
+                                    srcset="<?php echo $image['srcset']; ?>"
+                                    sizes="<?php echo $srcsetSizes; ?>"
+                            />
+                        <?php else: ?>
+                            <img class="post-gallery_thumb"
+                                    src="<?php echo $thumbUrl ?>"
+                                    data-title="<?php echo $image['title'] ?>"
+                                    data-desc="<?php echo $image['desc'] ?>"
+                                    alt="<?php echo $image['alt'] ?>"
+                                    data-scale="<?php echo $this->option( 'thumbScale' ); ?>"/>
+                        <?php endif; ?>
 
-                </a>
-                <div class="bg-image" style="background-image: url('<?php echo $thumbUrl; ?>');"></div>
+                    </a>
+                    <div class="bg-image" style="background-image: url('<?php echo $thumbUrl; ?>');"></div>
+
+                    <?php if ( !empty( $this->option( 'showCaptions' ) ) ): ?>
+                        <?php
+                        $caption = $this->getCaption( $image );
+                        if ( !empty( $caption ) ): ?>
+                            <figcaption class="caption-wrapper"><?php echo $caption; ?></figcaption>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </figure>
             </div>
         <?php endforeach; ?>
     </figure>

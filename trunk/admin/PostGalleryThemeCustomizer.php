@@ -101,18 +101,12 @@ slideOutDown,	slideOutLeft,	slideOutRight,	slideOutUp' );
                         'default' => false,
                         'description' => 'Will disable litebox, slider and image-animations',
                     ],
-
-                    'disableGroupedMedia' => [
-                        'type' => 'checkbox',
-                        'label' => __( 'Disable grouped media', 'postgallery' ),
-                        'default' => false,
-                    ],
                 ],
             ];
 
         $this->fields['postgallery-templateSettings'] =
             [
-                'title' => __( 'Template-Settings', 'postgallery' ),
+                'title' => __( 'Shortcode-Defaults', 'postgallery' ),
                 'fields' => [
                     'globalTemplate' => [
                         'label' => __( 'Global template', 'postgallery' ),
