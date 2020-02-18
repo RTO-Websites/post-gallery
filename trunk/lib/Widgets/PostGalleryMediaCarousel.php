@@ -17,6 +17,7 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
 class PostGalleryMediaCarousel extends Media_Carousel {
+    use MediaCarouselInjections;
 
     protected function _register_controls() {
         $this->start_controls_section(
@@ -31,19 +32,7 @@ class PostGalleryMediaCarousel extends Media_Carousel {
 
         parent::_register_controls();
 
-        MediaCarouselInjections::addInjections( $this );
-    }
-
-    /**
-     * Override output for single image
-     *  Add img-tag for auto-height
-     *
-     * @param array $slide
-     * @param $element_key
-     * @param array $settings
-     */
-    protected function print_slide_image( array $slide, $element_key, array $settings ) {
-        MediaCarouselInjections::print_slide_image( $this, $slide, $element_key, $settings );
+        $this->addInjections();
     }
 
     /**
@@ -120,7 +109,7 @@ class PostGalleryMediaCarousel extends Media_Carousel {
 
         // remove empty slides
         $imageCount = PostGalleryMediaCarousel::addPostGalleryToSlides( $settings );
-        MediaCarouselInjections::removeEmptySlides( $settings, !empty( $imageCount ) );
+        $this->removeEmptySlides( $settings, !empty( $imageCount ) );
 
         parent::print_slider( $settings );
     }
