@@ -3,6 +3,7 @@
 namespace Lib\Widgets;
 
 use Elementor\Controls_Manager;
+use ElementorPro\Modules\Carousel\Widgets\Media_Carousel;
 
 if ( !class_exists( 'MediaCarouselInjections' ) ) {
     class MediaCarouselInjections {
@@ -191,7 +192,7 @@ if ( !class_exists( 'MediaCarouselInjections' ) ) {
          * Override output for single image
          *  Add img-tag for auto-height
          *
-         * @param $element
+         * @param Media_Carousel $element
          * @param array $slide
          * @param $element_key
          * @param array $settings
@@ -211,13 +212,40 @@ if ( !class_exists( 'MediaCarouselInjections' ) ) {
             <?php if ( $settings['overlay'] ) : ?>
                 <div <?php echo $element->get_render_attribute_string( 'image-overlay' ); ?>>
                     <?php if ( 'text' === $settings['overlay'] ) : ?>
-                        <?php echo $element->get_image_caption( $slide ); ?>
+                        <?php echo self::get_image_caption( $slide, $element ); ?>
                     <?php else : ?>
                         <i class="fa fa-<?php echo $settings['icon']; ?>"></i>
                     <?php endif; ?>
                 </div>
             <?php
             endif;
+        }
+
+        /**
+         * Replacement for protected method of elementor (1:1 copy)
+         *
+         * @param array $slide
+         * @param Media_Carousel $element
+         * @return string
+         */
+        public static function get_image_caption( $slide, $element ) {
+            $caption_type = $element->get_settings( 'caption' );
+
+            if ( empty( $caption_type ) ) {
+                return '';
+            }
+
+            $attachment_post = get_post( $slide['image']['id'] );
+
+            if ( 'caption' === $caption_type ) {
+                return $attachment_post->post_excerpt;
+            }
+
+            if ( 'title' === $caption_type ) {
+                return $attachment_post->post_title;
+            }
+
+            return $attachment_post->post_content;
         }
     }
 }
