@@ -5,8 +5,9 @@ namespace Lib\Widgets;
 use Elementor\Controls_Manager;
 use ElementorPro\Modules\Carousel\Widgets\Media_Carousel;
 
-if ( !class_exists( 'MediaCarouselInjections' ) ) {
-    class MediaCarouselInjections {
+
+if ( !trait_exists( 'MediaCarouselInjections' ) ) {
+    trait MediaCarouselInjections {
 
         /**
          * Remove empty slides in frontend
@@ -192,15 +193,14 @@ if ( !class_exists( 'MediaCarouselInjections' ) ) {
          * Override output for single image
          *  Add img-tag for auto-height
          *
-         * @param Media_Carousel $element
          * @param array $slide
          * @param $element_key
          * @param array $settings
          */
-        public static function print_slide_image( $element, array $slide, $element_key, array $settings ) {
-            $element->add_render_attribute( $element_key . '-image', 'class', 'media-carousel-autoheight', false );
+        protected function print_slide_image( array $slide, $element_key, array $settings ) {
+            $this->add_render_attribute( $element_key . '-image', 'class', 'media-carousel-autoheight', false );
             ?>
-            <div <?php echo $element->get_render_attribute_string( $element_key . '-image' ); ?>>
+            <div <?php echo $this->get_render_attribute_string( $element_key . '-image' ); ?>>
                 <?php if ( 'video' === $slide['type'] && $settings['video_play_icon'] ) : ?>
                     <div class="elementor-custom-embed-play">
                         <i class="eicon-play" aria-hidden="true"></i>
@@ -210,42 +210,15 @@ if ( !class_exists( 'MediaCarouselInjections' ) ) {
                 <img src="<?php echo $slide['image']['url']; ?>" alt="" class="media-carousel-img"/>
             </div>
             <?php if ( $settings['overlay'] ) : ?>
-                <div <?php echo $element->get_render_attribute_string( 'image-overlay' ); ?>>
+                <div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
                     <?php if ( 'text' === $settings['overlay'] ) : ?>
-                        <?php echo self::get_image_caption( $slide, $element ); ?>
+                        <?php echo $this->get_image_caption( $slide ); ?>
                     <?php else : ?>
                         <i class="fa fa-<?php echo $settings['icon']; ?>"></i>
                     <?php endif; ?>
                 </div>
             <?php
             endif;
-        }
-
-        /**
-         * Replacement for protected method of elementor (1:1 copy)
-         *
-         * @param array $slide
-         * @param Media_Carousel $element
-         * @return string
-         */
-        public static function get_image_caption( $slide, $element ) {
-            $caption_type = $element->get_settings( 'caption' );
-
-            if ( empty( $caption_type ) ) {
-                return '';
-            }
-
-            $attachment_post = get_post( $slide['image']['id'] );
-
-            if ( 'caption' === $caption_type ) {
-                return $attachment_post->post_excerpt;
-            }
-
-            if ( 'title' === $caption_type ) {
-                return $attachment_post->post_title;
-            }
-
-            return $attachment_post->post_content;
         }
     }
 }
