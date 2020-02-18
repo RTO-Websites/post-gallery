@@ -32,7 +32,7 @@ class PostGalleryMediaCarousel extends Media_Carousel {
 
         parent::_register_controls();
 
-        MediaCarouselInjections::addInjections( $this );
+        $this->addInjections();
     }
 
     /**
@@ -109,7 +109,7 @@ class PostGalleryMediaCarousel extends Media_Carousel {
 
         // remove empty slides
         $imageCount = PostGalleryMediaCarousel::addPostGalleryToSlides( $settings );
-        MediaCarouselInjections::removeEmptySlides( $settings, !empty( $imageCount ) );
+        $this->removeEmptySlides( $settings, !empty( $imageCount ) );
 
         parent::print_slider( $settings );
     }

@@ -13,7 +13,7 @@ trait MediaCarouselInjections {
      *
      * @param $settings
      */
-    public static function removeEmptySlides( &$settings, $force = false ) {
+    protected function removeEmptySlides( &$settings, $force = false ) {
         if ( !$force && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
             return;
         }
@@ -28,15 +28,18 @@ trait MediaCarouselInjections {
         }
     }
 
-    public static function addInjections( $element ) {
+    /**
+     * Add controls for auto-height and ratio
+     */
+    protected function addInjections() {
 
-        $element->start_injection( [
+        $this->start_injection( [
             'type' => 'section',
             'at' => 'end',
             'of' => 'section_slides',
         ] );
 
-        $element->add_control(
+        $this->add_control(
             'autoHeight',
             [
                 'type' => Controls_Manager::SWITCHER,
@@ -49,7 +52,7 @@ trait MediaCarouselInjections {
             ]
         );
 
-        $element->add_control(
+        $this->add_control(
             'useAspectRatio',
             [
                 'type' => Controls_Manager::SWITCHER,
@@ -69,7 +72,7 @@ trait MediaCarouselInjections {
             ]
         );
 
-        $element->add_control(
+        $this->add_control(
             'aspectRatio',
             [
                 'label' => __( 'Aspect Ratio', 'elementor-pro' ),
@@ -94,7 +97,7 @@ trait MediaCarouselInjections {
         );
 
 
-        $element->add_control(
+        $this->add_control(
             'arrowOffset',
             [
                 'label' => __( 'Arrow Offset', 'elementor-pro' ),
@@ -116,7 +119,7 @@ trait MediaCarouselInjections {
             ]
         );
 
-        $element->add_control(
+        $this->add_control(
             'verticalAlign',
             [
                 'label' => __( 'Vertical-Align', 'elegesamt' ),
@@ -136,19 +139,19 @@ trait MediaCarouselInjections {
             ]
         );
 
-        $element->end_injection();
+        $this->end_injection();
 
 
-        $element->start_injection( [
+        $this->start_injection( [
             'type' => 'section',
             'at' => 'end',
             'of' => 'section_additional_options',
         ] );
 
 
-        $element->end_injection();
+        $this->end_injection();
 
-        $element->add_control(
+        $this->add_control(
             'overlayAlign',
             [
                 'label' => __( 'Overlay-Align', 'elegesamt' ),
@@ -168,14 +171,14 @@ trait MediaCarouselInjections {
         );
 
 
-        $element->update_responsive_control( 'height', [
+        $this->update_responsive_control( 'height', [
             'condition' => [
                 'autoHeight!' => 'yes',
                 'aspectRatio!' => 'yes',
             ],
         ] );
 
-        $element->update_responsive_control( 'width', [
+        $this->update_responsive_control( 'width', [
             'range' => [
                 'px' => [
                     'min' => 100,
