@@ -86,7 +86,6 @@ class PostGalleryAdmin {
         ];
 
         new SliderShortcodeAdmin( $pluginName, $version );
-        new PostGalleryMceButton( $pluginName );
     }
 
     /**
