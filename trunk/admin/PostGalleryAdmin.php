@@ -59,9 +59,9 @@ class PostGalleryAdmin {
     /**
      * Initialize the class and set its properties.
      *
+     * @param string $pluginName The name of this plugin.
+     * @param string $version The version of this plugin.
      * @since    1.0.0
-     * @param      string $pluginName The name of this plugin.
-     * @param      string $version The version of this plugin.
      */
     public function __construct( $pluginName, $version ) {
         load_plugin_textdomain( $pluginName, false, '/postgallery/languages' );
@@ -86,6 +86,50 @@ class PostGalleryAdmin {
         ];
 
         new SliderShortcodeAdmin( $pluginName, $version );
+
+        if ( filter_has_var( INPUT_GET, 'cleanAttachments' ) ) {
+            self::cleanAttachments();
+        }
+    }
+
+
+    public static function cleanAttachments() {
+        if ( !is_admin() || !current_user_can( 'administrator' ) ) {
+            return;
+        }
+        global $wpdb;
+        $query_args = [
+            'post_type' => 'attachment',
+            'post_status' => 'inherit',
+            'number_posts' => -1,
+            'posts_per_page' => -1,
+            'suppress_filters' => true,
+        ];
+        $query = new \WP_Query( $query_args );
+        $guids = [];
+        $toDelete = [];
+        if ( !$query->have_posts() ) {
+            return;
+        }
+        foreach ( $query->posts as $post ) {
+            if ( in_array( $post->guid, $guids ) ) {
+                $toDelete[] = $post->ID;
+                continue;
+            }
+
+            $guids[] = $post->guid;
+
+
+            $filePath = get_attached_file( $post->ID );
+            if ( !file_exists( $filePath ) ) {
+                $toDelete[] = $post->ID;
+                continue;
+            }
+
+            $exists[] = $post->ID;
+        }
+        $idListString = implode( ",", $toDelete );
+        $wpdb->query( "DELETE FROM {$wpdb->posts} WHERE ID IN ($idListString)" );
     }
 
     /**
@@ -678,10 +722,10 @@ class PostGalleryAdmin {
     /**
      * Method to save Post-Meta
      *
-     * @global type $post_options
      * @param int $postId
      * @param object $post
      * @return null
+     * @global type $post_options
      */
     public function savePostMeta( $postId, $post ) {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -699,12 +743,6 @@ class PostGalleryAdmin {
 
         $curLangPost = $post;
         $curLangPostId = $postId;
-        $imageDir = PostGalleryFilesystem::getImageDir( $post );
-        $uploads = wp_upload_dir();
-
-        if ( empty( $imageDir ) ) {
-            return;
-        }
 
         if ( 'auto-draft' == $post->post_status ) {
             return;
@@ -718,6 +756,12 @@ class PostGalleryAdmin {
             if ( 'auto-draft' == $post->post_status ) {
                 return;
             }
+        }
+        $imageDir = PostGalleryFilesystem::getImageDir( $post );
+        $uploads = wp_upload_dir();
+
+        if ( empty( $imageDir ) ) {
+            return;
         }
 
 
@@ -755,6 +799,7 @@ class PostGalleryAdmin {
             $uploads = wp_upload_dir();
             $uploadDir = $uploads['basedir'] . '/gallery/' . $currentImageDir;
             $uploadDirNew = $uploads['basedir'] . '/gallery/' . $imageDir;
+            die( $imageDir );
             $imageUrlOld = $uploads['baseurl'] . '/gallery/' . $currentImageDir;
             $imageUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
             if ( file_exists( $uploadDir ) ) {
@@ -804,13 +849,13 @@ class PostGalleryAdmin {
      * @return mixed
      */
     public function addMediaFields( $formFields, $post ) {
-        $formFields['postgallery-image-options'] = array(
+        $formFields['postgallery-image-options'] = [
             'label' => __( 'Image-Options', 'postgallery' ),
             'input' => 'textarea',
             'value' => get_post_meta( $post->ID, 'postgallery-image-options', true ),
             'placeholder' => 'key|value',
             'helps' => 'key|value',
-        );
+        ];
 
         return $formFields;
     }

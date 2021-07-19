@@ -4,7 +4,7 @@
  *
  * Follow variables are useable:
  *        $images
- *            -> filename, path, thumbURL
+ *            -> filename, path, thumbURL, url
  */
 
 $first_image = array_shift( $images );

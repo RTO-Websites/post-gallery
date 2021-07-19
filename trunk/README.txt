@@ -3,8 +3,8 @@ Contributors: rtowebsites
 Donate link: https://www.rto.de
 Tags: post gallery, post, gallery, post-gallery, postgallery, litebox, owl, carousel, slider, rto, rto.de, elementor
 Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 1.12.1
+Tested up to: 5.7
+Stable tag: 1.12.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
