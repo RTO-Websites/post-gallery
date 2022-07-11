@@ -147,7 +147,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      *
      * @access protected
      */
-    protected function _register_controls() {
+    protected function register_controls() {
         $selectPosts = PostGallery::getPostList();
 
         $this->start_controls_section(
