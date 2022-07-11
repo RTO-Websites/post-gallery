@@ -115,7 +115,7 @@ class PostGallerySliderWidget extends Widget_Base {
      *
      * @access protected
      */
-    protected function _register_controls() {
+    protected function register_controls() {
         $filterPostTypes = explode( ',', 'nav_menu_item,revision,custom_css,customize_changeset,'
             . 'oembed_cache,ocean_modal_window,nxs_qp,elementor_library,attachment,dtbaker_style' );
         $allPosts = get_posts( [

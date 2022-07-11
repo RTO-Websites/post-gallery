@@ -19,7 +19,7 @@ if ( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class PostGalleryMediaCarousel extends Media_Carousel {
     use MediaCarouselInjections;
 
-    protected function _register_controls() {
+    protected function register_controls() {
         $this->start_controls_section(
             'section_content',
             [
@@ -30,7 +30,7 @@ class PostGalleryMediaCarousel extends Media_Carousel {
 
         $this->end_controls_section();
 
-        parent::_register_controls();
+        parent::register_controls();
 
         $this->addInjections();
     }
