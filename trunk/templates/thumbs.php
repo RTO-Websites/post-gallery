@@ -4,7 +4,7 @@
  *
  * Follow variables are useable:
  *        $images
- *            -> filename, path, thumbURL
+ *            -> filename, path, thumbURL, url
  */
 ?>
     <figure role="group"

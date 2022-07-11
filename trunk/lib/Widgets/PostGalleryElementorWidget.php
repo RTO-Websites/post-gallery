@@ -10,7 +10,7 @@ use Elementor\Group_Control_Typography;
 use Elementor\Modules\DynamicTags\Module;
 use Elementor\Plugin;
 use Elementor\Repeater;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Typography;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Lib\PostGallery;
@@ -147,7 +147,7 @@ class PostGalleryElementorWidget extends Widget_Base {
      *
      * @access protected
      */
-    protected function _register_controls() {
+    protected function register_controls() {
         $selectPosts = PostGallery::getPostList();
 
         $this->start_controls_section(
@@ -588,7 +588,7 @@ class PostGalleryElementorWidget extends Widget_Base {
             [
                 'name' => 'pgcaption_typography',
                 'label' => __( 'Typography', 'elementor' ),
-                'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+                'scheme' => Typography::TYPOGRAPHY_1,
                 'selector' => '{{WRAPPER}} .item .caption-wrapper',
             ]
         );

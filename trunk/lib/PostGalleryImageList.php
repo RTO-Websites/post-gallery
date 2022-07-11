@@ -120,6 +120,7 @@ class PostGalleryImageList {
             $info = self::getAttachmentInfo( $attachmentId, $postid );
             $file = $info['filename'];
             $images[$file] = $info;
+            $images[$file]['url'] = $fullUrl;;
         }
 
         $images = self::sort( $images, $postid );
