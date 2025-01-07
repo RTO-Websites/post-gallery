@@ -799,7 +799,6 @@ class PostGalleryAdmin {
             $uploads = wp_upload_dir();
             $uploadDir = $uploads['basedir'] . '/gallery/' . $currentImageDir;
             $uploadDirNew = $uploads['basedir'] . '/gallery/' . $imageDir;
-            die( $imageDir );
             $imageUrlOld = $uploads['baseurl'] . '/gallery/' . $currentImageDir;
             $imageUrl = $uploads['baseurl'] . '/gallery/' . $imageDir;
             if ( file_exists( $uploadDir ) ) {
