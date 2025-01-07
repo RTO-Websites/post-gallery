@@ -1,0 +1,23 @@
+{
+  "name": "post-gallery",
+  "authors": [
+    "shennemann <s.hennemann@rto.de>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "owlcarousel": "~1.3.2",
+    "animate.css": "~3.4.0",
+    "owl.carousel": "2.2.1"
+  }
+}
